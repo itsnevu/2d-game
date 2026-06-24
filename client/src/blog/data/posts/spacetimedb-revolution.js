@@ -3,7 +3,7 @@ export default {
   title: "SpacetimeDB: How We Rebuilt Broth & Bullets and Unlocked Development at Lightning Speed",
   subtitle: "From visual overhaul to dynamic weather systems - our journey with SpacetimeDB has transformed everything",
   date: "2025-01-15",
-  author: "Martin Erlic",
+  author: "Wilder Team",
   excerpt: "Discover how SpacetimeDB revolutionized our game development process, enabling us to implement complex features like dynamic weather, seasonal changes, and enhanced graphics in record time.",
   coverImage: "/images/blog/spacetimedb-revolution-cover.jpg",
   content: `

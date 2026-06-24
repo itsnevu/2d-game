@@ -143,6 +143,10 @@ export function renderPlayerCorpse({
     lastPvpCombatTime: undefined, // No PvP combat time for corpses
     isNpc: false, // Corpses are not NPCs
     npcRole: '', // Corpses have no NPC role
+    ownerIdentity: undefined,
+    goldShareRatio: 0,
+    goldBalance: 0n,
+    stakedBounty: 0n,
   };
 
   // Choose the appropriate hero sprite based on water status (corpses don't crouch)

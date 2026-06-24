@@ -64,7 +64,7 @@
 .cairn-tier-name {
   font-size: 14px;
   font-weight: bold;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   letter-spacing: 2px;
   text-shadow: 0 0 6px currentColor;
 }
@@ -72,14 +72,14 @@
 .cairn-tier-reward {
   font-size: 12px;
   font-weight: bold;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   opacity: 0.8;
 }
 
 .cairn-tier-progress {
   margin-left: auto;
   font-size: 12px;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   color: #888;
 }
 
@@ -164,7 +164,7 @@
 .cairn-number {
   color: #666;
   font-weight: bold;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   font-size: 12px;
   min-width: 28px;
 }
@@ -195,7 +195,7 @@
   border-radius: 0;
   font-size: 10px;
   font-weight: bold;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -222,7 +222,7 @@
   cursor: pointer;
   padding: 4px 8px;
   font-size: 13px;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -277,7 +277,7 @@
   color: #d0d0d0;
   font-size: 12px;
   line-height: 1.6;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   text-align: left;
   max-height: 250px;
   overflow-y: auto;

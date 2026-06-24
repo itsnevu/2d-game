@@ -32,7 +32,7 @@ const BlogFooter: React.FC = () => {
         <footer style={{
             backgroundColor: 'rgba(0, 0, 0, 0.95)',
             backdropFilter: 'blur(20px)',
-            borderTop: '1px solid rgba(0, 170, 255, 0.3)',
+            borderTop: '1px solid rgba(200, 162, 60, 0.3)',
             padding: isMobile 
                 ? '30px 20px 20px 20px' 
                 : 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px) clamp(20px, 4vw, 40px) clamp(20px, 5vw, 40px)',
@@ -51,7 +51,7 @@ const BlogFooter: React.FC = () => {
                 transform: 'translateX(-50%)',
                 width: '60%',
                 height: '1px',
-                background: 'linear-gradient(90deg, transparent 0%, rgba(0, 170, 255, 0.6) 50%, transparent 100%)',
+                background: 'linear-gradient(90deg, transparent 0%, rgba(200, 162, 60, 0.6) 50%, transparent 100%)',
             }} />
 
             {/* Decorative symbol at center top */}
@@ -62,10 +62,10 @@ const BlogFooter: React.FC = () => {
                 transform: 'translateX(-50%)',
                 width: '16px',
                 height: '16px',
-                background: 'linear-gradient(135deg, #5c8e32 0%, #0066cc 100%)',
+                background: 'linear-gradient(135deg, #3B6B35 0%, #C8A23C 100%)',
                 borderRadius: '50%',
                 border: '2px solid rgba(0, 0, 0, 0.95)',
-                boxShadow: '0 0 15px rgba(0, 170, 255, 0.5)',
+                boxShadow: '0 0 15px rgba(200, 162, 60, 0.5)',
             }} />
 
             {/* Footer Grid */}
@@ -84,19 +84,18 @@ const BlogFooter: React.FC = () => {
                     alignItems: isMobile ? 'center' : 'flex-start',
                     textAlign: isMobile ? 'center' : 'left',
                 }}>
-                    <img
-                        src={logo}
-                        alt="Broth & Bullets Logo"
+                    <span
                         style={{
-                            width: isMobile ? '140px' : '160px',
-                            height: 'auto',
-                            marginBottom: isMobile ? '15px' : '20px',
-                            filter: 'none',
-                            boxShadow: 'none',
-                            border: 'none',
-                            outline: 'none',
+                            fontFamily: "'KiwiSoda', sans-serif",
+                            fontSize: '36px',
+                            color: '#C8A23C',
+                            textShadow: '2px 2px 0px #000',
+                            marginBottom: '20px',
+                            userSelect: 'none',
                         }}
-                    />
+                    >
+                        WILDER
+                    </span>
                     <p style={{
                         fontSize: '13px',
                         color: 'rgba(255, 255, 255, 0.7)',
@@ -106,24 +105,7 @@ const BlogFooter: React.FC = () => {
                         fontFamily: "'Courier New', Consolas, Monaco, monospace",
                     }}>
                         Broth & Bullets is developed by{' '}
-                        <a
-                            href="https://martinerlic.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                color: '#5c8e32',
-                                textDecoration: 'none',
-                                transition: 'color 0.2s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#86be52';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '#5c8e32';
-                            }}
-                        >
-                            Martin Erlic
-                        </a>
+                        the Wilder Team
                     </p>
                     <p style={{
                         fontSize: '12px',
@@ -132,7 +114,7 @@ const BlogFooter: React.FC = () => {
                         textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                         fontFamily: "'Courier New', Consolas, Monaco, monospace",
                     }}>
-                        © 2025 Martin Erlic
+                        © 2025 Wilder Team
                     </p>
                 </div>
 
@@ -164,7 +146,7 @@ const BlogFooter: React.FC = () => {
                             { label: 'FAQ', action: 'faq', section: true },
                             { label: 'LORE', action: 'https://www.babushkabook.com/reader/excerpts/tides-prologue-lagunov', external: true },
                             { label: 'BLOG', action: '/blog', internal: true },
-                            { label: 'CONTACT', action: 'mailto:martin.erlic@gmail.com', external: true },
+                            { label: 'CONTACT', action: 'mailto:contact@playwilder.com', external: true },
                         ].map((link) => (
                             <li key={link.label} style={{ marginBottom: '12px' }}>
                                 {link.internal ? (
@@ -342,30 +324,30 @@ const BlogFooter: React.FC = () => {
                                     width: '40px',
                                     height: '40px',
                                     borderRadius: '50%',
-                                    border: '1px solid rgba(0, 170, 255, 0.4)',
+                                    border: '1px solid rgba(200, 162, 60, 0.4)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     fontSize: '16px',
                                     textDecoration: 'none',
                                     transition: 'all 0.3s ease',
-                                    backgroundColor: 'rgba(0, 170, 255, 0.1)',
+                                    backgroundColor: 'rgba(200, 162, 60, 0.1)',
                                     color: 'rgba(255, 255, 255, 0.7)',
-                                    boxShadow: '0 0 10px rgba(0, 170, 255, 0.2)',
+                                    boxShadow: '0 0 10px rgba(200, 162, 60, 0.2)',
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.borderColor = '#5c8e32';
-                                    e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.2)';
+                                    e.currentTarget.style.backgroundColor = 'rgba(200, 162, 60, 0.2)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
                                     e.currentTarget.style.color = '#5c8e32';
-                                    e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 170, 255, 0.5)';
+                                    e.currentTarget.style.boxShadow = '0 0 20px rgba(200, 162, 60, 0.5)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.borderColor = 'rgba(0, 170, 255, 0.4)';
-                                    e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.1)';
+                                    e.currentTarget.style.borderColor = 'rgba(200, 162, 60, 0.4)';
+                                    e.currentTarget.style.backgroundColor = 'rgba(200, 162, 60, 0.1)';
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                                    e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.2)';
+                                    e.currentTarget.style.boxShadow = '0 0 10px rgba(200, 162, 60, 0.2)';
                                 }}
                             >
                                 <FontAwesomeIcon icon={social.icon} />
@@ -373,45 +355,7 @@ const BlogFooter: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* Back to Top Button */}
-                    <button
-                        onClick={() => {
-                            window.scrollTo({
-                                top: 0,
-                                behavior: 'smooth'
-                            });
-                        }}
-                        style={{
-                            width: '50px',
-                            height: '50px',
-                            borderRadius: '50%',
-                            border: '2px solid rgba(0, 170, 255, 0.6)',
-                            background: 'linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(45, 71, 21, 0.4) 100%)',
-                            color: '#5c8e32',
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                            boxShadow: '0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(0,170,255,0.4)',
-                            fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.3)';
-                            e.currentTarget.style.borderColor = 'rgba(0, 170, 255, 0.9)';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), 0 0 15px rgba(0,170,255,0.6)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(45, 71, 21, 0.4) 100%)';
-                            e.currentTarget.style.borderColor = 'rgba(0, 170, 255, 0.6)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(0,170,255,0.4)';
-                        }}
-                        title="Back to Top"
-                    >
-                        ↑
-                    </button>
+                    
                 </div>
             </div>
         </footer>

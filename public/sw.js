@@ -6,7 +6,7 @@
  * Network-first for API calls and dynamic content.
  */
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `game-assets-${CACHE_VERSION}`;
 
 // Production mode detection - silence verbose logs in production

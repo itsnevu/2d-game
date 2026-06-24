@@ -16,6 +16,7 @@
     "git:commit-push-both": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/git-commit-and-push-both.ps1"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.30.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
@@ -24,8 +25,10 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@openauthjs/openauth": "^0.4.3",
+    "@solana/web3.js": "^1.95.0",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
+    "bs58": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jose": "^6.0.10",
@@ -35,9 +38,7 @@
     "react-router-dom": "^7.6.3",
     "spacetimedb": "^2.0.1",
     "statuses": "^2.0.2",
-    "use-debounce": "^10.0.4",
-    "@solana/web3.js": "^1.95.0",
-    "@coral-xyz/anchor": "^0.30.0"
+    "use-debounce": "^10.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

@@ -12,7 +12,7 @@
     width: 100%;
     background: linear-gradient(135deg, rgba(20, 12, 8, 0.98) 0%, rgba(35, 20, 12, 0.95) 100%);
     color: #e0e6ed;
-    font-family: 'Roboto Mono', 'Courier New', monospace;
+    font-family: 'Roboto Mono', 'PixelOperatorMono', monospace;
     overflow: hidden;
     box-sizing: border-box;
 }

@@ -7,7 +7,7 @@
   border: none;
   border-radius: 0;
   overflow: hidden;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   color: #e0e0e0;
 }
 
@@ -149,7 +149,7 @@
   border-radius: 0;
   padding: 6px 10px;
   color: #e0e0e0;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   font-size: 11px;
   font-weight: bold;
   white-space: nowrap;

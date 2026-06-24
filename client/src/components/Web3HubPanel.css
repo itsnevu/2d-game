@@ -1,0 +1,384 @@
+.web3-panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, rgba(12, 10, 20, 0.98) 0%, rgba(22, 15, 35, 0.96) 100%);
+  border: 1px solid rgba(229, 193, 88, 0.15);
+  overflow: hidden;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.web3-panel-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(229, 193, 88, 0.2);
+  background: linear-gradient(90deg, rgba(229, 193, 88, 0.1) 0%, transparent 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.web3-panel-title {
+  color: #e5c158;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(229, 193, 88, 0.4);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.web3-gold-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(229, 193, 88, 0.15);
+  border: 1px solid rgba(229, 193, 88, 0.4);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'PixelOperatorMono', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  color: #e5c158;
+  text-shadow: 0 0 5px rgba(229, 193, 88, 0.5);
+}
+
+.web3-subtabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0 10px;
+  gap: 4px;
+}
+
+.web3-subtab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #888899;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.web3-subtab:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.web3-subtab.active {
+  color: #e5c158;
+  border-bottom-color: #e5c158;
+  text-shadow: 0 0 8px rgba(229, 193, 88, 0.3);
+  background: rgba(229, 193, 88, 0.05);
+}
+
+.web3-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glass Card */
+.web3-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.web3-card-title {
+  font-size: 15px;
+  color: #e5c158;
+  margin-top: 0;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  border-left: 3px solid #e5c158;
+  padding-left: 8px;
+}
+
+/* Forms */
+.web3-form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.web3-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.web3-label {
+  font-size: 11px;
+  color: #888899;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'PixelOperatorMono', monospace;
+}
+
+.web3-input, .web3-select {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(229, 193, 88, 0.2);
+  border-radius: 4px;
+  color: #ffffff;
+  padding: 10px 12px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.web3-input:focus, .web3-select:focus {
+  border-color: #e5c158;
+  box-shadow: 0 0 8px rgba(229, 193, 88, 0.25);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Buttons */
+.web3-btn {
+  background: linear-gradient(135deg, #e5c158 0%, #b89228 100%);
+  border: none;
+  border-radius: 4px;
+  color: #0c0a14;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.web3-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 12px rgba(229, 193, 88, 0.4);
+  transform: translateY(-1px);
+}
+
+.web3-btn:active {
+  transform: translateY(0);
+}
+
+.web3-btn:disabled {
+  background: #33333e;
+  color: #666677;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+.web3-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.web3-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+.web3-btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: white;
+}
+
+.web3-btn-danger:hover {
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Status Info */
+.web3-status-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.web3-status-box.safe {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.web3-status-box.warning {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+}
+
+.web3-status-box.danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+/* Auction Grid */
+.web3-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.web3-item-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.web3-item-card:hover {
+  border-color: rgba(229, 193, 88, 0.3);
+  background: rgba(229, 193, 88, 0.02);
+  transform: translateY(-2px);
+}
+
+.web3-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.web3-item-qty {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: monospace;
+}
+
+.web3-item-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.web3-item-details {
+  font-size: 12px;
+  color: #aaaaaa;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.web3-detail-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.web3-detail-val {
+  color: #ffffff;
+  font-family: monospace;
+}
+
+.web3-detail-val.gold {
+  color: #e5c158;
+}
+
+/* Custom Table */
+.web3-table-wrapper {
+  overflow-x: auto;
+}
+
+.web3-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.web3-table th {
+  padding: 10px 12px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  color: #888899;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.web3-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.web3-table tr:hover td {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.web3-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666677;
+  font-size: 13px;
+  font-style: italic;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+/* Modal Popup */
+.web3-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.web3-modal {
+  background: #14111f;
+  border: 1px solid #e5c158;
+  border-radius: 8px;
+  padding: 20px;
+  width: 340px;
+  box-shadow: 0 0 20px rgba(229, 193, 88, 0.3);
+}
+
+.web3-modal-header {
+  font-size: 15px;
+  font-weight: bold;
+  color: #e5c158;
+  margin-bottom: 16px;
+}
+
+.web3-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}

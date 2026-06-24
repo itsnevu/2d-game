@@ -1,7 +1,7 @@
-Broth & Bullets
-Copyright 2025 Martin Erlic
+WILDER
+Copyright 2025 WILDER
 
-This product includes software developed by Martin Erlic.
+This product includes software developed by WILDER.
 
 ================================================================================
 
@@ -9,11 +9,11 @@ INTELLECTUAL PROPERTY NOTICE
 
 The source code in this repository is licensed under the Apache License 2.0.
 However, the following elements remain the exclusive intellectual property of
-Martin Erlic and are NOT covered by the Apache 2.0 license:
+WILDER and are NOT covered by the Apache 2.0 license:
 
 TRADEMARKS & BRANDING
 ---------------------
-- "Broth & Bullets" name and all associated branding
+- "WILDER" name and all associated branding
 - Game logos, wordmarks, and visual identity
 - Marketing materials and promotional content
 
@@ -30,7 +30,7 @@ PROTECTED ASSETS
 - Main player character sprite and animations
 - Custom character designs
 - Original music and sound effects
-- Any assets specifically created for Broth & Bullets
+- Any assets specifically created for WILDER
 
 AI-GENERATED ASSETS
 -------------------
@@ -45,10 +45,10 @@ WHAT THIS MEANS FOR YOU
 ✅ You CAN build your own game using this codebase as a foundation
 ✅ You CAN run private servers for experimentation and learning
 
-❌ You CANNOT use "Broth & Bullets" name or branding commercially
-❌ You CANNOT present derivative works as official Broth & Bullets
+❌ You CANNOT use "WILDER" name or branding commercially
+❌ You CANNOT present derivative works as official WILDER
 ❌ You CANNOT use original character designs without permission
-❌ You CANNOT operate competing Broth & Bullets servers
+❌ You CANNOT operate competing WILDER servers
 ❌ You CANNOT redistribute protected assets separately from the code
 
 THIRD-PARTY COMPONENTS
@@ -61,7 +61,7 @@ This project uses the following third-party components:
 - OpenAuthJS (https://openauth.js.org) - MIT License
 - Kokoro TTS - Apache 2.0 License
 
-For licensing inquiries regarding Broth & Bullets intellectual property,
-please contact Martin Erlic.
+For licensing inquiries regarding WILDER intellectual property,
+please contact WILDER.
 
 ================================================================================

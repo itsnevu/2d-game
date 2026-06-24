@@ -45,10 +45,10 @@ const BlogHeader: React.FC = () => {
                 right: 0,
                 width: '100%',
                 zIndex: 1000,
-                background: 'linear-gradient(135deg, rgba(0, 10, 20, 0.95) 0%, rgba(0, 20, 40, 0.98) 100%)',
+                background: 'linear-gradient(135deg, rgba(13, 13, 13, 0.95) 0%, rgba(20, 18, 15, 0.98) 100%)',
                 backdropFilter: 'blur(10px)',
-                borderBottom: '1px solid rgba(0, 170, 255, 0.3)',
-                boxShadow: '0 2px 10px rgba(0, 170, 255, 0.2)',
+                borderBottom: '2px solid rgba(200, 162, 60, 0.30)',
+                boxShadow: '0 2px 10px rgba(200, 162, 60, 0.15)',
                 padding: isMobile ? '10px 0' : '15px 0',
                 height: isMobile ? '60px' : '80px',
                 boxSizing: 'border-box',
@@ -79,18 +79,17 @@ const BlogHeader: React.FC = () => {
                             e.currentTarget.style.transform = 'scale(1)';
                         }}
                     >
-                        <img
-                            src={logo}
-                            alt="Broth & Bullets"
+                        <span
                             style={{
-                                height: isMobile ? '40px' : '50px',
-                                width: 'auto',
-                                filter: 'none',
-                                boxShadow: 'none',
-                                border: 'none',
-                                outline: 'none',
+                                fontFamily: "'KiwiSoda', sans-serif",
+                                fontSize: isMobile ? '28px' : '36px',
+                                color: '#C8A23C',
+                                textShadow: '2px 2px 0px #000',
+                                userSelect: 'none',
                             }}
-                        />
+                        >
+                            WILDER
+                        </span>
                     </div>
 
                     {/* Desktop buttons or Mobile hamburger */}
@@ -105,8 +104,8 @@ const BlogHeader: React.FC = () => {
                                 onClick={() => handleNavigate('/')}
                                 style={{
                                     display: 'inline-block',
-                                    background: 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)',
-                                    border: '2px solid #5c8e32',
+                                    background: 'linear-gradient(135deg, #3B6B35 0%, #C8A23C 100%)',
+                                    border: '2px solid #C8A23C',
                                     borderRadius: '8px',
                                     color: '#ffffff',
                                     padding: '10px 18px',
@@ -116,22 +115,22 @@ const BlogHeader: React.FC = () => {
                                     textTransform: 'uppercase',
                                     textDecoration: 'none',
                                     transition: 'all 0.3s ease',
-                                    boxShadow: '0 0 10px rgba(0, 170, 255, 0.3)',
-                                    fontFamily: "'Courier New', Consolas, Monaco, monospace",
+                                    boxShadow: '0 0 10px rgba(200, 162, 60, 0.3)',
+                                    fontFamily: "'PixelOperatorMono', monospace",
                                     textAlign: 'center',
                                     cursor: 'pointer',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #86be52 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #3B6B35 0%, #D4B44A 100%)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 170, 255, 0.6)';
-                                    e.currentTarget.style.borderColor = '#86be52';
+                                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(200, 162, 60, 0.6)';
+                                    e.currentTarget.style.borderColor = '#D4B44A';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #3B6B35 0%, #C8A23C 100%)';
                                     e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.3)';
-                                    e.currentTarget.style.borderColor = '#5c8e32';
+                                    e.currentTarget.style.boxShadow = '0 0 10px rgba(200, 162, 60, 0.3)';
+                                    e.currentTarget.style.borderColor = '#C8A23C';
                                 }}
                             >
                                 Play Now
@@ -152,7 +151,7 @@ const BlogHeader: React.FC = () => {
                                     transition: 'all 0.2s ease',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.color = '#86be52';
+                                    e.currentTarget.style.color = '#D4B44A';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)';
@@ -184,7 +183,7 @@ const BlogHeader: React.FC = () => {
                                     textDecoration: 'none',
                                     transition: 'all 0.3s ease',
                                     boxShadow: '0 0 10px rgba(102, 102, 102, 0.3)',
-                                    fontFamily: "'Courier New', Consolas, Monaco, monospace",
+                                    fontFamily: "'PixelOperatorMono', monospace",
                                     minWidth: '120px',
                                     textAlign: 'center',
                                     cursor: 'pointer',
@@ -210,8 +209,8 @@ const BlogHeader: React.FC = () => {
                                 onClick={() => handleNavigate('/')}
                                 style={{
                                     display: 'inline-block',
-                                    background: 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)',
-                                    border: '2px solid #5c8e32',
+                                    background: 'linear-gradient(135deg, #3B6B35 0%, #C8A23C 100%)',
+                                    border: '2px solid #C8A23C',
                                     borderRadius: '8px',
                                     color: '#ffffff',
                                     padding: '12px 24px',
@@ -221,23 +220,23 @@ const BlogHeader: React.FC = () => {
                                     textTransform: 'uppercase',
                                     textDecoration: 'none',
                                     transition: 'all 0.3s ease',
-                                    boxShadow: '0 0 10px rgba(0, 170, 255, 0.3)',
-                                    fontFamily: "'Courier New', Consolas, Monaco, monospace",
+                                    boxShadow: '0 0 10px rgba(200, 162, 60, 0.3)',
+                                    fontFamily: "'PixelOperatorMono', monospace",
                                     minWidth: '120px',
                                     textAlign: 'center',
                                     cursor: 'pointer',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #86be52 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #3B6B35 0%, #D4B44A 100%)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 170, 255, 0.6)';
-                                    e.currentTarget.style.borderColor = '#86be52';
+                                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(200, 162, 60, 0.6)';
+                                    e.currentTarget.style.borderColor = '#D4B44A';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #3B6B35 0%, #C8A23C 100%)';
                                     e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.3)';
-                                    e.currentTarget.style.borderColor = '#5c8e32';
+                                    e.currentTarget.style.boxShadow = '0 0 10px rgba(200, 162, 60, 0.3)';
+                                    e.currentTarget.style.borderColor = '#C8A23C';
                                 }}
                             >
                                 Play Now
@@ -276,7 +275,7 @@ const BlogHeader: React.FC = () => {
                             height: 'calc(100vh - 60px)',
                             backgroundColor: 'rgba(0, 0, 0, 0.98)',
                             backdropFilter: 'blur(20px)',
-                            borderLeft: '2px solid rgba(0, 170, 255, 0.3)',
+                            borderLeft: '2px solid rgba(200, 162, 60, 0.3)',
                             boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.5)',
                             zIndex: 1000,
                             display: 'flex',
@@ -301,7 +300,7 @@ const BlogHeader: React.FC = () => {
                                 margin: '0 20px 16px',
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease',
-                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
+                                fontFamily: "'PixelOperatorMono', monospace",
                             }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.background = 'linear-gradient(135deg, #404040 0%, #606060 100%)';
@@ -320,8 +319,8 @@ const BlogHeader: React.FC = () => {
                         <button
                             onClick={() => handleNavigate('/')}
                             style={{
-                                background: 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)',
-                                border: '2px solid #5c8e32',
+                                background: 'linear-gradient(135deg, #3B6B35 0%, #C8A23C 100%)',
+                                border: '2px solid #C8A23C',
                                 borderRadius: '8px',
                                 color: '#ffffff',
                                 padding: '14px 20px',
@@ -332,20 +331,20 @@ const BlogHeader: React.FC = () => {
                                 margin: '0 20px',
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease',
-                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                                boxShadow: '0 0 10px rgba(0, 170, 255, 0.3)',
+                                fontFamily: "'PixelOperatorMono', monospace",
+                                boxShadow: '0 0 10px rgba(200, 162, 60, 0.3)',
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #86be52 100%)';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #3B6B35 0%, #D4B44A 100%)';
                                 e.currentTarget.style.transform = 'translateY(-2px)';
-                                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 170, 255, 0.6)';
-                                e.currentTarget.style.borderColor = '#86be52';
+                                e.currentTarget.style.boxShadow = '0 4px 20px rgba(200, 162, 60, 0.6)';
+                                e.currentTarget.style.borderColor = '#D4B44A';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #3B6B35 0%, #C8A23C 100%)';
                                 e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.3)';
-                                e.currentTarget.style.borderColor = '#5c8e32';
+                                e.currentTarget.style.boxShadow = '0 0 10px rgba(200, 162, 60, 0.3)';
+                                e.currentTarget.style.borderColor = '#C8A23C';
                             }}
                         >
                             Play Now

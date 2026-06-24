@@ -52,7 +52,7 @@ body::-webkit-scrollbar-thumb:hover {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a0d2e 0%, #16213e 50%, #0f1419 100%);
   color: #e0e0e0;
-  font-family: 'Courier New', Consolas, Monaco, monospace;
+  font-family: 'PixelOperatorMono', monospace;
   position: relative;
   overflow-x: hidden;
 }
@@ -384,7 +384,7 @@ body::-webkit-scrollbar-thumb:hover {
   border: 1px solid rgba(0, 170, 255, 0.3);
   border-radius: 4px;
   padding: 2px 6px;
-  font-family: 'Courier New', Consolas, Monaco, monospace;
+  font-family: 'PixelOperatorMono', monospace;
   font-size: 14px;
   color: #86be52;
 }

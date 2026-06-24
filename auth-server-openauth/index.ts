@@ -51,6 +51,8 @@ import path from 'path';
 import { db, type UserRecord, type AuthCodeData, type PasswordResetToken } from './database.js';
 import { initializeKeys, getPrivateKey, getPublicJWK, keyId } from './jwt-keys.js';
 import { Resend } from 'resend';
+import nacl from 'tweetnacl';
+import bs58 from 'bs58';
 
 /* -------------------------------------------------------------------------- */
 /* Config                                                                     */
@@ -512,6 +514,73 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     success,
   });
   const app  = new Hono();
+
+  // --- Solana Wallet Signature Authentication & OIDC Token Issuance ---
+  app.post('/auth/solana-login', async (c) => {
+    try {
+      const { publicKey, signature, message } = await c.req.json();
+      
+      if (!publicKey || !signature || !message) {
+        return c.json({ error: 'Missing required parameters (publicKey, signature, message)' }, 400);
+      }
+      
+      console.log(`[Solana Login] Verifying signature for wallet: ${publicKey}`);
+      
+      // Decode public key, signature, and message
+      const pubKeyBytes = bs58.decode(publicKey);
+      const signatureBytes = bs58.decode(signature);
+      const messageBytes = new TextEncoder().encode(message);
+      
+      // Verify Ed25519 signature
+      const verified = nacl.sign.detached.verify(messageBytes, signatureBytes, pubKeyBytes);
+      
+      if (!verified) {
+        console.warn(`[Solana Login] Invalid signature for wallet: ${publicKey}`);
+        return c.json({ error: 'Invalid wallet signature' }, 400);
+      }
+      
+      // Find or create the user in the OIDC user database
+      let user = await db.getUserById(publicKey);
+      if (!user) {
+        console.log(`[Solana Login] Registered new user database record for Solana wallet: ${publicKey}`);
+        await db.createUser({
+          userId: publicKey,
+          email: `${publicKey.slice(0, 8)}@solana-wallet.com`,
+          passwordHash: 'wallet-authentication-bypass-hash'
+        });
+      }
+      
+      // Build OIDC-compliant JWT payload
+      const payload = {
+        iss: ISSUER_URL,
+        sub: publicKey, // The public key acts as the OIDC Subject (which maps directly to SpacetimeDB Identity)
+        aud: 'vibe-survival-game-client',
+        iat: Math.floor(Date.now() / 1000),
+        email: `${publicKey.slice(0, 8)}@solana-wallet.com`,
+      };
+
+      const signOptions: jwt.SignOptions = {
+        algorithm: 'RS256',
+        expiresIn: '24h',
+        keyid: keyId,
+      };
+
+      const privateKey = getPrivateKey();
+      const idToken = jwt.sign(payload, privateKey, signOptions);
+      const accessToken = idToken;
+
+      return c.json({
+        access_token: accessToken,
+        id_token: idToken,
+        token_type: 'Bearer',
+        expires_in: 24 * 60 * 60
+      });
+      
+    } catch (error: any) {
+      console.error('[Solana Login] Error during signature verification:', error);
+      return c.json({ error: error.message || 'Authentication failed' }, 500);
+    }
+  });
 
   // --- Static File Serving for logo_alt.png ---
   app.get('/logo_alt.png', async (c) => {

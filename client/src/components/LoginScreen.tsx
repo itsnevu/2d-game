@@ -26,6 +26,9 @@ import ShipwreckCarousel from './ShipwreckCarousel';
 import GameplayFeaturesCarousel from './GameplayFeaturesCarousel';
 // @ts-ignore - importing JavaScript module
 import { blogPosts } from '../blog/data/blogPosts';
+import bs58 from 'bs58';
+
+const UI_BRAND_FONT = "'KiwiSoda', sans-serif";
 
 // Style Constants (Consider moving to a shared file)
 const UI_BG_COLOR = 'rgba(40, 40, 60, 0.85)';
@@ -284,7 +287,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
         isLoading: authIsLoading,
         authError,
         loginRedirect,
-        logout
+        logout,
+        loginWithWallet
     } = useAuth();
 
     // React Router navigation hook
@@ -293,6 +297,31 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     // Local state for the username input field (only used for new players)
     const [inputUsername, setInputUsername] = useState<string>('');
     const [localError, setLocalError] = useState<string | null>(null);
+
+    const handleWalletLogin = async () => {
+        setLocalError(null);
+        try {
+            const provider = (window as any).solana;
+            if (!provider) {
+                throw new Error("Solana wallet extension not found. Please install Phantom or Solflare.");
+            }
+            
+            const connectResponse = await provider.connect();
+            const publicKeyStr = connectResponse.publicKey.toString();
+            
+            const timestamp = Math.floor(Date.now() / 1000);
+            const messageStr = `Sign this message to log into WILDER.\nChallenge: ${timestamp}`;
+            const encodedMessage = new TextEncoder().encode(messageStr);
+            const signResponse = await provider.signMessage(encodedMessage, "utf8");
+            
+            const signatureStr = bs58.encode(signResponse.signature);
+            
+            await loginWithWallet(publicKeyStr, signatureStr, messageStr);
+        } catch (err: any) {
+            console.error("[LoginScreen] Wallet authentication failed:", err);
+            setLocalError(err.message || "Wallet sign-in cancelled or failed.");
+        }
+    };
 
     // Debug logging for new users (enable when debugging)
     // React.useEffect(() => {
@@ -685,18 +714,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                     animation: 'slideDown 0.3s ease-out',
                 }}>
                     {/* Logo */}
-                    <img
-                        src={logo}
-                        alt="Broth & Bullets"
+                    <span
                         onClick={scrollToTop}
                         style={{
-                            height: '50px',
+                            fontFamily: UI_BRAND_FONT,
+                            fontSize: '32px',
+                            color: '#C8A23C',
+                            textShadow: '2px 2px 0px #000',
                             cursor: 'pointer',
                             transition: 'transform 0.2s ease',
+                            userSelect: 'none',
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                         onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                    />
+                    >
+                        WILDER
+                    </span>
 
                     {/* Navigation Links */}
                     {isMobile ? (
@@ -874,47 +907,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                 }}>
                     {/* Logo - Hidden on mobile since nav bar has logo */}
                     {!isMobile && (
-                        <>
-                            {!logoLoaded && (
-                                <div style={{
-                                    width: 'min(600px, 70vw)',
-                                    height: '200px', // Approximate logo height
-                                    marginBottom: 'clamp(20px, 4vh, 60px)',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                    borderRadius: '12px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    animation: 'pulse 1.5s ease-in-out infinite alternate',
-                                }}>
-                                    <div style={{
-                                        fontSize: '24px',
-                                        color: 'rgba(255, 255, 255, 0.5)',
-                                        textAlign: 'center',
-                                        fontWeight: 'bold',
-                                    }}>
-                                        BROTH & BULLETS
-                                    </div>
-                                </div>
-                            )}
-                            <img
-                                src={logo}
-                                alt="Broth & Bullets Logo"
-                                loading="eager"
-                                fetchPriority="high"
-                                decoding="sync"
-                                style={{
-                                    width: 'min(600px, 70vw)', // Responsive: 600px on desktop, 70% of viewport width on mobile (smaller)
-                                    maxWidth: '600px',
-                                    height: 'auto',
-                                    marginBottom: 'clamp(20px, 4vh, 60px)', // Responsive margin, smaller on mobile
-                                    display: logoLoaded ? 'block' : 'none',
-                                    filter: 'drop-shadow(0 0 20px rgba(0,0,0,0.8)) drop-shadow(0 0 40px rgba(255,255,255,0.2))',
-                                    opacity: logoLoaded ? 1 : 0,
-                                    transition: 'opacity 0.3s ease-in-out',
-                                }}
-                            />
-                        </>
+                        <h1 style={{
+                            fontFamily: UI_BRAND_FONT,
+                            fontSize: 'clamp(48px, 8vw, 96px)',
+                            color: '#C8A23C',
+                            textShadow: '3px 3px 0px #000, 6px 6px 20px rgba(200, 162, 60, 0.4)',
+                            margin: '0 0 clamp(20px, 4vh, 60px) 0',
+                            letterSpacing: '2px',
+                            textTransform: 'uppercase',
+                            userSelect: 'none',
+                        }}>
+                            WILDER
+                        </h1>
                     )}
 
                     <div style={{
@@ -1103,304 +1107,83 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         {/* Render Login/Join button only if not loading and no authError and (no connectionError OR we have storedUsername) */}
                         {!authIsLoading && !authError && (!connectionError || storedUsername) && !localError && (
                             <form onSubmit={handleSubmit}>
-                                <button
-                                    type="submit"
-                                    // Disable if there's any auth error, or connection error without stored username
-                                    disabled={authError !== null || (connectionError !== null && !storedUsername) || localError !== null}
-                                    onMouseEnter={(e) => {
-                                        const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
-                                        if (!isButtonDisabled) {
+                                {isAuthenticated ? (
+                                    <button
+                                        type="submit"
+                                        disabled={authError !== null || (connectionError !== null && !storedUsername) || localError !== null}
+                                        onMouseEnter={(e) => {
+                                            const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
+                                            if (!isButtonDisabled) {
+                                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.4), 0 0 20px rgba(200, 162, 60, 0.3)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
+                                            if (!isButtonDisabled) {
+                                                e.currentTarget.style.transform = 'translateY(0)';
+                                                e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)';
+                                            }
+                                        }}
+                                        style={{
+                                            padding: '16px 32px',
+                                            border: '2px solid rgba(200, 162, 60, 0.5)',
+                                            background: 'linear-gradient(135deg, #C8A23C, #3B6B35)',
+                                            color: 'white',
+                                            fontFamily: "'PixelOperator', sans-serif",
+                                            fontSize: '18px',
+                                            fontWeight: 'bold',
+                                            cursor: (authError || (connectionError && !storedUsername) || localError) ? 'not-allowed' : 'pointer',
+                                            boxShadow: '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)',
+                                            display: 'inline-block',
+                                            boxSizing: 'border-box',
+                                            textTransform: 'uppercase',
+                                            borderRadius: '8px',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            letterSpacing: '1px',
+                                            textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
+                                            position: 'relative',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        Join Game
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={handleWalletLogin}
+                                        onMouseEnter={(e) => {
                                             e.currentTarget.style.transform = 'translateY(-2px)';
-                                            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.4), 0 0 20px rgba(255,165,0,0.3)';
-                                        }
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
-                                        if (!isButtonDisabled) {
+                                            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.4), 0 0 20px rgba(200, 162, 60, 0.5)';
+                                        }}
+                                        onMouseLeave={(e) => {
                                             e.currentTarget.style.transform = 'translateY(0)';
-                                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(255,140,0,0.4)';
-                                        }
-                                    }}
-                                    style={{
-                                        padding: '16px 32px',
-                                        border: '2px solid rgba(255, 165, 0, 0.6)',
-                                        backgroundColor: (() => {
-                                            const isDisabled = authError || (connectionError && !storedUsername) || localError;
-                                            return isDisabled ? 'rgba(100, 50, 50, 0.6)' : 'linear-gradient(135deg, rgba(92, 142, 50, 0.9), rgba(200, 100, 0, 0.9))';
-                                        })(),
-                                        background: (() => {
-                                            const isDisabled = authError || (connectionError && !storedUsername) || localError;
-                                            return isDisabled ? 'rgba(100, 50, 50, 0.6)' : 'linear-gradient(135deg, #5c8e32, #2d4715)';
-                                        })(),
-                                        color: (() => {
-                                            const isDisabled = authError || (connectionError && !storedUsername) || localError;
-                                            return isDisabled ? '#ccc' : 'white';
-                                        })(),
-                                        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                        fontSize: '16px',
-                                        fontWeight: 'bold',
-                                        cursor: (() => {
-                                            const isDisabled = authError || (connectionError && !storedUsername) || localError;
-                                            return isDisabled ? 'not-allowed' : 'pointer';
-                                        })(),
-                                        boxShadow: (() => {
-                                            const isDisabled = authError || (connectionError && !storedUsername) || localError;
-                                            return isDisabled ? '2px 2px 6px rgba(0,0,0,0.4)' : '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(255,140,0,0.4)';
-                                        })(),
-                                        display: 'inline-block',
-                                        boxSizing: 'border-box',
-                                        textTransform: 'uppercase',
-                                        borderRadius: '8px',
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        letterSpacing: '1px',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                    }}
-                                >
-                                    {(() => {
-                                        if (!isAuthenticated) return 'Start Your Journey';
-                                        return 'Join Game';
-                                    })()}
-                                </button>
-
-                                {/* Mobile: Account info lives in hamburger menu - keeps main area clean */}
-
-                                {/* Version Text with Learn More */}
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '12px',
-                                    marginTop: '19px',
-                                }}>
-                                    {/* First row: Early Access text and Learn More button */}
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '17px',
-                                    }}>
-                                        <span style={{
-                                            fontSize: '13.5px',
-                                            color: 'rgba(255, 255, 255, 0.97)',
-                                            fontWeight: 600,
-                                            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                            textShadow: '1px 1px 3px rgba(60,18,0,0.7)',
-                                            letterSpacing: '0.7px',
-                                        }}>
-                                            Early Access Alpha v0.82
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                smoothScrollTo('[data-about-section]');
-                                            }}
-                                            style={{
-                                                background: 'linear-gradient(90deg, #c4e89c, #86be52 40%, #5c8e32 90%, #2d4715)',
-                                                border: 'none',
-                                                color: '#852100',
-                                                fontWeight: 800,
-                                                padding: '7px 22px',
-                                                fontSize: '13px',
-                                                borderRadius: '18px',
-                                                boxShadow: '0 1.5px 11px 2px rgba(0,0,0,0.08)',
-                                                cursor: 'pointer',
-                                                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                                textShadow: '1px 1px 3px rgba(255,255,255,0.15)',
-                                                transition: 'all 0.22s cubic-bezier(0.63, 0.1, 0.32, 1), box-shadow 0.13s',
-                                                letterSpacing: '1.2px',
-                                                position: 'relative',
-                                                userSelect: 'none',
-                                                overflow: 'hidden'
-                                            }}
-                                            className={isGleaming ? 'gleam-animating' : ''}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.background =
-                                                    'linear-gradient(92deg, #fff3e0, #ffb94f 50%, #5c8e32 90%, #2d4715)';
-                                                e.currentTarget.style.color = '#7a2200';
-                                                e.currentTarget.style.boxShadow = '0 0 21px 2px rgba(255,220,120,0.48), 0 3px 12px 0 rgba(0,0,0,0.22)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.background = 'linear-gradient(90deg, #c4e89c, #86be52 40%, #5c8e32 90%, #2d4715)';
-                                                e.currentTarget.style.color = '#852100';
-                                                e.currentTarget.style.boxShadow = '0 1.5px 11px 2px rgba(0,0,0,0.08)';
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    fontWeight: 800,
-                                                    textTransform: "uppercase",
-                                                    letterSpacing: "1.8px",
-                                                    fontSize: 'inherit',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '4px',
-                                                    position: 'relative',
-                                                    zIndex: 1
-                                                }}
-                                            >
-                                                learn more
-                                            </span>
-                                        </button>
-                                    </div>
-
-                                    {/* Live player count (visible when Spacetime connected and props provided) */}
-                                    {isSpacetimeConnected && typeof onlinePlayerCount === 'number' && typeof maxPlayerCount === 'number' && (
-                                        <div style={{
-                                            padding: '6px 12px',
-                                            backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                                            borderRadius: '10px',
-                                        }}>
-                                            <span style={{
-                                                fontSize: '12px',
-                                                color: (() => {
-                                                    if (onlinePlayerCount >= maxPlayerCount) return 'rgba(255, 120, 120, 0.98)';
-                                                    if (onlinePlayerCount >= maxPlayerCount - 5) return 'rgba(255, 200, 100, 0.98)';
-                                                    return 'rgba(255, 255, 255, 0.85)';
-                                                })(),
-                                                fontWeight: 500,
-                                                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                letterSpacing: '0.5px',
-                                            }}>
-                                                Players Online: {onlinePlayerCount} / {maxPlayerCount}
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {/* Disclaimer: server wipe notice */}
-                                    <div style={{
-                                        padding: '8px 14px',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                                        borderRadius: '10px',
-                                        maxWidth: '340px',
-                                    }}>
-                                        <span style={{
-                                            fontSize: '11px',
-                                            color: 'rgba(255, 220, 180, 0.98)',
-                                            fontWeight: 500,
-                                            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                            textShadow: '1px 1px 2px rgba(0,0,0,0.9)',
-                                            letterSpacing: '0.4px',
-                                            lineHeight: '1.4',
-                                            textAlign: 'center',
-                                            display: 'block',
-                                        }}>
-                                            We're in Early Access Alpha. The server may be wiped anytime for updates, migrations, or fixes. Treat progress as temporary and enjoy the journey.
-                                        </span>
-                                    </div>
-
-                                    {/* Second row: System Requirements and FAQ buttons */}
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                setShowSystemRequirements(true);
-                                            }}
-                                            style={{
-                                                background: 'rgba(0, 0, 0, 0.5)',
-                                                border: '1px solid rgba(92, 142, 50, 0.6)',
-                                                color: '#ffb366',
-                                                fontWeight: 600,
-                                                padding: '6px 16px',
-                                                fontSize: '11px',
-                                                borderRadius: '14px',
-                                                cursor: 'pointer',
-                                                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                boxShadow: '0 0 12px rgba(92, 142, 50, 0.2)',
-                                                transition: 'all 0.2s ease',
-                                                letterSpacing: '0.8px',
-                                                textTransform: 'uppercase',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.9)';
-                                                e.currentTarget.style.color = '#ffcc99';
-                                                e.currentTarget.style.background = 'rgba(92, 142, 50, 0.25)';
-                                                e.currentTarget.style.boxShadow = '0 0 16px rgba(92, 142, 50, 0.35)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
-                                                e.currentTarget.style.color = '#ffb366';
-                                                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)';
-                                                e.currentTarget.style.boxShadow = '0 0 12px rgba(92, 142, 50, 0.2)';
-                                            }}
-                                        >
-                                            System Requirements
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                smoothScrollTo('[data-faq-section]');
-                                            }}
-                                            style={{
-                                                background: 'rgba(0, 0, 0, 0.5)',
-                                                border: '1px solid rgba(92, 142, 50, 0.6)',
-                                                color: '#ffb366',
-                                                fontWeight: 600,
-                                                padding: '6px 16px',
-                                                fontSize: '11px',
-                                                borderRadius: '14px',
-                                                cursor: 'pointer',
-                                                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                boxShadow: '0 0 12px rgba(92, 142, 50, 0.2)',
-                                                transition: 'all 0.2s ease',
-                                                letterSpacing: '0.8px',
-                                                textTransform: 'uppercase',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.9)';
-                                                e.currentTarget.style.color = '#ffcc99';
-                                                e.currentTarget.style.background = 'rgba(92, 142, 50, 0.25)';
-                                                e.currentTarget.style.boxShadow = '0 0 16px rgba(92, 142, 50, 0.35)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
-                                                e.currentTarget.style.color = '#ffb366';
-                                                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)';
-                                                e.currentTarget.style.boxShadow = '0 0 12px rgba(92, 142, 50, 0.2)';
-                                            }}
-                                        >
-                                            FAQ
-                                        </button>
-                                    </div>
-
-                                    <style>{`
-                                    .gleam-animating::before {
-                                        content: '';
-                                        position: absolute;
-                                        top: 0;
-                                        left: -100%;
-                                        width: 60%;
-                                        height: 100%;
-                                        background: linear-gradient(
-                                            90deg,
-                                            transparent 0%,
-                                            rgba(255, 255, 255, 0.1) 25%,
-                                            rgba(255, 255, 255, 0.4) 50%,
-                                            rgba(255, 255, 255, 0.1) 75%,
-                                            transparent 100%
-                                        );
-                                        transform: skewX(-20deg);
-                                        animation: gleamkeyframes 0.6s ease-out forwards;
-                                        pointer-events: none;
-                                    }
-                                    @keyframes gleamkeyframes {
-                                        0% { left: -100%; }
-                                        100% { left: 150%; }
-                                    }
-                                `}
-                                    </style>
-                                </div>
+                                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)';
+                                        }}
+                                        style={{
+                                            padding: '16px 32px',
+                                            border: '2px solid rgba(200, 162, 60, 0.5)',
+                                            background: 'linear-gradient(135deg, #C8A23C, #3B6B35)',
+                                            color: 'white',
+                                            fontFamily: "'PixelOperator', sans-serif",
+                                            fontSize: '18px',
+                                            fontWeight: 'bold',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)',
+                                            display: 'inline-block',
+                                            boxSizing: 'border-box',
+                                            textTransform: 'uppercase',
+                                            borderRadius: '8px',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            letterSpacing: '1px',
+                                            textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
+                                            position: 'relative',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        Connect Solana Wallet
+                                    </button>
+                                )}
                             </form>
                         )}
 
@@ -2390,19 +2173,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             alignItems: isMobile ? 'center' : 'flex-start',
                             textAlign: isMobile ? 'center' : 'left',
                         }}>
-                            <img
-                                src={logo}
-                                alt="Broth & Bullets Logo"
+
+                            <span
                                 style={{
-                                    width: '160px',
-                                    height: 'auto',
+                                    fontFamily: UI_BRAND_FONT,
+                                    fontSize: '36px',
+                                    color: '#C8A23C',
+                                    textShadow: '2px 2px 0px #000',
                                     marginBottom: '20px',
-                                    filter: 'none',
-                                    boxShadow: 'none',
-                                    border: 'none',
-                                    outline: 'none',
+                                    userSelect: 'none',
                                 }}
-                            />
+                            >
+                                WILDER
+                            </span>
                             <p style={{
                                 fontSize: '13px',
                                 color: 'rgba(255, 255, 255, 0.7)',
@@ -2412,24 +2195,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 fontFamily: "'Courier New', Consolas, Monaco, monospace",
                             }}>
                                 Broth & Bullets is developed by{' '}
-                                <a
-                                    href="https://martinerlic.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                        color: '#5c8e32',
-                                        textDecoration: 'none',
-                                        transition: 'color 0.2s ease',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.color = '#ffaa33';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.color = '#5c8e32';
-                                    }}
-                                >
-                                    Martin Erlic
-                                </a>
+                                the Wilder Team
                             </p>
                             <p style={{
                                 fontSize: '12px',
@@ -2438,7 +2204,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                 fontFamily: "'Courier New', Consolas, Monaco, monospace",
                             }}>
-                                © 2025 Martin Erlic
+                                © 2025 Wilder Team
                             </p>
                         </div>
 
@@ -2470,7 +2236,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     { label: 'FAQ', action: 'faq' },
                                     { label: 'LORE', action: 'https://www.babushkabook.com/reader/excerpts/tides-prologue-lagunov', external: true },
                                     { label: 'BLOG', action: '/blog', internal: true },
-                                    { label: 'CONTACT', action: 'mailto:martin.erlic@gmail.com', external: true },
+                                    { label: 'CONTACT', action: 'mailto:contact@playwilder.com', external: true },
                                 ].map((link) => (
                                     <li key={link.label} style={{ marginBottom: '12px' }}>
                                         <a
@@ -2653,45 +2419,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 ))}
                             </div>
 
-                            {/* Back to Top Button */}
-                            <button
-                                onClick={() => {
-                                    window.scrollTo({
-                                        top: 0,
-                                        behavior: 'smooth'
-                                    });
-                                }}
-                                style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    borderRadius: '50%',
-                                    border: '2px solid rgba(92, 142, 50, 0.6)',
-                                    background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.2) 0%, rgba(255, 100, 0, 0.4) 100%)',
-                                    color: '#5c8e32',
-                                    fontSize: '18px',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s ease',
-                                    textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                    boxShadow: '0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(255,140,0,0.4)',
-                                    fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.3)';
-                                    e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.9)';
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), 0 0 15px rgba(255,140,0,0.6)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'linear-gradient(135deg, rgba(92, 142, 50, 0.2) 0%, rgba(255, 100, 0, 0.4) 100%)';
-                                    e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(255,140,0,0.4)';
-                                }}
-                                title="Back to Top"
-                            >
-                                ↑
-                            </button>
+                            
                         </div>
                     </div>
                 </footer>

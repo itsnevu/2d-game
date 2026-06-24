@@ -8,7 +8,7 @@
   border-radius: 8px;
   box-shadow: 0 0 25px rgba(92, 142, 50, 0.4), inset 0 0 15px rgba(92, 142, 50, 0.1), 2px 2px 0px rgba(0,0,0,0.4);
   color: #e0e0e0;
-  font-family: 'Courier New', Consolas, Monaco, monospace;
+  font-family: 'PixelOperatorMono', monospace;
   position: relative;
   width: 404px; /* Match inventory grid width + gap (388px + 16px) */
   box-sizing: border-box; /* Include padding in width */

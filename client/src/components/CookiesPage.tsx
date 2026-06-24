@@ -264,11 +264,11 @@ const CookiesPage: React.FC = () => {
                         color: 'rgba(255, 255, 255, 0.8)',
                     }}>
                         If you have any questions about our use of cookies or this Cookie Declaration, please contact us at:{' '}
-                        <a href="mailto:martin.erlic@gmail.com" style={{
+                        <a href="mailto:contact@playwilder.com" style={{
                             color: '#5c8e32',
                             textDecoration: 'none',
                         }}>
-                            martin.erlic@gmail.com
+                            contact@playwilder.com
                         </a>
                     </p>
                 </section>

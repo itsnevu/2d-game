@@ -77,7 +77,7 @@
 .node-cost {
   pointer-events: none;
   user-select: none;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   font-weight: bold;
   transition: all 0.2s ease;
 }

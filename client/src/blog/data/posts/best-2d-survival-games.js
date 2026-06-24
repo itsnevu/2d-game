@@ -3,7 +3,7 @@ export default {
   title: "What Is The Best 2D Survival Game in 2025? Top 10 Games Compared",
   subtitle: "A comprehensive analysis of the top 2D survival games with Broth & Bullets comparison",
   date: "2025-04-05",
-  author: "Martin Erlic",
+  author: "Wilder Team",
   excerpt: "Looking for the best 2D survival game in 2025? This detailed comparison ranks the top 10 games based on crafting systems, resource gathering, combat mechanics, base building, and overall survival challenge.",
   coverImage: "/images/blog/survival-games-comparison.jpg",
   content: `

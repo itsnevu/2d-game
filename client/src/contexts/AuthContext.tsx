@@ -35,6 +35,7 @@ interface AuthContextType {
   logout: () => Promise<void>;        // Function to logout
   handleRedirectCallback: () => Promise<void>; // Function to process callback
   invalidateCurrentToken: () => void; // New function to invalidate token
+  loginWithWallet: (publicKey: string, signature: string, message: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -47,6 +48,7 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => { console.warn("AuthContext not initialized"); },
   handleRedirectCallback: async () => { console.warn("AuthContext not initialized"); },
   invalidateCurrentToken: () => { console.warn("AuthContext not initialized"); },
+  loginWithWallet: async () => { console.warn("AuthContext not initialized"); },
 });
 
 interface AuthProviderProps {
@@ -295,7 +297,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // console.log("[AuthContext LOG] Cleared tokens from storage AND state.");
   };
 
-  const parseToken = (token: string): UserProfile | null => {
+  const parseToken = useCallback((token: string): UserProfile | null => {
        try {
             const decoded = parseJwt(token);
             
@@ -321,10 +323,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             };
        } catch (error) {
             console.error("Error parsing token:", error);
-            // Don't set authError here directly, let callers handle
             return null;
        }
-  };
+  }, []);
+
+  const loginWithWallet = useCallback(async (publicKey: string, signature: string, message: string) => {
+    setIsLoading(true);
+    setAuthError(null);
+    try {
+      console.log(`[AuthContext] Exchanging Solana signature for JWT: ${publicKey}`);
+      const response = await fetch(`${authServerUrl}/auth/solana-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ publicKey, signature, message }),
+      });
+      
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to verify Solana wallet login signature');
+      }
+      
+      const id_token = data.id_token;
+      if (!id_token) {
+        throw new Error('id_token missing from OIDC response');
+      }
+      
+      localStorage.setItem(LOCAL_STORAGE_KEYS.ID_TOKEN, id_token);
+      setSpacetimeToken(id_token);
+      
+      const profile = parseToken(id_token);
+      setUserProfile(profile);
+      setAuthError(null);
+      console.log("[AuthContext] Solana wallet successfully authenticated via OIDC backend!");
+      
+    } catch (error: any) {
+      console.error("[AuthContext] Solana wallet authentication failed:", error);
+      setAuthError(error.message || "Failed to log in with Solana wallet");
+      clearTokens();
+    } finally {
+      setIsLoading(false);
+    }
+  }, [parseToken]);
 
   // Helper function to validate if current token is still valid
   const isTokenValid = useCallback(() => {
@@ -431,7 +472,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         loginRedirect,
         logout,
         handleRedirectCallback,
-        invalidateCurrentToken
+        invalidateCurrentToken,
+        loginWithWallet
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-![Broth & Bullets - Alpha Launch](https://www.brothandbullets.com/images/blog/systems.png)
+![WILDER - Alpha Launch](https://www.brothandbullets.com/images/blog/systems.png)
 
 > **Warning: Make sure to read the [license](#-license) before use.**
 
@@ -6,9 +6,9 @@
 
 🎮 **[Watch gameplay demo](https://x.com/SeloSlav/status/2023523837724221851?s=20)**
 
-What started as an open source project for a generic 2D survival game is now a full-fledged game called **Broth & Bullets**. You can read more about it at [https://www.brothandbullets.com/blog](https://www.brothandbullets.com/blog).
+What started as an open source project for a generic 2D survival game is now a full-fledged game called **WILDER**. You can read more about it at [https://www.brothandbullets.com/blog](https://www.brothandbullets.com/blog).
 
-I've committed to open sourcing the entire project and providing the best documentation possible to help you get up and running, fork the project, create your own games, or even contribute back to Broth & Bullets itself. This repository has evolved into an exhaustive, feature-rich project with almost every pattern you can think of—constantly in development and running on SpacetimeDB 2.0. A stripped-down true "starter kit" for 2D MMORPGs (all the main features without the bloat) is planned for release soon.
+I've committed to open sourcing the entire project and providing the best documentation possible to help you get up and running, fork the project, create your own games, or even contribute back to WILDER itself. This repository has evolved into an exhaustive, feature-rich project with almost every pattern you can think of—constantly in development and running on SpacetimeDB 2.0. A stripped-down true "starter kit" for 2D MMORPGs (all the main features without the bloat) is planned for release soon.
 
 💬 **Want to chat?** Join the discussion on [Discord](https://discord.gg/tUcBzfAYfs)
 
@@ -810,7 +810,7 @@ For questions or discussions, feel free to open an issue first or join our [Disc
 
 This project is licensed under the **Apache License 2.0** - see the [LICENSE](./LICENSE) file for details.
 
-The game's assets and IP remain protected, and the official Broth & Bullets servers will continue to be operated by Martin Erlic. For more information see [NOTICE](./NOTICE).
+The game's assets and IP remain protected, and the official WILDER servers will continue to be operated by WILDER. For more information see [NOTICE](./NOTICE).
 
 ### What you can and cannot do
 
@@ -822,15 +822,15 @@ To avoid any confusion, here is a clear summary of what is allowed and what is n
 - ✅ Modify and experiment with the code locally
 - ✅ Run your own servers for experimentation and learning
 - ✅ Use it as a reference for building your own projects
-- ✅ Make a game similar to Broth & Bullets with your own IP (art and themes) using our code as a basis
+- ✅ Make a game similar to WILDER with your own IP (art and themes) using our code as a basis
 - ✅ Contribute back to the project via Pull Requests
 
 **You cannot:**
 
-- ❌ Use Broth & Bullets' art, game content, music, or other protected assets
-- ❌ Use the "Broth & Bullets" name, branding, or story for commercial purposes
-- ❌ Present forks or derivative works as official Broth & Bullets
-- ❌ Operate official, unofficial, private, or competing Broth & Bullets servers
+- ❌ Use WILDER' art, game content, music, or other protected assets
+- ❌ Use the "WILDER" name, branding, or story for commercial purposes
+- ❌ Present forks or derivative works as official WILDER
+- ❌ Operate official, unofficial, private, or competing WILDER servers
 - ❌ Use original character designs or hand-crafted assets without permission
 - ❌ Do anything that violates the Apache 2.0 license
 
@@ -840,7 +840,7 @@ We truly appreciate any reporting of in-game exploits. To ensure that exploits a
 
 Contributors who report meaningful, previously unreported, and verified exploits may receive special recognition.
 
-For licensing inquiries regarding Broth & Bullets intellectual property, please contact Martin Erlic.
+For licensing inquiries regarding WILDER intellectual property, please contact WILDER.
 
 ---
 

@@ -19,10 +19,10 @@ export default {
   date: "2024-01-01",
   
   // Author name
-  author: "Martin Erlic",
+  author: "Wilder Team",
   
   // Author image path (relative to public folder)
-  authorImage: "/images/blog/author-marty.jpg",
+  authorImage: "",
   
   // Author's Twitter/X username (without @)
   authorTwitter: "seloslav",

@@ -2,13 +2,13 @@
 body {
   margin: 0;
   overflow: hidden; /* Prevent body scrollbars */
-  font-family: 'Courier New', Consolas, Monaco, monospace; /* Master cyberpunk font */
+  font-family: 'PixelOperator', sans-serif; /* Master pixel font */
 }
 
 .App {
   text-align: center;
   padding: 0;
-  font-family: 'Courier New', Consolas, Monaco, monospace; /* Cyberpunk font */
+  font-family: 'PixelOperator', sans-serif; /* Pixel font */
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -16,9 +16,14 @@ body {
   overflow: hidden; /* Ensure App doesn't overflow */
 }
 
-/* Global override to ensure all UI elements use cyberpunk font */
-* {
-  font-family: 'Courier New', Consolas, Monaco, monospace !important;
+/* Global override to ensure all UI elements use pixel font, excluding KiwiSoda brand fonts */
+*:not(.brand-font):not([style*="KiwiSoda"]) {
+  font-family: 'PixelOperator', sans-serif !important;
+}
+
+/* Monospaced text override to PixelOperatorMono */
+code, pre, .mono, .monospace, [style*="Courier New"], [style*="Consolas"], [style*="monospace"] {
+  font-family: 'PixelOperatorMono', monospace !important;
 }
 
 .error-message {

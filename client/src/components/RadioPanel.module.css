@@ -116,7 +116,7 @@
   font-size: 24px;
   color: #86be52;
   text-shadow: 0 0 10px #86be52, 0 0 20px #00ff44;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
   margin-bottom: 6px;
   letter-spacing: 2px;
 }
@@ -335,7 +335,7 @@
 .stationFreq {
   font-size: 10px;
   color: #86be52;
-  font-family: 'Courier New', monospace;
+  font-family: 'PixelOperatorMono', monospace;
 }
 
 /* Speaker Grille - Hidden to save space */
