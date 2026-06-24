@@ -1,0 +1,437 @@
+/******************************************************************************
+ *                                                                            *
+ * Backpack Auto-Consolidation System                                         *
+ *                                                                            *
+ * Automatically creates backpack containers (BOX_TYPE_BACKPACK) when         *
+ * dropped items cluster together, consolidating them to reduce world clutter.*
+ * Uses scheduled reducer for periodic cleanup and immediate trigger on drop. *
+ *                                                                            *
+ ******************************************************************************/
+
+use spacetimedb::{ReducerContext, Table, Timestamp};
+use spacetimedb::spacetimedb_lib::{ScheduleAt, TimeDuration};
+use log;
+use std::time::Duration;
+
+use crate::wooden_storage_box::{WoodenStorageBox, BOX_TYPE_BACKPACK, NUM_BACKPACK_SLOTS, BACKPACK_INITIAL_HEALTH, BACKPACK_MAX_HEALTH};
+use crate::dropped_item::{DroppedItem, dropped_item as DroppedItemTableTrait};
+use crate::wooden_storage_box::wooden_storage_box as WoodenStorageBoxTableTrait;
+use crate::items::{InventoryItem, item_definition as ItemDefinitionTableTrait, inventory_item as InventoryItemTableTrait};
+use crate::environment::{calculate_chunk_index, CHUNK_SIZE_PX, WORLD_HEIGHT_CHUNKS, WORLD_WIDTH_CHUNKS};
+use crate::models::{ItemLocation, ContainerLocationData, ContainerType};
+use crate::inventory_management::ItemContainer; // Trait for get_slot_instance_id
+
+// --- Constants ---
+const BACKPACK_PROXIMITY_RADIUS: f32 = 128.0;
+const BACKPACK_PROXIMITY_RADIUS_SQUARED: f32 = 16384.0;
+const MIN_ITEMS_FOR_BACKPACK: usize = 5;
+const BACKPACK_SPAWN_SPACING: f32 = 160.0;
+const CONSOLIDATION_CHECK_INTERVAL_SECS: u64 = 30;
+
+#[derive(Clone)]
+struct BackpackTransferItem {
+    item_def_id: u64,
+    quantity: u32,
+    item_data: Option<String>,
+}
+
+// --- Schedule Table ---
+#[spacetimedb::table(accessor = backpack_consolidation_schedule, scheduled(check_and_consolidate_all_clusters))]
+#[derive(Clone)]
+pub struct BackpackConsolidationSchedule {
+    #[primary_key]
+    #[auto_inc]
+    pub id: u64,
+    pub scheduled_at: ScheduleAt,
+}
+
+// --- Initialization ---
+/// Initialize the backpack consolidation system
+pub fn init_backpack_consolidation_schedule(ctx: &ReducerContext) -> Result<(), String> {
+    // Count existing schedules
+    let mut count: usize = 0;
+    for _ in ctx.db.backpack_consolidation_schedule().iter() {
+        count += 1;
+    }
+    
+    if count == 0 {
+        log::info!("Starting backpack consolidation schedule (every {}s).", CONSOLIDATION_CHECK_INTERVAL_SECS);
+        let interval = Duration::from_secs(CONSOLIDATION_CHECK_INTERVAL_SECS);
+        let schedule = BackpackConsolidationSchedule {
+            id: 0,
+            scheduled_at: ScheduleAt::Interval(TimeDuration::from(interval)),
+        };
+        ctx.db.backpack_consolidation_schedule().insert(schedule);
+        log::info!("✅ Backpack consolidation schedule started");
+    } else {
+        log::debug!("Backpack consolidation schedule already exists.");
+    }
+    Ok(())
+}
+
+// --- Scheduled Reducer ---
+#[spacetimedb::reducer]
+pub fn check_and_consolidate_all_clusters(
+    ctx: &ReducerContext,
+    _args: BackpackConsolidationSchedule
+) -> Result<(), String> {
+    use crate::player as PlayerTableTrait;
+    
+    if ctx.sender() != ctx.identity() {
+        return Err("Backpack consolidation can only be run by scheduler".to_string());
+    }
+    
+    // PERFORMANCE: Skip if no players online (no one dropping items)
+    let has_online_players = ctx.db.player().iter().any(|p| p.is_online);
+    if !has_online_players {
+        return Ok(());
+    }
+    
+    let clusters = find_dropped_item_clusters(ctx);
+    log::info!("[BackpackConsolidation] Found {} item clusters", clusters.len());
+    
+    for (center_x, center_y, items) in clusters {
+        consolidate_dropped_items_near_position(ctx, center_x, center_y, items)?;
+    }
+    
+    Ok(())
+}
+
+// --- Core Logic ---
+pub fn consolidate_dropped_items_near_position(
+    ctx: &ReducerContext,
+    center_x: f32,
+    center_y: f32,
+    mut items: Vec<DroppedItem>,
+) -> Result<(), String> {
+    if items.len() < MIN_ITEMS_FOR_BACKPACK {
+        return Ok(());
+    }
+    
+    // Sort by distance from center
+    items.sort_by(|a, b| {
+        let dist_a = (a.pos_x - center_x).powi(2) + (a.pos_y - center_y).powi(2);
+        let dist_b = (b.pos_x - center_x).powi(2) + (b.pos_y - center_y).powi(2);
+        dist_a.partial_cmp(&dist_b).unwrap()
+    });
+    
+    let source_item_ids: Vec<u64> = items.iter().map(|item| item.id).collect();
+    let transfer_items = build_backpack_transfer_items(ctx, &items)?;
+
+    let mut backpack_count = 0;
+    let mut current_backpack: Option<WoodenStorageBox> = None;
+    let mut current_slot_index = 0u8;
+    
+    for item in transfer_items {
+        // Create new backpack if needed
+        if current_backpack.is_none() || current_slot_index >= NUM_BACKPACK_SLOTS as u8 {
+            let spawn_offset = backpack_count as f32 * BACKPACK_SPAWN_SPACING;
+            let backpack_x = center_x + spawn_offset;
+            let backpack_y = center_y;
+            
+            current_backpack = Some(create_backpack_at_position(ctx, backpack_x, backpack_y)?);
+            current_slot_index = 0;
+            backpack_count += 1;
+        }
+        
+        // Transfer item to backpack
+        if let Some(ref mut backpack) = current_backpack {
+            transfer_dropped_item_to_backpack(ctx, backpack, current_slot_index, &item)?;
+            current_slot_index += 1;
+        }
+    }
+
+    for item_id in source_item_ids {
+        ctx.db.dropped_item().id().delete(item_id);
+    }
+    
+    // Save final backpack
+    if let Some(backpack) = current_backpack {
+        ctx.db.wooden_storage_box().id().update(backpack);
+    }
+    
+    log::info!("[BackpackConsolidation] Created {} backpack(s) at ({}, {})", backpack_count, center_x, center_y);
+    Ok(())
+}
+
+fn create_backpack_at_position(
+    ctx: &ReducerContext,
+    pos_x: f32,
+    pos_y: f32,
+) -> Result<WoodenStorageBox, String> {
+    let backpack = WoodenStorageBox {
+        id: 0,
+        pos_x,
+        pos_y,
+        chunk_index: calculate_chunk_index(pos_x, pos_y),
+        placed_by: ctx.identity(), // System-placed
+        box_type: BOX_TYPE_BACKPACK,
+        // All 48 slots initialized to None (only first 36 used)
+        slot_instance_id_0: None, slot_def_id_0: None,
+        slot_instance_id_1: None, slot_def_id_1: None,
+        slot_instance_id_2: None, slot_def_id_2: None,
+        slot_instance_id_3: None, slot_def_id_3: None,
+        slot_instance_id_4: None, slot_def_id_4: None,
+        slot_instance_id_5: None, slot_def_id_5: None,
+        slot_instance_id_6: None, slot_def_id_6: None,
+        slot_instance_id_7: None, slot_def_id_7: None,
+        slot_instance_id_8: None, slot_def_id_8: None,
+        slot_instance_id_9: None, slot_def_id_9: None,
+        slot_instance_id_10: None, slot_def_id_10: None,
+        slot_instance_id_11: None, slot_def_id_11: None,
+        slot_instance_id_12: None, slot_def_id_12: None,
+        slot_instance_id_13: None, slot_def_id_13: None,
+        slot_instance_id_14: None, slot_def_id_14: None,
+        slot_instance_id_15: None, slot_def_id_15: None,
+        slot_instance_id_16: None, slot_def_id_16: None,
+        slot_instance_id_17: None, slot_def_id_17: None,
+        slot_instance_id_18: None, slot_def_id_18: None,
+        slot_instance_id_19: None, slot_def_id_19: None,
+        slot_instance_id_20: None, slot_def_id_20: None,
+        slot_instance_id_21: None, slot_def_id_21: None,
+        slot_instance_id_22: None, slot_def_id_22: None,
+        slot_instance_id_23: None, slot_def_id_23: None,
+        slot_instance_id_24: None, slot_def_id_24: None,
+        slot_instance_id_25: None, slot_def_id_25: None,
+        slot_instance_id_26: None, slot_def_id_26: None,
+        slot_instance_id_27: None, slot_def_id_27: None,
+        slot_instance_id_28: None, slot_def_id_28: None,
+        slot_instance_id_29: None, slot_def_id_29: None,
+        slot_instance_id_30: None, slot_def_id_30: None,
+        slot_instance_id_31: None, slot_def_id_31: None,
+        slot_instance_id_32: None, slot_def_id_32: None,
+        slot_instance_id_33: None, slot_def_id_33: None,
+        slot_instance_id_34: None, slot_def_id_34: None,
+        slot_instance_id_35: None, slot_def_id_35: None,
+        slot_instance_id_36: None, slot_def_id_36: None,
+        slot_instance_id_37: None, slot_def_id_37: None,
+        slot_instance_id_38: None, slot_def_id_38: None,
+        slot_instance_id_39: None, slot_def_id_39: None,
+        slot_instance_id_40: None, slot_def_id_40: None,
+        slot_instance_id_41: None, slot_def_id_41: None,
+        slot_instance_id_42: None, slot_def_id_42: None,
+        slot_instance_id_43: None, slot_def_id_43: None,
+        slot_instance_id_44: None, slot_def_id_44: None,
+        slot_instance_id_45: None, slot_def_id_45: None,
+        slot_instance_id_46: None, slot_def_id_46: None,
+        slot_instance_id_47: None, slot_def_id_47: None,
+        health: BACKPACK_INITIAL_HEALTH,
+        max_health: BACKPACK_MAX_HEALTH,
+        is_destroyed: false,
+        destroyed_at: None,
+        last_hit_time: None,
+        last_damaged_by: None,
+        respawn_at: Timestamp::UNIX_EPOCH, // 0 = not respawning (backpacks don't respawn)
+        // Backpacks are not monument placeables
+        is_monument: false,
+        active_user_id: None,
+        active_user_since: None,
+    };
+    
+    Ok(ctx.db.wooden_storage_box().insert(backpack))
+}
+
+fn transfer_dropped_item_to_backpack(
+    ctx: &ReducerContext,
+    backpack: &mut WoodenStorageBox,
+    slot_index: u8,
+    transfer_item: &BackpackTransferItem,
+) -> Result<(), String> {
+    // Create InventoryItem for the backpack slot
+    let inv_item = InventoryItem {
+        instance_id: 0,
+        item_def_id: transfer_item.item_def_id,
+        quantity: transfer_item.quantity,
+        location: ItemLocation::Container(ContainerLocationData {
+            container_type: ContainerType::WoodenStorageBox,
+            container_id: backpack.id as u64,
+            slot_index,
+        }),
+        item_data: transfer_item.item_data.clone(),
+    };
+    
+    let inserted = ctx.db.inventory_item().insert(inv_item);
+    backpack.set_slot(slot_index, Some(inserted.instance_id), Some(transfer_item.item_def_id));
+    
+    Ok(())
+}
+
+fn build_backpack_transfer_items(
+    ctx: &ReducerContext,
+    items: &[DroppedItem],
+) -> Result<Vec<BackpackTransferItem>, String> {
+    let mut transfer_items: Vec<BackpackTransferItem> = Vec::new();
+    let mut stackable_quantities = std::collections::BTreeMap::<u64, u32>::new();
+
+    for item in items {
+        let item_def = ctx.db.item_definition().id().find(&item.item_def_id)
+            .ok_or_else(|| format!("Missing item definition {} during backpack consolidation", item.item_def_id))?;
+
+        let can_stack_for_backpack = item_def.is_stackable && item.item_data.is_none();
+        if can_stack_for_backpack {
+            *stackable_quantities.entry(item.item_def_id).or_insert(0) += item.quantity;
+            continue;
+        }
+
+        transfer_items.push(BackpackTransferItem {
+            item_def_id: item.item_def_id,
+            quantity: item.quantity,
+            item_data: item.item_data.clone(),
+        });
+    }
+
+    for (item_def_id, total_quantity) in stackable_quantities {
+        let item_def = ctx.db.item_definition().id().find(&item_def_id)
+            .ok_or_else(|| format!("Missing item definition {} during backpack stack split", item_def_id))?;
+        let stack_size = item_def.stack_size.max(1);
+        let mut remaining = total_quantity;
+
+        while remaining > 0 {
+            let chunk_quantity = remaining.min(stack_size);
+            transfer_items.push(BackpackTransferItem {
+                item_def_id,
+                quantity: chunk_quantity,
+                item_data: None,
+            });
+            remaining -= chunk_quantity;
+        }
+    }
+
+    Ok(transfer_items)
+}
+
+fn find_dropped_item_clusters(ctx: &ReducerContext) -> Vec<(f32, f32, Vec<DroppedItem>)> {
+    // Bucket by chunk + union-find for pairs within proximity — avoids O(n²) over all dropped items.
+    let items: Vec<DroppedItem> = ctx.db.dropped_item().iter().collect();
+    let n = items.len();
+    if n < MIN_ITEMS_FOR_BACKPACK {
+        return Vec::new();
+    }
+
+    let mut buckets: std::collections::HashMap<u32, Vec<usize>> = std::collections::HashMap::new();
+    for (idx, item) in items.iter().enumerate() {
+        buckets.entry(item.chunk_index).or_default().push(idx);
+    }
+
+    let chunk_r = ((BACKPACK_PROXIMITY_RADIUS / CHUNK_SIZE_PX).ceil() as i32 + 1)
+        .max(1)
+        .min(32);
+
+    struct Dsu {
+        parent: Vec<usize>,
+    }
+    impl Dsu {
+        fn new(n: usize) -> Self {
+            Self {
+                parent: (0..n).collect(),
+            }
+        }
+        fn find(&mut self, mut x: usize) -> usize {
+            while self.parent[x] != x {
+                self.parent[x] = self.parent[self.parent[x]];
+                x = self.parent[x];
+            }
+            x
+        }
+        fn union(&mut self, a: usize, b: usize) {
+            let ra = self.find(a);
+            let rb = self.find(b);
+            if ra != rb {
+                self.parent[rb] = ra;
+            }
+        }
+    }
+
+    let mut dsu = Dsu::new(n);
+
+    #[inline]
+    fn chunk_xy(chunk_index: u32) -> (i32, i32) {
+        (
+            (chunk_index % WORLD_WIDTH_CHUNKS) as i32,
+            (chunk_index / WORLD_WIDTH_CHUNKS) as i32,
+        )
+    }
+
+    for idx in 0..n {
+        let item = &items[idx];
+        let (pcx, pcy) = chunk_xy(item.chunk_index);
+        for dy in -chunk_r..=chunk_r {
+            for dx in -chunk_r..=chunk_r {
+                let ncx = pcx + dx;
+                let ncy = pcy + dy;
+                if ncx < 0 || ncy < 0 {
+                    continue;
+                }
+                let ncx = ncx as u32;
+                let ncy = ncy as u32;
+                if ncx >= WORLD_WIDTH_CHUNKS || ncy >= WORLD_HEIGHT_CHUNKS {
+                    continue;
+                }
+                let chunk_idx = ncy * WORLD_WIDTH_CHUNKS + ncx;
+                let Some(neighbors) = buckets.get(&chunk_idx) else { continue };
+                for &j in neighbors {
+                    if j <= idx {
+                        continue;
+                    }
+                    let other = &items[j];
+                    let dx = item.pos_x - other.pos_x;
+                    let dy = item.pos_y - other.pos_y;
+                    if dx * dx + dy * dy <= BACKPACK_PROXIMITY_RADIUS_SQUARED {
+                        dsu.union(idx, j);
+                    }
+                }
+            }
+        }
+    }
+
+    let mut components: std::collections::HashMap<usize, Vec<DroppedItem>> =
+        std::collections::HashMap::new();
+    for idx in 0..n {
+        let root = dsu.find(idx);
+        components
+            .entry(root)
+            .or_default()
+            .push(items[idx].clone());
+    }
+
+    let mut clusters = Vec::new();
+    for (_, cluster_items) in components {
+        if cluster_items.len() < MIN_ITEMS_FOR_BACKPACK {
+            continue;
+        }
+        let center_x =
+            cluster_items.iter().map(|i| i.pos_x).sum::<f32>() / cluster_items.len() as f32;
+        let center_y =
+            cluster_items.iter().map(|i| i.pos_y).sum::<f32>() / cluster_items.len() as f32;
+        clusters.push((center_x, center_y, cluster_items));
+    }
+
+    clusters
+}
+
+// --- Auto-despawn when empty ---
+pub fn check_and_despawn_if_empty(ctx: &ReducerContext, backpack_id: u32) -> Result<(), String> {
+    let backpack = ctx.db.wooden_storage_box().id().find(backpack_id)
+        .ok_or("Backpack not found")?;
+    
+    if backpack.box_type != BOX_TYPE_BACKPACK {
+        return Ok(()); // Not a backpack
+    }
+    
+    // Check if all slots are empty
+    let mut is_empty = true;
+    for i in 0..NUM_BACKPACK_SLOTS as u8 {
+        if backpack.get_slot_instance_id(i).is_some() {
+            is_empty = false;
+            break;
+        }
+    }
+    
+    if is_empty {
+        ctx.db.wooden_storage_box().id().delete(backpack_id);
+        log::info!("[Backpack] Auto-despawned empty backpack {}", backpack_id);
+    }
+    
+    Ok(())
+}
+

@@ -1,0 +1,785 @@
+/* Chat.module.css - Cyberpunk themed chat interface */
+
+.chatContainer {
+  position: fixed;
+  bottom: 15px; /* Align with StatusBar positioning */
+  left: 15px;   /* Match StatusBar margins */
+  width: 380px;
+  max-height: 250px; /* Increased max height */
+  background: linear-gradient(135deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98));
+  border: 2px solid #00aaff;
+  border-radius: 8px;
+  font-family: '"Press Start 2P", cursive';
+  box-shadow: 0 0 30px rgba(0, 170, 255, 0.3), inset 0 0 20px rgba(0, 170, 255, 0.1);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  overflow: visible;
+}
+
+/* Chat Container Animation States */
+.chatContainerMinimized {
+  transform: translateX(-100%) scale(0.9);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  transform-origin: left center;
+}
+
+.chatContainerVisible {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: auto;
+  transform-origin: left center;
+}
+
+/* Minimized SOVA Button */
+.sovaButtonMinimized {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(30, 15, 50, 0.9), rgba(20, 10, 40, 0.95));
+  border: 3px solid #00aaff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(0, 170, 255, 0.6), inset 0 0 15px rgba(0, 170, 255, 0.2);
+  z-index: 50;
+  font-size: 20px;
+  color: #00ffff;
+  transform: translateY(0px) scale(1);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.sovaButtonMinimized:hover {
+  background: linear-gradient(135deg, rgba(40, 25, 70, 0.95), rgba(30, 20, 60, 1));
+  transform: translateY(-4px) scale(1.15);
+  box-shadow: 0 0 50px rgba(0, 170, 255, 0.9), inset 0 0 25px rgba(0, 170, 255, 0.3), 0 8px 20px rgba(0, 0, 0, 0.3);
+  border: 3px solid #00ffff;
+}
+
+.sovaIcon {
+  width: 70px;
+  height: 70px;
+  filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.5));
+  transition: all 0.3s ease;
+}
+
+.sovaButtonMinimized:hover .sovaIcon {
+  filter: drop-shadow(0 0 20px rgba(0, 170, 255, 0.8)) drop-shadow(0 0 30px rgba(0, 255, 255, 0.6));
+}
+
+/* Top-right chat controls */
+.chatControls {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 20;
+}
+
+.titleGearButton,
+.minimizeButton {
+  width: 14px;
+  height: 14px;
+  background: rgba(0, 170, 255, 0.2);
+  border: 1px solid #00aaff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 8px;
+  color: #00ffff;
+  opacity: 0.7;
+  padding: 0;
+}
+
+.titleGearButton {
+  line-height: 1;
+}
+
+.titleGearButton:hover,
+.minimizeButton:hover {
+  opacity: 1;
+}
+
+.titleContextMenu {
+  position: absolute;
+  bottom: 20px;
+  right: 0;
+  min-width: 160px;
+  max-height: min(220px, 45vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 170, 255, 0.5);
+  background: linear-gradient(135deg, rgba(20, 20, 40, 0.98), rgba(10, 10, 25, 0.98));
+  box-shadow: 0 0 12px rgba(0, 170, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titleContextMenu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.titleContextMenu::-webkit-scrollbar-track {
+  background: rgba(10, 20, 35, 0.8);
+  border-radius: 4px;
+}
+
+.titleContextMenu::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(0, 170, 255, 0.9), rgba(0, 120, 200, 0.9));
+  border-radius: 4px;
+}
+
+.titleContextMenu {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 170, 255, 0.9) rgba(10, 20, 35, 0.8);
+}
+
+.titleMenuOption {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: rgba(0, 170, 255, 0.08);
+  color: rgba(0, 220, 255, 0.9);
+  text-align: left;
+  font-family: '"Press Start 2P', cursive;
+  font-size: 9px;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.titleMenuOption:hover {
+  border-color: rgba(0, 170, 255, 0.5);
+  background: rgba(0, 170, 255, 0.18);
+}
+
+.activeTitleOption {
+  border-color: rgba(255, 215, 0, 0.8);
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.12);
+}
+
+.titleMenuEmpty {
+  color: rgba(0, 170, 255, 0.7);
+  font-size: 9px;
+  padding: 8px 6px;
+}
+
+/* Scan line effect removed per user request */
+
+.chatHeader {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 255, 0.2));
+  color: #00ffff;
+  padding: 8px 12px;
+  font-size: 8px;
+  border-bottom: 1px solid rgba(0, 170, 255, 0.4);
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.8);
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.messageHistory {
+  max-height: 140px; /* Reduced from 150px for better proportions */
+  overflow-y: auto;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(15, 15, 35, 0.8), rgba(10, 10, 25, 0.9));
+  text-align: left;
+  scrollbar-width: thin;
+}
+
+.chatContainer.active .messageHistory {
+  background: linear-gradient(135deg, rgba(20, 20, 40, 0.9), rgba(15, 15, 30, 0.95));
+  border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+/* Enhanced cyberpunk scrollbar styling */
+.messageHistory::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messageHistory::-webkit-scrollbar-track {
+  background: rgba(30, 15, 50, 0.8);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+.messageHistory::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.8), rgba(0, 150, 255, 0.6));
+  border-radius: 4px;
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3), inset 0 0 4px rgba(0, 255, 255, 0.2);
+}
+
+.messageHistory::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(0, 200, 255, 0.9), rgba(0, 170, 255, 0.8));
+  box-shadow: 0 0 12px rgba(0, 204, 255, 0.5), inset 0 0 6px rgba(0, 255, 255, 0.3);
+  border-color: rgba(0, 204, 255, 0.6);
+}
+
+/* Firefox scrollbar styling */
+.messageHistory {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 170, 255, 0.8) rgba(30, 15, 50, 0.8);
+}
+
+.message {
+  margin-bottom: 4px; /* Reduced spacing between messages */
+  padding: 4px 6px;   /* Reduced padding */
+  background: linear-gradient(135deg, rgba(20, 30, 60, 0.4), rgba(15, 25, 50, 0.6));
+  border-radius: 4px;
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  box-shadow: 0 0 5px rgba(0, 170, 255, 0.1);
+  animation: messageGlow 0.4s ease-in;
+  font-size: 14px; /* Increased from 11px to 14px */
+  line-height: 1.3;
+}
+
+/* SOVA Message Styles */
+.sovaMessageUser {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 150, 255, 0.1));
+}
+
+.sovaMessageBot {
+  background: linear-gradient(135deg, rgba(255, 100, 0, 0.2), rgba(255, 80, 0, 0.1));
+}
+
+.sovaPlayerNameUser {
+  color: #00ffff;
+}
+
+.sovaPlayerNameBot {
+  color: #ff6600;
+}
+
+/* SOVA Welcome Message */
+.sovaWelcomeMessage {
+  color: rgba(0, 170, 255, 0.6);
+  font-size: 12px;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+@keyframes messageGlow {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 5px rgba(0, 170, 255, 0.1);
+  }
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px; /* Reduced margin */
+}
+
+.playerName {
+  font-size: 13px; /* Increased from 10px to 13px */
+  color: #00ffff;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0, 255, 255, 0.6);
+  letter-spacing: 0.5px;
+}
+
+.timestamp {
+  font-size: 10px; /* Increased from 8px to 10px */
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
+  opacity: 0.9;
+}
+
+.messageContent {
+  font-size: 14px; /* Increased from 11px to 14px */
+  color: #ffffff;
+  line-height: 1.3;
+  word-wrap: break-word;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.senderName {
+  color: #ffcc00;
+  margin-right: 4px;
+  font-weight: bold;
+  font-size: 13px; /* Increased from 10px to 13px */
+}
+
+.matronageTag {
+  color: #40ff40; /* Bright green for matronage - guild identity */
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 0 0 4px rgba(64, 255, 64, 0.6);
+}
+
+.titleTag {
+  color: #ffd700; /* Gold for achievement titles - personal glory */
+  font-weight: normal;
+  font-size: 11px;
+  font-style: italic;
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.6);
+  opacity: 0.95;
+}
+
+.messageText {
+  color: #ffffff;
+  font-size: 14px; /* Increased from 11px to 14px */
+}
+
+.systemMessage {
+  color: #ffcc66;
+  font-style: italic;
+  font-size: 13px; /* Increased from 10px to 13px */
+}
+
+/* Whisper message styling - hot pink like World of Warcraft */
+.whisperMessage {
+  background: linear-gradient(135deg, rgba(255, 105, 180, 0.15), rgba(255, 105, 180, 0.1)) !important;
+  border-left: 3px solid #FF69B4 !important;
+  padding-left: 8px !important;
+}
+
+.whisperSenderName {
+  color: #FF1493 !important;
+  text-shadow: 0 0 6px rgba(255, 20, 147, 0.8) !important;
+}
+
+.whisperMessageText {
+  color: #FF69B4 !important;
+  font-style: italic;
+  text-shadow: 0 0 4px rgba(255, 105, 180, 0.5) !important;
+}
+
+/* Team (Matronage) message styling - green like World of Warcraft guild/party chat */
+.teamMessage {
+  background: linear-gradient(135deg, rgba(64, 255, 64, 0.15), rgba(64, 255, 64, 0.1)) !important;
+  border-left: 3px solid #40FF40 !important;
+  padding-left: 8px !important;
+}
+
+.teamSenderName {
+  color: #40FF40 !important;
+  text-shadow: 0 0 6px rgba(64, 255, 64, 0.8) !important;
+}
+
+.teamMessageText {
+  color: #40FF40 !important;
+  text-shadow: 0 0 4px rgba(64, 255, 64, 0.5) !important;
+}
+
+.teamPrefix {
+  color: #32CD32 !important;
+  font-weight: bold;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* Chat Input Styling */
+.chatInput {
+  width: 100%;
+  padding: 12px 15px; /* Increased padding for larger input area */
+  background: linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9));
+  border: none;
+  border-top: 1px solid rgba(0, 170, 255, 0.3);
+  color: #00ffff;
+  font-family: '"Press Start 2P", cursive';
+  font-size: 12px; /* Increased from 9px to 12px */
+  outline: none;
+  border-radius: 0 0 6px 6px;
+  text-shadow: 0 0 4px rgba(0, 255, 255, 0.6);
+  box-sizing: border-box;
+  letter-spacing: 0.5px;
+}
+
+.chatInput::placeholder {
+  color: rgba(0, 170, 255, 0.6);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.4);
+  font-size: 12x; /* Increased from 8px to 10px */
+}
+
+.chatInput:focus {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.15), rgba(0, 150, 255, 0.1));
+  box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.2), 0 0 10px rgba(0, 170, 255, 0.3);
+  border-top-color: rgba(0, 170, 255, 0.6);
+}
+
+/* Chat Placeholder */
+.chatPlaceholder {
+  margin: 0;
+  padding: 12px 15px; /* Match input padding */
+  background: linear-gradient(135deg, rgba(20, 30, 60, 0.6), rgba(15, 25, 50, 0.7));
+  color: rgba(0, 170, 255, 0.7);
+  border-top: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 0 0 6px 6px;
+  font-size: 11px; /* Increased from 8px to 11px */
+  font-family: '"Press Start 2P", cursive';
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.4);
+}
+
+.chatPlaceholder:hover {
+  background: linear-gradient(135deg, rgba(30, 40, 70, 0.7), rgba(20, 30, 60, 0.8));
+  color: rgba(0, 170, 255, 0.9);
+  border-top-color: rgba(0, 170, 255, 0.4);
+  text-shadow: 0 0 6px rgba(0, 170, 255, 0.6);
+}
+
+/* Performance Report Button Container */
+.performanceReportContainer {
+  padding: 5px 10px;
+  border-top: 1px solid rgba(0, 170, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+}
+
+/* Performance Report Button */
+.performanceReportButton {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 150, 255, 0.3));
+  border: 1px solid #00aaff;
+  border-radius: 4px;
+  color: #00ffff;
+  padding: 4px 8px;
+  font-size: 8px;
+  font-family: "Press Start 2P", cursive;
+  cursor: pointer;
+}
+
+.performanceReportButton:hover {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.4), rgba(0, 150, 255, 0.5));
+}
+
+/* Performance Report Modal */
+.performanceReportModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  font-family: monospace;
+}
+
+.performanceReportContent {
+  background-color: rgba(10, 10, 20, 0.95);
+  border: 2px solid #00aaff;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  box-shadow: 0 0 30px rgba(0, 170, 255, 0.3);
+}
+
+.performanceReportTitle {
+  color: #00ffff;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 15px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.performanceReportText {
+  color: #ffffff;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  margin: 0;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+.performanceReportActions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+/* Modal Action Buttons */
+.modalButtonPrimary {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 255, 0.4));
+  border: 1px solid #00aaff;
+  border-radius: 4px;
+  color: #00ffff;
+  padding: 8px 16px;
+  font-size: 10px;
+  font-family: "Press Start 2P", cursive;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalButtonPrimary:hover {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.5), rgba(0, 150, 255, 0.6));
+}
+
+.modalButtonSecondary {
+  background: linear-gradient(135deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.4));
+  border: 1px solid #666;
+  border-radius: 4px;
+  color: #ccc;
+  padding: 8px 16px;
+  font-size: 10px;
+  font-family: "Press Start 2P", cursive;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalButtonSecondary:hover {
+  background: linear-gradient(135deg, rgba(120, 120, 120, 0.5), rgba(100, 100, 100, 0.6));
+}
+
+/* Active state improvements */
+.chatContainer.active {
+  pointer-events: auto;
+  box-shadow: 0 0 40px rgba(0, 170, 255, 0.4), inset 0 0 25px rgba(0, 170, 255, 0.15);
+}
+
+/* Fade out messages slightly when inactive */
+.chatContainer:not(.active) .message {
+  opacity: 0.7;
+}
+
+.chatContainer:not(.active) .messageHistory::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Remove unused styles */
+.messagesContainer,
+.inputContainer,
+.messageInput,
+.toggleButton,
+.newMessageIndicator {
+  display: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .chatContainer {
+    width: calc(100vw - 20px);
+    max-width: 380px;
+    bottom: 100px; /* Move up to make room for mobile control bar */
+    left: 10px;
+    max-height: calc(100vh - 200px); /* Limit height on mobile */
+  }
+  
+  .messageHistory {
+    max-height: 150px;
+    padding: 6px 10px;
+  }
+  
+  .chatInput,
+  .chatPlaceholder {
+    padding: 10px 12px;
+    font-size: 11px; /* Increased from 8px to maintain readability */
+  }
+  
+  .message {
+    padding: 3px 5px;
+    font-size: 10px; /* Increased from 6px to maintain readability */
+  }
+  
+  .playerName {
+    font-size: 9px; /* Increased from 5px to maintain readability */
+  }
+  
+  .timestamp {
+    font-size: 7px; /* Increased from 4px to maintain readability */
+  }
+
+  /* Minimized SOVA button - move up on mobile */
+  .sovaButtonMinimized {
+    bottom: 100px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .sovaIcon {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* Mobile-specific chat styling when controlled by MobileControlBar */
+.mobileChat {
+  /* Position above the mobile control bar */
+  bottom: 100px;
+  left: 10px;
+  right: 10px;
+  width: auto;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 200px);
+  z-index: 9998; /* Below MobileControlBar's 9999 */
+}
+
+.mobileChat .messageHistory {
+  max-height: calc(100vh - 320px);
+}
+
+.mobileChat .tabContainer {
+  padding: 8px 10px;
+}
+
+.mobileChat .tab {
+  padding: 8px 12px;
+  font-size: 10px;
+}
+
+/* Tab Navigation */
+.tabContainer {
+  display: flex;
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 150, 255, 0.05));
+  border-bottom: 1px solid rgba(0, 170, 255, 0.3);
+  padding: 0;
+  margin: 0;
+}
+
+.tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: rgba(0, 170, 255, 0.7);
+  font-family: '"Press Start 2P", cursive';
+  font-size: 12px; /* Increased from 8px to 12px */
+  padding: 8px 12px;
+  cursor: pointer;
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.4);
+  letter-spacing: 0.5px;
+  border-right: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+.tab:last-child {
+  border-right: none;
+}
+
+.tab:hover {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.15), rgba(0, 150, 255, 0.1));
+  color: rgba(0, 170, 255, 0.9);
+  text-shadow: 0 0 6px rgba(0, 170, 255, 0.6);
+}
+
+.activeTab {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 255, 0.2)) !important;
+  color: #00ffff !important;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.8) !important;
+  box-shadow: inset 0 0 10px rgba(0, 170, 255, 0.2);
+}
+
+.activeTab:hover {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.35), rgba(0, 150, 255, 0.25)) !important;
+}
+
+/* SOVA Tab Flash Animation - Horizontal sweep to draw attention */
+.sovaTabFlash {
+  position: relative;
+  overflow: hidden;
+}
+
+.sovaTabFlash::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 255, 0.4),
+    rgba(0, 255, 255, 0.8),
+    rgba(0, 255, 255, 0.4),
+    transparent
+  );
+  animation: sovaTabFlashSweep 1s ease-in-out 3;
+}
+
+@keyframes sovaTabFlashSweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Also pulse the text color during flash */
+.sovaTabFlash {
+  animation: sovaTabTextPulse 0.5s ease-in-out 6;
+}
+
+@keyframes sovaTabTextPulse {
+  0%, 100% {
+    color: rgba(0, 170, 255, 0.7);
+    text-shadow: 0 0 4px rgba(0, 170, 255, 0.4);
+  }
+  50% {
+    color: #00ffff;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.5);
+  }
+}
+
+/* SOVA Loading Animation */
+.sovaLoadingDots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.sovaLoadingDots .dot {
+  font-size: 16px;
+  color: #ff6600;
+  animation: sovaLoadingPulse 1.4s ease-in-out infinite;
+  text-shadow: 0 0 8px rgba(255, 102, 0, 0.8);
+}
+
+.sovaLoadingDots .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sovaLoadingDots .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.sovaLoadingDots .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes sovaLoadingPulse {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+    text-shadow: 0 0 15px rgba(255, 102, 0, 1);
+  }
+} 

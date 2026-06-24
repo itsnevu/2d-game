@@ -1,0 +1,1362 @@
+/**
+ * ProceduralWorldRenderer - Procedural tile rendering with dual-grid autotiling.
+ *
+ * Renders the tiled world background (grass, dirt, sea, beach, etc.) using
+ * dual-grid autotile transitions. Caches tile images and supports shoreline
+ * overlays, doodads, and snorkeling underwater mode.
+ *
+ * Responsibilities:
+ * 1. TILE CACHING: updateTileCache stores WorldTile map and preloads tile images.
+ *    Invalidates on tile data change.
+ *
+ * 2. DUAL-GRID AUTOTILING: getDualGridTileInfoMultiLayer resolves tile transitions
+ *    (edges, corners) for seamless terrain. Supports multi-layer tilesets.
+ *
+ * 3. RENDERING: render() draws tiles in viewport with correct transitions, doodads,
+ *    and shoreline overlay. isSnorkeling mode tints land dark blue.
+ *
+ * 4. ANIMATION: animationTime drives water/shimmer effects. No SpacetimeDB.
+ */
+
+import { gameConfig, DEEP_SEA_EDGE_TILES } from '../../config/gameConfig';
+import type { WorldTile } from '../../generated/types';
+import { 
+    getDualGridTileInfoMultiLayer, 
+    getAllTransitionTilesets, 
+    resolveTileAsset,
+    DualGridTileInfo,
+    DUAL_GRID_LOOKUP
+} from '../dualGridAutotile';
+import { tileDoodadRenderer } from './tileDoodadRenderer';
+import {
+    initGrassHotSpringShorelineMask,
+    isGrassHotSpringShorelineMaskReady,
+    renderShorelineOverlay,
+} from './shorelineOverlayUtils.ts';
+import { isWaterTileTag } from '../tileTypeGuards';
+import { getProceduralBlendCornerWeights } from './dualGridCornerBlend';
+import {
+    getProceduralBlendConfig,
+    getProceduralTransitionKeys,
+} from './dualGridProceduralBlendRegistry';
+import {
+    initProceduralDualGridBlendWebGL,
+    renderProceduralDualGridLayer,
+    renderProceduralDualGridLayerFallback,
+} from './dualGridProceduralBlendWebGL';
+
+const UNDERWATER_LAND_TEXTURE_KEY = 'UnderwaterLand_base';
+const UNDERWATER_HOT_SPRING_TEXTURE_KEY = 'UnderwaterHotSpring_base';
+const UNDERWATER_FALLBACK_COLOR = '#0a3d4f';
+const UNDERWATER_HOT_SPRING_FALLBACK_COLOR = '#cdbd8a';
+
+// Helper to get tile base texture path from tile type name
+function getTileBaseTexturePath(tileTypeName: string): string {
+    const tileNameMap: { [key: string]: string } = {
+        'Grass': 'grass.png',
+        'Dirt': 'dirt.png',
+        'DirtRoad': 'dirtroad.png',
+        'Sea': 'sea.png',
+        'DeepSea': 'deepsea.png',
+        'Beach': 'beach.png',
+        'Sand': 'beach.png', // Use beach texture for sand
+        'HotSpringWater': 'hotspringwater.png',
+        'Quarry': 'quarry.png',
+        'Asphalt': 'asphalt.png',
+        'Forest': 'forest.png',
+        'Tundra': 'tundra.png',
+        'Alpine': 'alpine.png',
+        'TundraGrass': 'tundragrass.png',
+    };
+    
+    const fileName = tileNameMap[tileTypeName] || 'grass.png';
+    return resolveTileAsset(fileName);
+}
+
+interface TileCache {
+    tiles: Map<string, WorldTile>;
+    images: Map<string, HTMLImageElement>;
+    lastUpdate: number;
+}
+
+type VendorImageSmoothingContext = CanvasRenderingContext2D & {
+    webkitImageSmoothingEnabled?: boolean;
+    mozImageSmoothingEnabled?: boolean;
+    msImageSmoothingEnabled?: boolean;
+};
+
+export interface ProceduralWorldProfilerTimings {
+    baseTiles: number;
+    transitions: number;
+    doodads: number;
+    doodadsTransitionChecks: number;
+    doodadsSpawnEvaluation: number;
+    doodadsBlurredDraws: number;
+    doodadsOpaqueDraws: number;
+}
+
+function createEmptyProceduralWorldTimings(): ProceduralWorldProfilerTimings {
+    return {
+        baseTiles: 0,
+        transitions: 0,
+        doodads: 0,
+        doodadsTransitionChecks: 0,
+        doodadsSpawnEvaluation: 0,
+        doodadsBlurredDraws: 0,
+        doodadsOpaqueDraws: 0,
+    };
+}
+
+function markProfiler(enabled: boolean): number {
+    return enabled ? performance.now() : 0;
+}
+
+function elapsedProfiler(start: number, end: number): number {
+    return start > 0 && end >= start ? end - start : 0;
+}
+
+export class ProceduralWorldRenderer {
+    private tileCache: TileCache = {
+        tiles: new Map(),
+        images: new Map(),
+        lastUpdate: 0
+    };
+
+    /** Skip redundant updateTileCache when same map reference passed (e.g. standing still). */
+    private lastWorldTilesRef: Map<string, WorldTile> | null = null;
+    private tileSignatureCache = new Map<string, string>();
+    private tileSeenEpoch = new Map<string, number>();
+    private currentTileCacheEpoch = 0;
+    private transitionInfoCache = new Map<string, DualGridTileInfo[]>();
+    
+    private animationTime = 0;
+    private isInitialized = false;
+    
+    constructor() {
+        this.preloadTileAssets();
+    }
+    
+    private async preloadTileAssets() {
+        const promises: Promise<void>[] = [];
+        
+        // Load base textures for all tile types
+        const tileTypes = ['Grass', 'Dirt', 'DirtRoad', 'Sea', 'DeepSea', 'Beach', 'Sand', 'HotSpringWater', 
+                          'Quarry', 'Asphalt', 'Forest', 'Tundra', 'Alpine', 'TundraGrass'];
+        
+        tileTypes.forEach((tileType) => {
+            const texturePath = getTileBaseTexturePath(tileType);
+            promises.push(
+                this.loadImage(texturePath, `${tileType}_base`)
+                    .catch(() => {})
+            );
+        });
+
+        // Load all transition tilesets from Dual Grid config
+        const transitionTilesets = getAllTransitionTilesets();
+        const proceduralTransitionKeys = getProceduralTransitionKeys();
+        transitionTilesets.forEach((tilesetPath, transitionKey) => {
+            if (proceduralTransitionKeys.has(transitionKey)) {
+                return;
+            }
+            const cacheKey = `transition_${transitionKey}`;
+            promises.push(this.loadImage(tilesetPath, cacheKey).catch(() => {
+                // Silently ignore missing autotile files - they'll be added later
+            }));
+        });
+        
+        try {
+            await Promise.all(promises);
+            await this.registerUnderwaterSyntheticTextures();
+            this.isInitialized = true;
+            const grassBeachImg = this.tileCache.images.get('transition_Grass_Beach');
+            initGrassHotSpringShorelineMask(grassBeachImg).catch(() => {});
+        } catch {
+            // Silently handle errors - missing assets will show fallback colors
+        }
+    }
+    
+    private loadImage(src: string, key: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = async () => {
+                if (typeof img.decode === 'function') {
+                    try {
+                        await img.decode();
+                    } catch {
+                        // Some browsers reject decode() for already usable images.
+                    }
+                }
+                this.tileCache.images.set(key, img);
+                resolve();
+            };
+            img.onerror = () => {
+                reject(new Error(`Failed to load image ${key}`));
+            };
+            img.src = src;
+        });
+    }
+
+    private async createSolidColorTexture(key: string, color: string): Promise<void> {
+        if (this.tileCache.images.has(key)) {
+            return;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 8;
+        canvas.height = 8;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            throw new Error(`Failed to create synthetic texture ${key}`);
+        }
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        await this.loadImage(canvas.toDataURL('image/png'), key);
+    }
+
+    private async registerUnderwaterSyntheticTextures(): Promise<void> {
+        await this.createSolidColorTexture(UNDERWATER_LAND_TEXTURE_KEY, UNDERWATER_FALLBACK_COLOR);
+
+        const beachBase = this.tileCache.images.get('Beach_base');
+        if (beachBase?.complete && beachBase.naturalHeight !== 0) {
+            this.tileCache.images.set(UNDERWATER_HOT_SPRING_TEXTURE_KEY, beachBase);
+            return;
+        }
+
+        await this.createSolidColorTexture(
+            UNDERWATER_HOT_SPRING_TEXTURE_KEY,
+            UNDERWATER_HOT_SPRING_FALLBACK_COLOR
+        );
+    }
+    
+    public updateTileCache(worldTiles: Map<string, WorldTile>) {
+        if (this.lastWorldTilesRef === worldTiles) return;
+        this.lastWorldTilesRef = worldTiles;
+
+        this.currentTileCacheEpoch += 1;
+        const epoch = this.currentTileCacheEpoch;
+        let hasChanges = false;
+
+        worldTiles.forEach((tile) => {
+            const tileKey = `${tile.worldX}_${tile.worldY}`;
+            this.tileSeenEpoch.set(tileKey, epoch);
+
+            const nextSignature = this.getTileCacheSignature(tile);
+            if (this.tileSignatureCache.get(tileKey) === nextSignature) {
+                return;
+            }
+
+            this.tileCache.tiles.set(tileKey, tile);
+            this.tileSignatureCache.set(tileKey, nextSignature);
+            this.invalidateTransitionsAroundTile(tile.worldX, tile.worldY);
+            hasChanges = true;
+        });
+
+        for (const tileKey of this.tileSignatureCache.keys()) {
+            if (this.tileSeenEpoch.get(tileKey) === epoch) {
+                continue;
+            }
+
+            const removedTile = this.tileCache.tiles.get(tileKey);
+            this.tileCache.tiles.delete(tileKey);
+            this.tileSignatureCache.delete(tileKey);
+            this.tileSeenEpoch.delete(tileKey);
+
+            if (removedTile) {
+                this.invalidateTransitionsAroundTile(removedTile.worldX, removedTile.worldY);
+            } else {
+                const separatorIndex = tileKey.indexOf('_');
+                const tileX = Number(tileKey.slice(0, separatorIndex));
+                const tileY = Number(tileKey.slice(separatorIndex + 1));
+                if (Number.isFinite(tileX) && Number.isFinite(tileY)) {
+                    this.invalidateTransitionsAroundTile(tileX, tileY);
+                }
+            }
+
+            hasChanges = true;
+        }
+
+        if (hasChanges) {
+            this.tileCache.lastUpdate = Date.now();
+        }
+    }
+
+    private getTileCacheSignature(tile: WorldTile): string {
+        return `${tile.tileType?.tag ?? ''}|${tile.variant ?? 0}`;
+    }
+
+    private invalidateTransitionsAroundTile(tileX: number, tileY: number): void {
+        // A logical tile participates in the four dual-grid cells touching its corners.
+        this.transitionInfoCache.delete(`${tileX - 1}_${tileY - 1}`);
+        this.transitionInfoCache.delete(`${tileX}_${tileY - 1}`);
+        this.transitionInfoCache.delete(`${tileX - 1}_${tileY}`);
+        this.transitionInfoCache.delete(`${tileX}_${tileY}`);
+    }
+
+    private getTransitionInfo(logicalX: number, logicalY: number): DualGridTileInfo[] {
+        const cacheKey = `${logicalX}_${logicalY}`;
+        const cached = this.transitionInfoCache.get(cacheKey);
+        if (cached) {
+            return cached;
+        }
+
+        const transitions = getDualGridTileInfoMultiLayer(logicalX, logicalY, this.tileCache.tiles);
+        this.transitionInfoCache.set(cacheKey, transitions);
+        return transitions;
+    }
+    
+    public renderProceduralWorld(
+        ctx: CanvasRenderingContext2D,
+        cameraOffsetX: number,
+        cameraOffsetY: number,
+        canvasWidth: number,
+        canvasHeight: number,
+        deltaTime: number,
+        showDebugOverlay: boolean = false,
+        isSnorkeling: boolean = false,
+        profilingEnabled: boolean = false
+    ): ProceduralWorldProfilerTimings {
+        const timings = createEmptyProceduralWorldTimings();
+        if (!this.isInitialized) {
+            // Fallback color - use underwater dark blue if snorkeling
+            ctx.fillStyle = isSnorkeling ? '#0a3d4f' : '#8FBC8F';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            return timings;
+        }
+        
+        // Enable pixel-perfect rendering for crisp autotiles
+        ctx.imageSmoothingEnabled = false;
+        const smoothingCtx = ctx as VendorImageSmoothingContext;
+        if ('webkitImageSmoothingEnabled' in smoothingCtx) {
+            smoothingCtx.webkitImageSmoothingEnabled = false;
+        }
+        if ('mozImageSmoothingEnabled' in smoothingCtx) {
+            smoothingCtx.mozImageSmoothingEnabled = false;
+        }
+        if ('msImageSmoothingEnabled' in smoothingCtx) {
+            smoothingCtx.msImageSmoothingEnabled = false;
+        }
+        
+        this.animationTime += deltaTime;
+        
+        const { tileSize } = gameConfig;
+        
+        // Calculate visible tile range
+        const viewMinX = -cameraOffsetX;
+        const viewMinY = -cameraOffsetY;
+        const viewMaxX = viewMinX + canvasWidth;
+        const viewMaxY = viewMinY + canvasHeight;
+        
+        const startTileX = Math.max(0, Math.floor(viewMinX / tileSize));
+        const endTileX = Math.min(gameConfig.worldWidth, Math.ceil(viewMaxX / tileSize));
+        const startTileY = Math.max(0, Math.floor(viewMinY / tileSize));
+        const endTileY = Math.min(gameConfig.worldHeight, Math.ceil(viewMaxY / tileSize));
+
+        // PASS 1: Render base textures at exact tile positions
+        const baseStart = markProfiler(profilingEnabled);
+        for (let y = startTileY; y < endTileY; y++) {
+            for (let x = startTileX; x < endTileX; x++) {
+                this.renderBaseTile(ctx, x, y, tileSize, showDebugOverlay, isSnorkeling);
+            }
+        }
+        const baseEnd = markProfiler(profilingEnabled);
+        timings.baseTiles = elapsedProfiler(baseStart, baseEnd);
+        
+        // PASS 2: Render Dual Grid transitions at half-tile offset positions
+        // Start one tile earlier to catch transitions that overlap visible area
+        const dualStartX = Math.max(0, startTileX - 1);
+        const dualStartY = Math.max(0, startTileY - 1);
+        const dualEndX = Math.min(gameConfig.worldWidth - 1, endTileX);
+        const dualEndY = Math.min(gameConfig.worldHeight - 1, endTileY);
+        
+        const transitionsStart = markProfiler(profilingEnabled);
+        if (isSnorkeling) {
+            // Underwater mode uses the same procedural dual-grid masks as the surface,
+            // but swaps land/water textures to underwater-specific variants.
+            for (let y = dualStartY; y < dualEndY; y++) {
+                for (let x = dualStartX; x < dualEndX; x++) {
+                    this.renderSnorkelingTransition(ctx, x, y, tileSize, showDebugOverlay);
+                }
+            }
+        } else {
+            // Normal mode: render all transitions
+            for (let y = dualStartY; y < dualEndY; y++) {
+                for (let x = dualStartX; x < dualEndX; x++) {
+                    this.renderDualGridTransition(ctx, x, y, tileSize, showDebugOverlay);
+                }
+            }
+        }
+        const transitionsEnd = markProfiler(profilingEnabled);
+        timings.transitions = elapsedProfiler(transitionsStart, transitionsEnd);
+        
+        // PASS 3: Render tile doodads (decorative objects on tile centers)
+        // Doodads are deterministically placed based on tile position and type
+        const doodadsStart = markProfiler(profilingEnabled);
+        const doodadTimings = tileDoodadRenderer.renderDoodads(
+            ctx,
+            this.tileCache.tiles,
+            startTileX,
+            endTileX,
+            startTileY,
+            endTileY,
+            isSnorkeling,
+            (logicalX, logicalY) => this.getTransitionInfo(logicalX, logicalY),
+            profilingEnabled,
+            this.tileCache.lastUpdate
+        );
+        const doodadsEnd = markProfiler(profilingEnabled);
+        timings.doodads = elapsedProfiler(doodadsStart, doodadsEnd);
+        timings.doodadsTransitionChecks = doodadTimings.transitionChecks;
+        timings.doodadsSpawnEvaluation = doodadTimings.spawnEvaluation;
+        timings.doodadsBlurredDraws = doodadTimings.blurredDraws;
+        timings.doodadsOpaqueDraws = doodadTimings.opaqueDraws;
+
+        return timings;
+    }
+
+    /**
+     * Animated shoreline overlay: Grass_HotSpringWater only (Beach_Sea / Beach_HotSpringWater disabled pending rework).
+     * Call this AFTER the water overlay so the edge reads on top of the water tint.
+     */
+    public renderShorelineOverlayPass(
+        ctx: CanvasRenderingContext2D,
+        cameraOffsetX: number,
+        cameraOffsetY: number,
+        canvasWidth: number,
+        canvasHeight: number,
+        isSnorkeling: boolean = false
+    ): void {
+        if (isSnorkeling) return;
+
+        const { tileSize } = gameConfig;
+        const currentTimeMs = performance.now();
+        const viewMinX = -cameraOffsetX;
+        const viewMinY = -cameraOffsetY;
+        const dualStartX = Math.max(0, Math.floor(viewMinX / tileSize) - 1);
+        const dualStartY = Math.max(0, Math.floor(viewMinY / tileSize) - 1);
+        const dualEndX = Math.min(gameConfig.worldWidth - 1, Math.ceil((viewMinX + canvasWidth) / tileSize));
+        const dualEndY = Math.min(gameConfig.worldHeight - 1, Math.ceil((viewMinY + canvasHeight) / tileSize));
+
+        for (let y = dualStartY; y <= dualEndY; y++) {
+            for (let x = dualStartX; x <= dualEndX; x++) {
+                this.renderShorelineForCell(ctx, x, y, tileSize, currentTimeMs);
+            }
+        }
+    }
+
+    private renderShorelineForCell(
+        ctx: CanvasRenderingContext2D,
+        logicalX: number,
+        logicalY: number,
+        tileSize: number,
+        currentTimeMs: number
+    ): void {
+        const transitions = this.getTransitionInfo(logicalX, logicalY);
+        if (transitions.length === 0) return;
+
+        const pixelX = Math.floor((logicalX + 0.5) * tileSize);
+        const pixelY = Math.floor((logicalY + 0.5) * tileSize);
+        const pixelSize = Math.floor(tileSize) + 1;
+        // Anchor the overdrawn dual-grid quad to the logical tile boundary so its
+        // extra coverage expands east/south like the base tile pass, not north/west.
+        const destX = Math.floor(logicalX * tileSize);
+        const destY = Math.floor(logicalY * tileSize);
+        const halfSize = Math.floor(pixelSize / 2);
+        const remainderSize = pixelSize - halfSize;
+
+        for (const tileInfo of transitions) {
+            const isGrassHotSpring =
+                (tileInfo.primaryTerrain === 'Grass' && tileInfo.secondaryTerrain === 'HotSpringWater') ||
+                (tileInfo.primaryTerrain === 'HotSpringWater' && tileInfo.secondaryTerrain === 'Grass');
+
+            if (!isGrassHotSpring || !isGrassHotSpringShorelineMaskReady()) continue;
+
+            ctx.save();
+
+            // Match renderDualGridTransition: flip first, then corner clip (renderShorelineOverlay must not flip again)
+            if (tileInfo.flipHorizontal || tileInfo.flipVertical) {
+                const centerX = destX + pixelSize / 2;
+                const centerY = destY + pixelSize / 2;
+                ctx.translate(centerX, centerY);
+                if (tileInfo.flipHorizontal) ctx.scale(-1, 1);
+                if (tileInfo.flipVertical) ctx.scale(1, -1);
+                ctx.translate(-centerX, -centerY);
+            }
+
+            if (tileInfo.clipCorners && tileInfo.clipCorners.length > 0) {
+                ctx.beginPath();
+                for (const corner of tileInfo.clipCorners) {
+                    switch (corner) {
+                        case 'TL': ctx.rect(destX, destY, halfSize, halfSize); break;
+                        case 'TR': ctx.rect(destX + halfSize, destY, remainderSize, halfSize); break;
+                        case 'BL': ctx.rect(destX, destY + halfSize, halfSize, remainderSize); break;
+                        case 'BR': ctx.rect(destX + halfSize, destY + halfSize, remainderSize, remainderSize); break;
+                    }
+                }
+                ctx.clip();
+            }
+
+            renderShorelineOverlay(
+                ctx,
+                tileInfo.spriteCoords,
+                destX,
+                destY,
+                pixelSize,
+                false,
+                false,
+                currentTimeMs
+            );
+
+            ctx.restore();
+        }
+    }
+    
+    /**
+     * Render the base texture for a tile at its exact position.
+     * This is the first pass - just the solid terrain texture.
+     * 
+     * When isSnorkeling is true, renders in "underwater view" mode:
+     * - Sea / DeepSea: surface base textures (open water)
+     * - HotSpringWater: sandy underwater floor texture
+     * - Land: dark synthetic underwater texture
+     */
+    private renderBaseTile(
+        ctx: CanvasRenderingContext2D, 
+        tileX: number, 
+        tileY: number, 
+        tileSize: number,
+        showDebugOverlay: boolean = false,
+        isSnorkeling: boolean = false
+    ) {
+        const tileKey = `${tileX}_${tileY}`;
+        const tile = this.tileCache.tiles.get(tileKey);
+        
+        // Calculate pixel-perfect positions
+        const pixelX = Math.floor(tileX * tileSize);
+        const pixelY = Math.floor(tileY * tileSize);
+        const pixelSize = Math.floor(tileSize) + 1; // Add 1 pixel to eliminate gaps
+        
+        if (!tile) {
+            // Fallback when no tile data - edge zone likely deep sea (chunks may not be loaded yet)
+            const isEdgeZone = tileX < DEEP_SEA_EDGE_TILES || tileX >= gameConfig.worldWidthTiles - DEEP_SEA_EDGE_TILES ||
+                tileY < DEEP_SEA_EDGE_TILES || tileY >= gameConfig.worldHeightTiles - DEEP_SEA_EDGE_TILES;
+            if (!isSnorkeling && isEdgeZone) {
+                const deepSeaImg = this.tileCache.images.get('DeepSea_base');
+                if (deepSeaImg && deepSeaImg.complete && deepSeaImg.naturalHeight !== 0) {
+                    ctx.drawImage(deepSeaImg, pixelX, pixelY, pixelSize, pixelSize);
+                } else {
+                    ctx.fillStyle = '#0a1628';
+                    ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+                }
+                return;
+            }
+            if (isSnorkeling) {
+                const underwaterImg = this.tileCache.images.get(UNDERWATER_LAND_TEXTURE_KEY);
+                if (underwaterImg && underwaterImg.complete && underwaterImg.naturalHeight !== 0) {
+                    ctx.drawImage(underwaterImg, pixelX, pixelY, pixelSize, pixelSize);
+                } else {
+                    ctx.fillStyle = UNDERWATER_FALLBACK_COLOR;
+                    ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+                }
+            } else {
+                // No chunk/tile data here yet; leave transparent so the already-drawn
+                // cyberpunk grid background remains visible instead of default grass.
+                return;
+            }
+            return;
+        }
+        
+        const tileTypeName = tile.tileType?.tag;
+        if (!tileTypeName) {
+            if (isSnorkeling) {
+                const underwaterImg = this.tileCache.images.get(UNDERWATER_LAND_TEXTURE_KEY);
+                if (underwaterImg && underwaterImg.complete && underwaterImg.naturalHeight !== 0) {
+                    ctx.drawImage(underwaterImg, pixelX, pixelY, pixelSize, pixelSize);
+                } else {
+                    ctx.fillStyle = UNDERWATER_FALLBACK_COLOR;
+                    ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+                }
+            } else {
+                ctx.fillStyle = '#808080';
+                ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+            }
+            return;
+        }
+        
+        // === UNDERWATER SNORKELING MODE ===
+        const isWaterTile = isWaterTileTag(tileTypeName);
+        
+        if (isSnorkeling && !isWaterTile) {
+            const underwaterImg = this.tileCache.images.get(UNDERWATER_LAND_TEXTURE_KEY);
+            if (underwaterImg && underwaterImg.complete && underwaterImg.naturalHeight !== 0) {
+                ctx.drawImage(underwaterImg, pixelX, pixelY, pixelSize, pixelSize);
+            } else {
+                ctx.fillStyle = UNDERWATER_FALLBACK_COLOR;
+                ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+            }
+            return;
+        }
+
+        // Hot spring pools read better underwater as a sandy floor than open-water blue.
+        if (isSnorkeling && tileTypeName === 'HotSpringWater') {
+            const underwaterImg = this.tileCache.images.get(UNDERWATER_HOT_SPRING_TEXTURE_KEY);
+            if (underwaterImg && underwaterImg.complete && underwaterImg.naturalHeight !== 0) {
+                ctx.drawImage(underwaterImg, pixelX, pixelY, pixelSize, pixelSize);
+            } else {
+                ctx.fillStyle = UNDERWATER_HOT_SPRING_FALLBACK_COLOR;
+                ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+            }
+            return;
+        }
+        
+        // === NORMAL RENDERING ===
+        // Render base texture
+        // Map Tilled tiles to use Dirt base texture (Tilled uses Dirt graphics)
+        const baseTextureKey = tileTypeName === 'Tilled' ? 'Dirt' : tileTypeName;
+        const image = this.tileCache.images.get(`${baseTextureKey}_base`);
+        
+        if (image && image.complete && image.naturalHeight !== 0) {
+            ctx.drawImage(image, pixelX, pixelY, pixelSize, pixelSize);
+        } else {
+            // Fallback to solid color
+            this.renderFallbackTile(ctx, tile, pixelX, pixelY, pixelSize);
+        }
+        
+        // Debug overlay for base tiles
+        if (showDebugOverlay && tileTypeName) {
+            const tileTypeAbbr = this.getTileTypeAbbreviation(tileTypeName);
+            const textX = pixelX + pixelSize / 2;
+            const textY = pixelY + pixelSize / 2;
+            
+            ctx.font = 'bold 18px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // White outline for visibility
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.strokeText(tileTypeAbbr, textX, textY);
+            
+            // Black fill
+            ctx.fillStyle = 'black';
+            ctx.fillText(tileTypeAbbr, textX, textY);
+        }
+    }
+
+    private getSnorkelingTextureKey(terrain: string): string {
+        switch (terrain) {
+            case 'Sea':
+                return 'Sea_base';
+            case 'DeepSea':
+                return 'DeepSea_base';
+            case 'HotSpringWater':
+                return UNDERWATER_HOT_SPRING_TEXTURE_KEY;
+            default:
+                return UNDERWATER_LAND_TEXTURE_KEY;
+        }
+    }
+
+    private renderSnorkelingTransition(
+        ctx: CanvasRenderingContext2D,
+        logicalX: number,
+        logicalY: number,
+        tileSize: number,
+        showDebugOverlay: boolean = false
+    ): void {
+        const transitions = this.getTransitionInfo(logicalX, logicalY);
+        if (transitions.length === 0) return;
+
+        const pixelX = Math.floor((logicalX + 0.5) * tileSize);
+        const pixelY = Math.floor((logicalY + 0.5) * tileSize);
+        const pixelSize = Math.floor(tileSize) + 1;
+        const destX = Math.floor(logicalX * tileSize);
+        const destY = Math.floor(logicalY * tileSize);
+        const halfSize = Math.floor(pixelSize / 2);
+        const remainderSize = pixelSize - halfSize;
+        let renderedAny = false;
+
+        for (const tileInfo of transitions) {
+            const proceduralConfig = getProceduralBlendConfig(tileInfo);
+            if (!proceduralConfig) {
+                continue;
+            }
+
+            const textureKeyA = this.getSnorkelingTextureKey(proceduralConfig.terrainA);
+            const textureKeyB = this.getSnorkelingTextureKey(proceduralConfig.terrainB);
+            if (textureKeyA === textureKeyB) {
+                continue;
+            }
+
+            const imageA = this.tileCache.images.get(textureKeyA);
+            const imageB = this.tileCache.images.get(textureKeyB);
+            const cornerWeightsB = getProceduralBlendCornerWeights(tileInfo, proceduralConfig);
+            const webglCtx = initProceduralDualGridBlendWebGL();
+
+            if (
+                !imageA ||
+                !imageB ||
+                !imageA.complete ||
+                !imageB.complete ||
+                imageA.naturalHeight === 0 ||
+                imageB.naturalHeight === 0 ||
+                !cornerWeightsB
+            ) {
+                continue;
+            }
+
+            const proceduralCanvas =
+                (webglCtx
+                    ? renderProceduralDualGridLayer(webglCtx, {
+                        imageA,
+                        imageB,
+                        cornerWeightsB,
+                        worldOriginX: destX,
+                        worldOriginY: destY,
+                        pixelSize,
+                        tileSize,
+                    })
+                    : null) ??
+                renderProceduralDualGridLayerFallback({
+                    imageA,
+                    imageB,
+                    cornerWeightsB,
+                    worldOriginX: destX,
+                    worldOriginY: destY,
+                    pixelSize,
+                    tileSize,
+                });
+
+            if (!proceduralCanvas) {
+                continue;
+            }
+
+            const { clipCorners, flipHorizontal, flipVertical } = tileInfo;
+            const needsTransform = flipHorizontal || flipVertical;
+
+            ctx.save();
+
+            if (needsTransform) {
+                const centerX = destX + pixelSize / 2;
+                const centerY = destY + pixelSize / 2;
+                ctx.translate(centerX, centerY);
+                if (flipHorizontal) {
+                    ctx.scale(-1, 1);
+                }
+                if (flipVertical) {
+                    ctx.scale(1, -1);
+                }
+                ctx.translate(-centerX, -centerY);
+            }
+
+            if (clipCorners && clipCorners.length > 0) {
+                ctx.beginPath();
+                for (const corner of clipCorners) {
+                    switch (corner) {
+                        case 'TL':
+                            ctx.rect(destX, destY, halfSize, halfSize);
+                            break;
+                        case 'TR':
+                            ctx.rect(destX + halfSize, destY, remainderSize, halfSize);
+                            break;
+                        case 'BL':
+                            ctx.rect(destX, destY + halfSize, halfSize, remainderSize);
+                            break;
+                        case 'BR':
+                            ctx.rect(destX + halfSize, destY + halfSize, remainderSize, remainderSize);
+                            break;
+                    }
+                }
+                ctx.clip();
+            }
+
+            ctx.drawImage(
+                proceduralCanvas,
+                0,
+                0,
+                proceduralCanvas.width,
+                proceduralCanvas.height,
+                destX,
+                destY,
+                pixelSize,
+                pixelSize
+            );
+
+            ctx.restore();
+            renderedAny = true;
+        }
+
+        if (showDebugOverlay && renderedAny) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(60, 200, 255, 0.85)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(destX, destY, pixelSize, pixelSize);
+            ctx.font = 'bold 14px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#aee8ff';
+            ctx.fillText('UW', pixelX, pixelY);
+            ctx.restore();
+        }
+    }
+    
+    /**
+     * Render Dual Grid transition tile at half-tile offset position.
+     * This is the second pass - smooth transitions between terrain types.
+     * 
+     * In Dual Grid, the rendered tile at (x, y) straddles 4 logical tiles:
+     * - TL: (x, y)
+     * - TR: (x+1, y)
+     * - BL: (x, y+1)
+     * - BR: (x+1, y+1)
+     * 
+     * The rendered tile is drawn at pixel position (x + 0.5, y + 0.5) * tileSize
+     */
+    private renderDualGridTransition(
+        ctx: CanvasRenderingContext2D,
+        logicalX: number,
+        logicalY: number,
+        tileSize: number,
+        showDebugOverlay: boolean = false
+    ) {
+        // Get ALL Dual Grid transition layers (handles 3+ terrain junctions)
+        const transitions = this.getTransitionInfo(logicalX, logicalY);
+        
+        // If no transitions needed (all corners same terrain), skip
+        if (transitions.length === 0) {
+            return;
+        }
+        
+        // Calculate pixel position with half-tile offset
+        // The Dual Grid tile renders centered between 4 logical tiles
+        const pixelX = Math.floor((logicalX + 0.5) * tileSize);
+        const pixelY = Math.floor((logicalY + 0.5) * tileSize);
+        const pixelSize = Math.floor(tileSize) + 1;
+        // Anchor the overdrawn dual-grid quad to the logical tile boundary so its
+        // extra coverage expands east/south like the base tile pass, not north/west.
+        const destX = Math.floor(logicalX * tileSize);
+        const destY = Math.floor(logicalY * tileSize);
+        const halfSize = Math.floor(pixelSize / 2);
+        const remainderSize = pixelSize - halfSize;
+        
+        // Render each transition layer from bottom to top
+        for (const tileInfo of transitions) {
+            const proceduralConfig = getProceduralBlendConfig(tileInfo);
+            if (proceduralConfig) {
+                const imageA = this.tileCache.images.get(proceduralConfig.textureKeyA);
+                const imageB = this.tileCache.images.get(proceduralConfig.textureKeyB);
+                const cornerWeightsB = getProceduralBlendCornerWeights(tileInfo, proceduralConfig);
+                const webglCtx = initProceduralDualGridBlendWebGL();
+
+                if (
+                    imageA &&
+                    imageB &&
+                    imageA.complete &&
+                    imageB.complete &&
+                    imageA.naturalHeight !== 0 &&
+                    imageB.naturalHeight !== 0 &&
+                    cornerWeightsB
+                ) {
+                    const proceduralCanvas =
+                        (webglCtx
+                            ? renderProceduralDualGridLayer(webglCtx, {
+                                imageA,
+                                imageB,
+                                cornerWeightsB,
+                                worldOriginX: destX,
+                                worldOriginY: destY,
+                                pixelSize,
+                                tileSize,
+                            })
+                            : null) ??
+                        renderProceduralDualGridLayerFallback({
+                            imageA,
+                            imageB,
+                            cornerWeightsB,
+                            worldOriginX: destX,
+                            worldOriginY: destY,
+                            pixelSize,
+                            tileSize,
+                        });
+
+                    if (proceduralCanvas) {
+                        const { clipCorners, flipHorizontal, flipVertical } = tileInfo;
+                        const needsTransform = flipHorizontal || flipVertical;
+
+                        ctx.save();
+
+                        if (needsTransform) {
+                            const centerX = destX + pixelSize / 2;
+                            const centerY = destY + pixelSize / 2;
+
+                            ctx.translate(centerX, centerY);
+                            if (flipHorizontal) {
+                                ctx.scale(-1, 1);
+                            }
+                            if (flipVertical) {
+                                ctx.scale(1, -1);
+                            }
+                            ctx.translate(-centerX, -centerY);
+                        }
+
+                        if (clipCorners && clipCorners.length > 0) {
+                            ctx.beginPath();
+                            for (const corner of clipCorners) {
+                                switch (corner) {
+                                    case 'TL':
+                                        ctx.rect(destX, destY, halfSize, halfSize);
+                                        break;
+                                    case 'TR':
+                                        ctx.rect(destX + halfSize, destY, remainderSize, halfSize);
+                                        break;
+                                    case 'BL':
+                                        ctx.rect(destX, destY + halfSize, halfSize, remainderSize);
+                                        break;
+                                    case 'BR':
+                                        ctx.rect(destX + halfSize, destY + halfSize, remainderSize, remainderSize);
+                                        break;
+                                }
+                            }
+                            ctx.clip();
+                        }
+
+                        ctx.drawImage(
+                            proceduralCanvas,
+                            0,
+                            0,
+                            proceduralCanvas.width,
+                            proceduralCanvas.height,
+                            destX,
+                            destY,
+                            pixelSize,
+                            pixelSize
+                        );
+
+                        ctx.restore();
+                        continue;
+                    }
+                }
+
+                continue;
+            }
+
+            // Get the tileset image for this transition
+            const transitionKey = `${tileInfo.primaryTerrain}_${tileInfo.secondaryTerrain}`;
+            let tilesetImg = this.tileCache.images.get(`transition_${transitionKey}`);
+            
+            // Try reversed key if not found
+            if (!tilesetImg || !tilesetImg.complete) {
+                const reversedKey = `${tileInfo.secondaryTerrain}_${tileInfo.primaryTerrain}`;
+                tilesetImg = this.tileCache.images.get(`transition_${reversedKey}`);
+            }
+            
+            // If tileset not found, skip this layer
+            if (!tilesetImg || !tilesetImg.complete || tilesetImg.naturalHeight === 0) {
+                continue;
+            }
+            
+            // Get sprite coordinates from Dual Grid lookup
+            const { spriteCoords, clipCorners, flipHorizontal, flipVertical } = tileInfo;
+            
+            // Apply transformations if flipping is needed
+            const needsTransform = flipHorizontal || flipVertical;
+            
+            ctx.save();
+            
+            if (needsTransform) {
+                // Move to center of destination, apply flip, then move back
+                const centerX = destX + pixelSize / 2;
+                const centerY = destY + pixelSize / 2;
+                
+                ctx.translate(centerX, centerY);
+                if (flipHorizontal) {
+                    ctx.scale(-1, 1);
+                }
+                if (flipVertical) {
+                    ctx.scale(1, -1);
+                }
+                ctx.translate(-centerX, -centerY);
+            }
+            
+            if (clipCorners && clipCorners.length > 0) {
+                // Corner clipping mode: only render specified corners
+                // This is used for 3+ terrain junctions where upper layers
+                // should only show where their higherTerrain actually exists
+                
+                // Create clipping path for specified corners
+                ctx.beginPath();
+                for (const corner of clipCorners) {
+                    switch (corner) {
+                        case 'TL':
+                            ctx.rect(destX, destY, halfSize, halfSize);
+                            break;
+                        case 'TR':
+                            ctx.rect(destX + halfSize, destY, remainderSize, halfSize);
+                            break;
+                        case 'BL':
+                            ctx.rect(destX, destY + halfSize, halfSize, remainderSize);
+                            break;
+                        case 'BR':
+                            ctx.rect(destX + halfSize, destY + halfSize, remainderSize, remainderSize);
+                            break;
+                    }
+                }
+                ctx.clip();
+            }
+            
+            // Draw the tile (clipping will mask it if clipCorners is set)
+            ctx.drawImage(
+                tilesetImg,
+                Math.floor(spriteCoords.x), Math.floor(spriteCoords.y),
+                Math.floor(spriteCoords.width), Math.floor(spriteCoords.height),
+                destX, destY,
+                Math.floor(pixelSize), Math.floor(pixelSize)
+            );
+
+            ctx.restore();
+        }
+        
+        // Debug overlay - show info for the TOP layer only
+        if (showDebugOverlay && transitions.length > 0) {
+            const topLayer = transitions[transitions.length - 1];
+            
+            ctx.save();
+            
+            // Draw tile boundary rectangle
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(pixelX - pixelSize/2, pixelY - pixelSize/2, pixelSize, pixelSize);
+            
+            // Draw dual grid index - large, bold, black with white outline
+            ctx.font = 'bold 24px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // White outline for visibility
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.strokeText(`${topLayer.dualGridIndex}`, pixelX, pixelY);
+            
+            // Black fill
+            ctx.fillStyle = 'black';
+            ctx.fillText(`${topLayer.dualGridIndex}`, pixelX, pixelY);
+            
+            // Show layer count if multi-layer (L suffix with count)
+            if (transitions.length > 1) {
+                ctx.font = 'bold 12px monospace';
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.strokeText(`L${transitions.length}`, pixelX + 20, pixelY - 15);
+                ctx.fillStyle = 'cyan';
+                ctx.fillText(`L${transitions.length}`, pixelX + 20, pixelY - 15);
+            }
+            
+            // Also show if reversed (R suffix)
+            if (topLayer.isReversedTileset) {
+                ctx.font = 'bold 12px monospace';
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                const rX = transitions.length > 1 ? pixelX - 20 : pixelX + 20;
+                ctx.strokeText('R', rX, pixelY - 15);
+                ctx.fillStyle = 'red';
+                ctx.fillText('R', rX, pixelY - 15);
+            }
+            
+            ctx.restore();
+        }
+    }
+    
+    /**
+     * Render underwater→sea transitions when snorkeling.
+     * This shows a feathered edge between the dark underwater area (land from below) and the sea.
+     * Uses the Underwater_Sea autotile tileset.
+     */
+    private renderUnderwaterTransition(
+        ctx: CanvasRenderingContext2D,
+        logicalX: number,
+        logicalY: number,
+        tileSize: number,
+        showDebugOverlay: boolean = false
+    ) {
+        // Get the 4 tiles that form this dual grid position
+        const tileKeys = [
+            `${logicalX}_${logicalY}`,     // TL
+            `${logicalX + 1}_${logicalY}`, // TR
+            `${logicalX}_${logicalY + 1}`, // BL
+            `${logicalX + 1}_${logicalY + 1}` // BR
+        ];
+        
+        const tiles = tileKeys.map(key => this.tileCache.tiles.get(key));
+        const tileTypes = tiles.map(tile => tile?.tileType?.tag || 'unknown');
+        
+        // Check which corners are water (Sea or HotSpringWater)
+        const isWater = tileTypes.map(type => isWaterTileTag(type));
+        
+        // Count water and land corners
+        const waterCount = isWater.filter(Boolean).length;
+        
+        // Only render transition if we have a mix of water and non-water (land viewed from underwater)
+        // All water (4) or all land (0) = no transition needed
+        if (waterCount === 0 || waterCount === 4) {
+            return;
+        }
+        
+        // Get the underwater autotile - this shows transition between underwater darkness and sea
+        const tilesetImg = this.tileCache.images.get('transition_Underwater_Sea');
+        if (!tilesetImg || !tilesetImg.complete || tilesetImg.naturalHeight === 0) {
+            return;
+        }
+        
+        // Calculate the Dual Grid index based on which corners are water
+        // Dual Grid bit ordering: TL(8) + TR(4) + BL(2) + BR(1)
+        // Convention: 1 = secondary terrain (sea), 0 = primary terrain (land/underwater darkness)
+        // So we set bits when the corner IS water (sea)
+        let dualGridIndex = 0;
+        if (isWater[0]) dualGridIndex |= 8; // TL is sea (secondary)
+        if (isWater[1]) dualGridIndex |= 4; // TR is sea
+        if (isWater[2]) dualGridIndex |= 2; // BL is sea
+        if (isWater[3]) dualGridIndex |= 1; // BR is sea
+        
+        // Skip if no actual transition (all same - shouldn't happen due to earlier check)
+        if (dualGridIndex === 0 || dualGridIndex === 15) {
+            return;
+        }
+        
+        // U6 and U9 need to be flipped horizontally (mirrored on vertical axis)
+        // The tileset has diagonal sprites in the wrong orientation
+        // U6 (0110) and U9 (1001) are geometric opposites - horizontal mirrors
+        // See docs/architecture/DUAL_GRID_AUTOTILE_SYSTEM.md for full explanation
+        const needsFlip = dualGridIndex === 6 || dualGridIndex === 9;
+        
+        // Use the standard DUAL_GRID_LOOKUP table for correct sprite positioning
+        // This table maps the 4-bit index to row/col in the 4x5 tileset
+        const lookup = DUAL_GRID_LOOKUP[dualGridIndex];
+        const TILE_SIZE_SRC = 128; // Source tileset tile size
+        
+        const spriteX = lookup.col * TILE_SIZE_SRC;
+        const spriteY = lookup.row * TILE_SIZE_SRC;
+        
+        // Calculate pixel position with half-tile offset (between the 4 logical tiles)
+        const pixelX = Math.floor((logicalX + 0.5) * tileSize);
+        const pixelY = Math.floor((logicalY + 0.5) * tileSize);
+        const pixelSize = Math.floor(tileSize) + 1;
+        
+        const destX = Math.floor(logicalX * tileSize);
+        const destY = Math.floor(logicalY * tileSize);
+        
+        if (needsFlip) {
+            // Flip U6/U9 horizontally (mirror on vertical axis)
+            ctx.save();
+            ctx.scale(-1, 1);
+            ctx.drawImage(
+                tilesetImg,
+                spriteX, spriteY, TILE_SIZE_SRC, TILE_SIZE_SRC,
+                -(destX + pixelSize), destY, pixelSize, pixelSize
+            );
+            ctx.restore();
+        } else {
+            ctx.drawImage(
+                tilesetImg,
+                spriteX, spriteY, TILE_SIZE_SRC, TILE_SIZE_SRC,
+                destX, destY, pixelSize, pixelSize
+            );
+        }
+        
+        // Debug overlay
+        if (showDebugOverlay) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(destX, destY, pixelSize, pixelSize);
+            
+            ctx.font = 'bold 16px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = needsFlip ? 'yellow' : 'cyan';
+            ctx.fillText(`U${dualGridIndex}${needsFlip ? 'F' : ''}`, pixelX, pixelY);
+            ctx.restore();
+        }
+    }
+
+    /**
+     * Render Sea↔DeepSea dual-grid transitions while snorkeling.
+     * In underwater mode we still need this boundary so deep-sea dropoff remains visible.
+     */
+    private renderSeaDeepSeaTransitionUnderwater(
+        ctx: CanvasRenderingContext2D,
+        logicalX: number,
+        logicalY: number,
+        tileSize: number,
+        showDebugOverlay: boolean = false
+    ) {
+        const transitions = this.getTransitionInfo(logicalX, logicalY);
+        if (transitions.length === 0) return;
+
+        const seaDeepSeaTransitions = transitions.filter((tileInfo) => {
+            const a = tileInfo.primaryTerrain;
+            const b = tileInfo.secondaryTerrain;
+            return (a === 'Sea' && b === 'DeepSea') || (a === 'DeepSea' && b === 'Sea');
+        });
+
+        if (seaDeepSeaTransitions.length === 0) return;
+
+        const pixelX = Math.floor((logicalX + 0.5) * tileSize);
+        const pixelY = Math.floor((logicalY + 0.5) * tileSize);
+        const pixelSize = Math.floor(tileSize) + 1;
+        const destX = Math.floor(logicalX * tileSize);
+        const destY = Math.floor(logicalY * tileSize);
+        const halfSize = Math.floor(pixelSize / 2);
+
+        for (const tileInfo of seaDeepSeaTransitions) {
+            const transitionKey = `${tileInfo.primaryTerrain}_${tileInfo.secondaryTerrain}`;
+            let tilesetImg = this.tileCache.images.get(`transition_${transitionKey}`);
+
+            if (!tilesetImg || !tilesetImg.complete) {
+                const reversedKey = `${tileInfo.secondaryTerrain}_${tileInfo.primaryTerrain}`;
+                tilesetImg = this.tileCache.images.get(`transition_${reversedKey}`);
+            }
+
+            if (!tilesetImg || !tilesetImg.complete || tilesetImg.naturalHeight === 0) {
+                continue;
+            }
+
+            const { spriteCoords, clipCorners, flipHorizontal, flipVertical } = tileInfo;
+            const needsTransform = flipHorizontal || flipVertical;
+
+            ctx.save();
+
+            if (needsTransform) {
+                const centerX = destX + pixelSize / 2;
+                const centerY = destY + pixelSize / 2;
+                ctx.translate(centerX, centerY);
+                if (flipHorizontal) ctx.scale(-1, 1);
+                if (flipVertical) ctx.scale(1, -1);
+                ctx.translate(-centerX, -centerY);
+            }
+
+            if (clipCorners && clipCorners.length > 0) {
+                ctx.beginPath();
+                for (const corner of clipCorners) {
+                    switch (corner) {
+                        case 'TL': ctx.rect(destX, destY, halfSize, halfSize); break;
+                        case 'TR': ctx.rect(destX + halfSize, destY, halfSize, halfSize); break;
+                        case 'BL': ctx.rect(destX, destY + halfSize, halfSize, halfSize); break;
+                        case 'BR': ctx.rect(destX + halfSize, destY + halfSize, halfSize, halfSize); break;
+                    }
+                }
+                ctx.clip();
+            }
+
+            ctx.drawImage(
+                tilesetImg,
+                Math.floor(spriteCoords.x), Math.floor(spriteCoords.y),
+                Math.floor(spriteCoords.width), Math.floor(spriteCoords.height),
+                destX, destY,
+                Math.floor(pixelSize), Math.floor(pixelSize)
+            );
+
+            ctx.restore();
+        }
+
+        if (showDebugOverlay) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(60, 200, 255, 0.85)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(destX, destY, pixelSize, pixelSize);
+            ctx.font = 'bold 14px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#aee8ff';
+            ctx.fillText('SDS', pixelX, pixelY);
+            ctx.restore();
+        }
+    }
+    
+    private getTileTypeAbbreviation(tileType: string): string {
+        const abbreviations: { [key: string]: string } = {
+            'DirtRoad': 'DR',
+            'Dirt': 'D',
+            'Grass': 'G',
+            'Sea': 'S',
+            'Beach': 'B',
+            'Sand': 'Sa',
+            'HotSpringWater': 'HS',
+            'Quarry': 'Q',
+            'Asphalt': 'AS',
+            'Forest': 'F',
+            'Tundra': 'TU',
+            'Alpine': 'AL',
+            'TundraGrass': 'TG'
+        };
+        return abbreviations[tileType] || tileType.substring(0, 2).toUpperCase();
+    }
+    
+    private renderFallbackTile(
+        ctx: CanvasRenderingContext2D, 
+        tile: WorldTile, 
+        x: number, 
+        y: number, 
+        size: number
+    ) {
+        const tileTypeName = tile.tileType.tag;
+        
+        // Fallback colors based on tile type
+        switch (tileTypeName) {
+            case 'Grass':
+                ctx.fillStyle = '#8FBC8F';
+                break;
+            case 'Dirt':
+            case 'Tilled': // Tilled uses same graphics as Dirt
+                ctx.fillStyle = '#8B7355';
+                break;
+            case 'DirtRoad':
+                ctx.fillStyle = '#6B4E3D';
+                break;
+            case 'Sea':
+                ctx.fillStyle = '#1E90FF';
+                break;
+            case 'DeepSea':
+                ctx.fillStyle = '#0a1628'; // Dark deep ocean
+                break;
+            case 'Beach':
+                ctx.fillStyle = '#F5DEB3';
+                break;
+            case 'Sand':
+                ctx.fillStyle = '#F4A460';
+                break;
+            case 'HotSpringWater':
+                ctx.fillStyle = '#64D4FF';
+                break;
+            case 'Quarry':
+                ctx.fillStyle = '#7A6B5C';
+                break;
+            case 'Asphalt':
+                ctx.fillStyle = '#3C3C3C';
+                break;
+            case 'Forest':
+                ctx.fillStyle = '#2E5E2E';
+                break;
+            case 'Tundra':
+                ctx.fillStyle = '#8B9B7A';
+                break;
+            case 'Alpine':
+                ctx.fillStyle = '#9B9B9B';
+                break;
+            case 'TundraGrass':
+                ctx.fillStyle = '#7A8B6A';
+                break;
+            default:
+                ctx.fillStyle = '#808080';
+        }
+        
+        ctx.fillRect(x, y, size, size);
+    }
+    
+    public getCacheStats() {
+        return {
+            tileCount: this.tileCache.tiles.size,
+            imageCount: this.tileCache.images.size,
+            lastUpdate: this.tileCache.lastUpdate,
+            initialized: this.isInitialized
+        };
+    }
+}

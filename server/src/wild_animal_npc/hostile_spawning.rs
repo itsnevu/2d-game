@@ -1,0 +1,1998 @@
+/******************************************************************************
+ *                                                                            *
+ * Hostile NPC Spawning System                                               *
+ *                                                                            *
+ * Handles spawning of hostile NPCs (Shorebound, Shardkin, DrownedWatch)     *
+ * at night and despawning them at dawn.                                     *
+ *                                                                            *
+ * Key features:                                                              *
+ * - Spawn only during night (Dusk, Night) by default                        *
+ * - MEMORY BEACON EXCEPTION: Spawns 24/7 within beacon attraction zone!     *
+ * - Spawn in rings around players (outside viewport)                        *
+ * - Despawn all hostiles at dawn over 10-15 seconds                        *
+ * - Hostiles near Memory Beacons are NOT despawned at dawn                 *
+ * - Respect runestone deterrence radius                                     *
+ * - Never spawn inside player structures                                    *
+ *                                                                            *
+ ******************************************************************************/
+
+use spacetimedb::{table, reducer, ReducerContext, Timestamp, Table, ScheduleAt, TimeDuration};
+use std::f32::consts::PI;
+use log;
+use rand::{Rng, SeedableRng};
+
+use crate::{Player, WORLD_WIDTH_PX, WORLD_HEIGHT_PX, TILE_SIZE_PX};
+use crate::utils::get_distance_squared;
+use crate::environment::calculate_chunk_index;
+use crate::world_state::{TimeOfDay, world_state as WorldStateTableTrait};
+use crate::rune_stone::{rune_stone as RuneStoneTableTrait, RUNE_STONE_DETERRENCE_RADIUS};
+use crate::building::{
+    foundation_cell as FoundationCellTableTrait,
+    FOUNDATION_TILE_SIZE_PX,
+};
+use crate::building_enclosure::is_position_inside_building;
+use crate::animal_collision::validate_animal_spawn_position;
+
+use super::core::{
+    WildAnimal, AnimalSpecies, AnimalState, MovementPattern, AnimalBehavior,
+    wild_animal as WildAnimalTableTrait,
+};
+
+// Table trait imports
+use crate::player as PlayerTableTrait;
+use crate::active_connection as ActiveConnectionTableTrait;
+use crate::items::{inventory_item as InventoryItemTableTrait, item_definition as ItemDefinitionTableTrait, ItemCategory};
+use crate::models::ItemLocation;
+
+// Settlement intensity table imports
+use crate::planted_seeds::planted_seed as PlantedSeedTableTrait;
+use crate::harvestable_resource::harvestable_resource as HarvestableResourceTableTrait;
+use crate::campfire::campfire as CampfireTableTrait;
+use crate::furnace::furnace as FurnaceTableTrait;
+use crate::barbecue::barbecue as BarbecueTableTrait;
+use crate::wooden_storage_box::wooden_storage_box as WoodenStorageBoxTableTrait;
+use crate::shelter::shelter as ShelterTableTrait;
+use crate::lantern::lantern as LanternTableTrait;
+
+// Ward protection imports (used for deterrence zone checks during spawning)
+// Note: Spawn rate reduction has been removed - wards now create deterrence zones
+// where apparitions simply won't spawn or approach. This is handled in core.rs NPC AI.
+//
+// IMPORTANT: Memory Beacon is NOT a protective ward! It ATTRACTS hostiles instead of repelling.
+// Memory Beacon constants are imported for the spawn attraction system.
+use crate::lantern::{
+    LANTERN_TYPE_LANTERN,
+    LANTERN_TYPE_ANCESTRAL_WARD,
+    LANTERN_TYPE_SIGNAL_DISRUPTOR,
+    LANTERN_TYPE_MEMORY_BEACON,
+    ANCESTRAL_WARD_RADIUS_SQ,
+    SIGNAL_DISRUPTOR_RADIUS_SQ,
+    // Memory Beacon uses different constants - it ATTRACTS instead of repelling
+    MEMORY_BEACON_SANITY_RADIUS_SQ,
+    MEMORY_BEACON_ATTRACTION_RADIUS_SQ,
+    MEMORY_BEACON_SPAWN_MULTIPLIER,
+};
+
+// --- Constants ---
+
+const TILE_SIZE: f32 = TILE_SIZE_PX as f32;
+
+// Spawn distance bands (in tiles, converted to pixels)
+// TUNED: Reduced distances so enemies actually reach the player during night
+// A laptop viewport is ~1920x1080 = 40x22 tiles, half = 20x11 tiles from center
+const RING_A_MAX_TILES: f32 = 12.0;  // No-spawn zone: 0-12 tiles (keeps immediate area clear)
+const RING_B_MIN_TILES: f32 = 13.0;  // Primary spawn: 13-22 tiles (just outside viewport)
+const RING_B_MAX_TILES: f32 = 22.0;
+const RING_C_MIN_TILES: f32 = 23.0;  // Distant pressure: 23-35 tiles
+const RING_C_MAX_TILES: f32 = 35.0;
+
+const RING_A_MAX_PX: f32 = RING_A_MAX_TILES * TILE_SIZE;
+const RING_B_MIN_PX: f32 = RING_B_MIN_TILES * TILE_SIZE;
+const RING_B_MAX_PX: f32 = RING_B_MAX_TILES * TILE_SIZE;
+const RING_C_MIN_PX: f32 = RING_C_MIN_TILES * TILE_SIZE;
+const RING_C_MAX_PX: f32 = RING_C_MAX_TILES * TILE_SIZE;
+
+// Population caps (per player area)
+// TUNED: Reduced for solo play - unless you have a gun or friends, you shouldn't see 3+ at a time
+const MAX_TOTAL_HOSTILES_NEAR_PLAYER: usize = 10;   // Cap for grouped play
+const MAX_SHOREBOUND_NEAR_PLAYER: usize = 3;        // Maximum 3 stalkers
+const MAX_SHARDKIN_NEAR_PLAYER: usize = 6;          // Swarms
+const MAX_DROWNED_WATCH_NEAR_PLAYER: usize = 2;     // Up to 2 brutes
+
+// Solo player caps - significantly reduced when playing alone (no friends nearby)
+const SOLO_MAX_TOTAL_HOSTILES: usize = 5;            // ~1-2 visible at a time for solo
+const SOLO_MAX_SHOREBOUND: usize = 2;                // Max 2 stalkers when solo
+const SOLO_MAX_SHARDKIN: usize = 3;                 // Max 3 swarmers when solo
+const SOLO_MAX_DROWNED_WATCH: usize = 1;            // Max 1 brute when solo
+const SOLO_SPAWN_MULTIPLIER: f32 = 0.55;            // 45% fewer spawn attempts when solo
+
+// Spawn timing - Faster spawning for more constant pressure
+const SPAWN_ATTEMPT_INTERVAL_MS: u64 = 6_000; // Every 6 seconds
+
+// Shardkin group spawn sizes - Slightly larger groups
+const SHARDKIN_GROUP_MIN: u32 = 2;
+const SHARDKIN_GROUP_MAX: u32 = 5;  // Medium swarms
+
+// Dawn cleanup
+const DAWN_CLEANUP_CHECK_INTERVAL_MS: u64 = 2000; // Check every 2 seconds during dawn cleanup
+const DAWN_CLEANUP_DURATION_MS: u64 = 12000; // Clean up over 12 seconds
+
+// Runestone deterrence radius squared (matches light radius, not economic zone)
+const RUNESTONE_DETERRENCE_RADIUS_SQ: f32 = RUNE_STONE_DETERRENCE_RADIUS * RUNE_STONE_DETERRENCE_RADIUS;
+
+// Camping detection constants
+const CAMPING_STATIONARY_TIME_MS: i64 = 60_000; // 60 seconds stationary = camping
+const CAMPING_MOVEMENT_THRESHOLD_PX: f32 = 500.0; // Must move 500px (~10 tiles) to reset camping timer
+                                                   // This allows movement within a medium-sized base (4-5 foundations)
+
+// Settlement intensity constants
+// The more valuable structures near a player, the more apparitions are attracted
+const SETTLEMENT_CHECK_RADIUS_PX: f32 = 1500.0; // ~31 tiles - check within this radius
+const SETTLEMENT_CHECK_RADIUS_SQ: f32 = SETTLEMENT_CHECK_RADIUS_PX * SETTLEMENT_CHECK_RADIUS_PX;
+
+// Settlement intensity thresholds and multipliers
+// Solo player with nothing: 0.6x spawn rate (easier start)
+// Small camp (few structures): 1.0x (baseline)
+// Medium settlement: 1.3x
+// Large settlement with multiple players: 1.6x+
+const BASE_SETTLEMENT_MULTIPLIER: f32 = 0.6; // Start low for new/solo players
+const MAX_SETTLEMENT_MULTIPLIER: f32 = 2.0;  // Cap at 2x to prevent overwhelming spawns
+
+// Value weights for different structure types (apparitions are drawn to civilization)
+const VALUE_PLANTED_CROP: f32 = 3.0;      // Growing crops are valuable targets
+const VALUE_MATURE_CROP: f32 = 2.0;       // Harvestable player-planted resources
+const VALUE_STORAGE: f32 = 5.0;           // Storage boxes attract attention
+const VALUE_FURNACE: f32 = 4.0;           // Industrial structures
+const VALUE_COOKING: f32 = 3.0;           // Campfires, barbecues
+const VALUE_SHELTER: f32 = 4.0;           // Player shelters
+const VALUE_FOUNDATION: f32 = 1.0;        // Building foundations (capped)
+const VALUE_PER_NEARBY_PLAYER: f32 = 15.0; // Each additional player adds significant value
+const MAX_FOUNDATION_VALUE: f32 = 10.0;   // Cap foundation contribution to avoid wall spam
+
+// Settlement value thresholds
+const SETTLEMENT_VALUE_FOR_BASELINE: f32 = 20.0;  // This much value = 1.0x multiplier
+const SETTLEMENT_VALUE_FOR_MAX: f32 = 100.0;      // This much value = max multiplier
+
+// ============================================================================
+// COMBAT READINESS SYSTEM - Scales spawn rates based on weapon power
+// ============================================================================
+// Tracks player weapon power to adjust hostile spawn rates appropriately.
+// New players with basic weapons (Combat Ladle) get reduced spawn rates,
+// while players with high-tier weapons face increased challenge.
+//
+// Anti-gaming mechanisms:
+// - Peak power memory persists even if weapons are dropped
+// - Slow decay rate (hours) prevents instant reset
+// - Comprehensive scanning of inventory/hotbar/equipped items
+// ============================================================================
+
+// Combat readiness constants
+const COMBAT_READINESS_DECAY_HALF_LIFE_HOURS: f32 = 2.0; // Peak power halves every 2 hours
+const PEAK_RETENTION_FACTOR: f32 = 0.7;  // Dropped items still count at 70% of peak
+const MIN_COMBAT_MULTIPLIER: f32 = 0.1;  // Brand new players get 90% fewer spawns (very easy start)
+const MAX_COMBAT_MULTIPLIER: f32 = 1.2;  // Geared players get 20% more spawns
+const BASELINE_COMBAT_SCORE: f32 = 35.0; // Score for 1.0x multiplier
+const WEAPON_SCAN_INTERVAL_SECS: i64 = 60; // Only rescan weapons every 60 seconds (performance)
+
+// New player protection threshold - if peak weapon power has NEVER exceeded this,
+// no apparitions spawn around the player at all (protects true newbies)
+// Combat Ladle (10 damage) = 5.0 power, Torch (5 damage) = 2.5 power
+// Set to 6.0 to include Combat Ladle with a small buffer
+const NEW_PLAYER_WEAPON_POWER_THRESHOLD: f32 = 6.0;
+
+// Weapon power tiers (based on pvp_damage_max)
+// Tier 0: 0-10 damage → Power: 0-5 (Combat Ladle, Rock, Torch)
+// Tier 1: 11-25 damage → Power: 10-25 (Stone tools, Bone weapons)
+// Tier 2: 26-40 damage → Power: 30-50 (Spears, Bush Knife, Skulls)
+// Tier 3: 41-60 damage → Power: 55-75 (Battle Axe, War Hammer, Military weapons)
+// Tier 4: Ranged weapons → Power: 60-100 (based on damage + magazine capacity)
+
+// ============================================================================
+// NIGHT PHASE SYSTEM - Creates tension arc through the night
+// ============================================================================
+// With 30-min cycle (20 day + 10 night), night phases create dramatic tension:
+// - Early Night (Dusk/TwilightEvening 0.72-0.82): ~3.3 min - Tension builds, scouts appear
+// - Peak Night (Night 0.82-0.92): ~3.3 min - Maximum pressure, swarms and stalkers
+// - Desperate Hour (Midnight/TwilightMorning 0.92-1.0): ~2.6 min - Final push, brutes emerge
+// ============================================================================
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum NightPhase {
+    EarlyNight,    // 0.72-0.82: Tension building, scouts probe defenses
+    PeakNight,     // 0.82-0.92: Maximum pressure, swarms attack
+    DesperateHour, // 0.92-1.0: Final push before dawn, brutes emerge
+    NotNight,      // Daytime - no spawning
+}
+
+impl NightPhase {
+    pub fn from_progress(progress: f32) -> Self {
+        // Night cycle: Dusk (0.72) -> TwilightEvening (0.76) -> Night (0.80) -> Midnight (0.92) -> TwilightMorning (0.97) -> Dawn (0.0)
+        // Dawn (0.0-0.05) is MORNING - no spawning!
+        // TwilightMorning (0.97-1.0) is the final night phase before dawn
+        match progress {
+            p if p >= 0.72 && p < 0.82 => NightPhase::EarlyNight,   // Dusk + TwilightEvening + early Night
+            p if p >= 0.82 && p < 0.92 => NightPhase::PeakNight,    // Night
+            p if p >= 0.92 => NightPhase::DesperateHour,            // Midnight + TwilightMorning (0.92-1.0)
+            // IMPORTANT: p < 0.72 (including 0.0-0.05 Dawn) is NotNight - NO spawning!
+            _ => NightPhase::NotNight,
+        }
+    }
+    
+    /// Get spawn rate multipliers for this phase - BALANCED spawning
+    /// Returns (shorebound_mult, shardkin_mult, drowned_watch_mult)
+    pub fn get_spawn_multipliers(&self) -> (f32, f32, f32) {
+        match self {
+            // Early Night: Build up tension - scouts appear
+            NightPhase::EarlyNight => (0.7, 0.6, 0.0),      // Good pressure, no brutes yet
+            // Peak Night: Full pressure
+            NightPhase::PeakNight => (1.0, 1.0, 0.6),       // Full spawn rate, brutes emerge
+            // Desperate Hour: Maximum intensity before dawn
+            NightPhase::DesperateHour => (1.0, 1.0, 1.0),   // Everything at full
+            NightPhase::NotNight => (0.0, 0.0, 0.0),
+        }
+    }
+    
+    pub fn name(&self) -> &'static str {
+        match self {
+            NightPhase::EarlyNight => "Early Night",
+            NightPhase::PeakNight => "Peak Night", 
+            NightPhase::DesperateHour => "Desperate Hour",
+            NightPhase::NotNight => "Daytime",
+        }
+    }
+}
+
+// ============================================================================
+// SETTLEMENT INTENSITY SYSTEM - More civilization = more apparition attention
+// ============================================================================
+// Apparitions are drawn to signs of life and civilization. A lone survivor
+// with a campfire faces less pressure than a thriving settlement with farms,
+// storage, and multiple residents. This creates a risk/reward dynamic:
+// - Frontier living: Safer but less productive
+// - Settlement building: More rewarding but attracts more danger
+//
+// PERFORMANCE: Uses chunk-based queries to avoid O(n) full table scans.
+// Only queries chunks within SETTLEMENT_CHECK_RADIUS of the player.
+// ============================================================================
+
+use crate::environment::{CHUNK_SIZE_PX, WORLD_WIDTH_CHUNKS, WORLD_HEIGHT_CHUNKS};
+
+/// Get all chunk indices within the settlement check radius of a position
+/// Returns a Vec of chunk indices to query (typically 9-25 chunks)
+fn get_nearby_chunk_indices(player_x: f32, player_y: f32) -> Vec<u32> {
+    // Calculate how many chunks the radius spans
+    let chunks_radius = (SETTLEMENT_CHECK_RADIUS_PX / CHUNK_SIZE_PX).ceil() as i32;
+    
+    // Get player's chunk coordinates
+    let player_chunk_x = (player_x / CHUNK_SIZE_PX) as i32;
+    let player_chunk_y = (player_y / CHUNK_SIZE_PX) as i32;
+    
+    let mut chunks = Vec::with_capacity(((chunks_radius * 2 + 1) * (chunks_radius * 2 + 1)) as usize);
+    
+    for dy in -chunks_radius..=chunks_radius {
+        for dx in -chunks_radius..=chunks_radius {
+            let chunk_x = player_chunk_x + dx;
+            let chunk_y = player_chunk_y + dy;
+            
+            // Bounds check
+            if chunk_x >= 0 && chunk_x < WORLD_WIDTH_CHUNKS as i32 &&
+               chunk_y >= 0 && chunk_y < WORLD_HEIGHT_CHUNKS as i32 {
+                let chunk_idx = (chunk_y as u32) * WORLD_WIDTH_CHUNKS + (chunk_x as u32);
+                chunks.push(chunk_idx);
+            }
+        }
+    }
+    
+    chunks
+}
+
+/// Calculate settlement intensity multiplier based on nearby valuable structures
+/// Returns a multiplier from BASE_SETTLEMENT_MULTIPLIER to MAX_SETTLEMENT_MULTIPLIER
+/// 
+/// PERFORMANCE: O(chunks * items_per_chunk) instead of O(all_items)
+/// Uses chunk_index btree queries and early exit optimization.
+fn calculate_settlement_intensity(
+    ctx: &ReducerContext,
+    player_x: f32,
+    player_y: f32,
+    nearby_player_count: usize,
+) -> f32 {
+    let mut total_value: f32 = 0.0;
+    
+    // Pre-calculate nearby chunks once
+    let nearby_chunks = get_nearby_chunk_indices(player_x, player_y);
+    
+    // Macro to check distance and add value (reduces code duplication)
+    macro_rules! check_distance_add_value {
+        ($pos_x:expr, $pos_y:expr, $value:expr) => {{
+            let dx = $pos_x - player_x;
+            let dy = $pos_y - player_y;
+            if dx * dx + dy * dy <= SETTLEMENT_CHECK_RADIUS_SQ {
+                total_value += $value;
+                // Early exit if we've hit max value
+                if total_value >= SETTLEMENT_VALUE_FOR_MAX {
+                    return calculate_final_multiplier(total_value, nearby_player_count);
+                }
+            }
+        }};
+    }
+    
+    // Count planted seeds (growing crops) - uses chunk_index
+    for chunk_idx in &nearby_chunks {
+        for seed in ctx.db.planted_seed().chunk_index().filter(chunk_idx) {
+            check_distance_add_value!(seed.pos_x, seed.pos_y, VALUE_PLANTED_CROP);
+        }
+    }
+    
+    // Count player-planted harvestable resources (mature crops) - uses chunk_index
+    for chunk_idx in &nearby_chunks {
+        for resource in ctx.db.harvestable_resource().chunk_index().filter(chunk_idx) {
+            if resource.is_player_planted && resource.respawn_at == spacetimedb::Timestamp::UNIX_EPOCH {
+                check_distance_add_value!(resource.pos_x, resource.pos_y, VALUE_MATURE_CROP);
+            }
+        }
+    }
+    
+    // Count campfires - uses chunk_index
+    for chunk_idx in &nearby_chunks {
+        for campfire in ctx.db.campfire().chunk_index().filter(chunk_idx) {
+            if !campfire.is_destroyed {
+                check_distance_add_value!(campfire.pos_x, campfire.pos_y, VALUE_COOKING);
+            }
+        }
+    }
+    
+    // Count storage boxes - uses chunk_index
+    for chunk_idx in &nearby_chunks {
+        for storage in ctx.db.wooden_storage_box().chunk_index().filter(chunk_idx) {
+            if !storage.is_destroyed {
+                check_distance_add_value!(storage.pos_x, storage.pos_y, VALUE_STORAGE);
+            }
+        }
+    }
+    
+    // Count shelters - full table scan (typically very few shelters, no btree index)
+    for shelter in ctx.db.shelter().iter() {
+        if !shelter.is_destroyed {
+            check_distance_add_value!(shelter.pos_x, shelter.pos_y, VALUE_SHELTER);
+        }
+    }
+    
+    // Count foundations (capped) - uses idx_chunk btree index
+    let mut foundation_value: f32 = 0.0;
+    'foundation_loop: for chunk_idx in &nearby_chunks {
+        for foundation in ctx.db.foundation_cell().idx_chunk().filter(chunk_idx) {
+            if !foundation.is_destroyed {
+                let foundation_x = (foundation.cell_x as f32 * FOUNDATION_TILE_SIZE_PX as f32) + (FOUNDATION_TILE_SIZE_PX as f32 / 2.0);
+                let foundation_y = (foundation.cell_y as f32 * FOUNDATION_TILE_SIZE_PX as f32) + (FOUNDATION_TILE_SIZE_PX as f32 / 2.0);
+                let dx = foundation_x - player_x;
+                let dy = foundation_y - player_y;
+                if dx * dx + dy * dy <= SETTLEMENT_CHECK_RADIUS_SQ {
+                    foundation_value += VALUE_FOUNDATION;
+                    if foundation_value >= MAX_FOUNDATION_VALUE {
+                        break 'foundation_loop; // Cap foundation contribution
+                    }
+                }
+            }
+        }
+    }
+    total_value += foundation_value.min(MAX_FOUNDATION_VALUE);
+    
+    // Skip smaller tables (furnace, barbecue, lantern) if already near max
+    // These are typically few in number and don't justify the query overhead
+    if total_value < SETTLEMENT_VALUE_FOR_MAX * 0.8 {
+        // Count furnaces - typically few per settlement
+        for chunk_idx in &nearby_chunks {
+            for furnace in ctx.db.furnace().chunk_index().filter(chunk_idx) {
+                if !furnace.is_destroyed {
+                    check_distance_add_value!(furnace.pos_x, furnace.pos_y, VALUE_FURNACE);
+                }
+            }
+        }
+        
+        // Count barbecues - full table scan (typically very few, no btree index)
+        for bbq in ctx.db.barbecue().iter() {
+            if !bbq.is_destroyed {
+                check_distance_add_value!(bbq.pos_x, bbq.pos_y, VALUE_COOKING);
+            }
+        }
+        
+        // Count lanterns - full table scan (typically few per settlement, no btree index)
+        for lantern in ctx.db.lantern().iter() {
+            if !lantern.is_destroyed {
+                check_distance_add_value!(lantern.pos_x, lantern.pos_y, VALUE_COOKING);
+            }
+        }
+    }
+    
+    calculate_final_multiplier(total_value, nearby_player_count)
+}
+
+/// Calculate the final multiplier from total settlement value
+#[inline]
+fn calculate_final_multiplier(mut total_value: f32, nearby_player_count: usize) -> f32 {
+    // Add value for each additional nearby player (more people = bigger target)
+    if nearby_player_count > 1 {
+        total_value += (nearby_player_count - 1) as f32 * VALUE_PER_NEARBY_PLAYER;
+    }
+    
+    // Calculate multiplier based on settlement value
+    // 0 value = BASE_SETTLEMENT_MULTIPLIER (0.6x)
+    // SETTLEMENT_VALUE_FOR_BASELINE (20) = 1.0x
+    // SETTLEMENT_VALUE_FOR_MAX (100) = MAX_SETTLEMENT_MULTIPLIER (2.0x)
+    let multiplier = if total_value <= 0.0 {
+        BASE_SETTLEMENT_MULTIPLIER
+    } else if total_value < SETTLEMENT_VALUE_FOR_BASELINE {
+        let progress = total_value / SETTLEMENT_VALUE_FOR_BASELINE;
+        BASE_SETTLEMENT_MULTIPLIER + progress * (1.0 - BASE_SETTLEMENT_MULTIPLIER)
+    } else if total_value < SETTLEMENT_VALUE_FOR_MAX {
+        let progress = (total_value - SETTLEMENT_VALUE_FOR_BASELINE) / (SETTLEMENT_VALUE_FOR_MAX - SETTLEMENT_VALUE_FOR_BASELINE);
+        1.0 + progress * (MAX_SETTLEMENT_MULTIPLIER - 1.0)
+    } else {
+        MAX_SETTLEMENT_MULTIPLIER
+    };
+    
+    log::debug!("🏘️ [Settlement] Value: {:.1}, Multiplier: {:.2}x (players: {})", 
+               total_value, multiplier, nearby_player_count);
+    
+    multiplier
+}
+
+/// Check if a position is inside any active PROTECTIVE ward's deterrence zone.
+/// Only Ancestral Ward and Signal Disruptor provide protection.
+/// Memory Beacon does NOT protect - it ATTRACTS hostiles instead!
+/// Returns true if position is protected (don't spawn here).
+pub fn is_position_in_active_ward_zone(ctx: &ReducerContext, x: f32, y: f32) -> bool {
+    for lantern in ctx.db.lantern().iter() {
+        // Skip if not active or destroyed
+        if !lantern.is_burning || lantern.is_destroyed {
+            continue;
+        }
+        
+        // Skip regular lanterns (no protection zone)
+        if lantern.lantern_type == LANTERN_TYPE_LANTERN {
+            continue;
+        }
+        
+        // IMPORTANT: Memory Beacon does NOT provide protection!
+        // It ATTRACTS hostiles instead of repelling them.
+        if lantern.lantern_type == LANTERN_TYPE_MEMORY_BEACON {
+            continue;
+        }
+        
+        let dx = x - lantern.pos_x;
+        let dy = y - lantern.pos_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        // Check if position is within the ward's deterrence radius
+        // Only Ancestral Ward and Signal Disruptor provide protection
+        let radius_sq = match lantern.lantern_type {
+            LANTERN_TYPE_ANCESTRAL_WARD => ANCESTRAL_WARD_RADIUS_SQ,
+            LANTERN_TYPE_SIGNAL_DISRUPTOR => SIGNAL_DISRUPTOR_RADIUS_SQ,
+            _ => continue,
+        };
+        
+        if dist_sq <= radius_sq {
+            log::debug!("🛡️ [Ward] Position ({:.0}, {:.0}) is inside ward type {} deterrence zone", 
+                       x, y, lantern.lantern_type);
+            return true;
+        }
+    }
+    
+    false
+}
+
+/// Check if a position is inside an active Memory Beacon's SANITY zone.
+/// Memory Beacons clear and prevent insanity accumulation in a small radius.
+/// This allows players to farm shards without going crazy.
+/// Note: The sanity zone (600px) is SMALLER than the attraction zone (2000px).
+/// Returns true if position is inside an active Memory Beacon's sanity zone.
+pub fn is_position_in_memory_beacon_zone(ctx: &ReducerContext, x: f32, y: f32) -> bool {
+    for lantern in ctx.db.lantern().iter() {
+        // Only check Memory Beacons (type 3)
+        if lantern.lantern_type != LANTERN_TYPE_MEMORY_BEACON {
+            continue;
+        }
+        
+        // Skip if not active or destroyed
+        if !lantern.is_burning || lantern.is_destroyed {
+            continue;
+        }
+
+        let dx = x - lantern.pos_x;
+        let dy = y - lantern.pos_y;
+        let dist_sq = dx * dx + dy * dy;
+
+        // Use the smaller SANITY radius, not the attraction radius
+        if dist_sq <= MEMORY_BEACON_SANITY_RADIUS_SQ {
+            return true;
+        }
+    }
+
+    false
+}
+
+/// Get the nearest active PROTECTIVE ward that a position is inside of, if any.
+/// Only Ancestral Ward and Signal Disruptor provide protection.
+/// Memory Beacon does NOT provide protection - it ATTRACTS hostiles!
+/// Returns (ward_x, ward_y, radius_sq) or None if not in any protective ward zone.
+pub fn get_active_ward_at_position(ctx: &ReducerContext, x: f32, y: f32) -> Option<(f32, f32, f32)> {
+    for lantern in ctx.db.lantern().iter() {
+        if !lantern.is_burning || lantern.is_destroyed {
+            continue;
+        }
+        
+        // Skip regular lanterns
+        if lantern.lantern_type == LANTERN_TYPE_LANTERN {
+            continue;
+        }
+        
+        // IMPORTANT: Memory Beacon does NOT provide protection!
+        // It ATTRACTS hostiles instead of repelling them.
+        if lantern.lantern_type == LANTERN_TYPE_MEMORY_BEACON {
+            continue;
+        }
+        
+        let dx = x - lantern.pos_x;
+        let dy = y - lantern.pos_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        // Only protective wards (Ancestral Ward, Signal Disruptor)
+        let radius_sq = match lantern.lantern_type {
+            LANTERN_TYPE_ANCESTRAL_WARD => ANCESTRAL_WARD_RADIUS_SQ,
+            LANTERN_TYPE_SIGNAL_DISRUPTOR => SIGNAL_DISRUPTOR_RADIUS_SQ,
+            _ => continue,
+        };
+        
+        if dist_sq <= radius_sq {
+            return Some((lantern.pos_x, lantern.pos_y, radius_sq));
+        }
+    }
+    
+    None
+}
+
+// ============================================================================
+// MEMORY BEACON ATTRACTION SYSTEM - Monster Farming Tool
+// ============================================================================
+// Memory Beacons are the opposite of protective wards - they ATTRACT hostiles!
+// This creates a high-risk/high-reward farming opportunity for experienced players.
+//
+// Mechanics:
+// - Active Memory Beacon creates a large attraction zone (2000px radius)
+// - Spawn rates within this zone are multiplied by 2.5x
+// - ***DAYTIME SPAWNING***: Hostiles spawn 24/7 near beacons, not just at night!
+// - Players can farm shards from killing attracted hostiles day AND night
+// - The smaller sanity zone (600px) prevents insanity while farming
+// - Hostiles near beacons are NOT despawned at dawn (they persist!)
+// - Beacons auto-destruct after 90 minutes (server event duration)
+// ============================================================================
+
+/// Check if a position is within ANY active Memory Beacon's attraction zone.
+/// Memory Beacons allow daytime spawning within their radius!
+/// Returns true if within a beacon zone (allows daytime spawning).
+pub fn is_position_in_memory_beacon_attraction_zone(ctx: &ReducerContext, x: f32, y: f32) -> bool {
+    for lantern in ctx.db.lantern().iter() {
+        // Only check Memory Beacons (type 3)
+        if lantern.lantern_type != LANTERN_TYPE_MEMORY_BEACON {
+            continue;
+        }
+        
+        // Skip if not active or destroyed
+        if !lantern.is_burning || lantern.is_destroyed {
+            continue;
+        }
+
+        let dx = x - lantern.pos_x;
+        let dy = y - lantern.pos_y;
+        let dist_sq = dx * dx + dy * dy;
+
+        if dist_sq <= MEMORY_BEACON_ATTRACTION_RADIUS_SQ {
+            return true;
+        }
+    }
+    
+    false
+}
+
+/// Calculate spawn rate multiplier from nearby active Memory Beacons.
+/// Memory Beacons ATTRACT hostiles instead of repelling them.
+/// Returns multiplier >= 1.0 (1.0 means no beacon nearby, >1.0 means spawn boost)
+pub fn get_memory_beacon_attraction_multiplier(ctx: &ReducerContext, player_x: f32, player_y: f32) -> f32 {
+    let mut max_multiplier: f32 = 1.0;
+    
+    for lantern in ctx.db.lantern().iter() {
+        // Only check Memory Beacons (type 3)
+        if lantern.lantern_type != LANTERN_TYPE_MEMORY_BEACON {
+            continue;
+        }
+        
+        // Skip if not active or destroyed
+        if !lantern.is_burning || lantern.is_destroyed {
+            continue;
+        }
+
+        let dx = player_x - lantern.pos_x;
+        let dy = player_y - lantern.pos_y;
+        let dist_sq = dx * dx + dy * dy;
+
+        // Check if player is within the ATTRACTION radius (larger than sanity radius)
+        if dist_sq <= MEMORY_BEACON_ATTRACTION_RADIUS_SQ {
+            // Use the full multiplier if within range
+            // Multiple beacons don't stack - use the highest multiplier
+            max_multiplier = max_multiplier.max(MEMORY_BEACON_SPAWN_MULTIPLIER);
+            
+            log::debug!("🔮 [MemoryBeacon] Player at ({:.0}, {:.0}) is within beacon attraction zone - spawn rate: {:.1}x", 
+                       player_x, player_y, MEMORY_BEACON_SPAWN_MULTIPLIER);
+        }
+    }
+    
+    max_multiplier
+}
+
+/// Count players within the settlement check radius
+fn count_nearby_players(ctx: &ReducerContext, player_x: f32, player_y: f32, exclude_identity: &spacetimedb::Identity) -> usize {
+    ctx.db.player().iter()
+        .filter(|p| {
+            if p.is_dead || !p.is_online || &p.identity == exclude_identity {
+                return false;
+            }
+            // Check if they have an active connection
+            if ctx.db.active_connection().identity().find(&p.identity).is_none() {
+                return false;
+            }
+            let dx = p.position_x - player_x;
+            let dy = p.position_y - player_y;
+            dx * dx + dy * dy <= SETTLEMENT_CHECK_RADIUS_SQ
+        })
+        .count()
+}
+
+// ============================================================================
+// COMBAT READINESS CALCULATION FUNCTIONS
+// ============================================================================
+
+/// Calculate weapon power score from pvp_damage_max
+/// Returns a power score (0.0-100.0) based on weapon tier
+fn calculate_weapon_power(item_def: &crate::items::ItemDefinition) -> f32 {
+    let damage_max = item_def.pvp_damage_max.unwrap_or(0);
+    
+    // Tier 0: 0-10 damage → Power: 0-5 (Combat Ladle, Rock, Torch)
+    if damage_max <= 10 {
+        return (damage_max as f32 / 10.0) * 5.0;
+    }
+    
+    // Tier 1: 11-25 damage → Power: 10-25 (Stone tools, Bone weapons)
+    if damage_max <= 25 {
+        return 10.0 + ((damage_max - 11) as f32 / 14.0) * 15.0;
+    }
+    
+    // Tier 2: 26-40 damage → Power: 30-50 (Spears, Bush Knife, Skulls)
+    if damage_max <= 40 {
+        return 30.0 + ((damage_max - 26) as f32 / 14.0) * 20.0;
+    }
+    
+    // Tier 3: 41-60 damage → Power: 55-75 (Battle Axe, War Hammer, Military weapons)
+    if damage_max <= 60 {
+        return 55.0 + ((damage_max - 41) as f32 / 19.0) * 20.0;
+    }
+    
+    // Tier 4+: 61+ damage → Power: 75-100 (Highest tier weapons)
+    return 75.0 + ((damage_max - 61).min(39) as f32 / 39.0) * 25.0;
+}
+
+/// Calculate weapon power for ranged weapons (considers damage + magazine capacity)
+/// Ranged weapons get bonus power based on their effectiveness
+fn calculate_ranged_weapon_power(item_def: &crate::items::ItemDefinition) -> f32 {
+    let damage_max = item_def.pvp_damage_max.unwrap_or(0);
+    
+    // Base power from damage (similar to melee tiers)
+    let base_power = if damage_max <= 50 {
+        40.0 + (damage_max as f32 / 50.0) * 20.0  // 40-60 for low-mid ranged
+    } else {
+        60.0 + ((damage_max - 50).min(50) as f32 / 50.0) * 40.0  // 60-100 for high ranged
+    };
+    
+    // Bonus for ranged weapons (they're more effective than melee)
+    // Crossbow (78-95) gets ~85 power, Hunting Bow (42-52) gets ~55 power
+    base_power
+}
+
+/// Scan player's inventory, hotbar, and equipped items for weapons
+/// Returns the sum of top 2-3 weapon powers (to account for backup weapons)
+fn scan_player_weapons(ctx: &ReducerContext, player_id: &spacetimedb::Identity) -> f32 {
+    let mut weapon_powers: Vec<f32> = Vec::new();
+    
+    // Scan all inventory items owned by this player
+    for item in ctx.db.inventory_item().iter() {
+        // Check if item belongs to this player
+        let is_player_item = match &item.location {
+            ItemLocation::Inventory(data) => data.owner_id == *player_id,
+            ItemLocation::Hotbar(data) => data.owner_id == *player_id,
+            ItemLocation::Equipped(data) => data.owner_id == *player_id,
+            _ => false,
+        };
+        
+        if !is_player_item {
+            continue;
+        }
+        
+        // Get item definition
+        if let Some(item_def) = ctx.db.item_definition().id().find(&item.item_def_id) {
+            // Check if it's a weapon
+            let is_weapon = item_def.category == ItemCategory::Weapon || 
+                           item_def.category == ItemCategory::RangedWeapon;
+            
+            if is_weapon && (item_def.pvp_damage_min.is_some() || item_def.pvp_damage_max.is_some()) {
+                let power = if item_def.category == ItemCategory::RangedWeapon {
+                    calculate_ranged_weapon_power(&item_def)
+                } else {
+                    calculate_weapon_power(&item_def)
+                };
+                
+                // Add power for each quantity (stacked weapons count)
+                for _ in 0..item.quantity.min(3) {  // Cap at 3 per stack to avoid abuse
+                    weapon_powers.push(power);
+                }
+            }
+        }
+    }
+    
+    // Sort by power (descending) and take top 3 weapons
+    weapon_powers.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
+    
+    // Sum top 3 weapons (allows for primary + backup + ranged)
+    weapon_powers.iter().take(3).sum()
+}
+
+/// Get or create combat readiness state for a player
+fn get_or_create_readiness(
+    ctx: &ReducerContext,
+    player_id: &spacetimedb::Identity,
+    current_time: Timestamp,
+) -> PlayerCombatReadiness {
+    if let Some(mut state) = ctx.db.player_combat_readiness().player_identity().find(player_id) {
+        state
+    } else {
+        // Create new state
+        let new_state = PlayerCombatReadiness {
+            player_identity: *player_id,
+            peak_weapon_power: 0.0,
+            current_weapon_power: 0.0,
+            combat_readiness_score: 0.0,
+            last_update: current_time,
+        };
+        ctx.db.player_combat_readiness().insert(new_state.clone());
+        new_state
+    }
+}
+
+/// Calculate combat readiness score with peak tracking and decay
+/// Returns a score from 0.0-100.0 that represents player combat capability
+/// PERFORMANCE: Only rescans weapons every WEAPON_SCAN_INTERVAL_SECS to avoid
+/// expensive full table scans every spawn tick.
+pub fn calculate_combat_readiness(
+    ctx: &ReducerContext,
+    player_id: &spacetimedb::Identity,
+    current_time: Timestamp,
+) -> f32 {
+    // Get or create readiness state
+    let mut state = get_or_create_readiness(ctx, player_id, current_time);
+
+    // Death/respawn reset:
+    // If the player has respawned since we last updated readiness, wipe combat memory so
+    // high-tier weapon history does not keep punishing them after death.
+    if let Some(player) = ctx.db.player().identity().find(player_id) {
+        if player.last_respawn_time > state.last_update {
+            state.peak_weapon_power = 0.0;
+            state.current_weapon_power = 0.0;
+            state.combat_readiness_score = 0.0;
+            state.last_update = current_time;
+            ctx.db.player_combat_readiness().player_identity().update(state);
+            return 0.0;
+        }
+    }
+    
+    // PERFORMANCE: Only rescan weapons every 60 seconds, use cached value otherwise
+    let time_since_update_secs = (current_time.to_micros_since_unix_epoch() - state.last_update.to_micros_since_unix_epoch()) / 1_000_000;
+    let needs_weapon_scan = time_since_update_secs >= WEAPON_SCAN_INTERVAL_SECS;
+    
+    // If no scan needed, return cached score immediately (very fast path)
+    if !needs_weapon_scan && state.combat_readiness_score > 0.0 {
+        return state.combat_readiness_score;
+    }
+    
+    // Scan current weapons (only happens every 60 seconds)
+    let current_power = scan_player_weapons(ctx, player_id);
+    
+    // Calculate updated peak with decay
+    let hours_elapsed = (time_since_update_secs as f32) / 3600.0;
+    let decayed_peak = if hours_elapsed > 0.0 {
+        let decay_factor = 0.5_f32.powf(hours_elapsed / COMBAT_READINESS_DECAY_HALF_LIFE_HOURS);
+        state.peak_weapon_power * decay_factor
+    } else {
+        state.peak_weapon_power
+    };
+    
+    // Update peak (only goes up after decay is applied)
+    let new_peak = current_power.max(decayed_peak);
+    
+    // Final score = max(current_power, peak * PEAK_RETENTION_FACTOR)
+    // This means dropping items still leaves you at ~70% of your peak
+    let score = current_power.max(new_peak * PEAK_RETENTION_FACTOR);
+    let final_score = score.clamp(0.0, 100.0);
+    
+    // Update state in database
+    let updated_state = PlayerCombatReadiness {
+        player_identity: *player_id,
+        peak_weapon_power: new_peak,
+        current_weapon_power: current_power,
+        combat_readiness_score: final_score,
+        last_update: current_time,
+    };
+    
+    if ctx.db.player_combat_readiness().player_identity().find(player_id).is_some() {
+        ctx.db.player_combat_readiness().player_identity().update(updated_state);
+    } else {
+        ctx.db.player_combat_readiness().insert(updated_state);
+    }
+    
+    final_score
+}
+
+/// Check if player is a "true newbie" - has NEVER picked up a real weapon
+/// True newbies have only ever had Torch or Combat Ladle (peak_weapon_power <= threshold)
+/// Returns true if the player should be protected from ALL apparition spawns
+fn is_true_newbie_player(ctx: &ReducerContext, player_id: &spacetimedb::Identity) -> bool {
+    if let Some(state) = ctx.db.player_combat_readiness().player_identity().find(player_id) {
+        // Player has never acquired a weapon better than Combat Ladle or Torch
+        // Their peak_weapon_power reflects the best weapon they've EVER had
+        if state.peak_weapon_power <= NEW_PLAYER_WEAPON_POWER_THRESHOLD {
+            return true;
+        }
+    } else {
+        // No combat readiness state yet = brand new player, definitely a newbie
+        return true;
+    }
+    false
+}
+
+/// Calculate combat multiplier from combat readiness score
+/// Returns a multiplier from MIN_COMBAT_MULTIPLIER to MAX_COMBAT_MULTIPLIER
+fn calculate_combat_multiplier(combat_score: f32) -> f32 {
+    if combat_score < 15.0 {
+        // Score 0-15: Brand new player protection (0.1x - 0.2x)
+        // Combat Ladle only gives ~5 score, so they stay at ~0.13x
+        MIN_COMBAT_MULTIPLIER + (combat_score / 15.0) * 0.1
+    } else if combat_score < 35.0 {
+        // Score 15-35: Early game (0.2x - 0.6x)
+        // Stone Spear (~25) gets ~0.4x, Wooden Spear (~20) gets ~0.3x
+        0.2 + ((combat_score - 15.0) / 20.0) * 0.4
+    } else if combat_score < 60.0 {
+        // Score 35-60: Mid game (0.6x - 1.0x)
+        // Good melee + backup weapon gets ~50 score = ~0.84x
+        0.6 + ((combat_score - 35.0) / 25.0) * 0.4
+    } else {
+        // Score 60-100: Experienced player (1.0x - 1.2x)
+        // Military weapons + ranged = full challenge
+        1.0 + ((combat_score - 60.0) / 40.0) * 0.2
+    }
+}
+
+// --- Player Camping Tracker Table ---
+// Tracks player positions and when they started being stationary
+#[table(accessor = player_camping_state, public)]
+pub struct PlayerCampingState {
+    #[primary_key]
+    pub player_identity: spacetimedb::Identity,
+    pub last_known_x: f32,
+    pub last_known_y: f32,
+    pub stationary_since: Timestamp,
+}
+
+// --- Player Combat Readiness Table ---
+// Tracks weapon power to scale hostile spawn rates appropriately
+#[table(accessor = player_combat_readiness, public)]
+#[derive(Clone)]
+pub struct PlayerCombatReadiness {
+    #[primary_key]
+    pub player_identity: spacetimedb::Identity,
+    pub peak_weapon_power: f32,      // Highest weapon power ever held (decays slowly)
+    pub current_weapon_power: f32,   // Current weapons in possession
+    pub combat_readiness_score: f32, // Final calculated score (0.0-100.0)
+    pub last_update: Timestamp,
+}
+
+// --- Schedule Tables ---
+
+#[table(accessor = hostile_spawn_schedule, scheduled(process_hostile_spawns))]
+pub struct HostileSpawnSchedule {
+    #[primary_key]
+    #[auto_inc]
+    pub scheduled_id: u64,
+    pub scheduled_at: ScheduleAt,
+}
+
+#[table(accessor = hostile_dawn_cleanup_schedule, scheduled(process_dawn_cleanup))]
+pub struct HostileDawnCleanupSchedule {
+    #[primary_key]
+    #[auto_inc]
+    pub scheduled_id: u64,
+    pub scheduled_at: ScheduleAt,
+    pub cleanup_start_time: Timestamp,
+}
+
+/// Emit hostile death sound at the given position
+/// Visual effects are handled client-side when the WildAnimal is deleted
+pub fn emit_hostile_death_sound(
+    ctx: &ReducerContext,
+    pos_x: f32,
+    pos_y: f32,
+    triggered_by: spacetimedb::Identity,
+) {
+    // Play death sound (audible to nearby players)
+    if let Err(e) = crate::sound_events::emit_sound_at_position_with_distance(
+        ctx,
+        crate::sound_events::SoundType::HostileDeath,
+        pos_x,
+        pos_y,
+        0.9, // High volume
+        600.0, // Audible from moderate distance
+        triggered_by,
+    ) {
+        log::error!("Failed to emit hostile death sound: {}", e);
+    }
+    
+    log::debug!("💀 Hostile death sound emitted at ({:.0}, {:.0})", pos_x, pos_y);
+}
+
+// --- Initialization ---
+
+/// Initialize hostile NPC spawning system
+pub fn init_hostile_spawning_system(ctx: &ReducerContext) -> Result<(), String> {
+    if ctx.db.hostile_spawn_schedule().iter().count() > 0 {
+        log::debug!("[HostileNPC] Spawn schedule already exists, skipping init");
+        return Ok(());
+    }
+    let spawn_interval = TimeDuration::from_micros((SPAWN_ATTEMPT_INTERVAL_MS * 1000) as i64);
+    ctx.db.hostile_spawn_schedule().insert(HostileSpawnSchedule {
+        scheduled_id: 0,
+        scheduled_at: spawn_interval.into(),
+    });
+    log::info!("[HostileNPC] Initialized hostile NPC spawning system");
+    Ok(())
+}
+
+// --- Spawn Processing ---
+
+#[spacetimedb::reducer]
+pub fn process_hostile_spawns(ctx: &ReducerContext, _args: HostileSpawnSchedule) -> Result<(), String> {
+    if ctx.sender() != ctx.identity() {
+        return Err("process_hostile_spawns can only be called by the scheduler".to_string());
+    }
+    
+    let current_time = ctx.timestamp;
+    
+    // PERFORMANCE: Quick check if any players are online before doing anything
+    // If no players, skip all hostile spawn logic
+    let has_online_players = ctx.db.player().iter().any(|p| p.is_online && !p.is_dead);
+    if !has_online_players {
+        return Ok(());
+    }
+    
+    // Check if it's night time
+    let world_state = match ctx.db.world_state().iter().next() {
+        Some(ws) => ws,
+        None => return Ok(()), // No world state yet
+    };
+    
+    // Determine night phase from cycle progress
+    let cycle_progress = world_state.cycle_progress;
+    let night_phase = NightPhase::from_progress(cycle_progress);
+    
+    // Check if any active Memory Beacons exist (allows daytime spawning!)
+    let has_active_beacon = ctx.db.lantern().iter().any(|l| 
+        l.lantern_type == LANTERN_TYPE_MEMORY_BEACON && l.is_burning && !l.is_destroyed
+    );
+    
+    // Only spawn during actual night phases, UNLESS there's an active Memory Beacon
+    // Memory Beacons allow daytime spawning within their attraction radius!
+    if night_phase == NightPhase::NotNight && !has_active_beacon {
+        // Check if we need to start dawn cleanup - trigger at Dawn OR Morning (failsafe)
+        if matches!(world_state.time_of_day, TimeOfDay::Dawn | TimeOfDay::Morning | TimeOfDay::TwilightMorning) {
+            start_dawn_cleanup_if_needed(ctx, current_time);
+        }
+        
+        // AGGRESSIVE CLEANUP: Force-remove any hostiles that exist during daytime
+        // EXCEPTION: Hostiles within Memory Beacon attraction zones are NOT removed!
+        // This is a failsafe in case the scheduled cleanup didn't work
+        // GRACE PERIOD: Don't delete hostiles that spawned within the last 30 seconds
+        // This prevents instant deletion at the day/night transition moment
+        const SPAWN_GRACE_PERIOD_US: i64 = 30_000_000; // 30 seconds in microseconds
+        let current_time_us = current_time.to_micros_since_unix_epoch();
+        
+        let daytime_hostiles: Vec<u64> = ctx.db.wild_animal().iter()
+            .filter(|a| {
+                if !a.is_hostile_npc || a.health <= 0.0 {
+                    return false;
+                }
+                // Check if hostile is past the grace period
+                let spawn_time_us = a.created_at.to_micros_since_unix_epoch();
+                let age_us = current_time_us - spawn_time_us;
+                if age_us <= SPAWN_GRACE_PERIOD_US {
+                    return false;
+                }
+                // DON'T remove hostiles that are within a Memory Beacon's attraction zone!
+                // They're supposed to be there for farming
+                if is_position_in_memory_beacon_attraction_zone(ctx, a.pos_x, a.pos_y) {
+                    return false;
+                }
+                true
+            })
+            .map(|a| a.id)
+            .collect();
+        
+        if !daytime_hostiles.is_empty() {
+            log::warn!("⚠️ [HostileNPC] Found {} hostiles during daytime ({:?}) outside beacon zones, force removing!", 
+                      daytime_hostiles.len(), world_state.time_of_day);
+            for id in &daytime_hostiles {
+                ctx.db.wild_animal().id().delete(id);
+            }
+        }
+        
+        return Ok(());
+    }
+    
+    // If it's daytime but there's an active beacon, only spawn for players NEAR the beacon
+    let is_daytime = night_phase == NightPhase::NotNight;
+    
+    // Log phase transitions for debugging
+    log::debug!("🌙 [HostileNPC] Night phase: {} (progress: {:.3})", night_phase.name(), cycle_progress);
+    
+    // Get all online players (check active_connection table for connectivity)
+    let players: Vec<_> = ctx.db.player().iter()
+        .filter(|p| !p.is_dead && p.is_online && 
+                ctx.db.active_connection().identity().find(&p.identity).is_some())
+        .collect();
+    
+    if players.is_empty() {
+        return Ok(());
+    }
+    
+    // Process spawns for each player
+    let mut rng = rand::rngs::StdRng::seed_from_u64(current_time.to_micros_since_unix_epoch() as u64);
+    
+    for player in &players {
+        // =========================================================================
+        // COMBAT READINESS UPDATE - Must happen FIRST to detect newly acquired weapons
+        // =========================================================================
+        // This scans the player's inventory for weapons and updates their peak_weapon_power.
+        // We need this BEFORE the newbie check so that picking up a weapon immediately
+        // starts spawning hostiles (not on the next tick).
+        let combat_score = calculate_combat_readiness(ctx, &player.identity, current_time);
+        
+        // =========================================================================
+        // TRUE NEWBIE PROTECTION - No spawns for players who have never had real weapons
+        // =========================================================================
+        // If the player has NEVER picked up a weapon better than Torch or Combat Ladle,
+        // skip ALL apparition spawns for them. This keeps the game friendly for new players
+        // until they acquire their first real weapon (Stone Spear, Bone Club, etc.)
+        // Note: We check AFTER updating combat readiness so new weapons are detected immediately.
+        if is_true_newbie_player(ctx, &player.identity) {
+            log::debug!("🛡️ [NewbieProtection] Skipping spawns for {:?} - no real weapons acquired yet", player.identity);
+            continue;
+        }
+        
+        // Calculate Memory Beacon attraction multiplier - beacons ATTRACT hostiles!
+        // This allows players to farm monsters by placing a Memory Beacon
+        let beacon_attraction_multiplier = get_memory_beacon_attraction_multiplier(
+            ctx,
+            player.position_x,
+            player.position_y,
+        );
+        
+        // DAYTIME CHECK: If it's daytime, ONLY spawn for players near Memory Beacons
+        // This makes the beacon event much more valuable - apparitions spawn day AND night!
+        if is_daytime {
+            // Skip this player if they're not near a Memory Beacon during daytime
+            if beacon_attraction_multiplier <= 1.0 {
+                continue;
+            }
+            log::info!("☀️🔮 [MemoryBeacon] DAYTIME SPAWNING enabled for player {:?} - near active beacon!", player.identity);
+        }
+        
+        // Update camping state for this player
+        update_player_camping_state(ctx, player, current_time);
+        
+        // Check if player is camping (for Drowned Watch eligibility)
+        let is_camping = check_player_is_camping(ctx, player, current_time);
+        
+        // Calculate settlement intensity - more civilization = more apparition attention
+        let nearby_player_count = count_nearby_players(ctx, player.position_x, player.position_y, &player.identity);
+        let settlement_multiplier = calculate_settlement_intensity(
+            ctx, 
+            player.position_x, 
+            player.position_y,
+            nearby_player_count + 1, // Include this player in the count
+        );
+        
+        // Note: Ward protection (spawn rate reduction) has been REMOVED.
+        // Wards now create hard deterrence zones - hostiles won't spawn inside them
+        // and will actively avoid entering them. This is handled in is_valid_spawn_position
+        // and the hostile NPC AI in core.rs.
+        // Memory Beacons are the OPPOSITE - they attract hostiles for farming!
+        
+        // Use PeakNight phase for daytime beacon spawns (full spawn rates!)
+        let effective_phase = if is_daytime { NightPhase::PeakNight } else { night_phase };
+        
+        try_spawn_hostiles_for_player(ctx, player, current_time, is_camping, effective_phase, settlement_multiplier, beacon_attraction_multiplier, combat_score, nearby_player_count, &mut rng);
+    }
+    
+    Ok(())
+}
+
+/// Update camping state tracking for a player
+fn update_player_camping_state(ctx: &ReducerContext, player: &Player, current_time: Timestamp) {
+    if let Some(mut camping_state) = ctx.db.player_camping_state().player_identity().find(&player.identity) {
+        // Check if player has moved significantly
+        let dx = player.position_x - camping_state.last_known_x;
+        let dy = player.position_y - camping_state.last_known_y;
+        let distance = (dx * dx + dy * dy).sqrt();
+        
+        if distance > CAMPING_MOVEMENT_THRESHOLD_PX {
+            // Player moved - reset stationary timer
+            camping_state.last_known_x = player.position_x;
+            camping_state.last_known_y = player.position_y;
+            camping_state.stationary_since = current_time;
+            ctx.db.player_camping_state().player_identity().update(camping_state);
+        }
+        // Otherwise, keep existing stationary_since time (player hasn't moved much)
+    } else {
+        // Create new camping state entry
+        ctx.db.player_camping_state().insert(PlayerCampingState {
+            player_identity: player.identity,
+            last_known_x: player.position_x,
+            last_known_y: player.position_y,
+            stationary_since: current_time,
+        });
+    }
+}
+
+/// Check if a player is "camping" (stationary 60+ sec OR inside building)
+fn check_player_is_camping(ctx: &ReducerContext, player: &Player, current_time: Timestamp) -> bool {
+    // Player is camping if inside a building
+    if player.is_inside_building {
+        return true;
+    }
+    
+    // Check if stationary for 60+ seconds
+    if let Some(camping_state) = ctx.db.player_camping_state().player_identity().find(&player.identity) {
+        let stationary_ms = (current_time.to_micros_since_unix_epoch() - camping_state.stationary_since.to_micros_since_unix_epoch()) / 1000;
+        if stationary_ms >= CAMPING_STATIONARY_TIME_MS {
+            return true;
+        }
+    }
+    
+    false
+}
+
+fn try_spawn_hostiles_for_player(
+    ctx: &ReducerContext,
+    player: &Player,
+    current_time: Timestamp,
+    is_camping: bool,
+    night_phase: NightPhase,
+    settlement_multiplier: f32,
+    beacon_attraction_multiplier: f32,
+    combat_score: f32,  // Pre-calculated combat score passed in from caller
+    nearby_player_count: usize,  // 0 = solo, 1+ = with friends
+    rng: &mut impl Rng,
+) {
+    let player_x = player.position_x;
+    let player_y = player.position_y;
+    let is_solo = nearby_player_count == 0;
+    
+    // Count nearby hostiles
+    let (total_hostiles, shorebound_count, shardkin_count, drowned_watch_count) = 
+        count_nearby_hostiles(ctx, player_x, player_y);
+    
+    // Check hard cap - solo players get much lower caps; beacon farming gets higher
+    let (effective_cap, effective_shorebound_cap, effective_shardkin_cap, effective_drowned_cap) = if beacon_attraction_multiplier > 1.0 {
+        // Memory Beacon: farming mode - higher caps
+        (MAX_TOTAL_HOSTILES_NEAR_PLAYER + 6, MAX_SHOREBOUND_NEAR_PLAYER + 2, MAX_SHARDKIN_NEAR_PLAYER + 4, MAX_DROWNED_WATCH_NEAR_PLAYER + 2)
+    } else if is_solo {
+        // Solo: significantly reduced - you shouldn't see 3+ at a time without a gun or friends
+        (SOLO_MAX_TOTAL_HOSTILES, SOLO_MAX_SHOREBOUND, SOLO_MAX_SHARDKIN, SOLO_MAX_DROWNED_WATCH)
+    } else {
+        (MAX_TOTAL_HOSTILES_NEAR_PLAYER, MAX_SHOREBOUND_NEAR_PLAYER, MAX_SHARDKIN_NEAR_PLAYER, MAX_DROWNED_WATCH_NEAR_PLAYER)
+    };
+    
+    if total_hostiles >= effective_cap {
+        return;
+    }
+    
+    // Solo players get reduced spawn rate - fewer attempts = fewer apparitions
+    let solo_mult = if is_solo { SOLO_SPAWN_MULTIPLIER } else { 1.0 };
+    
+    // Calculate combat multiplier from pre-calculated combat score
+    let combat_multiplier = calculate_combat_multiplier(combat_score);
+    
+    // Get phase-based spawn multipliers for dynamic night tension
+    let (shorebound_mult, shardkin_mult, drowned_mult) = night_phase.get_spawn_multipliers();
+    
+    // =========================================================================
+    // PHASED SPAWN RATES - Creates dramatic night arc
+    // =========================================================================
+    // Base chances are modified by:
+    // 1. Night phase multipliers (early/peak/desperate)
+    // 2. Camping status (being stationary increases pressure)
+    // 3. Settlement intensity (more civilization = more apparition attention)
+    // 4. Memory Beacon attraction (monster farming tool - massively increases spawns!)
+    // 5. Combat readiness (weapon power - new players get reduced spawns, geared players get more)
+    // 
+    // NOTE: Protective wards (Ancestral Ward, Signal Disruptor) create hard deterrence zones.
+    // Memory Beacons are the OPPOSITE - they ATTRACT hostiles for farming!
+    // =========================================================================
+    
+    // Log Memory Beacon farming if active
+    if beacon_attraction_multiplier > 1.0 {
+        log::info!("🔮 [MemoryBeacon] Spawn rates boosted {:.1}x for player {:?} - FARMING MODE!", 
+                  beacon_attraction_multiplier, player.identity);
+    }
+    
+    // Log combat readiness for debugging
+    log::debug!("⚔️ [CombatReadiness] Player {:?} - Score: {:.1}, Multiplier: {:.2}x", 
+               player.identity, combat_score, combat_multiplier);
+    
+    // 1. Try Shorebound (stalker) - Primary threat, scouts early, pressures throughout
+    // Base: 45% chance, modified by phase, camping, settlement, beacon, combat readiness, and solo scaling
+    if shorebound_count < effective_shorebound_cap && total_hostiles < effective_cap {
+        let base_chance = 0.45;
+        let camping_bonus = if is_camping { 0.12 } else { 0.0 };
+        let final_chance = (base_chance + camping_bonus) * shorebound_mult * settlement_multiplier * beacon_attraction_multiplier * combat_multiplier * solo_mult;
+        
+        if rng.gen::<f32>() < final_chance {
+            if let Some((x, y)) = find_spawn_position(ctx, player_x, player_y, RING_B_MIN_PX, RING_B_MAX_PX, rng) {
+                spawn_hostile_npc(ctx, AnimalSpecies::Shorebound, x, y, current_time);
+                log::info!("👹 [HostileNPC] Shorebound spawned [{} phase] at ({:.0}, {:.0})", night_phase.name(), x, y);
+            }
+        }
+    }
+    
+    // 2. Try Shardkin (swarmer) - Swarms emerge mid-night, peak during desperate hour
+    // Base: 35% chance, modified by phase, camping, settlement, beacon, combat readiness, and solo scaling
+    if shardkin_count < effective_shardkin_cap && total_hostiles + 1 < effective_cap {
+        let base_chance = 0.35;
+        let camping_bonus = if is_camping { 0.15 } else { 0.0 };
+        let final_chance = (base_chance + camping_bonus) * shardkin_mult * settlement_multiplier * beacon_attraction_multiplier * combat_multiplier * solo_mult;
+        
+        if rng.gen::<f32>() < final_chance {
+            // Group size scales with phase - solo players get smaller groups (max 2 at a time)
+            let (min_group, max_group) = if is_solo {
+                match night_phase {
+                    NightPhase::EarlyNight => (1, 1),
+                    NightPhase::PeakNight => (1, 2),
+                    NightPhase::DesperateHour => (1, 2),
+                    NightPhase::NotNight => (1, 1),
+                }
+            } else {
+                match night_phase {
+                    NightPhase::EarlyNight => (1, 2),
+                    NightPhase::PeakNight => (2, 4),
+                    NightPhase::DesperateHour => (2, 4),
+                    NightPhase::NotNight => (1, 2),
+                }
+            };
+            
+            let group_size = rng.gen_range(min_group..=max_group) as usize;
+            let available_slots = (effective_shardkin_cap - shardkin_count)
+                .min(effective_cap - total_hostiles);
+            let actual_spawn = group_size.min(available_slots);
+            
+            // Find base spawn position
+            if let Some((base_x, base_y)) = find_spawn_position(ctx, player_x, player_y, RING_B_MIN_PX, RING_C_MAX_PX, rng) {
+                let mut spawned_count = 0;
+                for _ in 0..actual_spawn {
+                    // Scatter group members around base position
+                    let offset_angle = rng.gen::<f32>() * 2.0 * PI;
+                    let offset_dist = rng.gen::<f32>() * 100.0;
+                    let spawn_x = base_x + offset_angle.cos() * offset_dist;
+                    let spawn_y = base_y + offset_angle.sin() * offset_dist;
+                    
+                    if is_valid_spawn_position(ctx, spawn_x, spawn_y, player_x, player_y, RING_B_MIN_PX, RING_C_MAX_PX) {
+                        spawn_hostile_npc(ctx, AnimalSpecies::Shardkin, spawn_x, spawn_y, current_time);
+                        spawned_count += 1;
+                    }
+                }
+                if spawned_count > 0 {
+                    log::info!("👹 [HostileNPC] Shardkin swarm of {} spawned [{} phase] near ({:.0}, {:.0})", 
+                              spawned_count, night_phase.name(), base_x, base_y);
+                }
+            }
+        }
+    }
+    
+    // 3. Try Drowned Watch (brute) - Only emerges late night, terrifying finale
+    // Base: 12% chance, modified by phase, camping, settlement, beacon, combat readiness, and solo scaling
+    // Solo: max 1 brute; with friends or beacon: up to 2-4
+    if drowned_watch_count < effective_drowned_cap && total_hostiles + 1 <= effective_cap {
+        let base_chance = 0.12;
+        let camping_bonus = if is_camping { 0.15 } else { 0.0 };
+        let final_chance = (base_chance + camping_bonus) * drowned_mult * settlement_multiplier * beacon_attraction_multiplier * combat_multiplier * solo_mult;
+        
+        if rng.gen::<f32>() < final_chance {
+            if let Some((x, y)) = find_spawn_position(ctx, player_x, player_y, RING_C_MIN_PX, RING_C_MAX_PX, rng) {
+                spawn_hostile_npc(ctx, AnimalSpecies::DrownedWatch, x, y, current_time);
+                log::info!("👹 [HostileNPC] ⚠️ DROWNED WATCH spawned [{} phase] at ({:.0}, {:.0}) - camping: {}", 
+                          night_phase.name(), x, y, is_camping);
+            }
+        }
+    }
+}
+
+fn count_nearby_hostiles(ctx: &ReducerContext, player_x: f32, player_y: f32) -> (usize, usize, usize, usize) {
+    let check_range_sq = RING_C_MAX_PX * RING_C_MAX_PX;
+    
+    let mut total = 0;
+    let mut shorebound = 0;
+    let mut shardkin = 0;
+    let mut drowned_watch = 0;
+    
+    for animal in ctx.db.wild_animal().iter() {
+        if !animal.is_hostile_npc {
+            continue;
+        }
+        
+        // Skip dead or despawning hostiles
+        if animal.health <= 0.0 || animal.despawn_at.is_some() {
+            continue;
+        }
+        
+        let dx = animal.pos_x - player_x;
+        let dy = animal.pos_y - player_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        if dist_sq <= check_range_sq {
+            total += 1;
+            match animal.species {
+                AnimalSpecies::Shorebound => shorebound += 1,
+                AnimalSpecies::Shardkin => shardkin += 1,
+                AnimalSpecies::DrownedWatch => drowned_watch += 1,
+                _ => {}
+            }
+        }
+    }
+    
+    (total, shorebound, shardkin, drowned_watch)
+}
+
+fn find_spawn_position(
+    ctx: &ReducerContext,
+    player_x: f32,
+    player_y: f32,
+    min_distance: f32,
+    max_distance: f32,
+    rng: &mut impl Rng,
+) -> Option<(f32, f32)> {
+    // Try up to 10 times to find a valid position
+    for _ in 0..10 {
+        let angle = rng.gen::<f32>() * 2.0 * PI;
+        let distance = rng.gen::<f32>() * (max_distance - min_distance) + min_distance;
+        
+        let spawn_x = player_x + angle.cos() * distance;
+        let spawn_y = player_y + angle.sin() * distance;
+        
+        if is_valid_spawn_position(ctx, spawn_x, spawn_y, player_x, player_y, min_distance, max_distance) {
+            return Some((spawn_x, spawn_y));
+        }
+    }
+    
+    None
+}
+
+fn is_valid_spawn_position(
+    ctx: &ReducerContext,
+    spawn_x: f32,
+    spawn_y: f32,
+    player_x: f32,
+    player_y: f32,
+    min_distance: f32,
+    max_distance: f32,
+) -> bool {
+    // Check world bounds
+    if spawn_x < 64.0 || spawn_x > WORLD_WIDTH_PX - 64.0 ||
+       spawn_y < 64.0 || spawn_y > WORLD_HEIGHT_PX - 64.0 {
+        return false;
+    }
+    
+    // Check distance to player
+    let dx = spawn_x - player_x;
+    let dy = spawn_y - player_y;
+    let dist_sq = dx * dx + dy * dy;
+    
+    if dist_sq < min_distance * min_distance || dist_sq > max_distance * max_distance {
+        return false;
+    }
+    
+    // Check if inside a building
+    if is_position_inside_building(ctx, spawn_x, spawn_y) {
+        return false;
+    }
+    
+    // Check runestone deterrence
+    for rune_stone in ctx.db.rune_stone().iter() {
+        let rdx = spawn_x - rune_stone.pos_x;
+        let rdy = spawn_y - rune_stone.pos_y;
+        let rune_dist_sq = rdx * rdx + rdy * rdy;
+        
+        if rune_dist_sq < RUNESTONE_DETERRENCE_RADIUS_SQ {
+            return false;
+        }
+    }
+    
+    // Check active ward deterrence zones - hostile NPCs cannot spawn inside them
+    // This creates "civilized" safe areas around bases with active wards
+    if is_position_in_active_ward_zone(ctx, spawn_x, spawn_y) {
+        return false;
+    }
+    
+    // Check general spawn validation (water, collisions, etc.)
+    // Hostile NPCs spawn on land - pass None (blocks water)
+    if validate_animal_spawn_position(ctx, spawn_x, spawn_y, None).is_err() {
+        return false;
+    }
+    
+    true
+}
+
+fn spawn_hostile_npc(
+    ctx: &ReducerContext,
+    species: AnimalSpecies,
+    pos_x: f32,
+    pos_y: f32,
+    current_time: Timestamp,
+) {
+    let behavior = species.get_behavior();
+    let stats = behavior.get_stats();
+    
+    let animal = WildAnimal {
+        id: 0,
+        species,
+        pos_x,
+        pos_y,
+        direction_x: 1.0,
+        direction_y: 0.0,
+        facing_direction: "down".to_string(),
+        state: AnimalState::Patrolling,
+        health: stats.max_health,
+        spawn_x: pos_x,
+        spawn_y: pos_y,
+        target_player_id: None,
+        last_attack_time: None,
+        state_change_time: current_time,
+        hide_until: None,
+        investigation_x: None,
+        investigation_y: None,
+        patrol_phase: 0.0,
+        scent_ping_timer: 0,
+        movement_pattern: behavior.get_movement_pattern(),
+        chunk_index: calculate_chunk_index(pos_x, pos_y),
+        created_at: current_time,
+        last_hit_time: None,
+        
+        // Pack fields - hostiles don't use packs
+        pack_id: None,
+        is_pack_leader: false,
+        pack_join_time: None,
+        last_pack_check: None,
+        
+        // Fire fear - hostiles ignore fire
+        fire_fear_overridden_by: None,
+        
+        // Taming - hostiles can't be tamed
+        tamed_by: None,
+        tamed_at: None,
+        heart_effect_until: None,
+        crying_effect_until: None,
+        last_food_check: None,
+        
+        // Bird fields - not used
+        held_item_name: None,
+        held_item_quantity: None,
+        flying_target_x: None,
+        flying_target_y: None,
+        is_flying: false,
+        
+        // Hostile NPC fields
+        is_hostile_npc: true,
+        target_structure_id: None,
+        target_structure_type: None,
+        stalk_angle: 0.0,
+        stalk_distance: 200.0, // Initial stalk distance
+        despawn_at: None,
+        shock_active_until: None,
+        last_shock_time: None,
+    };
+    
+    ctx.db.wild_animal().insert(animal);
+    log::info!("👹 [HostileNPC] Spawned {:?} at ({:.0}, {:.0})", species, pos_x, pos_y);
+}
+
+// --- Dawn Cleanup ---
+
+fn start_dawn_cleanup_if_needed(ctx: &ReducerContext, current_time: Timestamp) {
+    // Check if there's already a cleanup schedule running
+    if ctx.db.hostile_dawn_cleanup_schedule().iter().count() > 0 {
+        return;
+    }
+    
+    // Count hostiles to clean up
+    let hostile_count = ctx.db.wild_animal().iter()
+        .filter(|a| a.is_hostile_npc && a.health > 0.0)
+        .count();
+    
+    if hostile_count == 0 {
+        return;
+    }
+    
+    // Start the cleanup schedule
+    let check_interval = TimeDuration::from_micros((DAWN_CLEANUP_CHECK_INTERVAL_MS * 1000) as i64);
+    ctx.db.hostile_dawn_cleanup_schedule().insert(HostileDawnCleanupSchedule {
+        scheduled_id: 0,
+        scheduled_at: check_interval.into(),
+        cleanup_start_time: current_time,
+    });
+    
+    log::info!("🌅 [HostileNPC] Starting dawn cleanup of {} hostile NPCs", hostile_count);
+}
+
+#[spacetimedb::reducer]
+pub fn process_dawn_cleanup(ctx: &ReducerContext, args: HostileDawnCleanupSchedule) -> Result<(), String> {
+    if ctx.sender() != ctx.identity() {
+        return Err("process_dawn_cleanup can only be called by the scheduler".to_string());
+    }
+    
+    let current_time = ctx.timestamp;
+    
+    // CRITICAL FIX: Check if it's actually daytime before cleaning up!
+    // This prevents the cleanup from running during subsequent nights
+    let world_state = match ctx.db.world_state().iter().next() {
+        Some(ws) => ws,
+        None => {
+            log::warn!("🌅 [HostileNPC] Dawn cleanup aborted - no world state");
+            return Ok(());
+        }
+    };
+    
+    let night_phase = NightPhase::from_progress(world_state.cycle_progress);
+    
+    // If it's night again, STOP the cleanup schedule entirely
+    if night_phase != NightPhase::NotNight {
+        log::info!("🌙 [HostileNPC] Dawn cleanup stopped - night has returned (phase: {})", night_phase.name());
+        // CRITICAL: Delete schedule rows to stop transactions. Rows accumulate if not deleted.
+        let ids: Vec<u64> = ctx.db.hostile_dawn_cleanup_schedule().iter().map(|r| r.scheduled_id).collect();
+        for id in ids {
+            ctx.db.hostile_dawn_cleanup_schedule().scheduled_id().delete(&id);
+        }
+        return Ok(());
+    }
+    
+    let elapsed_ms = (current_time.to_micros_since_unix_epoch() - args.cleanup_start_time.to_micros_since_unix_epoch()) / 1000;
+    
+    // Check if cleanup is complete (all time elapsed)
+    if elapsed_ms >= DAWN_CLEANUP_DURATION_MS as i64 {
+        // Force remove all remaining hostiles EXCEPT those near Memory Beacons
+        let hostile_ids: Vec<u64> = ctx.db.wild_animal().iter()
+            .filter(|a| {
+                if !a.is_hostile_npc {
+                    return false;
+                }
+                // DON'T remove hostiles that are within a Memory Beacon's attraction zone!
+                !is_position_in_memory_beacon_attraction_zone(ctx, a.pos_x, a.pos_y)
+            })
+            .map(|a| a.id)
+            .collect();
+        
+        for id in &hostile_ids {
+            ctx.db.wild_animal().id().delete(id);
+        }
+        
+        if !hostile_ids.is_empty() {
+            log::info!("🌅 [HostileNPC] Dawn cleanup complete - removed {} remaining hostiles (beacon zone hostiles preserved)", hostile_ids.len());
+        }
+        
+        // CRITICAL: Delete schedule rows to stop transactions. Rows accumulate if not deleted.
+        let ids: Vec<u64> = ctx.db.hostile_dawn_cleanup_schedule().iter().map(|r| r.scheduled_id).collect();
+        for id in ids {
+            ctx.db.hostile_dawn_cleanup_schedule().scheduled_id().delete(&id);
+        }
+        return Ok(());
+    }
+    
+    // Progressive cleanup - remove some hostiles each tick
+    let progress = elapsed_ms as f32 / DAWN_CLEANUP_DURATION_MS as f32;
+    let mut rng = rand::rngs::StdRng::seed_from_u64(current_time.to_micros_since_unix_epoch() as u64);
+    
+    // GRACE PERIOD: Don't delete hostiles that spawned within the last 10 seconds
+    // This prevents instant deletion of hostiles that just spawned at dawn edge
+    const CLEANUP_GRACE_PERIOD_US: i64 = 10_000_000; // 10 seconds in microseconds
+    let current_time_us = current_time.to_micros_since_unix_epoch();
+    
+    let hostiles: Vec<_> = ctx.db.wild_animal().iter()
+        .filter(|a| {
+            if !a.is_hostile_npc || a.despawn_at.is_some() {
+                return false;
+            }
+            // Check if hostile is past the grace period
+            let spawn_time_us = a.created_at.to_micros_since_unix_epoch();
+            let age_us = current_time_us - spawn_time_us;
+            if age_us <= CLEANUP_GRACE_PERIOD_US {
+                return false;
+            }
+            // DON'T remove hostiles that are within a Memory Beacon's attraction zone!
+            !is_position_in_memory_beacon_attraction_zone(ctx, a.pos_x, a.pos_y)
+        })
+        .collect();
+    
+    for hostile in hostiles {
+        // Gradually increase despawn chance as cleanup progresses
+        let despawn_chance = 0.1 + progress * 0.4; // 10% to 50% chance per tick
+        
+        if rng.gen::<f32>() < despawn_chance {
+            // Mark for despawn and immediately delete
+            ctx.db.wild_animal().id().delete(&hostile.id);
+            log::debug!("🌅 [HostileNPC] {:?} {} dissolved at dawn", hostile.species, hostile.id);
+        }
+    }
+    
+    // No insert needed: the single schedule row from start_dawn_cleanup_if_needed uses Interval
+    // and will auto-fire again in 2 seconds. Inserting here caused row accumulation (each row
+    // fires every 2s, so N rows = Nx transaction rate) and rows were never deleted on completion.
+    Ok(())
+}
+
+// ============================================================================
+// STRUCTURE ATTACK HELPERS
+// ============================================================================
+
+use crate::door::{door as DoorTableTrait, Door};
+use crate::building::{wall_cell as WallCellTableTrait, WallCell};
+use crate::fence::{fence as FenceTableTrait, Fence};
+// Note: ShelterTableTrait already imported at the top of the file
+
+/// Find the nearest door, wall, shelter, or fence that a hostile can attack
+/// Returns (structure_id, structure_type, distance_sq)
+/// Priority: doors > shelters > walls > fences
+pub fn find_nearest_attackable_structure(
+    ctx: &ReducerContext,
+    hostile_x: f32,
+    hostile_y: f32,
+    max_range: f32,
+) -> Option<(u64, String, f32)> {
+    let max_range_sq = max_range * max_range;
+    
+    // First, look for doors (preferred target - entry points)
+    let mut nearest_door: Option<(u64, f32)> = None;
+    for door in ctx.db.door().iter() {
+        if door.is_destroyed {
+            continue;
+        }
+        
+        // Calculate door center position
+        let door_x = door.pos_x;
+        let door_y = door.pos_y;
+        
+        let dx = door_x - hostile_x;
+        let dy = door_y - hostile_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        if dist_sq < max_range_sq {
+            if nearest_door.is_none() || dist_sq < nearest_door.unwrap().1 {
+                nearest_door = Some((door.id, dist_sq));
+            }
+        }
+    }
+    
+    // If found a door within range, use it
+    if let Some((door_id, dist_sq)) = nearest_door {
+        return Some((door_id, "door".to_string(), dist_sq));
+    }
+    
+    // Second, look for shelters (tent-like structures that protect players)
+    // IMPORTANT: Use AABB center position (pos_y - 200.0) for distance check
+    // This matches the attack range check in core.rs
+    let mut nearest_shelter: Option<(u64, f32)> = None;
+    for shelter in ctx.db.shelter().iter() {
+        if shelter.is_destroyed {
+            continue;
+        }
+        
+        // Use AABB collision center for shelter distance (matches attack detection)
+        let shelter_aabb_center_x = shelter.pos_x;
+        let shelter_aabb_center_y = shelter.pos_y - crate::shelter::SHELTER_AABB_CENTER_Y_OFFSET_FROM_POS_Y;
+        
+        let dx = shelter_aabb_center_x - hostile_x;
+        let dy = shelter_aabb_center_y - hostile_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        if dist_sq < max_range_sq {
+            if nearest_shelter.is_none() || dist_sq < nearest_shelter.unwrap().1 {
+                nearest_shelter = Some((shelter.id as u64, dist_sq));
+            }
+        }
+    }
+    
+    // If found a shelter within range, use it
+    if let Some((shelter_id, dist_sq)) = nearest_shelter {
+        return Some((shelter_id, "shelter".to_string(), dist_sq));
+    }
+    
+    // Last, look for walls
+    let mut nearest_wall: Option<(u64, f32)> = None;
+    for wall in ctx.db.wall_cell().iter() {
+        if wall.is_destroyed {
+            continue;
+        }
+        
+        // Calculate wall center position from cell coordinates
+        // Walls use foundation cell coordinates (96px grid)
+        let wall_x = (wall.cell_x as f32 * FOUNDATION_TILE_SIZE_PX as f32) + (FOUNDATION_TILE_SIZE_PX as f32 / 2.0);
+        let wall_y = (wall.cell_y as f32 * FOUNDATION_TILE_SIZE_PX as f32) + (FOUNDATION_TILE_SIZE_PX as f32 / 2.0);
+        
+        let dx = wall_x - hostile_x;
+        let dy = wall_y - hostile_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        if dist_sq < max_range_sq {
+            if nearest_wall.is_none() || dist_sq < nearest_wall.unwrap().1 {
+                nearest_wall = Some((wall.id, dist_sq));
+            }
+        }
+    }
+    
+    if let Some((wall_id, dist_sq)) = nearest_wall {
+        return Some((wall_id, "wall".to_string(), dist_sq));
+    }
+    
+    // Last, look for fences
+    let mut nearest_fence: Option<(u64, f32)> = None;
+    for fence in ctx.db.fence().iter() {
+        if fence.is_destroyed {
+            continue;
+        }
+        
+        // Fences use world position directly (posX, posY) on 48px tile grid
+        let fence_x = fence.pos_x;
+        let fence_y = fence.pos_y;
+        
+        let dx = fence_x - hostile_x;
+        let dy = fence_y - hostile_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        if dist_sq < max_range_sq {
+            if nearest_fence.is_none() || dist_sq < nearest_fence.unwrap().1 {
+                nearest_fence = Some((fence.id, dist_sq));
+            }
+        }
+    }
+    
+    if let Some((fence_id, dist_sq)) = nearest_fence {
+        return Some((fence_id, "fence".to_string(), dist_sq));
+    }
+    
+    None
+}
+
+/// Find the nearest active PROTECTIVE ward (Ancestral Ward or Signal Disruptor)
+/// Used by DrownedWatch to target and destroy ward protection
+/// Memory Beacons are NOT targeted (they attract, not protect)
+/// Returns (ward_id, "ward", distance_sq)
+pub fn find_nearest_active_ward(
+    ctx: &ReducerContext,
+    hostile_x: f32,
+    hostile_y: f32,
+    max_range: f32,
+) -> Option<(u64, String, f32)> {
+    let max_range_sq = max_range * max_range;
+    let mut nearest_ward: Option<(u64, f32)> = None;
+    
+    for lantern in ctx.db.lantern().iter() {
+        // Skip destroyed or inactive wards
+        if lantern.is_destroyed || !lantern.is_burning {
+            continue;
+        }
+        
+        // Skip regular lanterns (no deterrence effect)
+        if lantern.lantern_type == LANTERN_TYPE_LANTERN {
+            continue;
+        }
+        
+        // Skip Memory Beacons (they ATTRACT, not protect - no need to destroy)
+        if lantern.lantern_type == LANTERN_TYPE_MEMORY_BEACON {
+            continue;
+        }
+        
+        // Only target protective wards (Ancestral Ward, Signal Disruptor)
+        if lantern.lantern_type != LANTERN_TYPE_ANCESTRAL_WARD && 
+           lantern.lantern_type != LANTERN_TYPE_SIGNAL_DISRUPTOR {
+            continue;
+        }
+        
+        let dx = lantern.pos_x - hostile_x;
+        let dy = lantern.pos_y - hostile_y;
+        let dist_sq = dx * dx + dy * dy;
+        
+        if dist_sq < max_range_sq {
+            if nearest_ward.is_none() || dist_sq < nearest_ward.unwrap().1 {
+                nearest_ward = Some((lantern.id as u64, dist_sq));
+            }
+        }
+    }
+    
+    if let Some((ward_id, dist_sq)) = nearest_ward {
+        log::info!("👹 [DrownedWatch] Found active ward {} at distance {:.1}px to destroy!", ward_id, dist_sq.sqrt());
+        return Some((ward_id, "ward".to_string(), dist_sq));
+    }
+    
+    None
+}
+
+/// Apply hostile NPC damage to a structure
+/// BYPASSES normal melee damage reduction (hostile attacks are effective)
+pub fn hostile_attack_structure(
+    ctx: &ReducerContext,
+    structure_id: u64,
+    structure_type: &str,
+    damage: f32,
+    current_time: Timestamp,
+) -> Result<bool, String> {
+    match structure_type {
+        "door" => {
+            let doors = ctx.db.door();
+            if let Some(mut door) = doors.id().find(structure_id) {
+                if door.is_destroyed {
+                    return Ok(false);
+                }
+                
+                // HOSTILE ATTACKS BYPASS MELEE REDUCTION - full damage!
+                let old_health = door.health;
+                door.health = (door.health - damage).max(0.0);
+                door.last_hit_time = Some(current_time);
+                
+                let destroyed = door.health <= 0.0;
+                if destroyed {
+                    door.is_destroyed = true;
+                    door.destroyed_at = Some(current_time);
+                    log::info!("👹 [HostileNPC] Door {} destroyed by hostile attack!", structure_id);
+                } else {
+                    log::info!("👹 [HostileNPC] Door {} took {:.1} damage from hostile. Health: {:.1} -> {:.1}", 
+                              structure_id, damage, old_health, door.health);
+                }
+                
+                ctx.db.door().id().update(door);
+                return Ok(destroyed);
+            }
+        },
+        "wall" => {
+            let walls = ctx.db.wall_cell();
+            if let Some(mut wall) = walls.id().find(structure_id) {
+                if wall.is_destroyed {
+                    return Ok(false);
+                }
+                
+                // HOSTILE ATTACKS BYPASS MELEE REDUCTION - full damage!
+                let old_health = wall.health;
+                wall.health = (wall.health - damage).max(0.0);
+                wall.last_hit_time = Some(current_time);
+                
+                let destroyed = wall.health <= 0.0;
+                if destroyed {
+                    wall.is_destroyed = true;
+                    wall.destroyed_at = Some(current_time);
+                    log::info!("👹 [HostileNPC] Wall {} destroyed by hostile attack!", structure_id);
+                } else {
+                    log::info!("👹 [HostileNPC] Wall {} took {:.1} damage from hostile. Health: {:.1} -> {:.1}", 
+                              structure_id, damage, old_health, wall.health);
+                }
+                
+                ctx.db.wall_cell().id().update(wall);
+                return Ok(destroyed);
+            }
+        },
+        "shelter" => {
+            let shelters = ctx.db.shelter();
+            if let Some(mut shelter) = shelters.id().find(structure_id as u32) {
+                if shelter.is_destroyed {
+                    return Ok(false);
+                }
+                
+                // HOSTILE ATTACKS BYPASS MELEE REDUCTION - full damage!
+                let old_health = shelter.health;
+                shelter.health = (shelter.health - damage).max(0.0);
+                shelter.last_hit_time = Some(current_time);
+                
+                let destroyed = shelter.health <= 0.0;
+                if destroyed {
+                    shelter.is_destroyed = true;
+                    shelter.destroyed_at = Some(current_time);
+                    log::info!("👹 [HostileNPC] Shelter {} destroyed by hostile attack!", structure_id);
+                } else {
+                    log::info!("👹 [HostileNPC] Shelter {} took {:.1} damage from hostile. Health: {:.1} -> {:.1}", 
+                              structure_id, damage, old_health, shelter.health);
+                }
+                
+                ctx.db.shelter().id().update(shelter);
+                return Ok(destroyed);
+            }
+        },
+        "ward" => {
+            // DrownedWatch attacks wards to destroy ward protection!
+            let lanterns = ctx.db.lantern();
+            if let Some(mut lantern) = lanterns.id().find(structure_id as u32) {
+                if lantern.is_destroyed {
+                    return Ok(false);
+                }
+                
+                // Get ward type name for logging
+                let ward_name = match lantern.lantern_type {
+                    LANTERN_TYPE_ANCESTRAL_WARD => "Ancestral Ward",
+                    LANTERN_TYPE_SIGNAL_DISRUPTOR => "Signal Disruptor",
+                    _ => "Ward",
+                };
+                
+                // HOSTILE ATTACKS BYPASS MELEE REDUCTION - full damage!
+                let old_health = lantern.health;
+                lantern.health = (lantern.health - damage).max(0.0);
+                lantern.last_hit_time = Some(current_time);
+                
+                let destroyed = lantern.health <= 0.0;
+                if destroyed {
+                    lantern.is_destroyed = true;
+                    lantern.destroyed_at = Some(current_time);
+                    // Stop ward sound if it was burning
+                    if lantern.is_burning && lantern.lantern_type == LANTERN_TYPE_LANTERN {
+                        crate::sound_events::stop_lantern_sound(ctx, lantern.id as u64);
+                    }
+                    log::info!("👹 [DrownedWatch] {} {} destroyed! Ward protection removed!", ward_name, structure_id);
+                } else {
+                    log::info!("👹 [DrownedWatch] {} {} took {:.1} damage. Health: {:.1} -> {:.1}", 
+                              ward_name, structure_id, damage, old_health, lantern.health);
+                }
+                
+                ctx.db.lantern().id().update(lantern);
+                return Ok(destroyed);
+            }
+        },
+        "fence" => {
+            let fences = ctx.db.fence();
+            if let Some(mut fence) = fences.id().find(structure_id) {
+                if fence.is_destroyed {
+                    return Ok(false);
+                }
+                
+                // HOSTILE ATTACKS BYPASS MELEE REDUCTION - full damage!
+                let old_health = fence.health;
+                fence.health = (fence.health - damage).max(0.0);
+                fence.last_hit_time = Some(current_time);
+                
+                let destroyed = fence.health <= 0.0;
+                if destroyed {
+                    fence.is_destroyed = true;
+                    fence.destroyed_at = Some(current_time);
+                    log::info!("👹 [HostileNPC] Fence {} destroyed by hostile attack!", structure_id);
+                } else {
+                    log::info!("👹 [HostileNPC] Fence {} took {:.1} damage from hostile. Health: {:.1} -> {:.1}", 
+                              structure_id, damage, old_health, fence.health);
+                }
+                
+                ctx.db.fence().id().update(fence);
+                return Ok(destroyed);
+            }
+        },
+        _ => {
+            return Err(format!("Unknown structure type: {}", structure_type));
+        }
+    }
+    
+    Ok(false)
+}

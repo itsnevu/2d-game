@@ -1,0 +1,160 @@
+import { BasaltColumn } from '../../generated/types'; // Import generated type
+import basaltColumn1Image from '../../assets/doodads/basalt_column_new.png'; // Type1
+import basaltColumn3Image from '../../assets/doodads/basalt_column3_new.png'; // Type3
+import { applyStandardDropShadow, drawDynamicGroundShadow } from './shadowUtils';
+import { GroundEntityConfig, renderConfiguredGroundEntity } from './genericGroundRenderer'; // Import generic renderer
+import { imageManager } from './imageManager'; // Import image manager
+
+// --- Constants ---
+export const BASALT_COLUMN_WIDTH = 360; // Large rock formations for cover (similar to StonePine trees)
+export const BASALT_COLUMN_HEIGHT = 540; // Tall vertical rock formations (1.5x ratio maintained)
+
+// --- Basalt Column Variant Images Array ---
+const BASALT_COLUMN_VARIANT_IMAGES = [
+    basaltColumn1Image,    // Type1
+    basaltColumn3Image,    // Type3
+];
+
+// --- Define Configuration ---
+const basaltColumnConfig: GroundEntityConfig<BasaltColumn> = {
+    getImageSource: (entity) => {
+        // Select basalt column variant based on entity.columnType
+        const variantIndex = entity.columnType.tag === 'Type1' ? 0 : 1;
+        return BASALT_COLUMN_VARIANT_IMAGES[variantIndex];
+    },
+
+    getTargetDimensions: (img, _entity) => ({
+        width: BASALT_COLUMN_WIDTH,
+        height: BASALT_COLUMN_HEIGHT,
+    }),
+
+    calculateDrawPosition: (entity, drawWidth, drawHeight) => ({
+        drawX: entity.posX - drawWidth / 2,
+        drawY: entity.posY - drawHeight + 36, // Anchor at base with offset scaled for larger size
+    }),
+
+    getShadowParams: undefined,
+
+    drawCustomGroundShadow: (ctx, entity, entityImage, entityPosX, entityPosY, imageDrawWidth, imageDrawHeight, cycleProgress) => {
+        // Draw DYNAMIC ground shadow for basalt columns
+        drawDynamicGroundShadow({
+            ctx,
+            entityImage,
+            entityCenterX: entityPosX,
+            entityBaseY: entityPosY,
+            imageDrawWidth,
+            imageDrawHeight,
+            cycleProgress,
+            maxStretchFactor: 1.4,  // Larger stretch for taller columns
+            minStretchFactor: 0.25,  // Compressed at noon
+            shadowBlur: 3,           // Standardized to match other large objects
+            pivotYOffset: 10,        // Lowered pivot point for shadow (was 72, too high)
+        });
+    },
+
+    applyEffects: (ctx, entity, nowMs, baseDrawX, baseDrawY, cycleProgress) => {
+        // Apply standard drop shadow for depth
+        applyStandardDropShadow(ctx);
+        return {
+            offsetX: 0,
+            offsetY: 0,
+        };
+    },
+
+    drawOverlay: undefined, // No overlay needed
+
+    fallbackColor: '#696969', // Gray fallback color for stone
+};
+
+/**
+ * Renders a basalt column entity (decorative obstacle in quarry areas).
+ * Basalt columns have collision but cannot be mined.
+ */
+export function renderBasaltColumn(
+    ctx: CanvasRenderingContext2D,
+    basaltColumn: BasaltColumn,
+    nowMs: number,
+    cycleProgress: number,
+    localPlayerPosition?: { x: number; y: number } | null // Player position for transparency logic
+): void {
+    // Calculate if basalt column visually overlaps and occludes the player (same logic as trees)
+    const MIN_ALPHA = 0.3; // Minimum opacity when blocking player
+    const MAX_ALPHA = 1.0; // Full opacity when not blocking
+    
+    let columnAlpha = MAX_ALPHA;
+    
+    if (localPlayerPosition) {
+        // Use a NARROWER width for occlusion detection - the actual rock is only ~35% of sprite width
+        // This prevents transparency from triggering when player is near the transparent edges of the sprite
+        const occlusionWidth = BASALT_COLUMN_WIDTH * 0.35; // ~126px - just the actual rock portion
+        const occlusionHeight = BASALT_COLUMN_HEIGHT * 0.6; // Upper portion that actually occludes
+        
+        const columnLeft = basaltColumn.posX - occlusionWidth / 2;
+        const columnRight = basaltColumn.posX + occlusionWidth / 2;
+        const columnTop = basaltColumn.posY - occlusionHeight; // Only upper portion matters for occlusion
+        const columnBottom = basaltColumn.posY;
+        
+        // Player bounding box
+        const playerSize = 48;
+        const playerLeft = localPlayerPosition.x - playerSize / 2;
+        const playerRight = localPlayerPosition.x + playerSize / 2;
+        const playerTop = localPlayerPosition.y - playerSize;
+        const playerBottom = localPlayerPosition.y;
+        
+        // Check if player overlaps with basalt column visually
+        const overlapsHorizontally = playerRight > columnLeft && playerLeft < columnRight;
+        const overlapsVertically = playerBottom > columnTop && playerTop < columnBottom;
+        
+        // Basalt column should be transparent if:
+        // 1. It overlaps with player visually
+        // 2. Column renders AFTER player (column.posY > player.posY means column is in front in Y-sort)
+        if (overlapsHorizontally && overlapsVertically && basaltColumn.posY > localPlayerPosition.y) {
+            // Calculate how much the player is behind the column (for smooth fade)
+            const depthDifference = basaltColumn.posY - localPlayerPosition.y;
+            const maxDepthForFade = 100; // Max distance for fade effect
+            
+            if (depthDifference > 0 && depthDifference < maxDepthForFade) {
+                // Closer to column = more transparent
+                const fadeFactor = 1 - (depthDifference / maxDepthForFade);
+                columnAlpha = MAX_ALPHA - (fadeFactor * (MAX_ALPHA - MIN_ALPHA));
+                columnAlpha = Math.max(MIN_ALPHA, Math.min(MAX_ALPHA, columnAlpha));
+            } else if (depthDifference >= maxDepthForFade) {
+                // Very close - use minimum alpha
+                columnAlpha = MIN_ALPHA;
+            }
+        }
+    }
+    
+    // Apply transparency if needed
+    const needsTransparency = columnAlpha < MAX_ALPHA;
+    if (needsTransparency) {
+        ctx.save();
+        ctx.globalAlpha = columnAlpha;
+    }
+    
+    renderConfiguredGroundEntity({
+        ctx,
+        entity: basaltColumn,
+        config: basaltColumnConfig,
+        nowMs,
+        entityPosX: basaltColumn.posX,
+        entityPosY: basaltColumn.posY,
+        cycleProgress,
+    });
+    
+    // Restore context if transparency was applied
+    if (needsTransparency) {
+        ctx.restore();
+    }
+}
+
+/**
+ * Pre-loads basalt column images into the image manager cache.
+ */
+export function preloadBasaltColumnImages(): void {
+    // Preload all basalt column variant images
+    BASALT_COLUMN_VARIANT_IMAGES.forEach(imageSrc => {
+        imageManager.preloadImage(imageSrc);
+    });
+}
+

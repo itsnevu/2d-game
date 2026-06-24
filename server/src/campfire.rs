@@ -1,0 +1,1717 @@
+/******************************************************************************
+ *                                                                            *
+ * Defines the Campfire entity, its data structure, and associated logic.     *
+ * Handles interactions like adding/removing fuel, lighting/extinguishing,    *
+ * fuel consumption checks, and managing items within the campfire's fuel     *
+ * slots. Uses generic handlers from inventory_management.rs where applicable.*
+ *                                                                            *
+ ******************************************************************************/
+
+ use spacetimedb::{Identity, Timestamp, ReducerContext, Table, log, SpacetimeType, TimeDuration, ScheduleAt};
+ use std::cmp::min;
+ use std::time::Duration;   
+ use rand::Rng; // Added for random chance
+ 
+ // Import new models
+ use crate::models::{ContainerType, ItemLocation, EquipmentSlotType, ContainerLocationData}; // Added ContainerLocationData
+ use crate::cooking::CookingProgress; // Added CookingProgress
+ 
+ // Import table traits and concrete types
+ use crate::player as PlayerTableTrait;
+ use crate::Player;
+ use crate::items::{
+     inventory_item as InventoryItemTableTrait,
+     item_definition as ItemDefinitionTableTrait,
+     InventoryItem, ItemDefinition,
+     calculate_merge_result, split_stack_helper, add_item_to_player_inventory
+ };
+ use crate::inventory_management::{self, ItemContainer, ContainerItemClearer, merge_or_place_into_container_slot};
+ use crate::player_inventory::{move_item_to_inventory, move_item_to_hotbar, find_first_empty_player_slot, get_player_item};
+ use crate::environment::calculate_chunk_index; // Assuming helper is here or in utils
+ use crate::dropped_item::create_dropped_item_entity; // For dropping charcoal
+ 
+ // --- ADDED: Import for active effects ---
+ use crate::active_effects::{ActiveConsumableEffect, EffectType};
+ use crate::active_effects::active_consumable_effect as ActiveConsumableEffectTableTrait; // Added trait import
+ 
+ // --- ADDED: Import for rain protection functionality ---
+ use crate::world_state::world_state as WorldStateTableTrait;
+ use crate::world_state::WeatherType; // Import the WeatherType enum
+ use crate::shelter::shelter as ShelterTableTrait;
+ use crate::tree::tree as TreeTableTrait; // Added for tree protection functionality
+ 
+ // --- ADDED: Import for sound events ---
+ use crate::sound_events::{start_campfire_sound, stop_campfire_sound};
+ 
+ // --- Constants ---
+ // Collision constants
+ pub(crate) const CAMPFIRE_COLLISION_RADIUS: f32 = 20.0; // Increased from 12.0 to better match visual size
+pub(crate) const CAMPFIRE_COLLISION_Y_OFFSET: f32 = 0.0; // Changed from 25.0 to center on visual sprite
+pub(crate) const PLAYER_CAMPFIRE_COLLISION_DISTANCE_SQUARED: f32 = 
+    (super::PLAYER_RADIUS + CAMPFIRE_COLLISION_RADIUS) * (super::PLAYER_RADIUS + CAMPFIRE_COLLISION_RADIUS);
+pub(crate) const CAMPFIRE_CAMPFIRE_COLLISION_DISTANCE_SQUARED: f32 = 
+    (CAMPFIRE_COLLISION_RADIUS * 2.0) * (CAMPFIRE_COLLISION_RADIUS * 2.0);
+ 
+ // --- Placement constants ---
+ pub(crate) const CAMPFIRE_PLACEMENT_MAX_DISTANCE: f32 = 96.0;
+ pub(crate) const CAMPFIRE_PLACEMENT_MAX_DISTANCE_SQUARED: f32 = CAMPFIRE_PLACEMENT_MAX_DISTANCE * CAMPFIRE_PLACEMENT_MAX_DISTANCE;
+ 
+ // --- Initial amounts ---
+ pub const INITIAL_CAMPFIRE_FUEL_AMOUNT: u32 = 50; // Starting wood amount for new campfires
+
+ // --- Health constants ---
+ pub const CAMPFIRE_INITIAL_HEALTH: f32 = 100.0;
+ pub const CAMPFIRE_MAX_HEALTH: f32 = 100.0;
+
+ // Interaction constants
+ pub(crate) const PLAYER_CAMPFIRE_INTERACTION_DISTANCE: f32 = 96.0; // New radius: 96px
+ pub(crate) const PLAYER_CAMPFIRE_INTERACTION_DISTANCE_SQUARED: f32 = 
+    PLAYER_CAMPFIRE_INTERACTION_DISTANCE * PLAYER_CAMPFIRE_INTERACTION_DISTANCE; // 96.0 * 96.0
+ 
+ // Warmth and fuel constants
+ pub(crate) const WARMTH_RADIUS: f32 = 300.0; // Doubled from 150.0
+ pub(crate) const WARMTH_RADIUS_SQUARED: f32 = WARMTH_RADIUS * WARMTH_RADIUS; // Updated to 300.0 * 300.0 = 90000.0
+ pub(crate) const WARMTH_PER_SECOND: f32 = 5.0;
+ pub(crate) const FUEL_CONSUME_INTERVAL_SECS: u64 = 5;
+ pub const NUM_FUEL_SLOTS: usize = 5;
+ const FUEL_CHECK_INTERVAL_SECS: u64 = 1;
+ pub const CAMPFIRE_PROCESS_INTERVAL_SECS: u64 = 1; // How often to run the main logic when burning
+ const CHARCOAL_PRODUCTION_CHANCE: u8 = 75; // 75% chance
+ 
+ // --- ADDED: Campfire Damage Constants ---
+const CAMPFIRE_DAMAGE_CENTER_Y_OFFSET: f32 = 0.0; // Changed from 30.0 to center with visual sprite
+const CAMPFIRE_DAMAGE_RADIUS: f32 = 50.0; // Increased damage radius
+const CAMPFIRE_DAMAGE_RADIUS_SQUARED: f32 = 2500.0; // 50.0 * 50.0
+ const CAMPFIRE_DAMAGE_PER_TICK: f32 = 5.0; // Total damage over the burn duration
+ const CAMPFIRE_DAMAGE_EFFECT_DURATION_SECONDS: u64 = 3; // Duration of the burn effect (3 seconds)
+ const CAMPFIRE_BURN_TICK_INTERVAL_SECONDS: f32 = 2.0; // Apply burn damage every 2 seconds (gives time for white flash to reset)
+ const CAMPFIRE_DAMAGE_APPLICATION_COOLDOWN_SECONDS: u64 = 0; // MODIFIED: Apply damage every process tick if player is present
+ 
+ /// --- Campfire Data Structure ---
+ /// Represents a campfire in the game world with position, owner, burning state,
+ /// fuel slots (using individual fields instead of arrays), and fuel consumption timing.
+ #[spacetimedb::table(accessor = campfire, public)]
+ #[derive(Clone)]
+ pub struct Campfire {
+     #[primary_key]
+     #[auto_inc]
+     pub id: u32,
+    pub pos_x: f32,
+    pub pos_y: f32,
+    #[index(btree)]
+    pub chunk_index: u32,
+    pub placed_by: Identity, // Track who placed it
+     pub placed_at: Timestamp,
+    pub is_burning: bool, // Is the fire currently lit?
+    // Use individual fields instead of arrays (slot_* naming for consistency with other containers)
+    pub slot_instance_id_0: Option<u64>,
+    pub slot_def_id_0: Option<u64>,
+    pub slot_instance_id_1: Option<u64>,
+    pub slot_def_id_1: Option<u64>,
+    pub slot_instance_id_2: Option<u64>,
+    pub slot_def_id_2: Option<u64>,
+    pub slot_instance_id_3: Option<u64>,
+    pub slot_def_id_3: Option<u64>,
+    pub slot_instance_id_4: Option<u64>,
+    pub slot_def_id_4: Option<u64>,
+     pub current_fuel_def_id: Option<u64>,        // ADDED: Def ID of the currently burning fuel item
+     pub remaining_fuel_burn_time_secs: Option<f32>, // ADDED: How much time is left for the current_fuel_def_id
+     pub health: f32,
+     pub max_health: f32,
+     pub is_destroyed: bool,
+     pub destroyed_at: Option<Timestamp>,
+     pub last_hit_time: Option<Timestamp>, // ADDED
+     pub last_damaged_by: Option<Identity>, // ADDED: Track who last damaged this campfire
+
+     // --- ADDED: Cooking progress for each slot ---
+     pub slot_0_cooking_progress: Option<CookingProgress>,
+     pub slot_1_cooking_progress: Option<CookingProgress>,
+     pub slot_2_cooking_progress: Option<CookingProgress>,
+     pub slot_3_cooking_progress: Option<CookingProgress>,
+     pub slot_4_cooking_progress: Option<CookingProgress>,
+    pub last_damage_application_time: Option<Timestamp>, // ADDED: For damage cooldown
+     pub is_player_in_hot_zone: bool, // ADDED: True if any player is in the damage radius
+    pub attached_broth_pot_id: Option<u32>, // ADDED: Broth pot placed on this campfire
+    
+    // --- Monument Placeable System ---
+    pub is_monument: bool, // If true, this is a permanent monument placeable (indestructible, public access)
+    pub active_user_id: Option<Identity>, // Player currently using this container (for safe zone exclusivity)
+    pub active_user_since: Option<Timestamp>, // When the active user started using this container
+}
+ 
+ // Global schedule table - processes ALL campfires in one reducer call (1 tx/sec vs N tx/sec)
+ #[spacetimedb::table(accessor = campfire_global_schedule, scheduled(process_all_campfires_scheduled))]
+ #[derive(Clone)]
+ pub struct CampfireGlobalSchedule {
+     #[primary_key]
+     #[auto_inc]
+     pub id: u64,
+     pub scheduled_at: ScheduleAt,
+ }
+ 
+ /******************************************************************************
+  *                           REDUCERS (Generic Handlers)                        *
+  ******************************************************************************/
+ 
+/// --- Add Fuel to Campfire ---
+/// Adds an item from the player's inventory as fuel to a specific campfire slot.
+/// Validates the campfire interaction and fuel item, then uses the generic container handler
+/// to move the item to the campfire. Updates the campfire state after successful addition.
+#[spacetimedb::reducer]
+pub fn move_item_to_campfire(ctx: &ReducerContext, campfire_id: u32, target_slot_index: u8, item_instance_id: u64) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && target_slot_index != 0 {
+        return Err("Cannot add fuel to campfire slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+    
+    // --- Validate item type - prevent water bottles and cauldrons ---
+    let items = ctx.db.inventory_item();
+    let item = items.instance_id().find(&item_instance_id)
+        .ok_or_else(|| "Item not found.".to_string())?;
+    let item_defs = ctx.db.item_definition();
+    let item_def = item_defs.id().find(&item.item_def_id)
+        .ok_or_else(|| "Item definition not found.".to_string())?;
+    
+    // Prevent water containers and cauldrons from being placed in campfires
+    let blocked_items = ["Reed Water Bottle", "Plastic Water Jug", "Cerametal Field Cauldron Mk. II"];
+    if blocked_items.contains(&item_def.name.as_str()) {
+        return Err(format!("Cannot place '{}' in campfire. Use the broth pot's water container slot for water bottles, or place the cauldron on the campfire.", item_def.name));
+    }
+    
+    inventory_management::handle_move_to_container_slot(ctx, &mut campfire, target_slot_index, item_instance_id)?;
+    ctx.db.campfire().id().update(campfire.clone()); // Persist campfire slot changes
+    Ok(())
+}
+ 
+/// --- Remove Fuel from Campfire ---
+/// Removes the fuel item from a specific campfire slot and returns it to the player inventory/hotbar.
+/// Uses the quick move logic (attempts merge, then finds first empty slot).
+#[spacetimedb::reducer]
+pub fn quick_move_from_campfire(ctx: &ReducerContext, campfire_id: u32, source_slot_index: u8) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && source_slot_index != 0 {
+        return Err("Cannot remove fuel from campfire slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+    
+    inventory_management::handle_quick_move_from_container(ctx, &mut campfire, source_slot_index)?;
+     let still_has_fuel = check_if_campfire_has_fuel(ctx, &campfire);
+     if !still_has_fuel && campfire.is_burning {
+         campfire.is_burning = false;
+         campfire.current_fuel_def_id = None;
+         campfire.remaining_fuel_burn_time_secs = None;
+         stop_campfire_sound(ctx, campfire_id as u64);
+         log::info!("Campfire {} extinguished as last valid fuel was removed.", campfire_id);
+     }
+     ctx.db.campfire().id().update(campfire.clone());
+     Ok(())
+ }
+ 
+/// --- Split Stack Into Campfire ---
+/// Splits a stack from player inventory into a campfire slot.
+#[spacetimedb::reducer]
+pub fn split_stack_into_campfire(
+    ctx: &ReducerContext,
+    source_item_instance_id: u64,
+    quantity_to_split: u32,
+    target_campfire_id: u32,
+    target_slot_index: u8,
+) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, target_campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && target_slot_index != 0 {
+        return Err("Cannot add fuel to campfire slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+    
+    // --- Validate item type - prevent water bottles and cauldrons ---
+     let items = ctx.db.inventory_item();
+     let source_item = items.instance_id().find(&source_item_instance_id)
+         .ok_or_else(|| "Source item not found.".to_string())?;
+     let item_defs = ctx.db.item_definition();
+     let item_def = item_defs.id().find(&source_item.item_def_id)
+         .ok_or_else(|| "Item definition not found.".to_string())?;
+     
+     // Prevent water containers and cauldrons from being placed in campfires
+     let blocked_items = ["Reed Water Bottle", "Plastic Water Jug", "Cerametal Field Cauldron Mk. II"];
+     if blocked_items.contains(&item_def.name.as_str()) {
+         return Err(format!("Cannot place '{}' in campfire. Use the broth pot's water container slot for water bottles, or place the cauldron on the campfire.", item_def.name));
+     }
+     
+     let mut source_item_mut = get_player_item(ctx, source_item_instance_id)?;
+     let new_item_target_location = ItemLocation::Container(crate::models::ContainerLocationData {
+         container_type: ContainerType::Campfire,
+         container_id: campfire.id as u64,
+         slot_index: target_slot_index,
+     });
+     let new_item_instance_id = split_stack_helper(ctx, &mut source_item_mut, quantity_to_split, new_item_target_location)?;
+     
+     // Fetch the newly created item and its definition to pass to merge_or_place
+     let mut new_item = ctx.db.inventory_item().instance_id().find(new_item_instance_id)
+         .ok_or_else(|| format!("Failed to find newly split item instance {}", new_item_instance_id))?;
+     let new_item_def = ctx.db.item_definition().id().find(new_item.item_def_id)
+         .ok_or_else(|| format!("Failed to find definition for new item {}", new_item.item_def_id))?;
+ 
+     merge_or_place_into_container_slot(ctx, &mut campfire, target_slot_index, &mut new_item, &new_item_def)?;
+     
+     // Update the source item (quantity changed by split_stack_helper)
+     ctx.db.inventory_item().instance_id().update(source_item); 
+     ctx.db.campfire().id().update(campfire.clone());
+     Ok(())
+ }
+ 
+/// --- Campfire Internal Item Movement ---
+/// Moves/merges/swaps an item BETWEEN two slots within the same campfire.
+#[spacetimedb::reducer]
+pub fn move_item_within_campfire(
+    ctx: &ReducerContext,
+    campfire_id: u32,
+    source_slot_index: u8,
+    target_slot_index: u8,
+) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && source_slot_index != 0 && target_slot_index != 0 {
+        return Err("Cannot move fuel between slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+    
+    // Save cooking progress before move (since set_slot clears it)
+    use crate::cooking::CookableAppliance;
+    let source_progress = campfire.get_slot_cooking_progress(source_slot_index);
+    let target_progress = campfire.get_slot_cooking_progress(target_slot_index);
+    let source_had_item = campfire.get_slot_instance_id(source_slot_index).is_some();
+    let target_had_item = campfire.get_slot_instance_id(target_slot_index).is_some();
+    
+    inventory_management::handle_move_within_container(ctx, &mut campfire, source_slot_index, target_slot_index)?;
+    
+    // Transfer cooking progress based on what happened:
+    // - Move to empty slot: source progress -> target
+    // - Swap: exchange progress
+    // - Merge: target keeps its progress (items combined there)
+    if source_had_item && !target_had_item {
+        // Move to empty slot: transfer source progress to target
+        campfire.set_slot_cooking_progress(target_slot_index, source_progress);
+    } else if source_had_item && target_had_item {
+        // Check if it was a swap (source slot now has an item) or merge (source slot empty)
+        if campfire.get_slot_instance_id(source_slot_index).is_some() {
+            // Swap: exchange cooking progress
+            campfire.set_slot_cooking_progress(target_slot_index, source_progress);
+            campfire.set_slot_cooking_progress(source_slot_index, target_progress);
+        }
+        // If merge: target keeps its progress (already in place), source was cleared
+    }
+    
+    ctx.db.campfire().id().update(campfire.clone());
+    Ok(())
+}
+ 
+/// --- Campfire Internal Stack Splitting ---
+/// Splits a stack FROM one campfire slot TO another within the same campfire.
+#[spacetimedb::reducer]
+pub fn split_stack_within_campfire(
+    ctx: &ReducerContext,
+    campfire_id: u32,
+    source_slot_index: u8,
+    quantity_to_split: u32,
+    target_slot_index: u8,
+) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && source_slot_index != 0 && target_slot_index != 0 {
+        return Err("Cannot split fuel between slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+    
+    inventory_management::handle_split_within_container(ctx, &mut campfire, source_slot_index, target_slot_index, quantity_to_split)?;
+    
+    // IMPORTANT: Keep cooking progress on source slot when splitting (same as compost keeps timestamp)
+    // The remaining stack continues from where it was - only the new split item starts fresh
+    // Note: Progress is per-slot, so the remaining stack will continue cooking with existing progress
+    // The new split item in target slot will start cooking fresh when placed (no progress on new slot)
+    
+     ctx.db.campfire().id().update(campfire.clone());
+     Ok(())
+ }
+ 
+/// --- Quick Move to Campfire ---
+/// Quickly moves an item from player inventory/hotbar to the first available/mergeable slot in the campfire.
+#[spacetimedb::reducer]
+pub fn quick_move_to_campfire(
+    ctx: &ReducerContext,
+    campfire_id: u32,
+    item_instance_id: u64,
+) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent quick move when broth pot is attached ---
+    // Quick move might try to use slots 1-4 which are blocked when broth pot is attached
+    // Use move_item_to_campfire with explicit slot 0 instead
+    if campfire.attached_broth_pot_id.is_some() {
+        return Err("Cannot use quick move while broth pot is attached. Use move_item_to_campfire with slot 0 for fuel management.".to_string());
+    }
+    
+    // --- Validate item type - prevent water bottles and cauldrons ---
+     let items = ctx.db.inventory_item();
+     let item = items.instance_id().find(&item_instance_id)
+         .ok_or_else(|| "Item not found.".to_string())?;
+     let item_defs = ctx.db.item_definition();
+     let item_def = item_defs.id().find(&item.item_def_id)
+         .ok_or_else(|| "Item definition not found.".to_string())?;
+     
+     // Prevent water containers and cauldrons from being placed in campfires
+     let blocked_items = ["Reed Water Bottle", "Plastic Water Jug", "Cerametal Field Cauldron Mk. II"];
+     if blocked_items.contains(&item_def.name.as_str()) {
+         return Err(format!("Cannot place '{}' in campfire. Use the broth pot's water container slot for water bottles, or place the cauldron on the campfire.", item_def.name));
+     }
+     
+     inventory_management::handle_quick_move_to_container(ctx, &mut campfire, item_instance_id)?;
+     ctx.db.campfire().id().update(campfire.clone());
+     Ok(())
+ }
+ 
+/// --- Move From Campfire to Player ---
+/// Moves a specific item FROM a campfire slot TO a specific player inventory/hotbar slot.
+#[spacetimedb::reducer]
+pub fn move_item_from_campfire_to_player_slot(
+    ctx: &ReducerContext,
+    campfire_id: u32,
+    source_slot_index: u8,
+    target_slot_type: String,
+    target_slot_index: u32, // u32 to match client flexibility
+) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && source_slot_index != 0 {
+        return Err("Cannot remove fuel from campfire slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+    
+    inventory_management::handle_move_from_container_slot(ctx, &mut campfire, source_slot_index, target_slot_type, target_slot_index)?;
+     let still_has_fuel = check_if_campfire_has_fuel(ctx, &campfire);
+     if !still_has_fuel && campfire.is_burning {
+         campfire.is_burning = false;
+         campfire.current_fuel_def_id = None;
+         campfire.remaining_fuel_burn_time_secs = None;
+     }
+     ctx.db.campfire().id().update(campfire.clone());
+     Ok(())
+ }
+ 
+ /// --- Split From Campfire to Player ---
+ /// Splits a stack FROM a campfire slot TO a specific player inventory/hotbar slot.
+ #[spacetimedb::reducer]
+ pub fn split_stack_from_campfire(
+     ctx: &ReducerContext,
+     source_campfire_id: u32,
+     source_slot_index: u8,
+     quantity_to_split: u32,
+     target_slot_type: String,    // "inventory" or "hotbar"
+     target_slot_index: u32,     // Numeric index for inventory/hotbar
+ ) -> Result<(), String> {
+     // Get mutable campfire table handle
+     let mut campfires = ctx.db.campfire();
+ 
+     // --- Basic Validations --- 
+     let (_player, mut campfire) = validate_campfire_interaction(ctx, source_campfire_id)?;
+     // Note: Further validations (item existence, stackability, quantity) are handled 
+     //       within the generic handle_split_from_container function.
+ 
+     log::info!(
+         "[SplitFromCampfire] Player {:?} delegating split {} from campfire {} slot {} to {} slot {}",
+         ctx.sender(), quantity_to_split, source_campfire_id, source_slot_index, target_slot_type, target_slot_index
+     );
+ 
+     // --- Call GENERIC Handler --- 
+     inventory_management::handle_split_from_container(
+         ctx, 
+         &mut campfire, 
+         source_slot_index, 
+         quantity_to_split,
+         target_slot_type, 
+         target_slot_index
+     )?;
+
+     // IMPORTANT: Keep cooking progress on source slot when splitting (same as compost keeps timestamp)
+     // The remaining stack continues from where it was - only the new split item starts fresh
+     // Note: Progress is per-slot, so the remaining stack will continue cooking with existing progress
+
+     // --- Commit Campfire Update --- 
+     // The handler might have modified the source item quantity via split_stack_helper,
+     // but the campfire state itself (slots) isn't directly changed by this handler.
+     // However, to be safe and consistent with other reducers that fetch a mutable container,
+     // we update it here. In the future, if the handler needed to modify the container state
+     // (e.g., if the split failed and we needed to revert something), this update is necessary.
+     campfires.id().update(campfire);
+ 
+     Ok(())
+ }
+ 
+ /// --- Split and Move From Campfire ---
+ /// Splits a stack FROM a campfire slot and moves/merges the new stack 
+ /// TO a target slot (player inventory/hotbar, or another campfire slot).
+ #[spacetimedb::reducer]
+ pub fn split_and_move_from_campfire(
+     ctx: &ReducerContext,
+     source_campfire_id: u32,
+     source_slot_index: u8,
+     quantity_to_split: u32,
+     target_slot_type: String,    // "inventory", "hotbar", or "campfire_fuel"
+     target_slot_index: u32,     // Numeric index for inventory/hotbar/campfire
+ ) -> Result<(), String> {
+     let sender_id = ctx.sender(); 
+     let campfires = ctx.db.campfire();
+     let mut inventory_items = ctx.db.inventory_item(); 
+ 
+     log::info!(
+         "[SplitMoveFromCampfire] Player {:?} splitting {} from campfire {} slot {} to {} slot {}",
+         sender_id, quantity_to_split, source_campfire_id, source_slot_index, target_slot_type, target_slot_index
+     );
+ 
+     // --- 1. Find Source Campfire & Item ID --- 
+     let campfire = campfires.id().find(source_campfire_id)
+         .ok_or(format!("Source campfire {} not found", source_campfire_id))?;
+     
+     if source_slot_index >= crate::campfire::NUM_FUEL_SLOTS as u8 {
+         return Err(format!("Invalid source fuel slot index: {}", source_slot_index));
+     }
+ 
+    let source_instance_id = match source_slot_index {
+        0 => campfire.slot_instance_id_0,
+        1 => campfire.slot_instance_id_1,
+        2 => campfire.slot_instance_id_2,
+        3 => campfire.slot_instance_id_3,
+        4 => campfire.slot_instance_id_4,
+        _ => None,
+    }.ok_or(format!("No item found in source campfire slot {}", source_slot_index))?;
+ 
+     // --- 2. Get Source Item & Validate Split --- 
+     let mut source_item = inventory_items.instance_id().find(source_instance_id)
+         .ok_or("Source item instance not found in inventory table")?;
+ 
+     let item_def = ctx.db.item_definition().id().find(source_item.item_def_id)
+         .ok_or_else(|| format!("Definition not found for item ID {}", source_item.item_def_id))?;
+     
+     if !item_def.is_stackable {
+         return Err(format!("Item '{}' is not stackable.", item_def.name));
+     }
+     if quantity_to_split == 0 {
+         return Err("Cannot split a quantity of 0.".to_string());
+     }
+     if quantity_to_split >= source_item.quantity {
+         return Err(format!("Cannot split {} items, only {} available.", quantity_to_split, source_item.quantity));
+     }
+ 
+     // --- 3. Perform Split --- 
+     // Determine the initial location for the NEWLY SPLIT item.
+     // If moving to player inventory/hotbar, it must initially be in player inventory.
+     // If moving to another campfire slot, it can also initially be player inventory before being added.
+     let initial_location_for_new_split_item = 
+         find_first_empty_player_slot(ctx, sender_id)
+             .ok_or_else(|| "Player inventory is full, cannot create split stack.".to_string())?;
+ 
+     let new_item_instance_id = split_stack_helper(ctx, &mut source_item, quantity_to_split, initial_location_for_new_split_item)?;
+     // source_item (original in campfire) quantity is now updated by split_stack_helper, persist it.
+     inventory_items.instance_id().update(source_item.clone());
+ 
+     // Fetch the newly created item (which is now in player's inventory/hotbar at initial_location_for_new_split_item)
+     let new_item_for_move = inventory_items.instance_id().find(new_item_instance_id)
+         .ok_or_else(|| format!("Failed to find newly split item instance {} for moving", new_item_instance_id))?;
+ 
+     // --- 4. Move/Merge the NEW Stack from its initial player location to the FINAL target --- 
+     log::debug!("[SplitMoveFromCampfire] Moving new stack {} from its initial player location {:?} to final target {} slot {}", 
+                 new_item_instance_id, new_item_for_move.location, target_slot_type, target_slot_index);
+     
+     match target_slot_type.as_str() {
+         "inventory" => {
+             move_item_to_inventory(ctx, new_item_instance_id, target_slot_index as u16)
+         },
+         "hotbar" => {
+             move_item_to_hotbar(ctx, new_item_instance_id, target_slot_index as u8)
+         },
+                 "campfire_fuel" => {
+            // Moving to a slot in the *same* or *another* campfire. 
+            // `move_item_to_campfire` expects the item to come from player inventory.
+            // The new_item_instance_id is already in player's inventory due to split_stack_helper's new location.
+            move_item_to_campfire(ctx, source_campfire_id, target_slot_index as u8, new_item_instance_id)
+         },
+         _ => {
+             log::error!("[SplitMoveFromCampfire] Invalid target_slot_type: {}", target_slot_type);
+             // Attempt to delete the orphaned split stack to prevent item loss
+             inventory_items.instance_id().delete(new_item_instance_id);
+             Err(format!("Invalid target slot type for split: {}", target_slot_type))
+         }
+     }
+ }
+ 
+ /******************************************************************************
+  *                       REDUCERS (Campfire-Specific Logic)                   *
+  ******************************************************************************/
+ 
+ /// --- Campfire Interaction Check ---
+ /// Allows a player to interact with a campfire if they are close enough.
+ #[spacetimedb::reducer]
+ pub fn interact_with_campfire(ctx: &ReducerContext, campfire_id: u32) -> Result<(), String> {
+     let (_player, _campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+     Ok(())
+ }
+ 
+ /// --- Campfire Burning State Toggle ---
+/// Toggles the burning state of the campfire (lights or extinguishes it).
+/// Relies on checking if *any* fuel slot has Wood with quantity > 0.
+/// Rain prevents lighting campfires unless they are inside a shelter.
+#[spacetimedb::reducer]
+pub fn toggle_campfire_burning(ctx: &ReducerContext, campfire_id: u32) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    if campfire.is_burning {
+        campfire.is_burning = false;
+        campfire.current_fuel_def_id = None;
+        campfire.remaining_fuel_burn_time_secs = None;
+        log::info!("Campfire {} extinguished by player {:?}.", campfire.id, ctx.sender());
+        
+        // Stop campfire sound
+        stop_campfire_sound(ctx, campfire.id as u64);
+    } else {
+        if !check_if_campfire_has_fuel(ctx, &campfire) {
+            return Err("Cannot light campfire, requires fuel.".to_string());
+        }
+        
+        // Check if it's raining heavily in this campfire's chunk and campfire is not protected
+        if is_campfire_in_heavy_rain(ctx, &campfire) && !is_campfire_protected_from_rain(ctx, &campfire) {
+            return Err("Cannot light campfire in heavy rain unless it's inside a shelter or near a tree.".to_string());
+        }
+        
+        campfire.is_burning = true;
+        // remaining_fuel_burn_time_secs will be set by the first call to process_campfire_logic_scheduled
+        log::info!("Campfire {} lit by player {:?}.", campfire.id, ctx.sender());
+        
+        // Start campfire sound
+        start_campfire_sound(ctx, campfire.id as u64, campfire.pos_x, campfire.pos_y);
+    }
+    ctx.db.campfire().id().update(campfire.clone());
+    Ok(())
+}
+
+ // Reducer to place a campfire
+#[spacetimedb::reducer]
+pub fn place_campfire(ctx: &ReducerContext, item_instance_id: u64, world_x: f32, world_y: f32) -> Result<(), String> {
+    let sender_id = ctx.sender();
+    let inventory_items = ctx.db.inventory_item();
+    let item_defs = ctx.db.item_definition();
+    let players = ctx.db.player();
+    let campfires = ctx.db.campfire();
+
+    // --- Look up Item Definition IDs by Name ---
+    let campfire_def_id = item_defs.iter()
+        .find(|def| def.name == "Camp Fire")
+        .map(|def| def.id)
+        .ok_or_else(|| "Item definition for 'Camp Fire' not found.".to_string())?;
+
+    let wood_def_id = item_defs.iter()
+        .find(|def| def.name == "Wood")
+        .map(|def| def.id)
+        .ok_or_else(|| "Item definition for 'Wood' not found.".to_string())?;
+    // --- End Look up ---
+
+    log::info!(
+        "[PlaceCampfire] Player {:?} attempting placement of item {} at ({:.1}, {:.1})",
+        sender_id, item_instance_id, world_x, world_y
+    );
+
+    // Check if position is within monument zones (ALK stations, rune stones, hot springs, quarries)
+    crate::building::check_monument_zone_placement(ctx, world_x, world_y)?;
+
+    // --- 1. Validate Player and Placement Rules ---
+    let player = players.identity().find(sender_id)
+        .ok_or_else(|| "Player not found".to_string())?;
+
+    // Don't allow placing campfires if dead or knocked out
+    if player.is_dead {
+        return Err("Cannot place campfire while dead.".to_string());
+    }
+    if player.is_knocked_out {
+        return Err("Cannot place campfire while knocked out.".to_string());
+    }
+
+    let dx_place = world_x - player.position_x;
+    let dy_place = world_y - player.position_y;
+    let dist_sq_place = dx_place * dx_place + dy_place * dy_place;
+    if dist_sq_place > CAMPFIRE_PLACEMENT_MAX_DISTANCE_SQUARED {
+        return Err(format!("Cannot place campfire too far away ({} > {}).",
+                dist_sq_place.sqrt(), CAMPFIRE_PLACEMENT_MAX_DISTANCE));
+    }
+    
+    // Check if placement position is on a wall
+    if crate::building::is_position_on_wall(ctx, world_x, world_y) {
+        return Err("Cannot place campfire on a wall.".to_string());
+    }
+    
+    // Check if placement position is on water (including hot springs)
+    let tile_x = (world_x / crate::TILE_SIZE_PX as f32).floor() as i32;
+    let tile_y = (world_y / crate::TILE_SIZE_PX as f32).floor() as i32;
+    if let Some(tile_type) = crate::get_tile_type_at_position(ctx, tile_x, tile_y) {
+        if tile_type.is_water() {
+            return Err("Cannot place campfire on water.".to_string());
+        }
+    }
+    
+    for other_fire in campfires.iter() {
+        let dx_fire = world_x - other_fire.pos_x;
+        let dy_fire = world_y - other_fire.pos_y;
+        let dist_sq_fire = dx_fire * dx_fire + dy_fire * dy_fire;
+        if dist_sq_fire < CAMPFIRE_CAMPFIRE_COLLISION_DISTANCE_SQUARED {
+            return Err("Cannot place campfire too close to another campfire.".to_string());
+        }
+    }
+    crate::placeable_collision::check_placeable_overlap(ctx, world_x, world_y, 24.0, 24.0, true)?;
+
+    // --- 3. Find the specific item instance and validate ---
+    let item_to_consume = inventory_items.instance_id().find(item_instance_id)
+        .ok_or_else(|| format!("Item instance {} not found.", item_instance_id))?;
+
+    // Validate ownership and location based on ItemLocation
+    match item_to_consume.location {
+        ItemLocation::Inventory(data) => {
+            if data.owner_id != sender_id {
+                return Err(format!("Item instance {} for campfire not owned by player {:?}.", item_instance_id, sender_id));
+            }
+        }
+        ItemLocation::Hotbar(data) => {
+            if data.owner_id != sender_id {
+                return Err(format!("Item instance {} for campfire not owned by player {:?}.", item_instance_id, sender_id));
+            }
+        }
+        _ => {
+            return Err(format!("Item instance {} must be in inventory or hotbar to be placed.", item_instance_id));
+        }
+    }
+    if item_to_consume.item_def_id != campfire_def_id {
+        return Err(format!("Item instance {} is not a Camp Fire (expected def {}, got {}).",
+                        item_instance_id, campfire_def_id, item_to_consume.item_def_id));
+    }
+
+    // --- 4. Consume the Item (Delete from InventoryItem table) ---
+    log::info!(
+        "[PlaceCampfire] Consuming item instance {} (Def ID: {}) from player {:?}",
+        item_instance_id, campfire_def_id, sender_id
+    );
+    inventory_items.instance_id().delete(item_instance_id);
+
+    // --- 5. Create Campfire Entity & Initial Fuel ---
+    // --- 5a. Insert Campfire Entity first to get its ID ---
+    let current_time = ctx.timestamp;
+    let chunk_idx = calculate_chunk_index(world_x, world_y);
+
+    // --- 5b. Create Initial Fuel Item (Wood) with correct ItemLocation ---
+    // We need the ItemDefinition of the wood to get its fuel_burn_duration_secs
+    let initial_fuel_item_def = ctx.db.item_definition().id().find(wood_def_id)
+        .ok_or_else(|| "Wood item definition not found for initial fuel.".to_string())?;
+
+    // --- 5a. Insert Campfire Entity first to get its ID ---
+    // The campfire entity is created with initial fuel data directly
+    let new_campfire = Campfire {
+        id: 0, // Auto-incremented
+        pos_x: world_x,
+        pos_y: world_y + 42.0, // Compensate for bottom-anchoring + 10px render offset
+        chunk_index: chunk_idx,
+        placed_by: sender_id,
+        placed_at: current_time,
+        is_burning: false, // Campfires start unlit
+        // Initialize all slot fields to None (slot_* naming for consistency with other containers)
+        slot_instance_id_0: None,
+        slot_def_id_0: None,
+        slot_instance_id_1: None,
+        slot_def_id_1: None,
+        slot_instance_id_2: None,
+        slot_def_id_2: None,
+        slot_instance_id_3: None,
+        slot_def_id_3: None,
+        slot_instance_id_4: None,
+        slot_def_id_4: None,
+        current_fuel_def_id: None,
+        remaining_fuel_burn_time_secs: None,
+        health: CAMPFIRE_INITIAL_HEALTH, // Example initial health
+        max_health: CAMPFIRE_MAX_HEALTH, // Example max health
+        is_destroyed: false,
+        destroyed_at: None,
+        last_hit_time: None,
+        last_damaged_by: None, // ADDED: Track who last damaged this campfire
+        // Initialize cooking progress to None
+        slot_0_cooking_progress: None,
+        slot_1_cooking_progress: None,
+        slot_2_cooking_progress: None,
+        slot_3_cooking_progress: None,
+        slot_4_cooking_progress: None,
+        last_damage_application_time: None,
+        is_player_in_hot_zone: false, // Initialize new field
+        attached_broth_pot_id: None, // Initialize broth pot field
+        // Monument placeable system (player-placed campfires are not monuments)
+        is_monument: false,
+        active_user_id: None,
+        active_user_since: None,
+    };
+    let inserted_campfire = campfires.try_insert(new_campfire.clone())
+        .map_err(|e| format!("Failed to insert campfire entity: {}", e))?;
+    let new_campfire_id = inserted_campfire.id; 
+
+    let initial_fuel_item = crate::items::InventoryItem {
+        instance_id: 0, // Auto-inc
+        item_def_id: wood_def_id, 
+        quantity: INITIAL_CAMPFIRE_FUEL_AMOUNT, 
+        location: ItemLocation::Container(ContainerLocationData {
+            container_type: ContainerType::Campfire,
+            container_id: new_campfire_id as u64, 
+            slot_index: 0, 
+        }),
+        item_data: None, // Initialize as empty
+    };
+    let inserted_fuel_item = inventory_items.try_insert(initial_fuel_item)
+        .map_err(|e| format!("Failed to insert initial fuel item: {}", e))?;
+    let fuel_instance_id = inserted_fuel_item.instance_id;
+    log::info!("[PlaceCampfire] Created initial fuel item (Wood, instance {}) for campfire {}.", fuel_instance_id, new_campfire_id);
+
+    // --- 5c. Update the Campfire Entity with the Fuel Item's ID in the correct slot --- 
+    let mut campfire_to_update = campfires.id().find(new_campfire_id)
+        .ok_or_else(|| format!("Failed to re-find campfire {} to update with fuel.", new_campfire_id))?;
+    
+    // Set the first slot of the campfire
+    campfire_to_update.slot_instance_id_0 = Some(fuel_instance_id);
+    campfire_to_update.slot_def_id_0 = Some(wood_def_id);
+    // DO NOT set current_fuel_def_id or remaining_fuel_burn_time_secs here.
+    // is_burning is already false from new_campfire.
+    // The scheduled process_campfire_logic_scheduled will pick it up.
+    
+    let is_burning_for_log = campfire_to_update.is_burning; // Capture before move
+    campfires.id().update(campfire_to_update); // campfire_to_update is moved here
+    
+    log::info!("Player {} placed a campfire {} at ({:.1}, {:.1}) with initial fuel (Item {} in slot 0). Burning state: {}.",
+             player.username, new_campfire_id, world_x, world_y, fuel_instance_id, is_burning_for_log); // Use captured value
+
+    // Global campfire schedule processes all campfires; no per-entity scheduling needed
+    
+    // Track quest progress for campfire placement
+    if let Err(e) = crate::quests::track_quest_progress(
+        ctx,
+        sender_id,
+        crate::quests::QuestObjectiveType::PlaceCampfire,
+        None,
+        1,
+    ) {
+        log::error!("Failed to track quest progress for campfire placement: {}", e);
+    }
+
+    Ok(())
+}
+ 
+ /******************************************************************************
+  *                           SCHEDULED REDUCERS                               *
+  ******************************************************************************/
+ 
+/// Scheduled reducer: Processes ALL campfires in one call (1 tx/sec vs N tx/sec)
+#[spacetimedb::reducer]
+pub fn process_all_campfires_scheduled(ctx: &ReducerContext, _schedule: CampfireGlobalSchedule) -> Result<(), String> {
+     if ctx.sender() != ctx.identity() {
+         log::warn!("[ProcessCampfireScheduled] Unauthorized attempt to run scheduled campfire logic by {:?}. Ignoring.", ctx.sender());
+         return Err("Unauthorized scheduler invocation".to_string());
+     }
+ 
+     let campfire_ids: Vec<u32> = ctx.db.campfire().iter().map(|c| c.id).collect();
+     if campfire_ids.is_empty() {
+         return Ok(());
+     }
+ 
+     let mut campfires_table = ctx.db.campfire();
+     let mut inventory_items_table = ctx.db.inventory_item();
+     let item_definition_table = ctx.db.item_definition(); // Keep this if fuel logic or charcoal needs it.
+ 
+     // Get a mutable handle to the active_consumable_effect table
+     let mut active_effects_table = ctx.db.active_consumable_effect();
+ 
+     for campfire_id in campfire_ids {
+     let mut campfire = match campfires_table.id().find(campfire_id) {
+         Some(cf) => cf,
+         None => continue,
+     };
+ 
+     if campfire.is_destroyed {
+         continue;
+     }
+
+    let mut made_changes_to_campfire_struct = false;
+    
+    // --- Auto-release container access if user is offline or too far ---
+    if let Some(active_user) = campfire.active_user_id {
+        let should_release = match ctx.db.player().identity().find(&active_user) {
+            Some(player) => {
+                let dx = player.position_x - campfire.pos_x;
+                let dy = player.position_y - campfire.pos_y;
+                let dist_sq = dx * dx + dy * dy;
+                dist_sq > PLAYER_CAMPFIRE_INTERACTION_DISTANCE_SQUARED * 2.0
+            }
+            None => true
+        };
+        if should_release {
+            campfire.active_user_id = None;
+            campfire.active_user_since = None;
+            made_changes_to_campfire_struct = true;
+        }
+    }
+    let mut produced_charcoal_and_modified_campfire_struct = false;
+
+    let current_time = ctx.timestamp;
+
+    if campfire.is_burning {
+        let time_increment = CAMPFIRE_PROCESS_INTERVAL_SECS as f32;
+
+        // --- OPTIMIZATION: Cache item flags computed once per tick instead of re-scanning slots ---
+        // These used to iterate all slots + item_definition lookups every tick.
+        // Now computed once and reused for damage, cooking, and fuel logic.
+        let cached_has_bellows = has_reed_bellows(ctx, &campfire);
+        let cached_has_metal_ore = has_metal_ore_in_campfire(ctx, &campfire);
+        
+        // --- OPTIMIZATION: Cache the active fuel instance ID ---
+        // Previous code did a nested find_map over all slots every tick.
+        let cached_active_fuel_instance_id: Option<u64> = if campfire.remaining_fuel_burn_time_secs.unwrap_or(0.0) > 0.0 {
+            campfire.current_fuel_def_id.and_then(|fuel_def_id| {
+                (0..NUM_FUEL_SLOTS as u8).find_map(|i| {
+                    if campfire.get_slot_def_id(i) == Some(fuel_def_id) {
+                        campfire.get_slot_instance_id(i)
+                    } else {
+                        None
+                    }
+                })
+            })
+        } else {
+            None
+        };
+
+        // --- Campfire Damage Logic (OPTIMIZED) ---
+        // Only update last_damage_application_time when damage is actually applied, not every tick.
+        let damage_cooldown_duration = TimeDuration::from_micros(CAMPFIRE_DAMAGE_APPLICATION_COOLDOWN_SECONDS as i64 * 1_000_000);
+        let can_apply_damage = campfire.last_damage_application_time.map_or(true, |last_time| {
+            current_time >= last_time + damage_cooldown_duration
+        });
+
+        if can_apply_damage {
+            let mut applied_damage_this_tick = false;
+            let mut a_player_is_in_hot_zone_this_tick = false;
+
+            // OPTIMIZATION: Pre-compute fire center and use AABB bounding-box pre-filter.
+            // Most players will be far from this campfire; the AABB check avoids
+            // the more expensive squared-distance computation for the vast majority.
+            const VISUAL_CENTER_Y_OFFSET: f32 = 42.0;
+            let fire_center_y = campfire.pos_y - VISUAL_CENTER_Y_OFFSET;
+            
+            for player_entity in ctx.db.player().iter() {
+                // Early exit: skip dead and offline players
+                if player_entity.is_dead || !player_entity.is_online { continue; }
+                
+                // AABB bounding-box pre-filter (cheaper than dist_sq for far-away players)
+                let dx = player_entity.position_x - campfire.pos_x;
+                if dx > CAMPFIRE_DAMAGE_RADIUS || dx < -CAMPFIRE_DAMAGE_RADIUS { continue; }
+                let dy = player_entity.position_y - fire_center_y;
+                if dy > CAMPFIRE_DAMAGE_RADIUS || dy < -CAMPFIRE_DAMAGE_RADIUS { continue; }
+                
+                let dist_sq = dx * dx + dy * dy;
+
+                if dist_sq < CAMPFIRE_DAMAGE_RADIUS_SQUARED {
+                    a_player_is_in_hot_zone_this_tick = true;
+
+                    log::info!("[CampfireProcess {}] Player {:?} IS IN DAMAGE RADIUS (dist_sq={:.1}). Applying burn effect.", campfire_id, player_entity.identity, dist_sq);
+                    
+                    match crate::active_effects::apply_burn_effect(
+                        ctx, 
+                        player_entity.identity, 
+                        CAMPFIRE_DAMAGE_PER_TICK, 
+                        CAMPFIRE_DAMAGE_EFFECT_DURATION_SECONDS as f32, 
+                        CAMPFIRE_BURN_TICK_INTERVAL_SECONDS,
+                        0
+                    ) {
+                        Ok(_) => {
+                            log::info!("[CampfireProcess {}] Successfully applied/extended burn effect for player {:?}", campfire_id, player_entity.identity);
+                            applied_damage_this_tick = true;
+                        }
+                        Err(e) => {
+                            log::error!("[CampfireProcess {}] FAILED to apply burn effect for player {:?}: {}", campfire_id, player_entity.identity, e);
+                        }
+                    }
+                }
+            }
+
+            // OPTIMIZED: Compute final hot zone state and only write if changed
+            if a_player_is_in_hot_zone_this_tick != campfire.is_player_in_hot_zone {
+                campfire.is_player_in_hot_zone = a_player_is_in_hot_zone_this_tick;
+                made_changes_to_campfire_struct = true;
+            }
+
+            // OPTIMIZED: Only set last_damage_application_time when damage was actually applied
+            if applied_damage_this_tick {
+                campfire.last_damage_application_time = Some(current_time);
+                made_changes_to_campfire_struct = true;
+            }
+        }
+ 
+        // --- COOKING LOGIC (using cached flags) ---
+        let cooking_speed_multiplier = if cached_has_bellows { 1.2 } else { 1.0 }
+            * if crate::rune_stone::is_position_in_green_rune_zone(ctx, campfire.pos_x, campfire.pos_y) { 2.0 } else { 1.0 };
+        let adjusted_cooking_time_increment = time_increment * cooking_speed_multiplier;
+        
+        if !cached_has_metal_ore {
+            match crate::cooking::process_appliance_cooking_tick(ctx, &mut campfire, adjusted_cooking_time_increment, cached_active_fuel_instance_id) {
+                Ok(cooking_modified_appliance) => {
+                    if cooking_modified_appliance {
+                        made_changes_to_campfire_struct = true;
+                    }
+                }
+                Err(e) => {
+                    log::error!("[ProcessCampfireScheduled] Error during cooking tick for campfire {}: {}", campfire.id, e);
+                }
+            }
+            // --- COMBAT LADLE HEATING ---
+            if crate::combat_ladle_heating::process_combat_ladle_heating(ctx, &mut campfire, adjusted_cooking_time_increment, cached_active_fuel_instance_id) {
+                made_changes_to_campfire_struct = true;
+            }
+        }
+        // --- END COOKING LOGIC ---
+ 
+        // --- FUEL CONSUMPTION LOGIC (using cached bellows flag) ---
+        if let Some(mut remaining_time) = campfire.remaining_fuel_burn_time_secs {
+            if remaining_time > 0.0 {
+                let fuel_burn_multiplier = if cached_has_bellows { 1.5 } else { 1.0 };
+                let adjusted_time_increment = time_increment / fuel_burn_multiplier;
+                 remaining_time -= adjusted_time_increment;
+ 
+                 if remaining_time <= 0.0 {
+                     // log::info!("[ProcessCampfireScheduled] Campfire {} fuel unit (Def: {:?}) burnt out. Consuming unit and checking stack/new fuel.", campfire.id, campfire.current_fuel_def_id);
+                     
+                     let mut consumed_and_reloaded_from_stack = false;
+                     let mut active_fuel_slot_idx_found: Option<u8> = None;
+ 
+                     for i in 0..NUM_FUEL_SLOTS as u8 {
+                         if campfire.get_slot_def_id(i) == campfire.current_fuel_def_id {
+                             if let Some(instance_id) = campfire.get_slot_instance_id(i) {
+                                 if let Some(mut fuel_item) = inventory_items_table.instance_id().find(instance_id) {
+                                     active_fuel_slot_idx_found = Some(i);
+                                     let consumed_item_def_id_for_charcoal = fuel_item.item_def_id;
+                                     fuel_item.quantity -= 1;
+ 
+                                     if fuel_item.quantity > 0 {
+                                         inventory_items_table.instance_id().update(fuel_item.clone());
+                                         if let Some(item_def) = item_definition_table.id().find(fuel_item.item_def_id) {
+                                             if let Some(burn_duration_per_unit) = item_def.fuel_burn_duration_secs {
+                                                 campfire.remaining_fuel_burn_time_secs = Some(burn_duration_per_unit);
+                                                 consumed_and_reloaded_from_stack = true;
+                                             } else { campfire.current_fuel_def_id = None; campfire.remaining_fuel_burn_time_secs = None; }
+                                         } else { campfire.current_fuel_def_id = None; campfire.remaining_fuel_burn_time_secs = None; }
+                                     } else {
+                                         inventory_items_table.instance_id().delete(instance_id);
+                                         campfire.set_slot(i, None, None);
+                                         campfire.current_fuel_def_id = None; 
+                                         campfire.remaining_fuel_burn_time_secs = None;
+                                     }
+                                     made_changes_to_campfire_struct = true;
+ 
+                                     if let Some(consumed_def) = item_definition_table.id().find(consumed_item_def_id_for_charcoal) {
+                                         if consumed_def.name == "Wood" && ctx.rng().gen_range(0..100) < CHARCOAL_PRODUCTION_CHANCE {
+                                             if let Some(charcoal_def) = get_item_def_by_name(ctx, "Charcoal") {
+                                                 if try_add_charcoal_to_campfire_or_drop(ctx, &mut campfire, &charcoal_def, 1).unwrap_or(false) {
+                                                     produced_charcoal_and_modified_campfire_struct = true;
+                                                 }
+                                             }
+                                         }
+                                     }
+                                     break; 
+                                 } else { campfire.current_fuel_def_id = None; campfire.remaining_fuel_burn_time_secs = None; made_changes_to_campfire_struct = true; break;}
+                             }
+                         }
+                     }
+                     if !consumed_and_reloaded_from_stack && campfire.current_fuel_def_id.is_some() && active_fuel_slot_idx_found.is_none() {
+                         campfire.current_fuel_def_id = None; campfire.remaining_fuel_burn_time_secs = None; made_changes_to_campfire_struct = true;
+                     }
+                 } else {
+                     campfire.remaining_fuel_burn_time_secs = Some(remaining_time);
+                     made_changes_to_campfire_struct = true;
+                 }
+             } else { // remaining_fuel_burn_time_secs was already <= 0.0 or None
+                 campfire.current_fuel_def_id = None; 
+                 campfire.remaining_fuel_burn_time_secs = None;
+                 made_changes_to_campfire_struct = true; 
+             }
+         }
+         
+         if campfire.current_fuel_def_id.is_none() { // Try to find new fuel
+             let mut new_fuel_loaded = false;
+             for i in 0..NUM_FUEL_SLOTS as u8 {
+                 if let (Some(instance_id), Some(def_id)) = (campfire.get_slot_instance_id(i), campfire.get_slot_def_id(i)) {
+                     if let Some(fuel_item_check) = inventory_items_table.instance_id().find(instance_id){
+                         if fuel_item_check.quantity > 0 {
+                              if find_and_set_burn_time_for_fuel_unit(ctx, &mut campfire, instance_id, def_id, i) {
+                                 new_fuel_loaded = true; made_changes_to_campfire_struct = true; break;
+                             }
+                         } else { campfire.set_slot(i, None, None); made_changes_to_campfire_struct = true; }
+                     } else { campfire.set_slot(i, None, None); made_changes_to_campfire_struct = true; }
+                 }
+             }
+                         if !new_fuel_loaded {
+                campfire.is_burning = false; made_changes_to_campfire_struct = true;
+                
+                // Stop campfire sound when it runs out of fuel
+                stop_campfire_sound(ctx, campfire.id as u64);
+            }
+         }
+     } else { // campfire.is_burning is false
+         // log::debug!("[ProcessCampfireScheduled] Campfire {} is not burning. No processing needed for fuel/cooking.", campfire.id);
+         // log::debug!("[CampfireProcess {}] Is NOT burning. Skipping damage and fuel/cooking.", campfire_id);
+     }
+ 
+     if made_changes_to_campfire_struct || produced_charcoal_and_modified_campfire_struct {
+         campfires_table.id().update(campfire); // Update the owned campfire variable
+     }
+     } // end for campfire_id
+     Ok(())
+ }
+
+/// Initialize the global campfire processing schedule (1 tx/sec for all campfires)
+pub fn init_campfire_global_schedule(ctx: &ReducerContext) -> Result<(), String> {
+    if ctx.db.campfire_global_schedule().iter().next().is_some() {
+        return Ok(());
+    }
+    let interval = TimeDuration::from_micros((CAMPFIRE_PROCESS_INTERVAL_SECS * 1_000_000) as i64);
+    crate::try_insert_schedule!(
+        ctx.db.campfire_global_schedule(),
+        CampfireGlobalSchedule { id: 0, scheduled_at: ScheduleAt::Interval(interval) },
+        "Campfire global processing"
+    );
+    Ok(())
+}
+
+/******************************************************************************
+ *                            TRAIT IMPLEMENTATIONS                           *
+ ******************************************************************************/
+ 
+ /// --- ItemContainer Implementation for Campfire ---
+ /// Implements the ItemContainer trait for the Campfire struct.
+ /// Provides methods to get the number of slots and access individual slots.
+ impl ItemContainer for Campfire {
+     fn num_slots(&self) -> usize {
+         NUM_FUEL_SLOTS
+     }
+ 
+    /// --- Get Slot Instance ID ---
+    /// Returns the instance ID for a given slot index.
+    /// Returns None if the slot index is out of bounds.
+    fn get_slot_instance_id(&self, slot_index: u8) -> Option<u64> {
+        if slot_index >= NUM_FUEL_SLOTS as u8 { return None; }
+        match slot_index {
+            0 => self.slot_instance_id_0,
+            1 => self.slot_instance_id_1,
+            2 => self.slot_instance_id_2,
+            3 => self.slot_instance_id_3,
+            4 => self.slot_instance_id_4,
+            _ => None, // Should be unreachable due to index check
+        }
+    }
+
+    /// --- Get Slot Definition ID ---
+    /// Returns the definition ID for a given slot index.
+    /// Returns None if the slot index is out of bounds.
+    fn get_slot_def_id(&self, slot_index: u8) -> Option<u64> {
+        if slot_index >= NUM_FUEL_SLOTS as u8 { return None; }
+        match slot_index {
+            0 => self.slot_def_id_0,
+            1 => self.slot_def_id_1,
+            2 => self.slot_def_id_2,
+            3 => self.slot_def_id_3,
+            4 => self.slot_def_id_4,
+            _ => None,
+        }
+    }
+
+    /// --- Set Slot ---
+    /// Sets the item instance ID and definition ID for a given slot index. 
+    /// Returns None if the slot index is out of bounds.
+    fn set_slot(&mut self, slot_index: u8, instance_id: Option<u64>, def_id: Option<u64>) {
+        if slot_index >= NUM_FUEL_SLOTS as u8 { return; }
+        match slot_index {
+            0 => { self.slot_instance_id_0 = instance_id; self.slot_def_id_0 = def_id; if instance_id.is_none() { self.slot_0_cooking_progress = None; } },
+            1 => { self.slot_instance_id_1 = instance_id; self.slot_def_id_1 = def_id; if instance_id.is_none() { self.slot_1_cooking_progress = None; } },
+            2 => { self.slot_instance_id_2 = instance_id; self.slot_def_id_2 = def_id; if instance_id.is_none() { self.slot_2_cooking_progress = None; } },
+            3 => { self.slot_instance_id_3 = instance_id; self.slot_def_id_3 = def_id; if instance_id.is_none() { self.slot_3_cooking_progress = None; } },
+            4 => { self.slot_instance_id_4 = instance_id; self.slot_def_id_4 = def_id; if instance_id.is_none() { self.slot_4_cooking_progress = None; } },
+            _ => {},
+        }
+        // If a new item is placed (instance_id is Some), its cooking progress should be determined by process_campfire_logic_scheduled.
+        // If an item is cleared (instance_id is None), its cooking progress is set to None above.
+    }
+ 
+     // --- ItemContainer Trait Extension for ItemLocation --- 
+     fn get_container_type(&self) -> ContainerType {
+         ContainerType::Campfire
+     }
+ 
+     fn get_container_id(&self) -> u64 {
+         self.id as u64 // Campfire ID is u32, cast to u64
+     }
+ }
+ 
+ /// --- Helper struct to implement the ContainerItemClearer trait for Campfire ---
+ /// Implements the ContainerItemClearer trait for the Campfire struct.
+ /// Provides a method to clear an item from all campfires.
+ pub struct CampfireClearer;
+ 
+ /// --- Clear Item From Campfire Fuel Slots ---
+ /// Removes a specific item instance from any campfire fuel slot it might be in.
+ /// Used when items are deleted or moved to ensure consistency across containers.
+ pub(crate) fn clear_item_from_campfire_fuel_slots(ctx: &ReducerContext, item_instance_id_to_clear: u64) -> bool {
+     let inventory_table = ctx.db.inventory_item();
+     let mut item_found_and_cleared = false;
+ 
+     for mut campfire in ctx.db.campfire().iter() { // Iterate over all campfires
+         let mut campfire_modified = false;
+         for i in 0..campfire.num_slots() as u8 { // Use ItemContainer trait method
+             if campfire.get_slot_instance_id(i) == Some(item_instance_id_to_clear) {
+                 log::debug!(
+                     "Item {} found in campfire {} slot {}. Clearing slot.",
+                     item_instance_id_to_clear, campfire.id, i
+                 );
+                 // Update item's location to Unknown before clearing from container and deleting
+                 if let Some(mut item) = inventory_table.instance_id().find(item_instance_id_to_clear) {
+                     item.location = ItemLocation::Unknown;
+                     inventory_table.instance_id().update(item);
+                 }
+                 // It's assumed the caller will delete the InventoryItem itself after clearing it from all potential containers.
+                 // This function just clears the reference from this specific container type.
+                 campfire.set_slot(i, None, None);
+                 campfire_modified = true;
+                 item_found_and_cleared = true; // Mark that we found and cleared it at least once
+                 // Do not break here, an item ID (though should be unique) might theoretically appear in multiple campfires if DB was manually edited.
+             }
+         }
+         if campfire_modified {
+             ctx.db.campfire().id().update(campfire);
+         }
+     }
+     item_found_and_cleared
+ }
+ 
+ impl ContainerItemClearer for CampfireClearer {
+     fn clear_item(ctx: &ReducerContext, item_instance_id: u64) -> bool {
+         // This specific implementation iterates all campfires to find and remove the item.
+         // This is different from container-specific reducers which operate on a single container ID.
+         clear_item_from_campfire_fuel_slots(ctx, item_instance_id)
+     }
+ }
+ 
+ /******************************************************************************
+  *                             HELPER FUNCTIONS                               *
+  ******************************************************************************/
+ 
+ /// --- Campfire Interaction Validation ---
+ /// Validates if a player can interact with a specific campfire (checks existence and distance).
+ /// Returns Ok((Player struct instance, Campfire struct instance)) on success, or Err(String) on failure.
+ fn validate_campfire_interaction(
+     ctx: &ReducerContext,
+     campfire_id: u32,
+ ) -> Result<(Player, Campfire), String> {
+     let sender_id = ctx.sender();
+     let players = ctx.db.player();
+     let campfires = ctx.db.campfire();
+
+     let player = players.identity().find(sender_id)
+         .ok_or_else(|| "Player not found".to_string())?;
+     let campfire = campfires.id().find(campfire_id)
+         .ok_or_else(|| format!("Campfire {} not found", campfire_id))?;
+
+     // OPTIMIZED: Check distance between player and campfire's visual center
+     // Since the visual campfire is rendered with its center offset from the base position,
+     // we need to adjust the y-coordinate to match where the player sees the campfire
+     // Using CAMPFIRE_HEIGHT constant from client (64px) divided by 2 plus CAMPFIRE_RENDER_Y_OFFSET (10px)
+     // Total offset is roughly 32 + 10 = 42px upward from base position
+     const VISUAL_CENTER_Y_OFFSET: f32 = 42.0;
+     
+     let dx = player.position_x - campfire.pos_x;
+     let dy = player.position_y - (campfire.pos_y - VISUAL_CENTER_Y_OFFSET);
+     let dist_sq = dx * dx + dy * dy;
+
+     if dist_sq > PLAYER_CAMPFIRE_INTERACTION_DISTANCE_SQUARED {
+         return Err("Too far away from campfire".to_string());
+     }
+
+    // NEW: Check shelter access control
+    if !crate::shelter::can_player_interact_with_object_in_shelter(
+        ctx,
+        sender_id,
+        player.position_x,
+        player.position_y,
+        campfire.pos_x,
+        campfire.pos_y,
+    ) {
+        return Err("Cannot interact with campfire inside shelter - only the shelter owner can access it from inside".to_string());
+    }
+
+    // Check safe zone container exclusivity
+    crate::active_effects::validate_safe_zone_container_access(
+        ctx,
+        campfire.pos_x,
+        campfire.pos_y,
+        campfire.active_user_id,
+        campfire.active_user_since,
+    )?;
+
+    Ok((player, campfire))
+}
+
+/// --- Open Campfire Container ---
+/// Called when a player opens the campfire UI. Sets the active_user_id to prevent
+/// other players from using this container in safe zones.
+#[spacetimedb::reducer]
+pub fn open_campfire_container(ctx: &ReducerContext, campfire_id: u32) -> Result<(), String> {
+    let (_player, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // Set the active user
+    campfire.active_user_id = Some(ctx.sender());
+    campfire.active_user_since = Some(ctx.timestamp);
+    
+    ctx.db.campfire().id().update(campfire);
+    log::debug!("Player {:?} opened campfire {} container", ctx.sender(), campfire_id);
+    
+    Ok(())
+}
+
+/// --- Close Campfire Container ---
+/// Called when a player closes the campfire UI. Clears the active_user_id to allow
+/// other players to use this container.
+#[spacetimedb::reducer]
+pub fn close_campfire_container(ctx: &ReducerContext, campfire_id: u32) -> Result<(), String> {
+    let campfire = ctx.db.campfire().id().find(campfire_id)
+        .ok_or_else(|| format!("Campfire {} not found", campfire_id))?;
+    
+    // Only clear if this player is the active user
+    if campfire.active_user_id == Some(ctx.sender()) {
+        let mut campfire = campfire;
+        campfire.active_user_id = None;
+        campfire.active_user_since = None;
+        ctx.db.campfire().id().update(campfire);
+        log::debug!("Player {:?} closed campfire {} container", ctx.sender(), campfire_id);
+    }
+    
+    Ok(())
+}
+ 
+ // --- Campfire Fuel Checking ---
+ // This function checks if a campfire has any valid fuel in its slots.
+ // It examines each fuel slot for Wood with quantity > 0.
+ // Returns true if valid fuel is found, false otherwise.
+ // Used when determining if a campfire can be lit or should continue burning.
+ pub(crate) fn check_if_campfire_has_fuel(ctx: &ReducerContext, campfire: &Campfire) -> bool {
+     let item_def_table = ctx.db.item_definition();
+     for i in 0..NUM_FUEL_SLOTS {
+         if let Some(instance_id) = campfire.get_slot_instance_id(i as u8) { // Ensure i is u8 for get_slot
+             if let Some(item_instance) = ctx.db.inventory_item().instance_id().find(instance_id) {
+                 if let Some(item_def) = item_def_table.id().find(item_instance.item_def_id) {
+                     if item_def.fuel_burn_duration_secs.is_some() && item_instance.quantity > 0 {
+                         return true;
+                     }
+                 }
+             }
+         }
+     }
+     false
+ }
+ 
+ // Renamed and refactored: find_and_consume_fuel_for_campfire to find_and_set_burn_time_for_fuel_unit
+ // This function now only CHECKS if a fuel item is valid and sets the burn time for ONE unit of it.
+ // It does NOT consume the item's quantity here. Consumption happens in process_campfire_logic_scheduled.
+ // Returns true if valid fuel was found and burn time set, false otherwise.
+ fn find_and_set_burn_time_for_fuel_unit(
+     ctx: &ReducerContext,
+     current_campfire: &mut Campfire, 
+     fuel_instance_id: u64,      
+     fuel_item_def_id: u64,      
+     _fuel_slot_index: u8, // Not strictly needed here anymore for setting, but good for logging if fuel_instance_id wasn't enough
+ ) -> bool { 
+     let inventory_items = ctx.db.inventory_item();
+     let item_defs = ctx.db.item_definition();
+ 
+     if let Some(fuel_item) = inventory_items.instance_id().find(fuel_instance_id) {
+         if fuel_item.quantity == 0 { // Should not happen if slot is occupied, but good check
+             log::warn!("[find_and_set_burn_time] Fuel item {} has 0 quantity, cannot use.", fuel_instance_id);
+             return false;
+         }
+         if let Some(item_def) = item_defs.id().find(fuel_item_def_id) { 
+             if let Some(burn_duration_per_unit) = item_def.fuel_burn_duration_secs {
+                 if burn_duration_per_unit > 0.0 {
+                     log::debug!("[find_and_set_burn_time] Campfire {} found valid fuel item {} (Def: {}) with burn duration {}. Setting as current fuel.", 
+                              current_campfire.id, fuel_instance_id, fuel_item_def_id, burn_duration_per_unit);
+ 
+                     current_campfire.current_fuel_def_id = Some(fuel_item_def_id);
+                     current_campfire.remaining_fuel_burn_time_secs = Some(burn_duration_per_unit); // Burn time for ONE unit.
+                     current_campfire.is_burning = true; // Ensure it's set to burning if we found fuel
+                     return true; 
+                 } else {
+                     log::debug!("[find_and_set_burn_time] Fuel item {} (Def: {}) has no burn duration.", fuel_instance_id, fuel_item_def_id);
+                 }
+             } else {
+                  log::debug!("[find_and_set_burn_time] Fuel item {} (Def: {}) has no burn duration attribute.", fuel_instance_id, fuel_item_def_id);
+             }
+         }  else {
+             log::warn!("[find_and_set_burn_time] Definition not found for fuel item_def_id {}.", fuel_item_def_id);
+         }
+     } else {
+         log::warn!("[find_and_set_burn_time] InventoryItem instance {} not found for fuel.", fuel_instance_id);
+     }
+     false
+ }
+ 
+// --- NEW: Drop Item from Campfire Fuel Slot to World ---
+#[spacetimedb::reducer]
+pub fn drop_item_from_campfire_slot_to_world(
+    ctx: &ReducerContext,
+    campfire_id: u32,
+    slot_index: u8, // This will be 0-4 for fuel slots
+) -> Result<(), String> {
+    let sender_id = ctx.sender();
+    let player_table = ctx.db.player();
+    let mut campfire_table = ctx.db.campfire();
+
+    log::info!("[DropFromCampfireToWorld] Player {} attempting to drop fuel from campfire ID {}, slot index {}.", 
+             sender_id, campfire_id, slot_index);
+
+    // 1. Validate interaction and get campfire
+    let (_player_for_validation, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && slot_index != 0 {
+        return Err("Cannot drop fuel from campfire slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+ 
+     // 2. Get Player for drop location
+     let player_for_drop_location = player_table.identity().find(sender_id)
+         .ok_or_else(|| format!("Player {} not found for drop location.", sender_id))?;
+ 
+     // 3. Call the generic handler from inventory_management
+     // The ItemContainer trait for Campfire handles the slot_index for fuel slots
+     crate::inventory_management::handle_drop_from_container_slot(ctx, &mut campfire, slot_index, &player_for_drop_location)?;
+ 
+     // 4. Persist changes to the Campfire
+     campfire_table.id().update(campfire);
+     log::info!("[DropFromCampfireToWorld] Successfully dropped fuel from campfire {}, slot {}. Campfire updated.", campfire_id, slot_index);
+ 
+     Ok(())
+ }
+ 
+// --- NEW: Split and Drop Item from Campfire Fuel Slot to World ---
+#[spacetimedb::reducer]
+pub fn split_and_drop_item_from_campfire_slot_to_world(
+    ctx: &ReducerContext,
+    campfire_id: u32,
+    slot_index: u8, // This will be 0-4 for fuel slots
+    quantity_to_split: u32,
+) -> Result<(), String> {
+    let sender_id = ctx.sender();
+    let player_table = ctx.db.player();
+    let mut campfire_table = ctx.db.campfire();
+
+    log::info!("[SplitDropFromCampfireToWorld] Player {} attempting to split {} fuel from campfire ID {}, slot {}.", 
+             sender_id, quantity_to_split, campfire_id, slot_index);
+
+    // 1. Validate interaction and get campfire
+    let (_player_for_validation, mut campfire) = validate_campfire_interaction(ctx, campfire_id)?;
+    
+    // --- SECURITY: Prevent interaction with campfire fuel slots 1-4 when broth pot is attached ---
+    // Slot 0 remains accessible for fuel management even when broth pot is attached
+    if campfire.attached_broth_pot_id.is_some() && slot_index != 0 {
+        return Err("Cannot drop fuel from campfire slots 1-4 while broth pot is attached. Use slot 0 for fuel management.".to_string());
+    }
+ 
+     // 2. Get Player for drop location
+     let player_for_drop_location = player_table.identity().find(sender_id)
+         .ok_or_else(|| format!("Player {} not found for drop location.", sender_id))?;
+ 
+     // 3. Call the generic handler from inventory_management
+     crate::inventory_management::handle_split_and_drop_from_container_slot(ctx, &mut campfire, slot_index, quantity_to_split, &player_for_drop_location)?;
+ 
+     // 4. Persist changes to the Campfire
+     campfire_table.id().update(campfire);
+     log::info!("[SplitDropFromCampfireToWorld] Successfully split and dropped fuel from campfire {}, slot {}. Campfire updated.", campfire_id, slot_index);
+     
+     Ok(())
+ }
+ 
+ // --- Helper: Get Item Definition by Name ---
+ fn get_item_def_by_name<'a>(ctx: &'a ReducerContext, name: &str) -> Option<ItemDefinition> {
+     ctx.db.item_definition().iter().find(|def| def.name == name)
+ }
+
+// --- Helper: Try to add charcoal to campfire or drop it ---
+// Returns Ok(bool) where true means campfire struct was modified (charcoal added to slots)
+// and false means it was dropped or not produced.
+fn try_add_charcoal_to_campfire_or_drop(
+    ctx: &ReducerContext,
+    campfire: &mut Campfire,
+    charcoal_def: &ItemDefinition,
+    quantity: u32
+) -> Result<bool, String> {
+    let mut inventory_items_table = ctx.db.inventory_item(); // Changed to mut
+    let charcoal_def_id = charcoal_def.id;
+    let charcoal_stack_size = charcoal_def.stack_size;
+    let mut charcoal_added_to_campfire_slots = false;
+
+    // 1. Try to stack with existing charcoal in campfire slots
+    for i in 0..NUM_FUEL_SLOTS as u8 {
+        if campfire.get_slot_def_id(i) == Some(charcoal_def_id) {
+            if let Some(instance_id) = campfire.get_slot_instance_id(i) {
+                if let Some(mut existing_charcoal_item) = inventory_items_table.instance_id().find(instance_id) {
+                    if existing_charcoal_item.quantity < charcoal_stack_size {
+                        let can_add = charcoal_stack_size - existing_charcoal_item.quantity;
+                        let to_add = min(quantity, can_add); // quantity is usually 1 from charcoal production
+                        existing_charcoal_item.quantity += to_add;
+                        inventory_items_table.instance_id().update(existing_charcoal_item);
+                        log::info!("[Charcoal] Campfire {}: Stacked {} charcoal onto existing stack in slot {}.", campfire.id, to_add, i);
+                        // Campfire struct (slots) didn't change, only InventoryItem quantity
+                        // Return false because campfire struct itself was not modified for its slots.
+                        return Ok(false); 
+                    }
+                }
+            }
+        }
+    }
+
+    // 2. Try to place in an empty slot
+    for i in 0..NUM_FUEL_SLOTS as u8 {
+        if campfire.get_slot_instance_id(i).is_none() {
+            let new_charcoal_location = ItemLocation::Container(ContainerLocationData {
+                container_type: ContainerType::Campfire,
+                container_id: campfire.id as u64,
+                slot_index: i,
+            });
+            let new_charcoal_item = InventoryItem {
+                instance_id: 0, 
+                item_def_id: charcoal_def_id,
+                quantity, // This will be 1 from production
+                location: new_charcoal_location,
+                item_data: None, // Initialize as empty
+            };
+            match inventory_items_table.try_insert(new_charcoal_item) {
+                Ok(inserted_item) => {
+                    campfire.set_slot(i, Some(inserted_item.instance_id), Some(charcoal_def_id));
+                    log::info!("[Charcoal] Campfire {}: Placed {} charcoal into empty slot {}.", campfire.id, quantity, i);
+                    charcoal_added_to_campfire_slots = true; // Campfire struct was modified
+                    return Ok(charcoal_added_to_campfire_slots);
+                }
+                Err(e) => {
+                    log::error!("[Charcoal] Campfire {}: Failed to insert new charcoal item for slot {}: {:?}", campfire.id, i, e);
+                    // Continue to drop if insert fails
+                    break; 
+                }
+            }
+        }
+    }
+
+    // 3. If not added to campfire (full or insert error), drop it
+    log::info!("[Charcoal] Campfire {}: Slots full or error encountered. Dropping {} charcoal.", campfire.id, quantity);
+    let drop_x = campfire.pos_x;
+    let drop_y = campfire.pos_y + crate::dropped_item::DROP_OFFSET / 2.0; 
+    create_dropped_item_entity(ctx, charcoal_def_id, quantity, drop_x, drop_y)?;
+    
+    Ok(charcoal_added_to_campfire_slots) // False, as it was dropped or failed to add to slots by modifying campfire struct
+}
+
+// --- CookableAppliance Trait Implementation for Campfire ---
+impl crate::cooking::CookableAppliance for Campfire {
+    fn get_slot_cooking_progress(&self, slot_index: u8) -> Option<CookingProgress> {
+        match slot_index {
+            0 => self.slot_0_cooking_progress.clone(),
+            1 => self.slot_1_cooking_progress.clone(),
+            2 => self.slot_2_cooking_progress.clone(),
+            3 => self.slot_3_cooking_progress.clone(),
+            4 => self.slot_4_cooking_progress.clone(),
+            _ => None,
+        }
+    }
+
+    fn set_slot_cooking_progress(&mut self, slot_index: u8, progress: Option<CookingProgress>) {
+        match slot_index {
+            0 => self.slot_0_cooking_progress = progress,
+            1 => self.slot_1_cooking_progress = progress,
+            2 => self.slot_2_cooking_progress = progress,
+            3 => self.slot_3_cooking_progress = progress,
+            4 => self.slot_4_cooking_progress = progress,
+            _ => { log::warn!("[CookableAppliance] Attempted to set cooking progress for invalid Campfire slot: {}", slot_index); }
+        }
+    }
+
+    fn get_appliance_world_position(&self) -> (f32, f32) {
+        (self.pos_x, self.pos_y)
+    }
+}
+
+/// Checks if it's currently raining heavily enough to prevent campfire lighting
+/// Only heavy rain/storms prevent lighting, light/moderate rain should allow lighting
+fn is_heavy_raining(ctx: &ReducerContext) -> bool {
+    // DEPRECATED: This function now always returns false because we use chunk-based weather
+    // The check is now done per-campfire in is_campfire_in_heavy_rain()
+    // Kept for backward compatibility but should not be used for new code
+    if let Some(world_state) = ctx.db.world_state().iter().next() {
+        if world_state.rain_intensity <= 0.0 {
+            return false;
+        }
+        
+        // Check the weather type if available, otherwise fall back to intensity threshold
+        match &world_state.current_weather {
+            WeatherType::HeavyRain => true,
+            WeatherType::HeavyStorm => true,
+            _ => {
+                // For other weather types, fallback to intensity threshold (>= 0.8 is heavy rain/storm range)
+                world_state.rain_intensity >= 0.8
+            }
+        }
+    } else {
+        false
+    }
+}
+
+/// Checks if it's raining heavily (HeavyRain or HeavyStorm) at a specific campfire's location
+/// Uses chunk-based weather system
+fn is_campfire_in_heavy_rain(ctx: &ReducerContext, campfire: &Campfire) -> bool {
+    let chunk_weather = crate::world_state::get_weather_for_position(ctx, campfire.pos_x, campfire.pos_y);
+    matches!(chunk_weather.current_weather, WeatherType::HeavyRain | WeatherType::HeavyStorm)
+}
+
+/// Checks if a campfire is protected from rain by being inside a shelter, building, or near a tree
+pub fn is_campfire_protected_from_rain(ctx: &ReducerContext, campfire: &Campfire) -> bool {
+    // Check if campfire is inside any shelter
+    for shelter in ctx.db.shelter().iter() {
+        if shelter.is_destroyed {
+            continue;
+        }
+        
+        // Use the same shelter collision detection logic as in shelter.rs
+        let shelter_aabb_center_x = shelter.pos_x;
+        let shelter_aabb_center_y = shelter.pos_y - crate::shelter::SHELTER_AABB_CENTER_Y_OFFSET_FROM_POS_Y;
+        let aabb_left = shelter_aabb_center_x - crate::shelter::SHELTER_AABB_HALF_WIDTH;
+        let aabb_right = shelter_aabb_center_x + crate::shelter::SHELTER_AABB_HALF_WIDTH;
+        let aabb_top = shelter_aabb_center_y - crate::shelter::SHELTER_AABB_HALF_HEIGHT;
+        let aabb_bottom = shelter_aabb_center_y + crate::shelter::SHELTER_AABB_HALF_HEIGHT;
+        
+        // Check if campfire position is inside shelter AABB
+        if campfire.pos_x >= aabb_left && campfire.pos_x <= aabb_right &&
+           campfire.pos_y >= aabb_top && campfire.pos_y <= aabb_bottom {
+            log::debug!("Campfire {} is protected from rain by shelter {}", campfire.id, shelter.id);
+            return true;
+        }
+    }
+    
+    // NEW: Check if campfire is inside an enclosed building (foundation + walls)
+    if crate::building_enclosure::is_position_inside_building(ctx, campfire.pos_x, campfire.pos_y) {
+        log::debug!("Campfire {} is protected from rain by enclosed building", campfire.id);
+        return true;
+    }
+    
+    // Check if campfire is inside a shipwreck protection zone (shipwrecks provide indoor shelter)
+    if crate::shipwreck::is_position_protected_by_shipwreck(ctx, campfire.pos_x, campfire.pos_y) {
+        log::debug!("Campfire {} is protected from rain by shipwreck", campfire.id);
+        return true;
+    }
+    
+    // Check if campfire is within 100px of any tree (protected by tree cover)
+    const TREE_PROTECTION_DISTANCE_SQ: f32 = 100.0 * 100.0; // 100px protection radius
+    
+    for tree in ctx.db.tree().iter() {
+        // Skip destroyed trees (respawn_at > UNIX_EPOCH when tree is harvested)
+        if tree.respawn_at > Timestamp::UNIX_EPOCH {
+            continue;
+        }
+        
+        // Calculate distance squared between campfire and tree
+        let dx = campfire.pos_x - tree.pos_x;
+        let dy = campfire.pos_y - tree.pos_y;
+        let distance_sq = dx * dx + dy * dy;
+        
+        // Check if campfire is within protection distance of this tree
+        if distance_sq <= TREE_PROTECTION_DISTANCE_SQ {
+            log::debug!("Campfire {} is protected from rain by tree at ({:.1}, {:.1}) - distance: {:.1}px", 
+                       campfire.id, tree.pos_x, tree.pos_y, distance_sq.sqrt());
+            return true;
+        }
+    }
+    
+    false
+}
+
+/// Check if a Reed Bellows is present in any of the campfire's fuel slots
+pub fn has_reed_bellows(ctx: &ReducerContext, campfire: &Campfire) -> bool {
+    let item_defs_table = ctx.db.item_definition();
+    
+    // Check all fuel slots for Reed Bellows
+    for slot_index in 0..NUM_FUEL_SLOTS {
+        if let Some(fuel_def_id) = campfire.get_slot_def_id(slot_index as u8) {
+            if let Some(item_def) = item_defs_table.id().find(fuel_def_id) {
+                if item_def.name == "Reed Bellows" {
+                    log::debug!("Reed Bellows found in campfire {} slot {}", campfire.id, slot_index);
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
+/// Get the fuel burn rate multiplier based on whether Reed Bellows is present
+/// Reed Bellows makes fuel burn 50% slower (multiplier = 1.5)
+pub fn get_fuel_burn_rate_multiplier(ctx: &ReducerContext, campfire: &Campfire) -> f32 {
+    if has_reed_bellows(ctx, campfire) {
+        1.5 // Fuel burns 50% slower with bellows (lasts 1.5x longer)
+    } else {
+        1.0 // Normal burn rate
+    }
+}
+
+/// Get the cooking speed multiplier based on Reed Bellows and green rune stone proximity
+/// Reed Bellows makes cooking 20% faster (multiplier = 1.2)
+/// Green rune stone zone doubles cooking speed (multiplier = 2.0)
+/// Multipliers stack multiplicatively (e.g., both = 1.2 * 2.0 = 2.4x)
+pub fn get_cooking_speed_multiplier(ctx: &ReducerContext, campfire: &Campfire) -> f32 {
+    let mut multiplier = 1.0;
+    
+    // Check for Reed Bellows (20% faster = 1.2x)
+    if has_reed_bellows(ctx, campfire) {
+        multiplier *= 1.2;
+    }
+    
+    // Check for green rune stone zone (2x faster cooking)
+    if crate::rune_stone::is_position_in_green_rune_zone(ctx, campfire.pos_x, campfire.pos_y) {
+        multiplier *= 2.0;
+    }
+    
+    multiplier
+}
+
+// --- NEW: Check if any items in campfire slots are Metal Ore and prevent cooking them
+// Metal Ore should only be smelted in furnaces, not cooked in campfires
+fn has_metal_ore_in_campfire(ctx: &ReducerContext, campfire: &Campfire) -> bool {
+    let item_defs_table = ctx.db.item_definition();
+    
+    // Check all fuel slots for Metal Ore
+    for slot_index in 0..NUM_FUEL_SLOTS {
+        if let Some(fuel_def_id) = campfire.get_slot_def_id(slot_index as u8) {
+            if let Some(item_def) = item_defs_table.id().find(fuel_def_id) {
+                if item_def.name == "Metal Ore" {
+                    log::debug!("Metal Ore found in campfire {} slot {}", campfire.id, slot_index);
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}

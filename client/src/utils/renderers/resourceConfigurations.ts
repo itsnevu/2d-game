@@ -1,0 +1,237 @@
+// Resource Configuration System for Harvestable Resources
+import { GroundEntityConfig } from './genericGroundRenderer';
+import { HarvestableResource } from '../../generated/types';
+import { ResourceType, getResourceType } from '../../types/resourceTypes';
+import { drawDynamicGroundShadow } from './shadowUtils';
+import { RESOURCE_IMAGE_SOURCES } from './resourceImageConfigs';
+
+// Resource-specific configuration interface
+export interface ResourceConfig {
+  // Visual properties
+  imageSource: string;
+  targetWidth: number;
+  targetHeight?: number; // Optional, will use aspect ratio if not provided
+  
+  // Shadow properties
+  shadowConfig: {
+    maxStretchFactor: number;
+    minStretchFactor: number;
+    shadowBlur: number;
+    pivotYOffset: number;
+    opacity?: number;
+  };
+  
+  // Rendering properties
+  fallbackColor: string;
+  
+  // Animation properties (optional)
+  animationConfig?: {
+    bobAmplitude?: number;
+    bobFrequency?: number;
+    rotationAmplitude?: number;
+  };
+}
+
+// Default configuration that most resources will use
+// UPDATED: Shadow parameters now match player dynamic shadows for consistency
+const DEFAULT_RESOURCE_CONFIG: Omit<ResourceConfig, 'imageSource'> = {
+  targetWidth: 90,
+  shadowConfig: {
+    maxStretchFactor: 3.0, // Match player dramatic shadows
+    minStretchFactor: 0.25, // Match player minimum visibility
+    shadowBlur: 2, // Match player base shadow blur
+    pivotYOffset: 0, // Match player pivot offset
+    opacity: 0.6 // Match player shadow opacity
+  },
+  fallbackColor: '#8B7355'
+};
+
+// Automatically generate configurations for all available resources
+export const RESOURCE_CONFIGS: Record<ResourceType, ResourceConfig> = Object.keys(RESOURCE_IMAGE_SOURCES).reduce((configs, resourceType) => {
+  configs[resourceType as ResourceType] = {
+    ...DEFAULT_RESOURCE_CONFIG,
+    imageSource: RESOURCE_IMAGE_SOURCES[resourceType as ResourceType]
+  };
+  return configs;
+}, {} as Record<ResourceType, ResourceConfig>);
+
+// Override specific resource configurations
+
+// === PLAINS PLANTS - Increased visibility ===
+RESOURCE_CONFIGS.BorealNettle = {
+  ...RESOURCE_CONFIGS.BorealNettle,
+  targetWidth: 100 // Larger for visibility in open plains
+};
+
+RESOURCE_CONFIGS.Flax = {
+  ...RESOURCE_CONFIGS.Flax,
+  targetWidth: 95 // Larger for visibility in open plains
+};
+
+RESOURCE_CONFIGS.Chicory = {
+  ...RESOURCE_CONFIGS.Chicory,
+  targetWidth: 85 // Larger for visibility
+};
+
+RESOURCE_CONFIGS.Yarrow = {
+  ...RESOURCE_CONFIGS.Yarrow,
+  targetWidth: 85 // Larger for visibility
+};
+
+RESOURCE_CONFIGS.Chamomile = {
+  ...RESOURCE_CONFIGS.Chamomile,
+  targetWidth: 85 // Larger for visibility
+};
+
+RESOURCE_CONFIGS.Mugwort = {
+  ...RESOURCE_CONFIGS.Mugwort,
+  targetWidth: 90 // Larger for visibility
+};
+
+RESOURCE_CONFIGS.Sunflowers = {
+  ...RESOURCE_CONFIGS.Sunflowers,
+  targetWidth: 110 // Tall landmark plant
+};
+
+// === OTHER RESOURCES ===
+RESOURCE_CONFIGS.ShaggyInkCap = {
+  ...RESOURCE_CONFIGS.ShaggyInkCap,
+  targetWidth: 48
+};
+
+RESOURCE_CONFIGS.Carrot = {
+  ...RESOURCE_CONFIGS.Carrot,
+  targetWidth: 48
+};
+
+RESOURCE_CONFIGS.MemoryShard = {
+  ...RESOURCE_CONFIGS.MemoryShard,
+  targetWidth: 64
+};
+
+// Resource piles - use default size (90) to match StonePile, SulfurPile and MetalOrePile
+RESOURCE_CONFIGS.WoodPile = {
+  ...RESOURCE_CONFIGS.WoodPile,
+  targetWidth: 90 // Same size as other small piles
+};
+
+RESOURCE_CONFIGS.BeachWoodPile = {
+  ...RESOURCE_CONFIGS.BeachWoodPile,
+  targetWidth: 160 // Larger size for better visibility (matches BonePile and SoggyPlantFiberPile)
+};
+
+// StonePile uses default size (90) to match SulfurPile and MetalOrePile
+
+RESOURCE_CONFIGS.SoggyPlantFiberPile = {
+  ...RESOURCE_CONFIGS.SoggyPlantFiberPile,
+  targetWidth: 160 // 2x size for visibility
+};
+
+RESOURCE_CONFIGS.BonePile = {
+  ...RESOURCE_CONFIGS.BonePile,
+  targetWidth: 160 // 2x size for visibility
+};
+
+// === UNDERWATER PLANTS ===
+RESOURCE_CONFIGS.SeaweedBed = {
+  ...RESOURCE_CONFIGS.SeaweedBed,
+  targetWidth: 180 // 2x larger than default (90 * 2) for better underwater visibility
+};
+
+
+// Helper function to get configuration for a resource
+export function getResourceConfig(resourceType: ResourceType): ResourceConfig {
+  return RESOURCE_CONFIGS[resourceType];
+}
+
+// Helper function to get configuration from entity
+export function getResourceConfigFromEntity(entity: HarvestableResource): ResourceConfig {
+  return getResourceConfig(getResourceType(entity));
+}
+
+// Create GroundEntityConfig for a specific resource type
+export function createResourceGroundConfig(resourceType: ResourceType): GroundEntityConfig<HarvestableResource> {
+  const config = getResourceConfig(resourceType);
+  
+  return {
+    getImageSource: (entity) => {
+      // Don't render if respawning (respawnAt > 0 means entity is destroyed/harvested)
+      if (entity.respawnAt && entity.respawnAt.microsSinceUnixEpoch !== 0n) return null;
+      return config.imageSource;
+    },
+    
+    getTargetDimensions: (img, entity) => {
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+      const width = config.targetWidth;
+      const height = config.targetHeight || (width / aspectRatio);
+      return { width, height };
+    },
+    
+    calculateDrawPosition: (entity, drawWidth, drawHeight) => {
+      return {
+        drawX: entity.posX - drawWidth / 2,
+        drawY: entity.posY - drawHeight
+      };
+    },
+    
+    drawCustomGroundShadow: (ctx, entity, entityImage, entityPosX, entityPosY, imageDrawWidth, imageDrawHeight, cycleProgress) => {
+      const shadowConfig = config.shadowConfig;
+      
+      // NOON FIX: At noon, shadows appear too far below (detached from entity)
+      // because the shadow is very short but still starts from the base pivot.
+      // Add extra upward offset at noon to keep shadow visually attached to entity base.
+      // Noon is roughly cycleProgress 0.35-0.55, peak at 0.45
+      let noonExtraOffset = 0;
+      if (cycleProgress >= 0.35 && cycleProgress < 0.55) {
+        // Parabolic curve: 0 at edges (0.35, 0.55), max at center (0.45)
+        const noonT = (cycleProgress - 0.35) / 0.20; // 0 to 1 across noon period
+        const noonFactor = 1.0 - Math.abs(noonT - 0.5) * 2.0; // 0 at edges, 1 at peak
+        // Push shadow UP - smaller offset for resources (they're smaller than monuments)
+        noonExtraOffset = noonFactor * imageDrawHeight * 0.3;
+      }
+      
+      drawDynamicGroundShadow({
+        ctx,
+        entityImage,
+        entityCenterX: entityPosX,
+        entityBaseY: entityPosY,
+        imageDrawWidth,
+        imageDrawHeight,
+        cycleProgress,
+        baseShadowColor: '0,0,0', // Match player shadow color
+        maxShadowAlpha: shadowConfig.opacity || 0.6, // Match player shadow opacity
+        maxStretchFactor: shadowConfig.maxStretchFactor,
+        minStretchFactor: shadowConfig.minStretchFactor, // Now included to match player shadows
+        shadowBlur: shadowConfig.shadowBlur,
+        pivotYOffset: shadowConfig.pivotYOffset + noonExtraOffset, // Add noon offset to push shadow up at noon
+      });
+    },
+    
+    applyEffects: (ctx, entity, nowMs, baseDrawX, baseDrawY, cycleProgress, targetImgWidth, targetImgHeight) => {
+      let offsetX = 0;
+      let offsetY = 0;
+      
+      // Apply animation if configured
+      if (config.animationConfig) {
+        const { bobAmplitude, bobFrequency, rotationAmplitude } = config.animationConfig;
+        
+        if (bobAmplitude && bobFrequency) {
+          offsetY = Math.sin(nowMs * bobFrequency) * bobAmplitude;
+        }
+        
+        if (rotationAmplitude) {
+          // Subtle rotation animation
+          const rotation = Math.sin(nowMs * 0.001) * rotationAmplitude * (Math.PI / 180);
+          return { offsetX, offsetY, rotation };
+        }
+      }
+      
+      return { offsetX, offsetY };
+    },
+    
+    fallbackColor: config.fallbackColor
+  };
+}
+
+// Interaction distance constants (shared across all resources)
+export const RESOURCE_INTERACTION_DISTANCE_SQUARED = 3600; // 60px squared 

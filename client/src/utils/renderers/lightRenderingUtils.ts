@@ -1,0 +1,1429 @@
+import { Player as SpacetimeDBPlayer, ItemDefinition as SpacetimeDBItemDefinition, ActiveEquipment as SpacetimeDBActiveEquipment, Lantern as SpacetimeDBLantern, Furnace as SpacetimeDBFurnace, Campfire as SpacetimeDBCampfire, Barbecue as SpacetimeDBBarbecue, RoadLamppost as SpacetimeDBRoadLamppost, Barrel as SpacetimeDBBarrel } from '../../generated/types';
+
+// Import rendering constants
+import { CAMPFIRE_RENDER_Y_OFFSET, CAMPFIRE_HEIGHT } from '../renderers/campfireRenderingUtils';
+import { getPlacedCampfireLightIntensity01 } from '../renderers/campfireGpuFireSmoothing';
+import { ROAD_LAMP_LIGHT_Y_OFFSET, ROAD_LAMP_LIGHT_RADIUS_BASE } from '../renderers/roadLamppostRenderingUtils';
+import { BUOY_HEIGHT } from '../renderers/barrelRenderingUtils';
+import { isNightTime, mapLegacyCycleProgress, NIGHT_LIGHTS_OFF } from '../../config/dayNightConstants';
+import { dayNightConfig } from '../../config/sharedGameConfig';
+import { LANTERN_RENDER_Y_OFFSET, LANTERN_HEIGHT, LANTERN_TYPE_LANTERN } from '../renderers/lanternRenderingUtils';
+import { FURNACE_RENDER_Y_OFFSET, FURNACE_HEIGHT, getFurnaceDimensions, FURNACE_TYPE_LARGE } from '../renderers/furnaceRenderingUtils';
+import { BARBECUE_RENDER_Y_OFFSET, BARBECUE_HEIGHT } from '../renderers/barbecueRenderingUtils';
+import { BuildingCluster } from '../buildingVisibilityUtils';
+import { isCompoundMonument } from '../../config/compoundBuildings';
+import { FOUNDATION_TILE_SIZE } from '../../config/gameConfig';
+import { getCachedRadialGradient } from './gradientCacheUtils';
+
+// --- Indoor Light Containment Utilities ---
+
+/**
+ * Convert world position to foundation cell coordinates
+ */
+function worldToFoundationCell(worldX: number, worldY: number): { cellX: number; cellY: number } {
+    return {
+        cellX: Math.floor(worldX / FOUNDATION_TILE_SIZE),
+        cellY: Math.floor(worldY / FOUNDATION_TILE_SIZE),
+    };
+}
+
+/**
+ * Find which enclosed building cluster contains the given world position
+ * Returns the cluster if found, null otherwise
+ */
+function findEnclosingCluster(
+    worldX: number,
+    worldY: number,
+    buildingClusters: Map<string, BuildingCluster>
+): BuildingCluster | null {
+    const { cellX, cellY } = worldToFoundationCell(worldX, worldY);
+    const cellKey = `${cellX},${cellY}`;
+    
+    for (const [_, cluster] of buildingClusters) {
+        if (cluster.isEnclosed && cluster.cellCoords.has(cellKey)) {
+            return cluster;
+        }
+    }
+    return null;
+}
+
+/**
+ * Create a Path2D clip path from a building cluster's foundation cells
+ * 
+ * IMPORTANT: North walls/doors render with a vertical offset ABOVE the foundation,
+ * so we extend the clip area upward by one foundation tile size to include
+ * the north wall rendering area.
+ */
+function createClusterClipPath(
+    cluster: BuildingCluster,
+    cameraOffsetX: number,
+    cameraOffsetY: number
+): Path2D {
+    const path = new Path2D();
+    
+    cluster.cellCoords.forEach((cellKey) => {
+        const [cellXStr, cellYStr] = cellKey.split(',');
+        const cellX = parseInt(cellXStr, 10);
+        const cellY = parseInt(cellYStr, 10);
+        
+        const screenX = cellX * FOUNDATION_TILE_SIZE + cameraOffsetX;
+        const screenY = cellY * FOUNDATION_TILE_SIZE + cameraOffsetY;
+        
+        // Add the foundation cell itself
+        path.rect(screenX, screenY, FOUNDATION_TILE_SIZE, FOUNDATION_TILE_SIZE);
+        
+        // Add a rectangle ABOVE this cell to cover north wall/door rendering area
+        // North walls render with vertical offset above the foundation
+        path.rect(screenX, screenY - FOUNDATION_TILE_SIZE, FOUNDATION_TILE_SIZE, FOUNDATION_TILE_SIZE);
+    });
+    
+    return path;
+}
+
+/**
+ * Apply building interior clipping if needed
+ * Returns a function to restore the context, or null if no clipping was applied
+ */
+function applyIndoorClip(
+    ctx: CanvasRenderingContext2D,
+    worldX: number,
+    worldY: number,
+    cameraOffsetX: number,
+    cameraOffsetY: number,
+    buildingClusters?: Map<string, BuildingCluster>
+): (() => void) | null {
+    if (!buildingClusters) return null;
+    
+    const enclosingCluster = findEnclosingCluster(worldX, worldY, buildingClusters);
+    if (!enclosingCluster) return null;
+    
+    ctx.save();
+    const clipPath = createClusterClipPath(enclosingCluster, cameraOffsetX, cameraOffsetY);
+    ctx.clip(clipPath);
+    
+    return () => ctx.restore();
+}
+
+// --- End Indoor Light Containment Utilities ---
+
+// --- Campfire Light Constants (defined locally now) ---
+export const CAMPFIRE_LIGHT_RADIUS_BASE = 150;
+export const CAMPFIRE_FLICKER_AMOUNT = 5; // Max pixels radius will change by
+export const CAMPFIRE_LIGHT_INNER_COLOR = 'rgba(255, 180, 80, 0.35)'; // Warmer orange/yellow, slightly more opaque
+export const CAMPFIRE_LIGHT_OUTER_COLOR = 'rgba(255, 100, 0, 0.0)';  // Fade to transparent orange
+
+// --- Torch Light Constants (more yellow-orange for pitch/tar burning) ---
+export const TORCH_LIGHT_RADIUS_BASE = CAMPFIRE_LIGHT_RADIUS_BASE * 0.8;
+export const TORCH_FLICKER_AMOUNT = CAMPFIRE_FLICKER_AMOUNT * 0.7;
+export const TORCH_LIGHT_INNER_COLOR = 'rgba(255, 200, 100, 0.28)'; // Reduced intensity for pitch/tar
+export const TORCH_LIGHT_OUTER_COLOR = 'rgba(255, 140, 60, 0.0)';  // Golden orange fade
+
+// --- Lantern Light Constants (focused spot lighting, half the range) ---
+export const LANTERN_LIGHT_RADIUS_BASE = CAMPFIRE_LIGHT_RADIUS_BASE * 0.6; // Reduced from 1.2 to 0.6 (half range)
+export const LANTERN_FLICKER_AMOUNT = CAMPFIRE_FLICKER_AMOUNT * 0.3; // Much more stable than campfire/torch
+export const LANTERN_LIGHT_INNER_COLOR = 'rgba(255, 220, 160, 0.32)'; // Reduced intensity for focused lighting
+export const LANTERN_LIGHT_OUTER_COLOR = 'rgba(240, 180, 120, 0.0)'; // Golden amber fade
+
+// --- Furnace Light Constants (industrial metal smelting - bright white-hot to orange gradient) ---
+export const FURNACE_LIGHT_RADIUS_BASE = CAMPFIRE_LIGHT_RADIUS_BASE * 0.5; // Focused lighting, doesn't cast far
+export const FURNACE_FLICKER_AMOUNT = CAMPFIRE_FLICKER_AMOUNT * 0.6; // More stable than campfire, industrial
+export const FURNACE_LIGHT_INNER_COLOR = 'rgba(255, 240, 200, 0.4)'; // Bright white-hot center
+export const FURNACE_LIGHT_OUTER_COLOR = 'rgba(255, 120, 40, 0.0)'; // Bright orange fade
+
+// --- Barbecue Light Constants (same as campfire - wood-burning cooking appliance) ---
+export const BARBECUE_LIGHT_RADIUS_BASE = CAMPFIRE_LIGHT_RADIUS_BASE; // Same as campfire
+export const FLARE_LIGHT_RADIUS_BASE = TORCH_LIGHT_RADIUS_BASE * 1.2; // Ground flare - slightly larger than torch
+export const BARBECUE_FLICKER_AMOUNT = CAMPFIRE_FLICKER_AMOUNT; // Same flicker as campfire
+
+const FLICKER_TIME_SCALE_MS = 1000;
+
+interface StableLightFlickerSample {
+    baseFlicker: number;
+    offsetX: number;
+    offsetY: number;
+}
+
+function hashLightSeed(x: number, y: number, salt: number): number {
+    const value = Math.sin(x * 12.9898 + y * 78.233 + salt * 37.719) * 43758.5453123;
+    return value - Math.floor(value);
+}
+
+export function sampleStableLightFlicker(
+    anchorX: number,
+    anchorY: number,
+    flickerAmount: number,
+    offsetScaleX: number,
+    offsetScaleY: number,
+    tempoMultiplier: number
+): StableLightFlickerSample {
+    if (flickerAmount <= 0) {
+        return { baseFlicker: 0, offsetX: 0, offsetY: 0 };
+    }
+
+    const time = performance.now() / FLICKER_TIME_SCALE_MS;
+    const phaseA = hashLightSeed(anchorX, anchorY, 1) * Math.PI * 2;
+    const phaseB = hashLightSeed(anchorX, anchorY, 2) * Math.PI * 2;
+    const phaseC = hashLightSeed(anchorX, anchorY, 3) * Math.PI * 2;
+
+    const primary = Math.sin(time * (2.7 * tempoMultiplier) + phaseA);
+    const secondary = Math.sin(time * (4.9 * tempoMultiplier) + phaseB) * 0.45;
+    const tertiary = Math.sin(time * (7.3 * tempoMultiplier) + phaseC) * 0.2;
+    const normalized = primary * 0.7 + secondary + tertiary;
+
+    return {
+        baseFlicker: normalized * flickerAmount,
+        offsetX: normalized * flickerAmount * offsetScaleX,
+        offsetY: Math.sin(time * (3.8 * tempoMultiplier) + phaseB) * flickerAmount * offsetScaleY,
+    };
+}
+export const BARBECUE_LIGHT_INNER_COLOR = CAMPFIRE_LIGHT_INNER_COLOR; // Same colors as campfire
+export const BARBECUE_LIGHT_OUTER_COLOR = CAMPFIRE_LIGHT_OUTER_COLOR; // Same colors as campfire
+
+/** Shared wood-fire light (campfire/barbecue) - 3-layer radial gradient pattern. */
+function renderWoodFireLight(
+    ctx: CanvasRenderingContext2D,
+    worldX: number,
+    worldY: number,
+    visualCenterY: number,
+    flickerAmount: number,
+    radiusBase: number,
+    cameraOffsetX: number,
+    cameraOffsetY: number,
+    buildingClusters?: Map<string, BuildingCluster>,
+    intensityScale: number = 1,
+): void {
+    if (intensityScale <= 0) return;
+    const a = Math.max(0, Math.min(1, intensityScale));
+    const restoreClip = applyIndoorClip(ctx, worldX, worldY, cameraOffsetX, cameraOffsetY, buildingClusters);
+
+    ctx.save();
+    ctx.globalAlpha *= a;
+
+    const lightScreenX = worldX + cameraOffsetX;
+    const lightScreenY = visualCenterY + cameraOffsetY;
+    const flicker = sampleStableLightFlicker(worldX, visualCenterY, flickerAmount, 0.6, 0.4, 1.15);
+    const rusticX = lightScreenX + flicker.offsetX;
+    const rusticY = lightScreenY + flicker.offsetY;
+
+    const SCALE = 1.5;
+
+    // Layer 1: Large ambient glow (wood-burning - deep oranges and reds)
+    const ambientRadius = Math.max(0, radiusBase * 3.9 * SCALE + flicker.baseFlicker * 0.3);
+    const ambientGradient = ctx.createRadialGradient(rusticX, rusticY, 0, rusticX, rusticY, ambientRadius);
+    ambientGradient.addColorStop(0, 'rgba(220, 70, 20, 0.04)');
+    ambientGradient.addColorStop(0.25, 'rgba(180, 55, 15, 0.025)');
+    ambientGradient.addColorStop(0.7, 'rgba(140, 35, 12, 0.012)');
+    ambientGradient.addColorStop(1, 'rgba(100, 20, 8, 0)');
+    ctx.fillStyle = ambientGradient;
+    ctx.beginPath();
+    ctx.arc(rusticX, rusticY, ambientRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Layer 2: Main illumination (authentic wood fire colors)
+    const mainRadius = Math.max(0, radiusBase * 2.6 * SCALE + flicker.baseFlicker * 1.0);
+    const mainGradient = ctx.createRadialGradient(rusticX, rusticY, 0, rusticX, rusticY, mainRadius);
+    mainGradient.addColorStop(0, 'rgba(230, 120, 50, 0.18)');
+    mainGradient.addColorStop(0.15, 'rgba(210, 90, 25, 0.15)');
+    mainGradient.addColorStop(0.4, 'rgba(190, 60, 18, 0.10)');
+    mainGradient.addColorStop(0.7, 'rgba(160, 45, 12, 0.05)');
+    mainGradient.addColorStop(0.9, 'rgba(120, 30, 8, 0.015)');
+    mainGradient.addColorStop(1, 'rgba(90, 20, 6, 0)');
+    ctx.fillStyle = mainGradient;
+    ctx.beginPath();
+    ctx.arc(rusticX, rusticY, mainRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Layer 3: Core bright light (intense flame center)
+    const coreRadius = Math.max(0, radiusBase * 0.65 * SCALE + flicker.baseFlicker * 1.5);
+    const coreGradient = ctx.createRadialGradient(rusticX, rusticY, 0, rusticX, rusticY, coreRadius);
+    coreGradient.addColorStop(0, 'rgba(240, 160, 90, 0.26)');
+    coreGradient.addColorStop(0.3, 'rgba(220, 110, 35, 0.18)');
+    coreGradient.addColorStop(0.7, 'rgba(190, 70, 22, 0.10)');
+    coreGradient.addColorStop(1, 'rgba(160, 50, 18, 0)');
+    ctx.fillStyle = coreGradient;
+    ctx.beginPath();
+    ctx.arc(lightScreenX, lightScreenY, coreRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+    if (restoreClip) restoreClip();
+}
+
+interface RenderPlayerTorchLightProps {
+    ctx: CanvasRenderingContext2D;
+    player: SpacetimeDBPlayer;
+    activeEquipments: Map<string, SpacetimeDBActiveEquipment>;
+    itemDefinitions: Map<string, SpacetimeDBItemDefinition>;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    renderPositionX?: number;
+    renderPositionY?: number;
+    // Indoor light containment - prevents light from spilling outside enclosed buildings
+    buildingClusters?: Map<string, BuildingCluster>;
+}
+
+export const renderPlayerTorchLight = ({
+    ctx,
+    player,
+    activeEquipments,
+    itemDefinitions,
+    cameraOffsetX,
+    cameraOffsetY,
+    renderPositionX,
+    renderPositionY,
+    buildingClusters,
+}: RenderPlayerTorchLightProps) => {
+    if (!player.isTorchLit || !player.identity) {
+        return; // Not lit or no identity, nothing to render
+    }
+
+    const playerIdentityStr = player.identity.toHexString();
+    const equipment = activeEquipments.get(playerIdentityStr);
+
+    if (equipment && equipment.equippedItemDefId) {
+        const itemDef = itemDefinitions.get(equipment.equippedItemDefId.toString());
+        if (itemDef && itemDef.name === "Torch") {
+            const lightCenterX = renderPositionX ?? player.positionX;
+            const lightCenterY = renderPositionY ?? player.positionY;
+            renderPortableFireLight(ctx, lightCenterX, lightCenterY, TORCH_LIGHT_RADIUS_BASE, TORCH_FLICKER_AMOUNT, 'torch', cameraOffsetX, cameraOffsetY, buildingClusters);
+        }
+    }
+}; 
+
+// --- Headlamp Light Constants (tallow-based fire light, twice as bright as torch with fire-like flicker) ---
+export const HEADLAMP_LIGHT_RADIUS_BASE = TORCH_LIGHT_RADIUS_BASE * 2.0; // Twice as bright as torch
+export const HEADLAMP_FLICKER_AMOUNT = TORCH_FLICKER_AMOUNT * 1.2; // More flicker for fire-like effect (tallow burning)
+
+/** Shared portable fire light (torch/headlamp) - 3-layer cached radial gradient. */
+function renderPortableFireLight(
+    ctx: CanvasRenderingContext2D,
+    lightCenterX: number,
+    lightCenterY: number,
+    radiusBase: number,
+    flickerAmount: number,
+    cacheKeyPrefix: string,
+    cameraOffsetX: number,
+    cameraOffsetY: number,
+    buildingClusters?: Map<string, BuildingCluster>
+): void {
+    const restoreClip = applyIndoorClip(ctx, lightCenterX, lightCenterY, cameraOffsetX, cameraOffsetY, buildingClusters);
+
+    const lightScreenX = lightCenterX + cameraOffsetX;
+    const lightScreenY = lightCenterY + cameraOffsetY;
+    const flicker = sampleStableLightFlicker(lightCenterX, lightCenterY, flickerAmount, 0.3, 0.2, 1.05);
+    const rustixLightX = lightScreenX + flicker.offsetX;
+    const rustixLightY = lightScreenY + flicker.offsetY;
+
+    const ambientRadius = Math.max(0, radiusBase * 2.8 + flicker.baseFlicker * 0.4);
+    const amb = getCachedRadialGradient(ctx, rustixLightX, rustixLightY, ambientRadius,
+        [[0, 'rgba(240, 160, 80, 0.04)'], [0.3, 'rgba(220, 130, 60, 0.025)'], [1, 'rgba(200, 100, 40, 0)']],
+        4, `${cacheKeyPrefix}_amb`);
+    ctx.fillStyle = amb.gradient;
+    ctx.beginPath();
+    ctx.arc(amb.x, amb.y, amb.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    const mainRadius = Math.max(0, radiusBase * 1.8 + flicker.baseFlicker * 0.8);
+    const main = getCachedRadialGradient(ctx, rustixLightX, rustixLightY, mainRadius,
+        [[0, 'rgba(240, 200, 120, 0.16)'], [0.2, 'rgba(230, 170, 90, 0.13)'], [0.5, 'rgba(220, 140, 70, 0.08)'], [0.8, 'rgba(210, 120, 50, 0.04)'], [1, 'rgba(190, 100, 40, 0)']],
+        4, `${cacheKeyPrefix}_main`);
+    ctx.fillStyle = main.gradient;
+    ctx.beginPath();
+    ctx.arc(main.x, main.y, main.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    const coreRadius = Math.max(0, radiusBase * 0.5 + flicker.baseFlicker * 1.2);
+    const core = getCachedRadialGradient(ctx, rustixLightX, rustixLightY, coreRadius,
+        [[0, 'rgba(245, 220, 160, 0.24)'], [0.4, 'rgba(235, 190, 110, 0.16)'], [1, 'rgba(220, 150, 80, 0)']],
+        4, `${cacheKeyPrefix}_core`);
+    ctx.fillStyle = core.gradient;
+    ctx.beginPath();
+    ctx.arc(lightScreenX, lightScreenY, coreRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (restoreClip) restoreClip();
+}
+
+interface RenderPlayerHeadlampLightProps {
+    ctx: CanvasRenderingContext2D;
+    player: SpacetimeDBPlayer;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    renderPositionX?: number;
+    renderPositionY?: number;
+    // Indoor light containment - prevents light from spilling outside enclosed buildings
+    buildingClusters?: Map<string, BuildingCluster>;
+}
+
+/**
+ * Renders fire-like light for the headlamp (tallow-burning head lamp)
+ * Similar to torch but positioned at player center (head), with good coverage radius
+ */
+export const renderPlayerHeadlampLight = ({
+    ctx,
+    player,
+    cameraOffsetX,
+    cameraOffsetY,
+    renderPositionX,
+    renderPositionY,
+    buildingClusters,
+}: RenderPlayerHeadlampLightProps) => {
+    if (!player.isHeadlampLit || !player.identity) return;
+    const lightCenterX = renderPositionX ?? player.positionX;
+    const lightCenterY = renderPositionY ?? player.positionY;
+    renderPortableFireLight(ctx, lightCenterX, lightCenterY, HEADLAMP_LIGHT_RADIUS_BASE, HEADLAMP_FLICKER_AMOUNT, 'headlamp', cameraOffsetX, cameraOffsetY, buildingClusters);
+};
+
+// --- Flashlight Light Constants (AAA pixel art style - narrow, long beam) ---
+export const FLASHLIGHT_BEAM_LENGTH = 650; // Very long reach for exploration
+export const FLASHLIGHT_BEAM_ANGLE = Math.PI / 7; // ~25 degrees - narrow focused beam
+export const FLASHLIGHT_START_OFFSET = 18; // Start beam slightly ahead of player
+
+interface RenderPlayerFlashlightLightProps {
+    ctx: CanvasRenderingContext2D;
+    player: SpacetimeDBPlayer;
+    activeEquipments: Map<string, SpacetimeDBActiveEquipment>;
+    itemDefinitions: Map<string, SpacetimeDBItemDefinition>;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    renderPositionX?: number;
+    renderPositionY?: number;
+    // Indoor light containment - prevents light from spilling outside enclosed buildings
+    buildingClusters?: Map<string, BuildingCluster>;
+    // Mouse target position for smooth 360° aiming (local player only)
+    targetWorldX?: number | null;
+    targetWorldY?: number | null;
+}
+
+export const renderPlayerFlashlightLight = ({
+    ctx,
+    player,
+    activeEquipments,
+    itemDefinitions,
+    cameraOffsetX,
+    cameraOffsetY,
+    renderPositionX,
+    renderPositionY,
+    buildingClusters,
+    targetWorldX,
+    targetWorldY,
+}: RenderPlayerFlashlightLightProps) => {
+    if (!player.isFlashlightOn || !player.identity) {
+        return; // Not on or no identity, nothing to render
+    }
+
+    const playerIdentityStr = player.identity.toHexString();
+    const equipment = activeEquipments.get(playerIdentityStr);
+
+    if (equipment && equipment.equippedItemDefId) {
+        const itemDef = itemDefinitions.get(equipment.equippedItemDefId.toString());
+        if (itemDef && itemDef.name === "Flashlight") {
+            const lightCenterX = renderPositionX ?? player.positionX;
+            const lightCenterY = renderPositionY ?? player.positionY;
+            
+            // Apply indoor clipping if player is inside an enclosed building
+            const restoreClip = applyIndoorClip(ctx, lightCenterX, lightCenterY, cameraOffsetX, cameraOffsetY, buildingClusters);
+
+            // Determine beam direction - use mouse target for local player, synced angle for remote players
+            let beamAngle = 0;
+            if (targetWorldX !== undefined && targetWorldX !== null && 
+                targetWorldY !== undefined && targetWorldY !== null) {
+                // Calculate angle from player to mouse for smooth 360° aiming (local player)
+                const dx = targetWorldX - lightCenterX;
+                const dy = targetWorldY - lightCenterY;
+                beamAngle = Math.atan2(dy, dx);
+            } else {
+                // Use synced flashlight aim angle for remote players
+                beamAngle = player.flashlightAimAngle ?? 0;
+            }
+
+            // Offset the beam start position slightly ahead of the player
+            const offsetX = Math.cos(beamAngle) * FLASHLIGHT_START_OFFSET;
+            const offsetY = Math.sin(beamAngle) * FLASHLIGHT_START_OFFSET;
+            
+            const lightScreenX = lightCenterX + cameraOffsetX + offsetX;
+            const lightScreenY = lightCenterY + cameraOffsetY + offsetY;
+
+            // Calculate cone vertices - narrow, long beam
+            const startX = lightScreenX;
+            const startY = lightScreenY;
+            const endX = startX + Math.cos(beamAngle) * FLASHLIGHT_BEAM_LENGTH;
+            const endY = startY + Math.sin(beamAngle) * FLASHLIGHT_BEAM_LENGTH;
+            
+            // Calculate cone width at the end (half-width) - narrow cone
+            const halfWidth = FLASHLIGHT_BEAM_LENGTH * Math.tan(FLASHLIGHT_BEAM_ANGLE / 2);
+            
+            // Perpendicular vector for cone width
+            const perpX = -Math.sin(beamAngle) * halfWidth;
+            const perpY = Math.cos(beamAngle) * halfWidth;
+            
+            const leftX = endX + perpX;
+            const leftY = endY + perpY;
+            const rightX = endX - perpX;
+            const rightY = endY - perpY;
+
+            // === SIMPLIFIED FUNCTIONAL FLASHLIGHT ===
+            // Main beam cone - clean cutout with soft edges
+            const mainGradient = ctx.createLinearGradient(startX, startY, endX, endY);
+            mainGradient.addColorStop(0, 'rgba(255, 255, 255, 0.45)'); // Bright white at source
+            mainGradient.addColorStop(0.3, 'rgba(250, 250, 250, 0.35)');
+            mainGradient.addColorStop(0.6, 'rgba(245, 245, 245, 0.22)');
+            mainGradient.addColorStop(0.85, 'rgba(240, 240, 240, 0.10)');
+            mainGradient.addColorStop(1, 'rgba(235, 235, 235, 0)'); // Soft fade at end
+
+            ctx.fillStyle = mainGradient;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(leftX, leftY);
+            ctx.lineTo(rightX, rightY);
+            ctx.closePath();
+            ctx.fill();
+
+            // === DUST PARTICLES IN BEAM ===
+            // Subtle floating particles to show the beam volume
+            const numParticles = 12;
+            const time = Date.now() * 0.0005; // Slow animation
+            
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            
+            for (let i = 0; i < numParticles; i++) {
+                // Distribute particles along the beam
+                const t = (i / numParticles) + (Math.sin(time + i * 0.5) * 0.1); // Slight drift
+                const distance = FLASHLIGHT_BEAM_LENGTH * Math.max(0.1, Math.min(0.9, t));
+                
+                // Position along beam center
+                const particleX = startX + Math.cos(beamAngle) * distance;
+                const particleY = startY + Math.sin(beamAngle) * distance;
+                
+                // Add slight perpendicular offset (particles drift across beam)
+                const driftOffset = Math.sin(time * 2 + i * 1.3) * halfWidth * (distance / FLASHLIGHT_BEAM_LENGTH) * 0.6;
+                const finalX = particleX + (-Math.sin(beamAngle) * driftOffset);
+                const finalY = particleY + (Math.cos(beamAngle) * driftOffset);
+                
+                // Particle size decreases with distance
+                const baseSize = 1.5;
+                const sizeFade = 1.0 - (distance / FLASHLIGHT_BEAM_LENGTH) * 0.5;
+                const particleSize = baseSize * sizeFade;
+                
+                // Brightness flicker
+                const flicker = 0.7 + Math.sin(time * 3 + i * 2.1) * 0.3;
+                
+                ctx.fillStyle = `rgba(255, 255, 255, ${flicker})`;
+                ctx.beginPath();
+                ctx.arc(finalX, finalY, particleSize, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.restore();
+
+            // === SOFT EDGE GLOW (subtle halo around beam edges) ===
+            const edgeGlowWidth = halfWidth * 1.2;
+            const edgeLeftX = endX + (-Math.sin(beamAngle) * edgeGlowWidth);
+            const edgeLeftY = endY + (Math.cos(beamAngle) * edgeGlowWidth);
+            const edgeRightX = endX - (-Math.sin(beamAngle) * edgeGlowWidth);
+            const edgeRightY = endY - (Math.cos(beamAngle) * edgeGlowWidth);
+
+            const edgeGradient = ctx.createLinearGradient(startX, startY, endX, endY);
+            edgeGradient.addColorStop(0, 'rgba(240, 245, 255, 0.12)'); // Soft blue-white glow
+            edgeGradient.addColorStop(0.5, 'rgba(230, 240, 255, 0.06)');
+            edgeGradient.addColorStop(1, 'rgba(220, 235, 250, 0)');
+
+            ctx.fillStyle = edgeGradient;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(edgeLeftX, edgeLeftY);
+            ctx.lineTo(edgeRightX, edgeRightY);
+            ctx.closePath();
+            ctx.fill();
+
+            // === BRIGHT HOTSPOT AT SOURCE ===
+            const hotspotRadius = 15;
+            const hotspotGradient = ctx.createRadialGradient(
+                startX, startY, 0,
+                startX, startY, hotspotRadius
+            );
+            hotspotGradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+            hotspotGradient.addColorStop(0.5, 'rgba(255, 252, 245, 0.4)');
+            hotspotGradient.addColorStop(1, 'rgba(245, 243, 235, 0)');
+
+            ctx.fillStyle = hotspotGradient;
+            ctx.beginPath();
+            ctx.arc(startX, startY, hotspotRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Restore context if we applied a clip
+            if (restoreClip) restoreClip();
+        }
+    }
+}; 
+
+// --- Campfire Light Rendering ---
+interface RenderCampfireLightProps {
+    ctx: CanvasRenderingContext2D;
+    campfire: SpacetimeDBCampfire;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    // Indoor light containment - prevents light from spilling outside enclosed buildings
+    buildingClusters?: Map<string, BuildingCluster>;
+}
+
+export const renderCampfireLight = ({
+    ctx,
+    campfire,
+    cameraOffsetX,
+    cameraOffsetY,
+    buildingClusters,
+}: RenderCampfireLightProps) => {
+    const idKey = String(campfire.id);
+    const intensity = getPlacedCampfireLightIntensity01(campfire.isBurning, idKey);
+    if (intensity <= 0) return;
+    const visualCenterY = campfire.posY - (CAMPFIRE_HEIGHT / 2) - CAMPFIRE_RENDER_Y_OFFSET;
+    renderWoodFireLight(
+        ctx,
+        campfire.posX,
+        campfire.posY,
+        visualCenterY,
+        CAMPFIRE_FLICKER_AMOUNT,
+        CAMPFIRE_LIGHT_RADIUS_BASE,
+        cameraOffsetX,
+        cameraOffsetY,
+        buildingClusters,
+        intensity,
+    );
+};
+
+// --- Barbecue Light Rendering ---
+interface RenderBarbecueLightProps {
+    ctx: CanvasRenderingContext2D;
+    barbecue: SpacetimeDBBarbecue;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    // Indoor light containment - prevents light from spilling outside enclosed buildings
+    buildingClusters?: Map<string, BuildingCluster>;
+}
+
+export const renderBarbecueLight = ({
+    ctx,
+    barbecue,
+    cameraOffsetX,
+    cameraOffsetY,
+    buildingClusters,
+}: RenderBarbecueLightProps) => {
+    if (!barbecue.isBurning) return;
+    // Sprite is CENTERED on posY, so visual center = posY
+    renderWoodFireLight(
+        ctx,
+        barbecue.posX,
+        barbecue.posY,
+        barbecue.posY,
+        BARBECUE_FLICKER_AMOUNT,
+        BARBECUE_LIGHT_RADIUS_BASE,
+        cameraOffsetX,
+        cameraOffsetY,
+        buildingClusters,
+        1,
+    );
+};
+
+// --- Lantern Light Rendering ---
+interface RenderLanternLightProps {
+    ctx: CanvasRenderingContext2D;
+    lantern: SpacetimeDBLantern;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    // Indoor light containment - prevents light from spilling outside enclosed buildings
+    buildingClusters?: Map<string, BuildingCluster>;
+}
+
+export const renderLanternLight = ({
+    ctx,
+    lantern,
+    cameraOffsetX,
+    cameraOffsetY,
+    buildingClusters,
+}: RenderLanternLightProps) => {
+    if (!lantern.isBurning) {
+        return; // Not burning, no light
+    }
+
+    // Apply indoor clipping if lantern is inside an enclosed building
+    const restoreClip = applyIndoorClip(ctx, lantern.posX, lantern.posY, cameraOffsetX, cameraOffsetY, buildingClusters);
+
+    const isWard = lantern.lanternType !== LANTERN_TYPE_LANTERN;
+    
+    // For wards, center the light on the visual center of the mystical structure
+    // Ward sprites are 256x256, so we offset significantly from posY to hit the visual heart
+    // For regular lanterns, use the visual center of the sprite
+    const WARD_VISUAL_LIGHT_Y_OFFSET = 140; // Higher up for visual centering on ward structure
+    
+    const visualCenterX = lantern.posX;
+    const visualCenterY = isWard 
+        ? lantern.posY - WARD_VISUAL_LIGHT_Y_OFFSET  // Center on visual mystical heart
+        : lantern.posY - (LANTERN_HEIGHT / 2) - LANTERN_RENDER_Y_OFFSET; // Standard lantern center
+    
+    const lightScreenX = visualCenterX + cameraOffsetX;
+    const lightScreenY = visualCenterY + cameraOffsetY;
+    const flicker = sampleStableLightFlicker(visualCenterX, visualCenterY, LANTERN_FLICKER_AMOUNT, 0.2, 0.1, 0.85);
+    const steadyLanternX = lightScreenX + flicker.offsetX;
+    const steadyLanternY = lightScreenY + flicker.offsetY;
+
+    if (isWard) {
+        // === AAA PIXEL ART WARD LIGHTING ===
+        // Multi-layered ethereal/mystical glow with soft transitions
+        // Larger, more dramatic than regular lanterns
+        
+        const WARD_LIGHT_SCALE = 2.5; // Larger scale for ward mystical aura
+        const wardFlicker = flicker.baseFlicker * 0.3; // Very subtle flicker for mystical feel
+        
+        // Layer 1: Very large ambient glow (ethereal outer aura)
+        const outerAuraRadius = Math.max(0, LANTERN_LIGHT_RADIUS_BASE * 4.5 * WARD_LIGHT_SCALE + wardFlicker * 0.1);
+        const outerAuraGradient = ctx.createRadialGradient(
+            steadyLanternX, steadyLanternY, 0,
+            steadyLanternX, steadyLanternY, outerAuraRadius
+        );
+        outerAuraGradient.addColorStop(0, 'rgba(255, 235, 200, 0.04)');    // Warm mystical center
+        outerAuraGradient.addColorStop(0.2, 'rgba(245, 220, 180, 0.03)');  // Soft amber glow
+        outerAuraGradient.addColorStop(0.5, 'rgba(235, 200, 160, 0.02)');  // Gentle transition
+        outerAuraGradient.addColorStop(0.75, 'rgba(225, 180, 140, 0.01)'); // Very soft
+        outerAuraGradient.addColorStop(1, 'rgba(215, 160, 120, 0)');       // Fade to nothing
+        
+        ctx.fillStyle = outerAuraGradient;
+        ctx.beginPath();
+        ctx.arc(steadyLanternX, steadyLanternY, outerAuraRadius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Layer 2: Main ambient illumination (warm mystical presence)
+        const mainAuraRadius = Math.max(0, LANTERN_LIGHT_RADIUS_BASE * 3.0 * WARD_LIGHT_SCALE + wardFlicker * 0.2);
+        const mainAuraGradient = ctx.createRadialGradient(
+            steadyLanternX, steadyLanternY, 0,
+            steadyLanternX, steadyLanternY, mainAuraRadius
+        );
+        mainAuraGradient.addColorStop(0, 'rgba(255, 230, 190, 0.12)');    // Bright warm center
+        mainAuraGradient.addColorStop(0.15, 'rgba(250, 220, 175, 0.10)'); // Rich amber
+        mainAuraGradient.addColorStop(0.35, 'rgba(240, 205, 155, 0.08)'); // Warm glow
+        mainAuraGradient.addColorStop(0.55, 'rgba(230, 185, 135, 0.05)'); // Soft transition
+        mainAuraGradient.addColorStop(0.75, 'rgba(220, 165, 115, 0.03)'); // Gentle fade
+        mainAuraGradient.addColorStop(0.9, 'rgba(210, 145, 100, 0.015)'); // Very soft
+        mainAuraGradient.addColorStop(1, 'rgba(200, 130, 85, 0)');        // Complete fade
+        
+        ctx.fillStyle = mainAuraGradient;
+        ctx.beginPath();
+        ctx.arc(steadyLanternX, steadyLanternY, mainAuraRadius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Layer 3: Core mystical light (intense warm heart)
+        const coreRadius = Math.max(0, LANTERN_LIGHT_RADIUS_BASE * 1.2 * WARD_LIGHT_SCALE + wardFlicker * 0.5);
+        const coreGradient = ctx.createRadialGradient(
+            steadyLanternX, steadyLanternY, 0,
+            steadyLanternX, steadyLanternY, coreRadius
+        );
+        coreGradient.addColorStop(0, 'rgba(255, 240, 210, 0.22)');   // Bright mystical core
+        coreGradient.addColorStop(0.2, 'rgba(250, 225, 185, 0.18)'); // Rich golden
+        coreGradient.addColorStop(0.4, 'rgba(240, 205, 160, 0.14)'); // Warm amber
+        coreGradient.addColorStop(0.6, 'rgba(230, 185, 135, 0.10)'); // Soft glow
+        coreGradient.addColorStop(0.8, 'rgba(220, 165, 115, 0.05)'); // Gentle fade
+        coreGradient.addColorStop(1, 'rgba(210, 145, 100, 0)');      // Complete fade
+        
+        ctx.fillStyle = coreGradient;
+        ctx.beginPath();
+        ctx.arc(lightScreenX, lightScreenY, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Layer 4: Hotspot (intense central glow)
+        const hotspotRadius = Math.max(0, LANTERN_LIGHT_RADIUS_BASE * 0.4 * WARD_LIGHT_SCALE);
+        const hotspotGradient = ctx.createRadialGradient(
+            lightScreenX, lightScreenY, 0,
+            lightScreenX, lightScreenY, hotspotRadius
+        );
+        hotspotGradient.addColorStop(0, 'rgba(255, 250, 235, 0.18)'); // Bright white-gold center
+        hotspotGradient.addColorStop(0.4, 'rgba(255, 240, 210, 0.12)'); // Golden glow
+        hotspotGradient.addColorStop(0.7, 'rgba(250, 225, 185, 0.06)'); // Soft fade
+        hotspotGradient.addColorStop(1, 'rgba(245, 210, 165, 0)');      // Complete fade
+        
+        ctx.fillStyle = hotspotGradient;
+        ctx.beginPath();
+        ctx.arc(lightScreenX, lightScreenY, hotspotRadius, 0, Math.PI * 2);
+        ctx.fill();
+    } else {
+        // === REGULAR LANTERN LIGHTING ===
+        // FOCUSED LANTERN LIGHTING SYSTEM - spot lighting, natural intensity
+        const LANTERN_SCALE = 1.0; // Focused spot lighting, smaller coverage than campfire
+
+        // Layer 1: Large ambient glow (tallow through glass - warm amber, extended reach)
+        const ambientRadius = Math.max(0, LANTERN_LIGHT_RADIUS_BASE * 3.5 * LANTERN_SCALE + flicker.baseFlicker * 0.1);
+        const ambientGradient = ctx.createRadialGradient(
+            steadyLanternX, steadyLanternY, 0,
+            steadyLanternX, steadyLanternY, ambientRadius
+        );
+        ambientGradient.addColorStop(0, 'rgba(230, 200, 150, 0.05)'); // Natural tallow amber center
+        ambientGradient.addColorStop(0.15, 'rgba(220, 180, 130, 0.04)'); // Natural amber glow
+        ambientGradient.addColorStop(0.35, 'rgba(210, 160, 110, 0.035)'); // Natural amber transition
+        ambientGradient.addColorStop(0.55, 'rgba(200, 140, 90, 0.03)'); // Natural deep amber
+        ambientGradient.addColorStop(0.75, 'rgba(190, 125, 75, 0.02)'); // Natural amber orange
+        ambientGradient.addColorStop(0.9, 'rgba(180, 110, 65, 0.015)'); // Natural soft amber
+        ambientGradient.addColorStop(1, 'rgba(170, 95, 55, 0)'); // Natural amber fade
+        
+        ctx.fillStyle = ambientGradient;
+        ctx.beginPath();
+        ctx.arc(steadyLanternX, steadyLanternY, ambientRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Layer 2: Main illumination (tallow flame through glass with smooth transitions)
+        const mainRadius = Math.max(0, LANTERN_LIGHT_RADIUS_BASE * 2.2 * LANTERN_SCALE + flicker.baseFlicker * 0.3);
+        const mainGradient = ctx.createRadialGradient(
+            steadyLanternX, steadyLanternY, 0,
+            steadyLanternX, steadyLanternY, mainRadius
+        );
+        mainGradient.addColorStop(0, 'rgba(235, 215, 170, 0.16)'); // Natural tallow center (glass filtered)
+        mainGradient.addColorStop(0.12, 'rgba(225, 205, 150, 0.14)'); // Natural amber bright center
+        mainGradient.addColorStop(0.25, 'rgba(220, 190, 135, 0.12)'); // Natural rich amber
+        mainGradient.addColorStop(0.4, 'rgba(210, 175, 120, 0.11)'); // Natural amber transition
+        mainGradient.addColorStop(0.6, 'rgba(200, 160, 105, 0.09)'); // Natural deep amber
+        mainGradient.addColorStop(0.8, 'rgba(190, 145, 90, 0.06)'); // Natural amber orange
+        mainGradient.addColorStop(0.95, 'rgba(180, 130, 80, 0.03)'); // Natural soft amber
+        mainGradient.addColorStop(1, 'rgba(170, 115, 70, 0)'); // Natural amber fade
+        
+        ctx.fillStyle = mainGradient;
+        ctx.beginPath();
+        ctx.arc(steadyLanternX, steadyLanternY, mainRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Layer 3: Core bright light (tallow flame center through glass with reduced glare) 
+        const coreRadius = Math.max(0, LANTERN_LIGHT_RADIUS_BASE * 0.9 * LANTERN_SCALE + flicker.baseFlicker * 0.8);
+        const coreGradient = ctx.createRadialGradient(
+            steadyLanternX, steadyLanternY, 0,
+            steadyLanternX, steadyLanternY, coreRadius
+        );
+        coreGradient.addColorStop(0, 'rgba(240, 220, 180, 0.20)'); // Natural tallow core (glass diffused)
+        coreGradient.addColorStop(0.15, 'rgba(230, 210, 160, 0.18)'); // Natural amber bright core
+        coreGradient.addColorStop(0.3, 'rgba(225, 200, 145, 0.16)'); // Natural rich amber
+        coreGradient.addColorStop(0.5, 'rgba(215, 185, 130, 0.14)'); // Natural deep amber
+        coreGradient.addColorStop(0.7, 'rgba(205, 170, 115, 0.11)'); // Natural amber transition
+        coreGradient.addColorStop(0.85, 'rgba(195, 155, 100, 0.07)'); // Natural warm amber
+        coreGradient.addColorStop(1, 'rgba(185, 140, 85, 0)'); // Natural amber fade
+        
+        ctx.fillStyle = coreGradient;
+        ctx.beginPath();
+        ctx.arc(lightScreenX, lightScreenY, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Restore context if we applied a clip
+    if (restoreClip) restoreClip();
+};
+
+// --- Road Lamppost Light Rendering (Aleutian whale oil - always on at night) ---
+const ROAD_LAMP_FLICKER_AMOUNT = CAMPFIRE_FLICKER_AMOUNT * 0.2; // Very stable - whale oil burns steadily
+
+type ColorStop = [number, string];
+
+/** Shared steady point light (road lamppost/buoy) - 3-layer radial, night-only. */
+function renderSteadyPointLight(
+    ctx: CanvasRenderingContext2D,
+    lightCenterX: number,
+    lightCenterY: number,
+    cameraOffsetX: number,
+    cameraOffsetY: number,
+    radiusBase: number,
+    scale: number,
+    flickerAmount: number,
+    ambientStops: ColorStop[],
+    mainStops: ColorStop[],
+    coreStops: ColorStop[]
+): void {
+    const lightScreenX = lightCenterX + cameraOffsetX;
+    const lightScreenY = lightCenterY + cameraOffsetY;
+    const flicker = sampleStableLightFlicker(lightCenterX, lightCenterY, flickerAmount, 0.2, 0.1, 0.6);
+    const lampX = lightScreenX + flicker.offsetX;
+    const lampY = lightScreenY + flicker.offsetY;
+
+    const ambientRadius = Math.max(0, radiusBase * 3.5 * scale + flicker.baseFlicker * 0.1);
+    const ambientGradient = ctx.createRadialGradient(lampX, lampY, 0, lampX, lampY, ambientRadius);
+    ambientStops.forEach(([pos, color]) => ambientGradient.addColorStop(pos, color));
+    ctx.fillStyle = ambientGradient;
+    ctx.beginPath();
+    ctx.arc(lampX, lampY, ambientRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    const mainRadius = Math.max(0, radiusBase * 2.2 * scale + flicker.baseFlicker * 0.3);
+    const mainGradient = ctx.createRadialGradient(lampX, lampY, 0, lampX, lampY, mainRadius);
+    mainStops.forEach(([pos, color]) => mainGradient.addColorStop(pos, color));
+    ctx.fillStyle = mainGradient;
+    ctx.beginPath();
+    ctx.arc(lampX, lampY, mainRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    const coreRadius = Math.max(0, radiusBase * 0.9 * scale + flicker.baseFlicker * 0.8);
+    const coreGradient = ctx.createRadialGradient(lampX, lampY, 0, lampX, lampY, coreRadius);
+    coreStops.forEach(([pos, color]) => coreGradient.addColorStop(pos, color));
+    ctx.fillStyle = coreGradient;
+    ctx.beginPath();
+    ctx.arc(lightScreenX, lightScreenY, coreRadius, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+interface RenderRoadLamppostLightProps {
+    ctx: CanvasRenderingContext2D;
+    lamppost: SpacetimeDBRoadLamppost;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    cycleProgress: number;
+}
+
+const ROAD_LAMP_AMBIENT_STOPS: ColorStop[] = [
+    [0, 'rgba(235, 200, 150, 0.05)'],
+    [0.15, 'rgba(225, 180, 130, 0.04)'],
+    [0.5, 'rgba(210, 160, 110, 0.03)'],
+    [0.85, 'rgba(195, 140, 85, 0.015)'],
+    [1, 'rgba(180, 120, 70, 0)'],
+];
+const ROAD_LAMP_MAIN_STOPS: ColorStop[] = [
+    [0, 'rgba(240, 215, 170, 0.16)'],
+    [0.2, 'rgba(230, 195, 145, 0.14)'],
+    [0.5, 'rgba(215, 175, 120, 0.10)'],
+    [0.8, 'rgba(200, 155, 95, 0.05)'],
+    [1, 'rgba(185, 135, 80, 0)'],
+];
+const ROAD_LAMP_CORE_STOPS: ColorStop[] = [
+    [0, 'rgba(245, 225, 185, 0.22)'],
+    [0.3, 'rgba(235, 205, 155, 0.18)'],
+    [0.6, 'rgba(220, 180, 125, 0.12)'],
+    [1, 'rgba(205, 155, 95, 0)'],
+];
+
+export const renderRoadLamppostLight = ({
+    ctx,
+    lamppost,
+    cameraOffsetX,
+    cameraOffsetY,
+    cycleProgress,
+}: RenderRoadLamppostLightProps) => {
+    if (!isNightTime(cycleProgress)) return;
+    const lightCenterX = lamppost.posX;
+    const lightCenterY = lamppost.posY + ROAD_LAMP_LIGHT_Y_OFFSET;
+    renderSteadyPointLight(ctx, lightCenterX, lightCenterY, cameraOffsetX, cameraOffsetY,
+        ROAD_LAMP_LIGHT_RADIUS_BASE, 1.0, ROAD_LAMP_FLICKER_AMOUNT,
+        ROAD_LAMP_AMBIENT_STOPS, ROAD_LAMP_MAIN_STOPS, ROAD_LAMP_CORE_STOPS);
+};
+
+// --- Buoy (Barrel variant 6) Night Light - Red LED glow (same "lights on" as road lamps) ---
+const BUOY_VARIANT = 6;
+const BUOY_Y_OFFSET = 28; // From barrelRenderingUtils calculateDrawPosition
+const BUOY_LIGHT_Y_OFFSET = -(BUOY_HEIGHT + BUOY_Y_OFFSET) + BUOY_HEIGHT * 0.12 + 20; // LED at ~12% from top, dropped 20px to align with pic
+export const BUOY_LIGHT_RADIUS_BASE = ROAD_LAMP_LIGHT_RADIUS_BASE * 0.5; // Subtle red glow
+
+interface RenderBuoyLightProps {
+    ctx: CanvasRenderingContext2D;
+    barrel: SpacetimeDBBarrel;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    cycleProgress: number;
+}
+
+const BUOY_AMBIENT_STOPS: ColorStop[] = [
+    [0, 'rgba(255, 80, 80, 0.05)'],
+    [0.2, 'rgba(220, 50, 50, 0.04)'],
+    [0.6, 'rgba(180, 30, 30, 0.02)'],
+    [1, 'rgba(140, 20, 20, 0)'],
+];
+const BUOY_MAIN_STOPS: ColorStop[] = [
+    [0, 'rgba(255, 90, 90, 0.14)'],
+    [0.2, 'rgba(240, 60, 60, 0.11)'],
+    [0.5, 'rgba(200, 40, 40, 0.07)'],
+    [0.8, 'rgba(160, 30, 30, 0.03)'],
+    [1, 'rgba(120, 20, 20, 0)'],
+];
+const BUOY_CORE_STOPS: ColorStop[] = [
+    [0, 'rgba(255, 100, 100, 0.20)'],
+    [0.3, 'rgba(240, 70, 70, 0.16)'],
+    [0.6, 'rgba(200, 50, 50, 0.10)'],
+    [1, 'rgba(160, 30, 30, 0)'],
+];
+
+export const renderBuoyLight = ({
+    ctx,
+    barrel,
+    cameraOffsetX,
+    cameraOffsetY,
+    cycleProgress,
+}: RenderBuoyLightProps) => {
+    const variantIndex = Number(barrel.variant ?? 0);
+    if (variantIndex !== BUOY_VARIANT || !isNightTime(cycleProgress)) return;
+    if (barrel.respawnAt && barrel.respawnAt.microsSinceUnixEpoch !== 0n) return;
+
+    const lightCenterX = barrel.posX;
+    const lightCenterY = barrel.posY + BUOY_LIGHT_Y_OFFSET;
+    const buoyFlicker = ROAD_LAMP_FLICKER_AMOUNT * 0.5; // Very stable red LED
+    renderSteadyPointLight(ctx, lightCenterX, lightCenterY, cameraOffsetX, cameraOffsetY,
+        BUOY_LIGHT_RADIUS_BASE, 0.7, buoyFlicker,
+        BUOY_AMBIENT_STOPS, BUOY_MAIN_STOPS, BUOY_CORE_STOPS);
+};
+
+// --- Furnace Light Rendering ---
+interface RenderFurnaceLightProps {
+    ctx: CanvasRenderingContext2D;
+    furnace: SpacetimeDBFurnace;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    // Indoor light containment - prevents light from spilling outside enclosed buildings
+    buildingClusters?: Map<string, BuildingCluster>;
+}
+
+export const renderFurnaceLight = ({
+    ctx,
+    furnace,
+    cameraOffsetX,
+    cameraOffsetY,
+    buildingClusters,
+}: RenderFurnaceLightProps) => {
+    if (!furnace.isBurning) {
+        return; // Not burning, no light
+    }
+
+    // Apply indoor clipping if furnace is inside an enclosed building
+    const restoreClip = applyIndoorClip(ctx, furnace.posX, furnace.posY, cameraOffsetX, cameraOffsetY, buildingClusters);
+
+    // Get correct dimensions based on furnace type and compound monument status
+    const dims = getFurnaceDimensions(furnace.furnaceType, isCompoundMonument(furnace.isMonument, furnace.posX, furnace.posY));
+    
+    const visualCenterX = furnace.posX;
+    const visualCenterY = furnace.posY - (dims.height / 2) - dims.yOffset;
+    
+    const lightScreenX = visualCenterX + cameraOffsetX;
+    const lightScreenY = visualCenterY + cameraOffsetY;
+    const flicker = sampleStableLightFlicker(visualCenterX, visualCenterY, FURNACE_FLICKER_AMOUNT, 0.4, 0.3, 0.95);
+    const industrialFurnaceX = lightScreenX + flicker.offsetX;
+    const industrialFurnaceY = lightScreenY + flicker.offsetY;
+
+    // INDUSTRIAL FURNACE LIGHTING SYSTEM - realistic high-temperature metal smelting
+    // Compound monument large furnaces (480px) cast more light than regular furnaces
+    const isLargeFurnace = furnace.furnaceType === FURNACE_TYPE_LARGE;
+    const isCompoundFurnace = isCompoundMonument(furnace.isMonument, furnace.posX, furnace.posY);
+    const FURNACE_SCALE = isLargeFurnace ? (isCompoundFurnace ? 2.0 : 1.5) : 1.0;
+
+    // Layer 1: Large ambient glow (hot furnace - bright orange ambient heat)
+    const ambientRadius = Math.max(0, FURNACE_LIGHT_RADIUS_BASE * 3.5 * FURNACE_SCALE + flicker.baseFlicker * 0.3);
+    const ambientGradient = ctx.createRadialGradient(
+        industrialFurnaceX, industrialFurnaceY, 0,
+        industrialFurnaceX, industrialFurnaceY, ambientRadius
+    );
+    ambientGradient.addColorStop(0, 'rgba(255, 180, 100, 0.06)'); // Bright orange ambient heat
+    ambientGradient.addColorStop(0.2, 'rgba(255, 160, 80, 0.05)'); // Warm orange glow
+    ambientGradient.addColorStop(0.4, 'rgba(255, 140, 60, 0.04)'); // Deep orange
+    ambientGradient.addColorStop(0.6, 'rgba(255, 120, 50, 0.03)'); // Rich orange
+    ambientGradient.addColorStop(0.8, 'rgba(255, 100, 40, 0.02)'); // Bright orange fade
+    ambientGradient.addColorStop(1, 'rgba(255, 80, 30, 0)'); // Orange fade to transparent
+    
+    ctx.fillStyle = ambientGradient;
+    ctx.beginPath();
+    ctx.arc(industrialFurnaceX, industrialFurnaceY, ambientRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Layer 2: Main illumination (bright yellow-orange furnace heat)
+    const mainRadius = Math.max(0, FURNACE_LIGHT_RADIUS_BASE * 2.4 * FURNACE_SCALE + flicker.baseFlicker * 0.8);
+    const mainGradient = ctx.createRadialGradient(
+        industrialFurnaceX, industrialFurnaceY, 0,
+        industrialFurnaceX, industrialFurnaceY, mainRadius
+    );
+    mainGradient.addColorStop(0, 'rgba(255, 220, 140, 0.15)'); // Bright yellow-orange center
+    mainGradient.addColorStop(0.15, 'rgba(255, 200, 120, 0.13)'); // Warm yellow-orange
+    mainGradient.addColorStop(0.3, 'rgba(255, 180, 100, 0.12)'); // Rich orange-yellow
+    mainGradient.addColorStop(0.5, 'rgba(255, 160, 80, 0.10)'); // Deep orange
+    mainGradient.addColorStop(0.7, 'rgba(255, 140, 70, 0.08)'); // Orange heat
+    mainGradient.addColorStop(0.85, 'rgba(255, 120, 60, 0.06)'); // Warm orange
+    mainGradient.addColorStop(1, 'rgba(255, 100, 50, 0)'); // Orange fade
+    
+    ctx.fillStyle = mainGradient;
+    ctx.beginPath();
+    ctx.arc(industrialFurnaceX, industrialFurnaceY, mainRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Restore context if we applied a clip
+    if (restoreClip) restoreClip();
+};
+
+// ===== UNIFIED PLAYER LIGHTS RENDERING =====
+
+/**
+ * Helper interface for remote player interpolation
+ */
+interface RemotePlayerInterpolation {
+    updateAndGetSmoothedPosition: (player: SpacetimeDBPlayer, localPlayerId: string) => { x: number; y: number } | null;
+}
+
+/**
+ * Options for rendering all player lights in a single unified loop
+ */
+export interface RenderAllPlayerLightsOptions {
+    ctx: CanvasRenderingContext2D;
+    players: Map<string, SpacetimeDBPlayer>;
+    localPlayerId: string | undefined;
+    currentPredictedPosition: { x: number; y: number } | null;
+    remotePlayerInterpolation: RemotePlayerInterpolation | null;
+    activeEquipments: Map<string, SpacetimeDBActiveEquipment>;
+    itemDefinitions: Map<string, SpacetimeDBItemDefinition>;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    buildingClusters: Map<string, BuildingCluster>;
+    // Mouse position for local player's flashlight aiming
+    currentWorldMouseX: number | null;
+    currentWorldMouseY: number | null;
+}
+
+/**
+ * Renders all player lights (torch, flashlight, headlamp) in a single unified loop.
+ * This is more efficient than three separate loops over all players.
+ * 
+ * Each player can have multiple light sources active simultaneously.
+ */
+export function renderAllPlayerLights(options: RenderAllPlayerLightsOptions): void {
+    const {
+        ctx,
+        players,
+        localPlayerId,
+        currentPredictedPosition,
+        remotePlayerInterpolation,
+        activeEquipments,
+        itemDefinitions,
+        cameraOffsetX,
+        cameraOffsetY,
+        buildingClusters,
+        currentWorldMouseX,
+        currentWorldMouseY,
+    } = options;
+
+    players.forEach(player => {
+        const playerId = player.identity?.toHexString();
+        if (!playerId) return;
+
+        // Calculate render position once for all light types
+        let renderPositionX = player.positionX;
+        let renderPositionY = player.positionY;
+        const isLocalPlayer = playerId === localPlayerId;
+
+        if (isLocalPlayer && currentPredictedPosition) {
+            // For local player, use predicted position
+            renderPositionX = currentPredictedPosition.x;
+            renderPositionY = currentPredictedPosition.y;
+        } else if (!isLocalPlayer && remotePlayerInterpolation && localPlayerId) {
+            // For remote players, use interpolated position
+            const interpolatedPos = remotePlayerInterpolation.updateAndGetSmoothedPosition(player, localPlayerId);
+            if (interpolatedPos) {
+                renderPositionX = interpolatedPos.x;
+                renderPositionY = interpolatedPos.y;
+            }
+        }
+
+        // Render torch light if player has torch lit
+        renderPlayerTorchLight({
+            ctx,
+            player,
+            activeEquipments,
+            itemDefinitions,
+            cameraOffsetX,
+            cameraOffsetY,
+            renderPositionX,
+            renderPositionY,
+            buildingClusters,
+        });
+
+        // Render flashlight light if player has flashlight on
+        if (player.isFlashlightOn) {
+            renderPlayerFlashlightLight({
+                ctx,
+                player,
+                activeEquipments,
+                itemDefinitions,
+                cameraOffsetX,
+                cameraOffsetY,
+                renderPositionX,
+                renderPositionY,
+                buildingClusters,
+                // Pass mouse position for local player's smooth 360° aiming
+                targetWorldX: isLocalPlayer ? currentWorldMouseX : null,
+                targetWorldY: isLocalPlayer ? currentWorldMouseY : null,
+            });
+        }
+
+        // Render headlamp light if player has headlamp lit
+        if (player.isHeadlampLit) {
+            renderPlayerHeadlampLight({
+                ctx,
+                player,
+                cameraOffsetX,
+                cameraOffsetY,
+                renderPositionX,
+                renderPositionY,
+                buildingClusters,
+            });
+        }
+    });
+}
+
+// ===== FISHING VILLAGE CAMPFIRE LIGHT RENDERING =====
+// Constants for fishing village communal campfire (larger than regular campfires)
+export const FV_CAMPFIRE_LIGHT_RADIUS_BASE = CAMPFIRE_LIGHT_RADIUS_BASE * 2.0; // Communal fire
+export const FV_CAMPFIRE_FLICKER_AMOUNT = CAMPFIRE_FLICKER_AMOUNT * 0.7; // More stable (well-tended fire)
+// Y offset to center light on the firepit in the 1024x1024 image (rendered at 256x256)
+export const FV_CAMPFIRE_Y_OFFSET = -150; // Dropped 100px lower for better alignment with 256x256 firepit
+
+interface RenderFishingVillageCampfireLightProps {
+    ctx: CanvasRenderingContext2D;
+    worldX: number;
+    worldY: number;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    cycleProgress: number;
+}
+
+/**
+ * Renders the warm, cozy light from the fishing village central campfire.
+ * This is a communal Aleut-style fire - larger, warmer, and more stable than player-placed campfires.
+ * Creates a safe, inviting atmosphere in the village.
+ */
+export const renderFishingVillageCampfireLight = ({
+    ctx,
+    worldX,
+    worldY,
+    cameraOffsetX,
+    cameraOffsetY,
+    cycleProgress,
+}: RenderFishingVillageCampfireLightProps) => {
+    if (!isNightTime(cycleProgress)) return;
+    const lightScreenX = worldX + cameraOffsetX;
+    // Apply Y offset to center light on the firepit in the image
+    const lightScreenY = worldY + cameraOffsetY + FV_CAMPFIRE_Y_OFFSET;
+    const flicker = sampleStableLightFlicker(worldX, worldY + FV_CAMPFIRE_Y_OFFSET, FV_CAMPFIRE_FLICKER_AMOUNT, 0.5, 0.4, 0.9);
+    const rusticCampfireX = lightScreenX + flicker.offsetX;
+    const rusticCampfireY = lightScreenY + flicker.offsetY;
+
+    // FISHING VILLAGE CAMPFIRE LIGHTING SYSTEM - Warm, inviting communal fire
+    const FV_SCALE = 2.0; // Communal fire atmosphere
+
+    // Layer 1: Large ambient glow (wood-burning communal fire - deep warm oranges)
+    const ambientRadius = Math.max(0, FV_CAMPFIRE_LIGHT_RADIUS_BASE * 3.5 * FV_SCALE + flicker.baseFlicker * 0.3);
+    const ambientGradient = ctx.createRadialGradient(
+        rusticCampfireX, rusticCampfireY, 0,
+        rusticCampfireX, rusticCampfireY, ambientRadius
+    );
+    ambientGradient.addColorStop(0, 'rgba(230, 90, 30, 0.05)'); // Warm orange-red center
+    ambientGradient.addColorStop(0.25, 'rgba(200, 70, 20, 0.035)'); // Deep ember glow
+    ambientGradient.addColorStop(0.6, 'rgba(160, 50, 15, 0.02)'); // Natural wood-burning red
+    ambientGradient.addColorStop(1, 'rgba(120, 35, 10, 0)'); // Cozy ember fade
+    
+    ctx.fillStyle = ambientGradient;
+    ctx.beginPath();
+    ctx.arc(rusticCampfireX, rusticCampfireY, ambientRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Layer 2: Main illumination (authentic communal fire warmth)
+    const mainRadius = Math.max(0, FV_CAMPFIRE_LIGHT_RADIUS_BASE * 2.4 * FV_SCALE + flicker.baseFlicker * 0.8);
+    const mainGradient = ctx.createRadialGradient(
+        rusticCampfireX, rusticCampfireY, 0,
+        rusticCampfireX, rusticCampfireY, mainRadius
+    );
+    mainGradient.addColorStop(0, 'rgba(240, 140, 60, 0.20)'); // Warm orange center
+    mainGradient.addColorStop(0.15, 'rgba(220, 110, 35, 0.17)'); // Rich cozy orange
+    mainGradient.addColorStop(0.4, 'rgba(200, 80, 25, 0.12)'); // Deep orange warmth
+    mainGradient.addColorStop(0.65, 'rgba(170, 55, 18, 0.07)'); // Natural ember
+    mainGradient.addColorStop(0.85, 'rgba(140, 40, 12, 0.03)'); // Gentle fade
+    mainGradient.addColorStop(1, 'rgba(100, 25, 8, 0)'); // Cozy rustic fade
+    
+    ctx.fillStyle = mainGradient;
+    ctx.beginPath();
+    ctx.arc(rusticCampfireX, rusticCampfireY, mainRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Layer 3: Core bright light (intense communal fire heart) 
+    const coreRadius = Math.max(0, FV_CAMPFIRE_LIGHT_RADIUS_BASE * 0.6 * FV_SCALE + flicker.baseFlicker * 1.2);
+    const coreGradient = ctx.createRadialGradient(
+        rusticCampfireX, rusticCampfireY, 0,
+        rusticCampfireX, rusticCampfireY, coreRadius
+    );
+    coreGradient.addColorStop(0, 'rgba(250, 180, 100, 0.28)'); // Bright warm center
+    coreGradient.addColorStop(0.3, 'rgba(235, 130, 50, 0.20)'); // Rich golden orange
+    coreGradient.addColorStop(0.6, 'rgba(210, 90, 30, 0.12)'); // Warm orange glow
+    coreGradient.addColorStop(1, 'rgba(180, 60, 20, 0)'); // Cozy rustic fade
+    
+    ctx.fillStyle = coreGradient;
+    ctx.beginPath();
+    ctx.arc(lightScreenX, lightScreenY, coreRadius, 0, Math.PI * 2);
+    ctx.fill();
+};
+
+// ===== SOVA AURA - LOCAL PLAYER NIGHT VISION AID =====
+// A subtle, always-on night visibility aid for the local player only.
+// Purely visual - no gameplay effects. Only visible during nighttime.
+
+// --- SOVA Aura Constants ---
+// Radius similar to torch but with weaker intensity
+export const SOVA_AURA_RADIUS_BASE = TORCH_LIGHT_RADIUS_BASE * 3.0; // Same size as torch
+// No flicker - steady bioelectric glow
+export const SOVA_AURA_FLICKER_AMOUNT = 0; // No flicker for consistent visibility
+// Deep blue color (bioelectric vibe) - more blue, less cyan
+// Much lower intensity than torch for subtle "night vision bubble" feel
+export const SOVA_AURA_INNER_COLOR_RGB = { r: 30, g: 60, b: 220 }; // Deep electric blue
+export const SOVA_AURA_OUTER_COLOR_RGB = { r: 15, g: 40, b: 180 }; // Rich blue fade
+
+// SOVA aura ramp: legacy-tuned breakpoints remapped to match shared dayNight progress scale
+const SOVA_AURA_DUSK_START = mapLegacyCycleProgress(0.7);
+const SOVA_AURA_NIGHT_FULL = dayNightConfig.twilightEveningStartProgress;
+const SOVA_AURA_DAWN_END = mapLegacyCycleProgress(0.12);
+const SOVA_AURA_DAY_START = NIGHT_LIGHTS_OFF;
+
+/**
+ * Calculate SOVA aura intensity based on time of day.
+ * Returns 0.0 during day, 1.0 during full night, with smooth transitions.
+ * @param cycleProgress - Day/night cycle progress (0.0 to 1.0)
+ */
+export function getSovaAuraIntensity(cycleProgress: number): number {
+    // Full day (0.15 to 0.70) - no aura
+    if (cycleProgress >= SOVA_AURA_DAY_START && cycleProgress < SOVA_AURA_DUSK_START) {
+        return 0.0;
+    }
+    
+    // Dusk transition (0.70 to 0.76) - fade in
+    if (cycleProgress >= SOVA_AURA_DUSK_START && cycleProgress < SOVA_AURA_NIGHT_FULL) {
+        const t = (cycleProgress - SOVA_AURA_DUSK_START) / (SOVA_AURA_NIGHT_FULL - SOVA_AURA_DUSK_START);
+        return t; // Linear fade in
+    }
+    
+    // Full night (0.76 to 1.0 and 0.0 to 0.12) - full intensity
+    if (cycleProgress >= SOVA_AURA_NIGHT_FULL || cycleProgress < SOVA_AURA_DAWN_END) {
+        return 1.0;
+    }
+    
+    // Dawn transition (0.12 to 0.15) - fade out
+    if (cycleProgress >= SOVA_AURA_DAWN_END && cycleProgress < SOVA_AURA_DAY_START) {
+        const t = (cycleProgress - SOVA_AURA_DAWN_END) / (SOVA_AURA_DAY_START - SOVA_AURA_DAWN_END);
+        return 1.0 - t; // Linear fade out
+    }
+    
+    return 0.0;
+}
+
+interface RenderSovaAuraProps {
+    ctx: CanvasRenderingContext2D;
+    playerWorldX: number;
+    playerWorldY: number;
+    cameraOffsetX: number;
+    cameraOffsetY: number;
+    cycleProgress: number;
+}
+
+/**
+ * Renders the SOVA Aura - a subtle night vision aid for the local player only.
+ * 
+ * IMPORTANT: This should ONLY be called for the local player.
+ * Remote players should NOT see this effect on other players.
+ * 
+ * Features:
+ * - Dark blue/cyan radial gradient (bioelectric vibe)
+ * - Weaker than torch (dim night vision bubble)
+ * - Very soft feathered edges
+ * - Smooth fade in/out during dusk/dawn transitions
+ * - Does not affect gameplay (no enemy behavior, spawning, etc.)
+ */
+export const renderSovaAura = ({
+    ctx,
+    playerWorldX,
+    playerWorldY,
+    cameraOffsetX,
+    cameraOffsetY,
+    cycleProgress,
+}: RenderSovaAuraProps) => {
+    // Calculate intensity based on time of day
+    const intensity = getSovaAuraIntensity(cycleProgress);
+    
+    // Skip rendering if intensity is too low (day time)
+    if (intensity < 0.01) {
+        return;
+    }
+    
+    const lightScreenX = playerWorldX + cameraOffsetX;
+    const lightScreenY = playerWorldY + cameraOffsetY;
+    
+    // Scale base intensity - much dimmer than torch for subtle effect
+    const baseAlpha = 0.12 * intensity; // Max alpha 0.12 (very subtle)
+    
+    const { r, g, b } = SOVA_AURA_INNER_COLOR_RGB;
+    const { r: outerR, g: outerG, b: outerB } = SOVA_AURA_OUTER_COLOR_RGB;
+    
+    // Layer 1: Large ambient glow (very soft, barely visible outer edge)
+    const ambientRadius = SOVA_AURA_RADIUS_BASE * 2.5;
+    const ambientGradient = ctx.createRadialGradient(
+        lightScreenX, lightScreenY, 0,
+        lightScreenX, lightScreenY, ambientRadius
+    );
+    ambientGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${baseAlpha * 0.4})`);
+    ambientGradient.addColorStop(0.3, `rgba(${r}, ${g}, ${b}, ${baseAlpha * 0.25})`);
+    ambientGradient.addColorStop(0.6, `rgba(${outerR}, ${outerG}, ${outerB}, ${baseAlpha * 0.12})`);
+    ambientGradient.addColorStop(0.85, `rgba(${outerR}, ${outerG}, ${outerB}, ${baseAlpha * 0.04})`);
+    ambientGradient.addColorStop(1, `rgba(${outerR}, ${outerG}, ${outerB}, 0)`);
+    
+    ctx.fillStyle = ambientGradient;
+    ctx.beginPath();
+    ctx.arc(lightScreenX, lightScreenY, ambientRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Layer 2: Main illumination (subtle cyan-blue visibility bubble)
+    const mainRadius = SOVA_AURA_RADIUS_BASE * 1.6;
+    const mainGradient = ctx.createRadialGradient(
+        lightScreenX, lightScreenY, 0,
+        lightScreenX, lightScreenY, mainRadius
+    );
+    mainGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${baseAlpha * 0.6})`);
+    mainGradient.addColorStop(0.25, `rgba(${r}, ${g}, ${b}, ${baseAlpha * 0.45})`);
+    mainGradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${baseAlpha * 0.28})`);
+    mainGradient.addColorStop(0.75, `rgba(${outerR}, ${outerG}, ${outerB}, ${baseAlpha * 0.12})`);
+    mainGradient.addColorStop(1, `rgba(${outerR}, ${outerG}, ${outerB}, 0)`);
+    
+    ctx.fillStyle = mainGradient;
+    ctx.beginPath();
+    ctx.arc(lightScreenX, lightScreenY, mainRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Layer 3: Core visibility area (centered around player, softest glow)
+    const coreRadius = SOVA_AURA_RADIUS_BASE * 0.6;
+    const coreGradient = ctx.createRadialGradient(
+        lightScreenX, lightScreenY, 0,
+        lightScreenX, lightScreenY, coreRadius
+    );
+    coreGradient.addColorStop(0, `rgba(${r + 20}, ${g + 30}, ${b + 30}, ${baseAlpha * 0.8})`); // Slightly brighter center
+    coreGradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${baseAlpha * 0.5})`);
+    coreGradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+    
+    ctx.fillStyle = coreGradient;
+    ctx.beginPath();
+    ctx.arc(lightScreenX, lightScreenY, coreRadius, 0, Math.PI * 2);
+    ctx.fill();
+};
+
+/** Renders campfire, lantern, furnace, barbecue lights in a single pass. */
+export function renderAllStructureLights(opts: {
+  ctx: CanvasRenderingContext2D;
+  cameraOffsetX: number;
+  cameraOffsetY: number;
+  buildingClusters: Map<string, BuildingCluster>;
+  visibleCampfiresMap: Map<string, SpacetimeDBCampfire>;
+  visibleLanternsMap: Map<string, SpacetimeDBLantern>;
+  visibleFurnacesMap: Map<string, SpacetimeDBFurnace>;
+  visibleBarbecuesMap: Map<string, SpacetimeDBBarbecue>;
+}): void {
+  const { ctx, cameraOffsetX, cameraOffsetY, buildingClusters } = opts;
+  const structureLightOpts = { ctx, cameraOffsetX, cameraOffsetY, buildingClusters };
+
+  opts.visibleCampfiresMap.forEach((campfire) =>
+    renderCampfireLight({ ...structureLightOpts, campfire })
+  );
+  opts.visibleLanternsMap.forEach((lantern) =>
+    renderLanternLight({ ...structureLightOpts, lantern })
+  );
+  opts.visibleFurnacesMap.forEach((furnace) =>
+    renderFurnaceLight({ ...structureLightOpts, furnace })
+  );
+  opts.visibleBarbecuesMap.forEach((barbecue) =>
+    renderBarbecueLight({ ...structureLightOpts, barbecue })
+  );
+}

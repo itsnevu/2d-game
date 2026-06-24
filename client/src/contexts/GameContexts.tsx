@@ -1,0 +1,46 @@
+import React, { ReactNode } from 'react';
+import { GameConnectionProvider } from './GameConnectionContext';
+import { PlayerActionsProvider } from './PlayerActionsContext';
+import { SettingsProvider } from './SettingsContext';
+import { ErrorDisplayProvider } from './ErrorDisplayContext';
+
+interface GameContextsProviderProps {
+    children: ReactNode;
+}
+
+/**
+ * Combined provider that sets up all game-related contexts in the correct order.
+ * This ensures proper dependency hierarchy (player actions depend on game connection).
+ * SettingsProvider is outermost since it has no game dependencies.
+ */
+export const GameContextsProvider: React.FC<GameContextsProviderProps> = ({ children }) => {
+    return (
+        <SettingsProvider>
+            <GameConnectionProvider>
+                <PlayerActionsProvider>
+                    <ErrorDisplayProvider>
+                        {children}
+                    </ErrorDisplayProvider>
+                </PlayerActionsProvider>
+            </GameConnectionProvider>
+        </SettingsProvider>
+    );
+};
+
+/**
+ * Use this in your App.tsx or main layout component to wrap your application
+ * with all the required game contexts.
+ * 
+ * Example:
+ * ```tsx
+ * import { GameContextsProvider } from './contexts/GameContexts';
+ * 
+ * function App() {
+ *   return (
+ *     <GameContextsProvider>
+ *       <YourGameComponents />
+ *     </GameContextsProvider>
+ *   );
+ * }
+ * ```
+ */ 

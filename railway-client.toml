@@ -1,0 +1,24 @@
+[build]
+builder = "nixpacks"
+# This tells Railway to use the root (client app) and ignore auth server
+# IMPORTANT: public/** includes sounds, music, images, and other static assets
+watchPatterns = ["client/**", "public/**", "*.json", "*.ts", "*.js", "vite.config.ts", "tsconfig*.json", "index.html", "!auth-server-openauth/**"]
+
+[deploy]
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+healthcheckPath = "/"
+healthcheckTimeout = 300
+
+[environments.production]
+[environments.production.build]
+buildCommand = "npm install && npm run build && npm install -g serve"
+startCommand = "serve -s dist -l 8080"
+
+# Performance optimizations
+[environments.production.variables]
+NODE_ENV = "production"
+# Increase Node.js memory limit
+NODE_OPTIONS = "--max-old-space-size=4096"
+# Disable source maps in production for faster loading
+VITE_SOURCEMAP = "false" 

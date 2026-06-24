@@ -1,0 +1,338 @@
+/* ItemInteractionPanel.module.css */
+
+.itemInteractionPanel {
+  margin-top: 15px;
+  padding: 15px;
+  background: linear-gradient(135deg, rgba(15, 23, 35, 0.98), rgba(20, 10, 40, 0.98));
+  border: 2px solid #00d4ff;
+  border-radius: 8px;
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.4), inset 0 0 15px rgba(0, 212, 255, 0.1), 2px 2px 0px rgba(0,0,0,0.4);
+  color: #e0e0e0;
+  font-family: 'Courier New', Consolas, Monaco, monospace;
+  position: relative;
+  width: 404px; /* Match inventory grid width + gap (388px + 16px) */
+  box-sizing: border-box; /* Include padding in width */
+  margin-left: auto;
+  margin-right: auto;
+  backdrop-filter: blur(10px);
+  animation: cyberpunkPanelFadeIn 0.3s ease-out;
+}
+
+@keyframes cyberpunkPanelFadeIn {
+  0% { 
+    opacity: 0; 
+    transform: translateY(10px) scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+.interactionHeader {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.closeInteractionButton {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border: 2px solid #ef4444;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.closeInteractionButton:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
+  transform: scale(1.05);
+}
+
+.interactionContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding-top: 10px; /* Space for the close button */
+}
+
+.interactionItemIcon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 10, 40, 0.8));
+  border: 2px solid #7c3aed;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative; /* For quantity positioning */
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.3), inset 0 0 10px rgba(124, 58, 237, 0.1);
+}
+
+.itemIcon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.itemQuantity {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 8px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  min-width: 16px;
+  text-align: center;
+}
+
+.interactionItemDetails {
+  flex-grow: 1;
+  min-width: 0; /* Allow flex item to shrink */
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Increased gap between elements */
+}
+
+.interactionItemName {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #00d4ff;
+  font-weight: bold;
+  line-height: 1.4;
+  text-align: left;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #7c3aed;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+  letter-spacing: 0.5px;
+}
+
+.interactionItemDescription {
+  margin: 0;
+  font-size: 0.75rem; /* Match tooltip description size */
+  color: #c0c0c0; /* Match tooltip description color */
+  line-height: 1.6;
+  text-align: left;
+  max-height: none;
+  overflow-y: visible;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.interactionActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px solid rgba(124, 58, 237, 0.3);
+  justify-content: flex-start; /* Left align buttons */
+  align-items: center; /* Center items vertically */
+}
+
+.actionButton {
+  padding: 10px 16px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 90px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.actionButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.actionButton:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.actionButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.actionButton:active:not(:disabled) {
+  transform: translateY(0);
+  filter: brightness(0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #444;
+  border-color: #666;
+  color: #888;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Specific action button styles */
+.crushButton {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  border-color: #d2691e;
+  box-shadow: 0 0 10px rgba(139, 69, 19, 0.5), inset 0 0 10px rgba(210, 105, 30, 0.1);
+}
+
+.crushButton:hover:not(:disabled) {
+  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.7), inset 0 0 15px rgba(210, 105, 30, 0.2);
+  border-color: #ff8c42;
+}
+
+.consumeButton {
+  background: linear-gradient(135deg, #228b22 0%, #006400 100%);
+  border-color: #32cd32;
+  box-shadow: 0 0 10px rgba(34, 139, 34, 0.5), inset 0 0 10px rgba(50, 205, 50, 0.1);
+}
+
+.consumeButton:hover:not(:disabled) {
+  box-shadow: 0 4px 15px rgba(34, 139, 34, 0.7), inset 0 0 15px rgba(50, 205, 50, 0.2);
+  border-color: #7fff00;
+}
+
+.carvingKitButton {
+  background: linear-gradient(135deg, #8b5a2b 0%, #6b4423 100%);
+  border-color: #daa520;
+  box-shadow: 0 0 10px rgba(139, 90, 43, 0.5), inset 0 0 10px rgba(218, 165, 32, 0.1);
+}
+
+.carvingKitButton:hover:not(:disabled) {
+  box-shadow: 0 4px 15px rgba(139, 90, 43, 0.7), inset 0 0 15px rgba(218, 165, 32, 0.2);
+  border-color: #ffd700;
+}
+
+.radioButton {
+  background: linear-gradient(135deg, #8b2323 0%, #6b1b1b 100%);
+  border-color: #ff4444;
+  box-shadow: 0 0 10px rgba(139, 35, 35, 0.5), inset 0 0 10px rgba(255, 68, 68, 0.1);
+}
+
+.radioButton:hover:not(:disabled) {
+  box-shadow: 0 4px 15px rgba(139, 35, 35, 0.7), inset 0 0 15px rgba(255, 68, 68, 0.2);
+  border-color: #ff6666;
+}
+
+/* Split controls styles */
+.splitControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto; /* Push to the right */
+}
+
+.splitInput {
+  width: 55px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 10, 40, 0.8));
+  color: #00d4ff;
+  border: 2px solid #7c3aed;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.3), inset 0 0 5px rgba(0, 212, 255, 0.1);
+}
+
+.splitInput:focus {
+  border-color: #00d4ff;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.6), inset 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+.splitInput::-webkit-inner-spin-button,
+.splitInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.splitButton {
+  background: linear-gradient(135deg, #6688cc 0%, #5577bb 100%);
+  border-color: #00d4ff;
+  min-width: 70px; /* Smaller than other action buttons */
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.4), inset 0 0 10px rgba(0, 212, 255, 0.1);
+}
+
+.splitButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7799dd 0%, #6688cc 100%);
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.6), inset 0 0 15px rgba(0, 212, 255, 0.2);
+  border-color: #7c3aed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .itemInteractionPanel {
+    padding: 12px;
+  }
+  
+  .interactionContent {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .interactionItemIcon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .interactionItemDetails {
+    align-items: center;
+    text-align: center;
+  }
+
+  .interactionItemName {
+    font-size: 11px;
+    text-align: center;
+  }
+  
+  .interactionItemDescription {
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .interactionActions {
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .splitControls {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+  
+  .actionButton {
+    font-size: 9px;
+    padding: 6px 10px;
+    min-width: 70px;
+  }
+} 

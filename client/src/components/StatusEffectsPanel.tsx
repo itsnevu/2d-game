@@ -1,0 +1,361 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { formatDuration, formatDurationVerbose } from '../utils/formatDuration';
+
+interface StatusEffect {
+  id: string;
+  name: string;
+  emoji: string;
+  duration?: number;
+  type: 'positive' | 'negative' | 'neutral';
+  description?: string;
+}
+
+interface StatusEffectsPanelProps {
+  effects: StatusEffect[];
+}
+
+const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
+  const [hoveredEffect, setHoveredEffect] = useState<string | null>(null);
+  const [interpolatedWetness, setInterpolatedWetness] = useState<number>(0);
+  const wetTargetRef = useRef<number>(0);
+  const wetCurrentRef = useRef<number>(0);
+  const wetDisplayRef = useRef<number>(0); // Track displayed value to avoid stale closures
+  const lastUpdateTimeRef = useRef<number>(Date.now());
+
+  // Find wet effect and update target
+  const wetEffect = effects.find(effect => effect.id === 'wet');
+  const newWetTarget = wetEffect && wetEffect.duration !== undefined ? (wetEffect.duration / 60) * 100 : 0;
+  
+  // Update target when server value changes
+  useEffect(() => {
+    if (newWetTarget !== wetTargetRef.current) {
+      wetTargetRef.current = newWetTarget;
+      lastUpdateTimeRef.current = Date.now();
+    }
+  }, [newWetTarget]);
+
+  // Keep display ref synchronized with state
+  useEffect(() => {
+    wetDisplayRef.current = Math.round(interpolatedWetness);
+  }, [interpolatedWetness]);
+
+  // Smooth interpolation animation
+  useEffect(() => {
+    let animationId: number;
+    
+    const animate = () => {
+      const now = Date.now();
+      const deltaTime = (now - lastUpdateTimeRef.current) / 1000; // Convert to seconds
+      const target = wetTargetRef.current;
+      const current = wetCurrentRef.current;
+      
+      if (Math.abs(target - current) > 0.1) {
+        // Calculate interpolation speed (1% per second, but faster for larger gaps)
+        const difference = target - current;
+        const maxSpeed = Math.max(1, Math.abs(difference) / 2); // Faster for larger gaps
+        const speed = Math.sign(difference) * Math.min(maxSpeed, Math.abs(difference));
+        
+        // Update current value
+        const newCurrent = current + (speed * deltaTime);
+        
+        // Clamp to not overshoot
+        if (Math.sign(difference) > 0) {
+          wetCurrentRef.current = Math.min(target, newCurrent);
+        } else {
+          wetCurrentRef.current = Math.max(target, newCurrent);
+        }
+        
+        // Only update state if there's a meaningful change (throttle updates)
+        const currentDisplayValue = wetDisplayRef.current;
+        const newDisplayValue = Math.round(wetCurrentRef.current);
+        if (Math.abs(newDisplayValue - currentDisplayValue) >= 1) {
+          wetDisplayRef.current = newDisplayValue;
+          setInterpolatedWetness(wetCurrentRef.current);
+        }
+      } else {
+        // Close enough, snap to target
+        const finalValue = target;
+        wetCurrentRef.current = finalValue;
+        
+        // Only update state if the final value is different from current display
+        const currentDisplayValue = wetDisplayRef.current;
+        const finalDisplayValue = Math.round(finalValue);
+        if (Math.abs(finalDisplayValue - currentDisplayValue) >= 1) {
+          wetDisplayRef.current = finalDisplayValue;
+          setInterpolatedWetness(finalValue);
+        }
+      }
+      
+      lastUpdateTimeRef.current = now;
+      animationId = requestAnimationFrame(animate);
+    };
+    
+    animationId = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, []);
+
+  if (effects.length === 0) return null;
+
+  const getEffectColor = (type: string, effectId?: string) => {
+    // Special cases for runestones
+    if (effectId === 'blue_runestone') {
+      return '#00d4ff'; // Bright cyan/blue
+    }
+    if (effectId === 'production_rune') {
+      return '#DC143C'; // Deep crimson red (distinct from negative)
+    }
+    if (effectId === 'agrarian_rune') {
+      return '#50C878'; // True emerald green (darker, richer than default positive)
+    }
+    // Special case for shipwreck Lagunov's Ghost - eerie blue/purple
+    if (effectId === 'lagunov_ghost') {
+      return '#8c64dc'; // Mystical purple-blue (matches shipwreck night glow)
+    }
+    // Hot combat ladle - fiery orange
+    if (effectId === 'hot_combat_ladle') {
+      return '#ff8c00'; // Deep orange (fire/heat themed)
+    }
+    switch (type) {
+      case 'positive': return '#00ff88';
+      case 'negative': return '#ff4444';
+      default: return '#ffaa00';
+    }
+  };
+
+  const getEffectGlow = (type: string, effectId?: string) => {
+    // Special cases for runestones
+    if (effectId === 'blue_runestone') {
+      return '0 0 8px rgba(0, 212, 255, 0.6)';
+    }
+    if (effectId === 'production_rune') {
+      return '0 0 8px rgba(220, 20, 60, 0.6)'; // Deep crimson glow
+    }
+    if (effectId === 'agrarian_rune') {
+      return '0 0 8px rgba(80, 200, 120, 0.6)'; // Emerald green glow
+    }
+    // Special case for shipwreck Lagunov's Ghost - eerie purple glow
+    if (effectId === 'lagunov_ghost') {
+      return '0 0 8px rgba(140, 100, 220, 0.6)'; // Mystical purple glow
+    }
+    // Hot combat ladle - fiery orange glow
+    if (effectId === 'hot_combat_ladle') {
+      return '0 0 8px rgba(255, 140, 0, 0.6)'; // Fiery orange glow
+    }
+    switch (type) {
+      case 'positive': return '0 0 8px rgba(0, 255, 136, 0.6)';
+      case 'negative': return '0 0 8px rgba(255, 68, 68, 0.6)';
+      default: return '0 0 8px rgba(255, 170, 0, 0.6)';
+    }
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '140px', // Position above status bars
+      right: '15px',
+      fontFamily: '"Courier New", monospace',
+      fontSize: '11px',
+      color: '#ffffff',
+      textShadow: '1px 1px 2px #000000',
+      background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 40, 0.85) 100%)',
+      padding: '10px 14px',
+      borderRadius: '6px',
+      border: '2px solid #00d4ff',
+      backdropFilter: 'blur(5px)',
+      boxShadow: '0 0 20px rgba(0, 212, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+      zIndex: 55, // Above status bars (50) but below other UI
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center',
+        gap: '12px',
+        flexWrap: 'wrap'
+      }}>
+        {effects.map((effect, index) => (
+          <div
+            key={effect.id}
+            style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={() => setHoveredEffect(effect.id)}
+            onMouseLeave={() => setHoveredEffect(null)}
+          >
+            {/* Cyberpunk Tooltip */}
+            {hoveredEffect === effect.id && (
+              <div style={{
+                position: 'absolute',
+                right: '100%',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                marginRight: '12px',
+                background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(20, 20, 40, 0.95) 100%)',
+                border: `2px solid ${getEffectColor(effect.type, effect.id)}`,
+                borderRadius: '8px',
+                padding: '12px 16px',
+                minWidth: '200px',
+                maxWidth: '300px',
+                boxShadow: `0 0 25px ${getEffectColor(effect.type, effect.id)}60, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+                backdropFilter: 'blur(10px)',
+                zIndex: 100,
+                fontFamily: '"Courier New", monospace',
+                animation: 'tooltipFadeIn 0.2s ease-out',
+                textAlign: 'left',
+                pointerEvents: 'none'
+              }}>
+                {/* Tooltip Header */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '8px'
+                }}>
+                  <span style={{ 
+                    fontSize: '18px',
+                    filter: `drop-shadow(0 0 4px ${getEffectColor(effect.type, effect.id)})`
+                  }}>
+                    {effect.emoji}
+                  </span>
+                  <span style={{
+                    color: getEffectColor(effect.type, effect.id),
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    textShadow: `0 0 8px ${getEffectColor(effect.type, effect.id)}80`,
+                    letterSpacing: '1px'
+                  }}>
+                    {effect.name.toUpperCase()}
+                  </span>
+                </div>
+                
+                {/* Tooltip Description */}
+                <div style={{
+                  color: '#e0e0e0',
+                  fontSize: '11px',
+                  lineHeight: '1.4',
+                  marginBottom: '8px',
+                  opacity: 0.9,
+                  textAlign: 'left',
+                  width: '100%',
+                  display: 'block',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  textJustify: 'none'
+                }}>
+                  {effect.description}
+                </div>
+                
+                {/* Duration Info */}
+                {effect.duration !== undefined && effect.duration > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '11px',
+                    color: '#00d4ff',
+                    textShadow: '0 0 8px rgba(0, 212, 255, 0.6), 1px 1px 2px #000000',
+                    letterSpacing: '0.5px'
+                  }}>
+                    <span>⏱</span>
+                    <span>
+                      {effect.id === 'wet' 
+                        ? (() => {
+                            // Use interpolated value for smooth animation
+                            const percentage = interpolatedWetness;
+                            // If very close to 100% (within 3%), just show 100% to avoid flickering
+                            const displayPercentage = percentage >= 97 ? 100 : Math.round(percentage);
+                            return `${displayPercentage}% wetness remaining`;
+                          })()
+                        : effect.id === 'venom'
+                        ? 'Persistent until cured'
+                        : formatDurationVerbose(effect.duration)
+                      }
+                    </span>
+                  </div>
+                )}
+                
+                {/* Tooltip Arrow */}
+                <div style={{
+                  position: 'absolute',
+                  left: '100%',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 0,
+                  height: 0,
+                  borderTop: '8px solid transparent',
+                  borderBottom: '8px solid transparent',
+                  borderLeft: `8px solid ${getEffectColor(effect.type, effect.id)}`
+                }} />
+              </div>
+            )}
+            
+            {/* Effect Icon */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '28px',
+              height: '28px',
+              fontSize: '16px',
+              border: `2px solid ${getEffectColor(effect.type, effect.id)}`,
+              borderRadius: '6px',
+              background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(20, 20, 40, 0.6) 100%)',
+              boxShadow: `${getEffectGlow(effect.type, effect.id)}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+              transition: 'all 0.2s ease',
+              transform: hoveredEffect === effect.id ? 'scale(1.15)' : 'scale(1)'
+            }}>
+              {effect.emoji}
+            </div>
+            
+            {/* Duration Text */}
+            {effect.duration !== undefined && effect.duration > 0 && (
+              <span style={{ 
+                fontSize: '11px',
+                color: '#00d4ff',
+                fontWeight: 'bold',
+                textShadow: '0 0 8px rgba(0, 212, 255, 0.6), 1px 1px 2px #000000',
+                minWidth: '30px',
+                letterSpacing: '0.5px'
+              }}>
+                {effect.id === 'wet' 
+                  ? (() => {
+                      // Use interpolated value for smooth animation
+                      const percentage = interpolatedWetness;
+                      // If very close to 100% (within 3%), just show 100% to avoid flickering
+                      return percentage >= 97 ? '100%' : `${Math.round(percentage)}%`;
+                    })()
+                  : effect.id === 'venom'
+                  ? '∞'
+                  : formatDuration(effect.duration)
+                }
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      {/* CSS Animation */}
+      <style>{`
+        @keyframes tooltipFadeIn {
+          0% { 
+            opacity: 0; 
+            transform: translateY(-50%) translateX(10px); 
+          }
+          100% { 
+            opacity: 1; 
+            transform: translateY(-50%) translateX(0); 
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default StatusEffectsPanel;

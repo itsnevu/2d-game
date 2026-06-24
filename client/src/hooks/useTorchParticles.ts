@@ -1,0 +1,261 @@
+import { useEffect, useRef, useState, useMemo, type MutableRefObject } from 'react';
+import {
+    Player as SpacetimeDBPlayer,
+    ActiveEquipment as SpacetimeDBActiveEquipment,
+    ItemDefinition as SpacetimeDBItemDefinition,
+} from '../generated/types';
+import { Particle } from './useCampfireParticles'; // Reuse Particle type
+import { isCampfireFireWebGLOverlayAvailable } from '../utils/renderers/campfireFireOverlayUtils';
+import {
+    getTorchGpuFlameAnchorWorld,
+    TORCH_FLAME_ANCHOR_FIRE_BASE_Y_OFFSET,
+} from '../utils/renderers/torchFlameAnchorWorldUtils';
+import { getClampedRafDeltaMs } from '../utils/frameDelta';
+
+// --- Particle Constants for Torch (can be adjusted) ---
+const TORCH_PARTICLE_LIFETIME_MIN = 100;  // Slightly longer for better visibility
+const TORCH_PARTICLE_LIFETIME_MAX = 250; // Slightly longer for better visibility
+const TORCH_PARTICLE_SPEED_Y_MIN = -0.8; // Faster upward movement for more dynamic flames
+const TORCH_PARTICLE_SPEED_Y_MAX = -1.5; // Faster upward movement for more dynamic flames
+const TORCH_PARTICLE_SPEED_X_SPREAD = 0.8; // More spread for liveliness
+const TORCH_PARTICLE_SIZE_MIN = 3; // Slightly larger for better visibility
+const TORCH_PARTICLE_SIZE_MAX = 6; // Slightly larger for better visibility
+const TORCH_PARTICLE_COLORS = ["#FFE55C", "#FFD878", "#FFB04A", "#FF783C", "#FC9842", "#FF4500"]; // More vibrant fire colors
+const TORCH_FIRE_PARTICLES_PER_FRAME = 2.0; // Increased for more prominent fire effect
+
+// --- Smoke Particle Constants for Torch ---
+const TORCH_SMOKE_PARTICLES_PER_FIRE_PARTICLE = 0.4; // More smoke
+const TORCH_SMOKE_LIFETIME_MIN = 300; 
+const TORCH_SMOKE_LIFETIME_MAX = 600; // Shorter for faster turnover
+const TORCH_SMOKE_SPEED_Y_MIN = -0.2; // Faster smoke movement
+const TORCH_SMOKE_SPEED_Y_MAX = -0.5; // Faster smoke movement
+const TORCH_SMOKE_SPEED_X_SPREAD = 0.4; // More spread
+const TORCH_SMOKE_SIZE_MIN = 4; 
+const TORCH_SMOKE_SIZE_MAX = 7;
+const TORCH_SMOKE_COLORS = ["#A0A0A0", "#B0B0B0", "#C0C0C0"]; // Slightly darker grays
+
+// --- Wispy Smoke Behavior Constants ---
+const TORCH_SMOKE_GROWTH_RATE = 0.025; // Faster growth
+const TORCH_SMOKE_INITIAL_ALPHA = 0.5; // Higher initial alpha
+const TORCH_SMOKE_TARGET_ALPHA = 0.05;
+const TORCH_SMOKE_Y_ACCELERATION = -0.008; // More acceleration
+
+interface UseTorchParticlesProps {
+    players: Map<string, SpacetimeDBPlayer>;
+    activeEquipments: Map<string, SpacetimeDBActiveEquipment>;
+    itemDefinitions: Map<string, SpacetimeDBItemDefinition>;
+    deltaTime: number; // Delta time in milliseconds
+    localPlayerId?: string;
+    localFacingDirectionRef?: MutableRefObject<string | undefined>;
+}
+
+export function useTorchParticles({
+    players,
+    activeEquipments,
+    itemDefinitions,
+    deltaTime, // Keep parameter for compatibility but won't use it
+    localPlayerId,
+    localFacingDirectionRef,
+}: UseTorchParticlesProps): Particle[] {
+    const particlesRef = useRef<Particle[]>([]);
+    const emissionAccumulatorRef = useRef<Map<string, number>>(new Map());
+    const lastUpdateTimeRef = useRef<number>(performance.now());
+    const animationFrameRef = useRef<number>(0);
+
+    // --- Create a derived state string that changes when any torch's lit status changes ---
+    const torchLitStatesKey = useMemo(() => {
+        let key = "";
+        players.forEach((player, playerId) => {
+            const equipment = activeEquipments.get(playerId);
+            if (equipment && equipment.equippedItemDefId) {
+                const itemDef = itemDefinitions.get(equipment.equippedItemDefId.toString());
+                if (itemDef && itemDef.name === "Torch") {
+                    key += `${playerId}:${player.isTorchLit};`;
+                }
+            }
+        });
+        return key;
+    }, [players, activeEquipments, itemDefinitions]);
+    // --- End derived state ---
+
+    useEffect(() => {
+        const updateParticles = () => {
+            const now = performance.now();
+            const deltaTime = getClampedRafDeltaMs(now, lastUpdateTimeRef);
+            
+            if (deltaTime <= 0) {
+                animationFrameRef.current = requestAnimationFrame(updateParticles);
+                return;
+            }
+
+            const newGeneratedParticlesThisFrame: Particle[] = [];
+
+            players.forEach((player, playerId) => {
+                if (!player || player.isDead) {
+                    emissionAccumulatorRef.current.set(playerId, 0); // Reset accumulator for dead/invalid players
+                    return;
+                }
+
+                const equipment = activeEquipments.get(playerId);
+                const itemDefId = equipment?.equippedItemDefId;
+                const itemDef = itemDefId ? itemDefinitions.get(itemDefId.toString()) : null;
+                
+                const isTorchCurrentlyActiveAndLit = !!(itemDef && itemDef.name === "Torch" && player.isTorchLit);
+
+                if (isTorchCurrentlyActiveAndLit) {
+                    if (isCampfireFireWebGLOverlayAvailable()) {
+                        emissionAccumulatorRef.current.set(playerId, 0);
+                        return;
+                    }
+
+                    // Use actual deltaTime for frame-rate independent movement
+                    const deltaTimeFactor = deltaTime / 16.667; // Normalize to 60fps
+
+                    let acc = emissionAccumulatorRef.current.get(playerId) || 0;
+                    acc += TORCH_FIRE_PARTICLES_PER_FRAME * deltaTimeFactor;
+
+                    const directionForTorch =
+                        localPlayerId && playerId === localPlayerId
+                            ? localFacingDirectionRef?.current ?? player.direction ?? 'down'
+                            : player.direction ?? 'down';
+
+                    const anchor = getTorchGpuFlameAnchorWorld({
+                        worldX: player.positionX,
+                        worldY: player.positionY,
+                        direction: directionForTorch,
+                        jumpStartTimeMs: player.jumpStartTimeMs,
+                        swingStartTimeMs: Number(equipment?.swingStartTimeMs ?? 0),
+                        nowMs: now,
+                    });
+                    const emissionPointX = anchor.x;
+                    const emissionPointY = anchor.y - TORCH_FLAME_ANCHOR_FIRE_BASE_Y_OFFSET;
+
+                    while (acc >= 1) {
+                        acc -= 1;
+                        const lifetime = TORCH_PARTICLE_LIFETIME_MIN + Math.random() * (TORCH_PARTICLE_LIFETIME_MAX - TORCH_PARTICLE_LIFETIME_MIN);
+                        
+                        const fireEmissionY = emissionPointY + TORCH_FLAME_ANCHOR_FIRE_BASE_Y_OFFSET;
+                        
+                        newGeneratedParticlesThisFrame.push({
+                            id: `torch_fire_${playerId}_${now}_${Math.random()}`,
+                            type: 'fire',
+                            x: emissionPointX + (Math.random() - 0.5) * 3, 
+                            y: fireEmissionY + (Math.random() - 0.5) * 3,
+                            vx: (Math.random() - 0.5) * TORCH_PARTICLE_SPEED_X_SPREAD,
+                            vy: TORCH_PARTICLE_SPEED_Y_MIN + Math.random() * (TORCH_PARTICLE_SPEED_Y_MAX - TORCH_PARTICLE_SPEED_Y_MIN),
+                            spawnTime: now,
+                            initialLifetime: lifetime,
+                            lifetime,
+                            size: Math.floor(TORCH_PARTICLE_SIZE_MIN + Math.random() * (TORCH_PARTICLE_SIZE_MAX - TORCH_PARTICLE_SIZE_MIN)) + 1,
+                            color: TORCH_PARTICLE_COLORS[Math.floor(Math.random() * TORCH_PARTICLE_COLORS.length)],
+                            alpha: 1.0,
+                        });
+
+                        // Add smoke particles based on fire particle emission (keep smoke at original position)
+                        if (Math.random() < TORCH_SMOKE_PARTICLES_PER_FIRE_PARTICLE) {
+                            const smokeLifetime = TORCH_SMOKE_LIFETIME_MIN + Math.random() * (TORCH_SMOKE_LIFETIME_MAX - TORCH_SMOKE_LIFETIME_MIN);
+                            newGeneratedParticlesThisFrame.push({
+                                id: `torch_smoke_${playerId}_${now}_${Math.random()}`,
+                                type: 'smoke', // Differentiate particle type
+                                x: emissionPointX + (Math.random() - 0.5) * 4, // Slightly wider spread for smoke base
+                                y: emissionPointY - 3 + (Math.random() - 0.5) * 3, // Start smoke slightly above fire
+                                vx: (Math.random() - 0.5) * TORCH_SMOKE_SPEED_X_SPREAD,
+                                vy: TORCH_SMOKE_SPEED_Y_MIN + Math.random() * (TORCH_SMOKE_SPEED_Y_MAX - TORCH_SMOKE_SPEED_Y_MIN),
+                                spawnTime: now,
+                                initialLifetime: smokeLifetime,
+                                lifetime: smokeLifetime,
+                                size: Math.floor(TORCH_SMOKE_SIZE_MIN + Math.random() * (TORCH_SMOKE_SIZE_MAX - TORCH_SMOKE_SIZE_MIN)) + 1,
+                                color: TORCH_SMOKE_COLORS[Math.floor(Math.random() * TORCH_SMOKE_COLORS.length)],
+                                alpha: TORCH_SMOKE_INITIAL_ALPHA, // Use initial alpha for smoke
+                            });
+                        }
+                    }
+                    emissionAccumulatorRef.current.set(playerId, acc);
+                } else {
+                    emissionAccumulatorRef.current.set(playerId, 0); // Reset accumulator if torch is not active for this player
+                }
+            });
+
+            // Update and filter all existing particles, then add newly generated ones
+            const currentParticles = particlesRef.current;
+            let liveParticleCount = 0;
+
+            // Use actual deltaTime for frame-rate independent movement
+            const normalizedDeltaTimeFactor = deltaTime / 16.667;
+
+            for (let i = 0; i < currentParticles.length; i++) {
+                const p = currentParticles[i];
+                const age = now - p.spawnTime;
+                const lifetimeRemaining = p.initialLifetime - age;
+
+                if (lifetimeRemaining <= 0) {
+                    // Mark for removal (or skip)
+                    continue;
+                }
+
+                let newVx = p.vx;
+                let newVy = p.vy;
+                let newSize = p.size;
+                let currentAlpha = p.alpha;
+
+                if (p.type === 'smoke') {
+                    newVy += TORCH_SMOKE_Y_ACCELERATION * normalizedDeltaTimeFactor;
+                    newSize = Math.min(p.size + TORCH_SMOKE_GROWTH_RATE * normalizedDeltaTimeFactor, TORCH_SMOKE_SIZE_MAX);
+                    const lifeRatio = Math.max(0, lifetimeRemaining / p.initialLifetime);
+                    currentAlpha = TORCH_SMOKE_TARGET_ALPHA + (TORCH_SMOKE_INITIAL_ALPHA - TORCH_SMOKE_TARGET_ALPHA) * lifeRatio;
+                } else if (p.type === 'fire') {
+                    // Fire particles flicker and dance with more dynamic behavior
+                    const lifeRatio = Math.max(0, lifetimeRemaining / p.initialLifetime);
+                    
+                    // Add horizontal flickering movement
+                    const flicker = (Math.random() - 0.5) * 0.3 * normalizedDeltaTimeFactor;
+                    newVx += flicker;
+                    
+                    // Size varies with life and adds flicker
+                    const baseSize = p.size * (0.7 + 0.3 * lifeRatio); // Shrink as it dies
+                    const sizeFlicker = (Math.random() - 0.5) * 0.4;
+                    newSize = Math.max(1, baseSize + sizeFlicker);
+                    
+                    // Alpha fades out with slight flickering
+                    const baseAlpha = lifeRatio;
+                    const alphaFlicker = (Math.random() - 0.5) * 0.1;
+                    currentAlpha = Math.max(0, Math.min(1, baseAlpha + alphaFlicker));
+                }
+
+                p.x += newVx * normalizedDeltaTimeFactor;
+                p.y += newVy * normalizedDeltaTimeFactor;
+                p.lifetime = lifetimeRemaining;
+                p.size = newSize;
+                p.alpha = Math.max(0, Math.min(1, currentAlpha));
+
+                if (p.alpha > 0.01) {
+                    currentParticles[liveParticleCount++] = p; // Keep live particle
+                }
+            }
+            // Trim the array to only live particles
+            currentParticles.length = liveParticleCount;
+            
+            // Add newly generated particles
+            if (newGeneratedParticlesThisFrame.length > 0) {
+                particlesRef.current = currentParticles.concat(newGeneratedParticlesThisFrame);
+            } else {
+                particlesRef.current = currentParticles;
+            }
+
+            // Continue the animation loop
+            animationFrameRef.current = requestAnimationFrame(updateParticles);
+        };
+
+        // Start the independent particle update loop
+        lastUpdateTimeRef.current = performance.now();
+        animationFrameRef.current = requestAnimationFrame(updateParticles);
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, [players, activeEquipments, itemDefinitions, torchLitStatesKey, localPlayerId, localFacingDirectionRef]);
+
+    return particlesRef.current;
+} 

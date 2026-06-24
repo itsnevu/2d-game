@@ -1,0 +1,1645 @@
+/**
+ * InventoryUI.tsx
+ * 
+ * Displays the player's inventory, equipment, and crafting panel.
+ * Also handles displaying the contents of interacted containers (Campfire, WoodenStorageBox).
+ * Allows players to drag/drop items between slots, equip items, and initiate crafting.
+ * Typically rendered conditionally by PlayerUI when inventory is opened or a container is interacted with.
+ */
+
+import React, { useCallback, useMemo, useEffect, useRef, useState } from 'react';
+import styles from './InventoryUI.module.css';
+// Import Custom Components
+import DraggableItem from './DraggableItem';
+import DroppableSlot from './DroppableSlot';
+
+// Import from shared location
+import { DragSourceSlotInfo, DraggedItemInfo } from '../types/dragDropTypes'; // Import both from shared
+
+// Import SpacetimeDB types needed for props and logic
+import { DbConnection } from '../generated';
+import {
+    Player,
+    InventoryItem,
+    ItemDefinition,
+    ActiveEquipment,
+    RangedWeaponStats,
+    Campfire as SpacetimeDBCampfire,
+    Furnace as SpacetimeDBFurnace,
+    Barbecue as SpacetimeDBBarbecue,
+    Fumarole as SpacetimeDBFumarole,
+    Lantern as SpacetimeDBLantern,
+    WoodenStorageBox as SpacetimeDBWoodenStorageBox,
+    Recipe,
+    CraftingQueueItem,
+    PlayerCorpse,
+    Stash as SpacetimeDBStash,
+    RainCollector as SpacetimeDBRainCollector,
+    HomesteadHearth as SpacetimeDBHomesteadHearth,
+    BrothPot as SpacetimeDBBrothPot,
+    WorldState,
+    ActiveConsumableEffect,
+    ItemLocation,
+    InventoryLocationData,
+    EquippedLocationData,
+    EquipmentSlotType,
+    StatThresholdsConfig,
+    KnockedOutStatus
+} from '../generated/types';
+import { Identity } from 'spacetimedb';
+// NEW: Import placement types
+import { PlacementItemInfo} from '../hooks/usePlacementManager';
+// ADD: Import CraftingUI component
+import CraftingUI from './CraftingUI';
+// ADD: Import ExternalContainerUI component
+import ExternalContainerUI from './ExternalContainerUI';
+// Import Tooltip component and its content type
+import Tooltip, { TooltipContent, TooltipStats } from './Tooltip';
+// Import the new formatting utility
+import { formatStatDisplay } from '../utils/formatUtils';
+// ADD: Import ItemInteractionPanel component
+import ItemInteractionPanel from './ItemInteractionPanel';
+// Import water container helpers
+import { isWaterContainer, getWaterContent, formatWaterContent, getWaterLevelPercentage } from '../utils/waterContainerHelpers';
+// Import durability helpers
+import { hasDurabilitySystem, getDurabilityPercentage, isItemBroken, getDurabilityColor, formatDurability, isFoodItem, isFoodSpoiled, formatFoodSpoilageTimeRemaining, getMaxDurability, MAX_DURABILITY } from '../utils/durabilityHelpers';
+import { formatGrenadeCountdown } from '../utils/grenadeMetadataHelpers';
+import { isCombatLadleHot } from '../utils/itemIconUtils';
+import DurabilityBar from './DurabilityBar';
+// Import ammo damage calculation helpers
+import { getAmmoDamageTooltip } from '../utils/arrowDamageCalculations';
+// Import InventorySearchBar component
+import InventorySearchBar from './InventorySearchBar';
+// Import ArmorStatsPanel component
+import ArmorStatsPanel from './ArmorStatsPanel';
+
+// --- Type Definitions ---
+// Define props for InventoryUI component
+interface InventoryUIProps {
+    playerIdentity: Identity | null;
+    onClose: () => void;
+    inventoryItems: Map<string, InventoryItem>;
+    itemDefinitions: Map<string, ItemDefinition>;
+    rangedWeaponStats: Map<string, RangedWeaponStats>; // ADDED: For ammo bar display
+    connection: DbConnection | null;
+    activeEquipments: Map<string, ActiveEquipment>;
+    onItemDragStart: (info: DraggedItemInfo) => void;
+    onItemDrop: (targetSlotInfo: DragSourceSlotInfo | null) => void;
+    draggedItemInfo: DraggedItemInfo | null;
+    // Add new props for interaction context
+    interactionTarget: { type: string; id: number | bigint } | null;
+    campfires: Map<string, SpacetimeDBCampfire>;
+    furnaces: Map<string, SpacetimeDBFurnace>;
+    barbecues: Map<string, SpacetimeDBBarbecue>; // ADDED: Barbecues
+    fumaroles: Map<string, SpacetimeDBFumarole>; // ADDED: Fumaroles
+    lanterns: Map<string, SpacetimeDBLantern>;
+    turrets: Map<string, any>; // ADDED: Turrets prop
+    woodenStorageBoxes: Map<string, SpacetimeDBWoodenStorageBox>; // <<< ADDED Prop Definition
+    playerCorpses: Map<string, PlayerCorpse>; // <<< ADD prop definition for corpses
+    stashes: Map<string, SpacetimeDBStash>; // <<< ADDED stashes prop
+    rainCollectors: Map<string, SpacetimeDBRainCollector>; // Add rain collectors prop
+    homesteadHearths: Map<string, SpacetimeDBHomesteadHearth>; // ADDED: Homestead Hearths
+    brothPots: Map<string, SpacetimeDBBrothPot>; // ADDED: Broth Pots
+    currentStorageBox?: SpacetimeDBWoodenStorageBox | null; // <<< ADDED Prop Definition
+    // NEW: Add Generic Placement Props
+    startPlacement: (itemInfo: PlacementItemInfo) => void;
+    cancelPlacement: () => void; // Assuming cancel might be needed (e.g., close button cancels placement)
+    placementInfo: PlacementItemInfo | null; // To potentially disable actions while placing
+    // ADD: Crafting related props
+    recipes: Map<string, Recipe>;
+    craftingQueueItems: Map<string, CraftingQueueItem>;
+    onCraftingSearchFocusChange?: (isFocused: boolean) => void;
+    worldState: WorldState | null;
+    players?: Map<string, Player>; // ADDED: Players for building privilege list
+    activeConsumableEffects?: Map<string, ActiveConsumableEffect>; // ADDED: For building privilege check
+    chunkWeather?: Map<string, any>; // ADDED: Chunk-based weather
+    purchasedMemoryNodes?: Set<string>; // ADDED: Memory Grid unlocks for crafting
+    // Hot loot props (from parent PlayerUI)
+    isHotLootActive?: boolean;
+    getSlotIndicator?: (slotType: string, slotIndex: number | string, parentId?: number | bigint) => { progress: number } | undefined;
+    handleHotLootSlotHover?: (item: PopulatedItem, slotInfo: DragSourceSlotInfo, context: 'player' | 'container') => void;
+    setHotLootCurrentHover?: (item: PopulatedItem | null, slotInfo: DragSourceSlotInfo | null, context: 'player' | 'container' | null) => void;
+    // Lifted ItemInteractionPanel state (allows Hotbar/ExternalContainerUI items to trigger the panel)
+    selectedInventoryItem?: PopulatedItem | null;
+    onSelectInventoryItem?: (item: PopulatedItem | null) => void;
+    onCloseItemInteraction?: () => void;
+    // Bone Carving Panel callback
+    onOpenBoneCarving?: () => void;
+    // Radio Panel callback
+    onOpenRadio?: () => void;
+}
+
+// Represents an item instance with its definition for rendering
+export interface PopulatedItem {
+    instance: InventoryItem;
+    definition: ItemDefinition;
+}
+
+// --- Constants ---
+const NUM_FUEL_SLOTS = 5; // For Campfire
+const NUM_BOX_SLOTS = 18; // For Wooden Storage Box
+const BOX_COLS = 6;
+const INVENTORY_ROWS = 4;
+const INVENTORY_COLS = 6;
+const TOTAL_INVENTORY_SLOTS = INVENTORY_ROWS * INVENTORY_COLS;
+const TOTAL_HOTBAR_SLOTS = 6;
+
+// Define Equipment Slot Layout (matches enum variants/logical names)
+const EQUIPMENT_SLOT_LAYOUT: { name: string, type: EquipmentSlotType | null }[] = [
+    { name: 'Head', type: { tag: 'Head' } as EquipmentSlotType },
+    { name: 'Chest', type: { tag: 'Chest' } as EquipmentSlotType },
+    { name: 'Legs', type: { tag: 'Legs' } as EquipmentSlotType },
+    { name: 'Feet', type: { tag: 'Feet' } as EquipmentSlotType },
+    { name: 'Hands', type: { tag: 'Hands' } as EquipmentSlotType },
+    { name: 'Back', type: { tag: 'Back' } as EquipmentSlotType },
+];
+
+// --- Main Component ---
+const InventoryUI: React.FC<InventoryUIProps> = ({
+    playerIdentity,
+    onClose,
+    inventoryItems,
+    itemDefinitions,
+    rangedWeaponStats,
+    connection,
+    activeEquipments,
+    onItemDragStart,
+    onItemDrop,
+    draggedItemInfo,
+    interactionTarget,
+    campfires,
+    furnaces,
+    barbecues,
+    fumaroles,
+    lanterns,
+    turrets,
+    woodenStorageBoxes,
+    playerCorpses,
+    stashes,
+    rainCollectors,
+    homesteadHearths,
+    brothPots,
+    currentStorageBox,
+    startPlacement,
+    cancelPlacement,
+    placementInfo,
+    recipes,
+    craftingQueueItems,
+    onCraftingSearchFocusChange,
+    worldState,
+    players,
+    activeConsumableEffects,
+    chunkWeather,
+    purchasedMemoryNodes,
+    isHotLootActive,
+    getSlotIndicator,
+    handleHotLootSlotHover,
+    setHotLootCurrentHover,
+    // Lifted ItemInteractionPanel state
+    selectedInventoryItem: externalSelectedItem,
+    onSelectInventoryItem,
+    onCloseItemInteraction,
+    // Bone Carving Panel callback
+    onOpenBoneCarving,
+    // Radio Panel callback
+    onOpenRadio,
+}) => {
+    const isPlacingItem = placementInfo !== null;
+    const prevInteractionTargetRef = useRef<typeof interactionTarget | undefined>(undefined);
+    const inventoryPanelRef = useRef<HTMLDivElement>(null); // Ref for the main panel
+    const currentInteractionTargetRef = useRef<typeof interactionTarget>(interactionTarget);
+
+    // Tooltip State
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    const [tooltipContent, setTooltipContent] = useState<TooltipContent | null>(null);
+    const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
+    // Selected item for interaction - use lifted state if available, otherwise local state
+    const [localSelectedItem, setLocalSelectedItem] = useState<PopulatedItem | null>(null);
+    const selectedInventoryItem = externalSelectedItem !== undefined ? externalSelectedItem : localSelectedItem;
+    const setSelectedInventoryItem = useCallback((item: PopulatedItem | null) => {
+        if (onSelectInventoryItem) {
+            onSelectInventoryItem(item);
+        } else {
+            setLocalSelectedItem(item);
+        }
+    }, [onSelectInventoryItem]);
+
+    // Add to state declarations
+    const [splitDragInfo, setSplitDragInfo] = useState<{ item: PopulatedItem, quantity: number } | null>(null);
+
+    // Add ref to track when drag operations complete
+    const lastDragCompleteTime = useRef<number>(0);
+
+    // Inventory search state
+    const [inventorySearchTerm, setInventorySearchTerm] = useState<string>('');
+
+    // Memoized handleClose to ensure stability if its dependencies are stable.
+    const handleClose = useCallback(() => {
+        if (isPlacingItem) {
+            cancelPlacement();
+        }
+        onClose();
+    }, [isPlacingItem, cancelPlacement, onClose]);
+
+    // Wrap the onItemDrop to track completion times
+    const handleItemDropWithTracking = useCallback((targetSlotInfo: DragSourceSlotInfo | null) => {
+        lastDragCompleteTime.current = Date.now();
+        // console.log('[InventoryUI] Drag operation completed at:', lastDragCompleteTime.current);
+        onItemDrop(targetSlotInfo);
+    }, [onItemDrop]);
+    
+    useEffect(() => {
+        // Update the current ref
+        currentInteractionTargetRef.current = interactionTarget;
+        
+        // console.log('[InventoryUI Effect] Current interactionTarget:', interactionTarget);
+        // console.log('[InventoryUI Effect] Previous interactionTarget from ref:', prevInteractionTargetRef.current);
+
+        // If there was a defined interactionTarget in the previous render,
+        // and now there isn't (interactionTarget is null or undefined),
+        // it means the player has moved away or the target is no longer valid.
+        // Add a small delay to prevent premature closing due to temporary target loss
+        if (prevInteractionTargetRef.current && !interactionTarget) {
+            console.log('[InventoryUI] Interaction target lost, scheduling auto-close check...');
+            
+            // Use a small timeout to prevent closing due to temporary target loss
+            const timeoutId = setTimeout(() => {
+                // Double-check that the target is still null after the delay using the ref
+                if (!currentInteractionTargetRef.current) {
+                    console.log('[InventoryUI] Interaction target still lost after delay, auto-closing inventory.');
+                    handleClose();
+                } else {
+                    console.log('[InventoryUI] Interaction target recovered, not closing inventory.');
+                }
+            }, 150); // 150ms delay to prevent flicker-induced closes
+            
+            // Cleanup timeout if component unmounts or target changes
+            return () => clearTimeout(timeoutId);
+        }
+        // Update the ref to the current value for the next render cycle.
+        prevInteractionTargetRef.current = interactionTarget;
+    }, [interactionTarget, handleClose]);
+
+    // --- Derived State & Data Preparation --- 
+
+    // Helper function to check if an item matches the search term
+    const itemMatchesSearch = useCallback((item: PopulatedItem | undefined, searchTerm: string): boolean => {
+        // If no search term, all items match (show all)
+        if (!searchTerm.trim()) return true;
+        
+        // If no item in slot, it doesn't match (empty slots shouldn't be highlighted)
+        if (!item) return false;
+        
+        const searchLower = searchTerm.toLowerCase().trim();
+        const itemName = item.definition.name.toLowerCase();
+        
+        return itemName.includes(searchLower);
+    }, []);
+
+    // Player Inventory & Equipment Data
+    const { itemsByInvSlot, itemsByEquipSlot } = useMemo(() => {
+        const invMap = new Map<number, PopulatedItem>();
+        const equipMap = new Map<string, PopulatedItem>();
+        if (!playerIdentity) return { itemsByInvSlot: invMap, itemsByEquipSlot: equipMap };
+
+        inventoryItems.forEach(itemInstance => {
+            const definition = itemDefinitions.get(itemInstance.itemDefId.toString());
+            if (definition) {
+                const populatedItem = { instance: itemInstance, definition };
+                const location = itemInstance.location; // Get location once
+
+                if (location.tag === 'Inventory') {
+                    // No need for type assertion if TypeScript can infer from .tag, but explicit for clarity if needed
+                    const inventoryData = location.value as InventoryLocationData;
+                    if (inventoryData.ownerId && inventoryData.ownerId.isEqual(playerIdentity)) {
+                        invMap.set(inventoryData.slotIndex, populatedItem);
+                    }
+                } else if (location.tag === 'Equipped') {
+                    // No need for type assertion if TypeScript can infer, but explicit for clarity
+                    const equipmentData = location.value as EquippedLocationData;
+                    if (equipmentData.ownerId && equipmentData.ownerId.isEqual(playerIdentity)) {
+                        // equipmentData.slotType will be like { tag: 'Head' } or { tag: 'Chest', value: ... }
+                        // We need the string tag for the map key
+                        equipMap.set(equipmentData.slotType.tag, populatedItem);
+                    }
+                }
+            }
+        });
+        return { itemsByInvSlot: invMap, itemsByEquipSlot: equipMap };
+    }, [playerIdentity, inventoryItems, itemDefinitions]);
+
+    // Extract equipped armor definitions for stats panel
+    const equippedArmorDefinitions = useMemo(() => {
+        const armorDefs: ItemDefinition[] = [];
+        itemsByEquipSlot.forEach(item => {
+            if (item.definition.category.tag === 'Armor') {
+                armorDefs.push(item.definition);
+            }
+        });
+        return armorDefs;
+    }, [itemsByEquipSlot]);
+
+    // Get local player's active equipment for ammo bar display
+    const localPlayerActiveEquipment = useMemo(() => {
+        if (!playerIdentity) return null;
+        return activeEquipments.get(playerIdentity.toHexString()) ?? null;
+    }, [playerIdentity, activeEquipments]);
+
+    // --- Callbacks & Handlers ---
+    const handleItemMouseEnter = useCallback((item: PopulatedItem, event: React.MouseEvent<HTMLDivElement>) => {
+        // Prevent browser tooltip
+        event.currentTarget.removeAttribute('title');
+        
+        if (inventoryPanelRef.current) {
+            const panelRect = inventoryPanelRef.current.getBoundingClientRect();
+            const relativeX = event.clientX - panelRect.left;
+            const relativeY = event.clientY - panelRect.top;
+
+            // const rect = event.currentTarget.getBoundingClientRect(); // CurrentTarget is the DraggableItem
+            // console.log('[Tooltip Debug] event.clientX:', event.clientX, 'panelRect.left:', panelRect.left, 'relativeX:', relativeX);
+            // console.log('[Tooltip Debug] Hovered Item:', item.definition.name);
+
+            const stats: TooltipStats[] = [];
+            const def = item.definition;
+
+            const categoryTag = def.category.tag;
+
+            if (categoryTag === 'Tool') {
+                // Primary Yield for Tools
+                if (def.primaryTargetYieldMin !== undefined || def.primaryTargetYieldMax !== undefined) {
+                    const min = def.primaryTargetYieldMin ?? 0;
+                    const max = def.primaryTargetYieldMax ?? min;
+                    let yieldLabel = 'Primary Yield';
+                    if (def.primaryTargetType) {
+                        const targetTypeTag = def.primaryTargetType.tag === 'PlayerCorpse' ? 'Corpse' : def.primaryTargetType.tag;
+                        yieldLabel = `${targetTypeTag} Yield`;
+                    }
+                    stats.push({ label: yieldLabel, value: max > min ? `${min}-${max}` : `${min}` });
+                }
+            } else {    
+                // Weapon Stats (Primary Damage - for non-tools or tools that also have direct damage)
+                if (def.primaryTargetDamageMin !== undefined || def.primaryTargetDamageMax !== undefined) {
+                    const min = def.primaryTargetDamageMin ?? 0;
+                    const max = def.primaryTargetDamageMax ?? min;
+                    stats.push({ label: 'Damage', value: max > min ? `${min}-${max}` : `${min}` });
+                }
+            }
+
+            // Weapon Stats (PvP) - handle ammunition differently
+            if (def.category.tag === 'Ammunition') {
+                // For ammunition, show effective damage with common weapons
+                const ammoDamageTooltip = getAmmoDamageTooltip(def, itemDefinitions);
+                if (ammoDamageTooltip) {
+                    stats.push({ label: 'Effective Damage', value: ammoDamageTooltip });
+                }
+            } else if (def.pvpDamageMin !== undefined || def.pvpDamageMax !== undefined) {
+                // For non-ammunition items, show raw damage values
+                const min = def.pvpDamageMin ?? 0;
+                const max = def.pvpDamageMax ?? min;
+                stats.push({ label: 'Damage', value: max > min ? `${min}-${max}` : `${min}` });
+            }
+            if (def.bleedDamagePerTick !== undefined && def.bleedDamagePerTick > 0 && def.bleedDurationSeconds !== undefined) {
+                stats.push({ label: 'Bleed', value: `${def.bleedDamagePerTick}/tick for ${def.bleedDurationSeconds}s` });
+            }
+
+            // Armor Stats - New System
+            if (def.armorResistances) {
+                const resistances = def.armorResistances;
+                
+                // Show melee resistance (most common)
+                if (resistances.meleeResistance !== undefined && resistances.meleeResistance !== 0) {
+                    stats.push({ 
+                        label: 'Melee Defense', 
+                        value: formatStatDisplay(resistances.meleeResistance * 100, true),
+                        color: resistances.meleeResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show projectile resistance
+                if (resistances.projectileResistance !== undefined && resistances.projectileResistance !== 0) {
+                    stats.push({ 
+                        label: 'Projectile Defense', 
+                        value: formatStatDisplay(resistances.projectileResistance * 100, true),
+                        color: resistances.projectileResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show slash resistance
+                if (resistances.slashResistance !== undefined && resistances.slashResistance !== 0) {
+                    stats.push({ 
+                        label: 'Slash Defense', 
+                        value: formatStatDisplay(resistances.slashResistance * 100, true),
+                        color: resistances.slashResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show pierce resistance
+                if (resistances.pierceResistance !== undefined && resistances.pierceResistance !== 0) {
+                    stats.push({ 
+                        label: 'Pierce Defense', 
+                        value: formatStatDisplay(resistances.pierceResistance * 100, true),
+                        color: resistances.pierceResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show blunt resistance
+                if (resistances.bluntResistance !== undefined && resistances.bluntResistance !== 0) {
+                    stats.push({ 
+                        label: 'Blunt Defense', 
+                        value: formatStatDisplay(resistances.bluntResistance * 100, true),
+                        color: resistances.bluntResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show fire resistance (can be negative for vulnerability)
+                if (resistances.fireResistance !== undefined && resistances.fireResistance !== 0) {
+                    stats.push({ 
+                        label: 'Fire Resistance', 
+                        value: formatStatDisplay(resistances.fireResistance * 100, true),
+                        color: resistances.fireResistance > 0 ? '#ff6b35' : '#d9534f'
+                    });
+                }
+                
+                // Show cold resistance
+                if (resistances.coldResistance !== undefined && resistances.coldResistance !== 0) {
+                    stats.push({ 
+                        label: 'Cold Resistance', 
+                        value: formatStatDisplay(resistances.coldResistance * 100, true),
+                        color: resistances.coldResistance > 0 ? '#5bc0de' : '#d9534f'
+                    });
+                }
+            }
+            
+            // Legacy armor stat (fallback for old items)
+            if (def.damageResistance !== undefined && def.damageResistance > 0) {
+                stats.push({ label: 'Defense', value: formatStatDisplay(def.damageResistance * 100, true) });
+            }
+            
+            if (def.warmthBonus !== undefined && def.warmthBonus !== 0) {
+                stats.push({ label: 'Warmth', value: formatStatDisplay(def.warmthBonus), color: def.warmthBonus > 0 ? '#f0ad4e' : '#5bc0de' });
+            }
+
+            // Consumable Stats
+            if (def.consumableHealthGain !== undefined && def.consumableHealthGain !== 0) {
+                stats.push({ label: 'Health', value: `${def.consumableHealthGain > 0 ? '+' : ''}${def.consumableHealthGain}`, color: def.consumableHealthGain > 0 ? '#5cb85c' : '#d9534f' });
+            }
+            if (def.consumableHungerSatiated !== undefined && def.consumableHungerSatiated !== 0) {
+                stats.push({ label: 'Hunger', value: `${def.consumableHungerSatiated > 0 ? '+' : ''}${def.consumableHungerSatiated}`, color: '#f0ad4e' });
+            }
+            if (def.consumableThirstQuenched !== undefined && def.consumableThirstQuenched !== 0) {
+                stats.push({ label: 'Thirst', value: `${def.consumableThirstQuenched > 0 ? '+' : ''}${def.consumableThirstQuenched}`, color: '#5bc0de' });
+            }
+            if (def.consumableDurationSecs !== undefined && def.consumableDurationSecs > 0) {
+                stats.push({ label: 'Duration', value: `${def.consumableDurationSecs}s` });
+            }
+            
+            // Fuel Stats
+            if (def.fuelBurnDurationSecs !== undefined && def.fuelBurnDurationSecs > 0) {
+                stats.push({ label: 'Burn Time', value: `${def.fuelBurnDurationSecs}s` });
+            }
+
+            // Water Container Stats
+            if (isWaterContainer(def.name)) {
+                const waterContent = getWaterContent(item.instance);
+                const waterDisplay = formatWaterContent(item.instance, def.name);
+                stats.push({ 
+                    label: 'Water', 
+                    value: waterDisplay, 
+                    color: waterContent !== null ? '#5bc0de' : '#999' 
+                });
+            }
+
+            // Durability Stats
+            if (hasDurabilitySystem(def)) {
+                const durabilityDisplay = formatDurability(item.instance);
+                const durabilityColor = getDurabilityColor(item.instance, def);
+                const isFood = isFoodItem(def);
+                const hasExplicitSpoilage = def.spoilsAfterHours !== null && def.spoilsAfterHours !== undefined && def.spoilsAfterHours > 0;
+                
+                if (isFood || hasExplicitSpoilage) {
+                    // For food items and items with explicit spoilage time (like Queen Bee), show spoilage time prominently
+                    let spoilageTime: string | null = null;
+                    try {
+                        spoilageTime = formatFoodSpoilageTimeRemaining(item.instance, def, connection);
+                    } catch (error) {
+                        console.error('[Tooltip] Error calculating spoilage time:', error);
+                    }
+                    
+                    // For food/explicit spoilage: show spoilage time directly (not "Full (time)")
+                    // "Preserved" means spoilage is paused (item is in a pantry)
+                    // Otherwise show time remaining
+                    const spoilageValue = spoilageTime || durabilityDisplay;
+                    stats.push({ 
+                        label: 'Spoilage', 
+                        value: spoilageValue, 
+                        color: durabilityColor.replace('0.8)', '1)')
+                    });
+                } else {
+                    // For non-food items without explicit spoilage (weapons, tools), show durability
+                    stats.push({ 
+                        label: 'Durability', 
+                        value: durabilityDisplay, 
+                        color: durabilityColor.replace('0.8)', '1)')
+                    });
+                }
+            }
+
+            // Grenade fuse countdown (inventory/hotbar/equipped/container)
+            if (def.name === 'Grenade') {
+                const countdown = formatGrenadeCountdown(item.instance);
+                if (countdown) {
+                    stats.push({ 
+                        label: 'Fuse', 
+                        value: countdown, 
+                        color: countdown === 'Detonating…' ? '#ff4444' : '#ffaa00' 
+                    });
+                }
+            }
+
+            const content: TooltipContent = {
+                name: def.name,
+                description: def.description,
+                category: def.category.tag,
+                // Rarity needs to be determined, for now, undefined
+                rarity: undefined, // Placeholder - implement rarity logic if available or desired
+                stats: stats.length > 0 ? stats : undefined,
+            };
+
+            setTooltipContent(content);
+            setTooltipPosition({ x: relativeX, y: relativeY });
+            setTooltipVisible(true);
+        }
+    }, [connection]); // Need connection for spoilage check
+
+    const handleItemMouseLeave = useCallback(() => {
+        setTooltipVisible(false);
+        setTooltipContent(null);
+    }, []);
+
+    const handleItemMouseMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+        if (inventoryPanelRef.current && tooltipVisible) { // Only update if visible and panel exists
+            const panelRect = inventoryPanelRef.current.getBoundingClientRect();
+            const relativeX = event.clientX - panelRect.left;
+            const relativeY = event.clientY - panelRect.top;
+            setTooltipPosition({ x: relativeX, y: relativeY });
+        }
+    }, [tooltipVisible]); // Depend on tooltipVisible to avoid unnecessary calculations
+
+    // NEW: Handler for clicking inventory items to show interaction panel
+    const handleInventoryItemClick = useCallback((item: PopulatedItem, event: React.MouseEvent<HTMLDivElement>) => {
+        // Only handle left clicks for item interaction
+        if (event.button !== 0) return;
+        
+        // Don't interfere with drag operations
+        if (draggedItemInfo) return;
+
+        // Don't handle clicks if they're coming from the interaction panel
+        if ((event.target as HTMLElement).closest('.itemInteractionPanel')) return;
+        
+        // Toggle selection - if same item clicked, deselect
+        if (selectedInventoryItem?.instance.instanceId === item.instance.instanceId) {
+            setSelectedInventoryItem(null);
+        } else {
+            setSelectedInventoryItem(item);
+        }
+    }, [selectedInventoryItem, draggedItemInfo, setSelectedInventoryItem]);
+
+    // NEW: Handler for closing the item interaction panel
+    const handleCloseItemInteraction = useCallback(() => {
+        if (onCloseItemInteraction) {
+            onCloseItemInteraction();
+        } else {
+            setSelectedInventoryItem(null);
+        }
+    }, [onCloseItemInteraction, setSelectedInventoryItem]);
+
+    const handleInventoryItemContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>, itemInfo: PopulatedItem) => {
+        event.preventDefault();
+        
+        // Don't trigger context menu if we're currently dragging or just finished dragging
+        if (draggedItemInfo) {
+            return;
+        }
+        
+        // Add a small delay check for recent drag operations
+        if (document.body.classList.contains('item-dragging')) {
+            return;
+        }
+        
+        // Block context menu for 200ms after a drag operation completes
+        const timeSinceLastDrag = Date.now() - lastDragCompleteTime.current;
+        if (timeSinceLastDrag < 200) {
+            return;
+        }
+        
+        if (!connection || !itemInfo) return;
+        const itemInstanceId = BigInt(itemInfo.instance.instanceId);
+
+        // Get interaction context directly here
+        const currentInteraction = interactionTarget;
+        
+        // Handle container interactions using correct reducer functions
+        if (currentInteraction && connection?.reducers) {
+            const containerId = Number(currentInteraction.id);
+            
+            try {
+                switch (currentInteraction.type) {
+                    case 'player_corpse':
+                        connection.reducers.quickMoveToCorpse({ corpseId: containerId, itemInstanceId });
+                        break;
+                    case 'wooden_storage_box':
+                        // Check if this is a compost/refrigerator/fish trap box and use the appropriate reducer
+                        const boxEntity = woodenStorageBoxes.get(containerId.toString());
+                        if (boxEntity?.boxType === 3) { // BOX_TYPE_COMPOST = 3
+                            connection.reducers.quickMoveToCompost({ boxId: containerId, itemInstanceId });
+                        } else if (boxEntity?.boxType === 18) { // BOX_TYPE_TANNING_RACK
+                            connection.reducers.quickMoveToTanningRack({ boxId: containerId, itemInstanceId });
+                        } else if (boxEntity?.boxType === 2) { // BOX_TYPE_REFRIGERATOR = 2
+                            connection.reducers.quickMoveToRefrigerator({ boxId: containerId, itemInstanceId });
+                        } else if (boxEntity?.boxType === 10) { // BOX_TYPE_FISH_TRAP = 10
+                            connection.reducers.quickMoveToFishTrap({ boxId: containerId, itemInstanceId });
+                        } else {
+                            connection.reducers.quickMoveToBox({ boxId: containerId, itemInstanceId });
+                        }
+                        break;
+                    case 'stash':
+                        const stashEntity = stashes.get(containerId.toString());
+                        if (stashEntity?.isHidden) {
+                            return; // Can't move to hidden stash
+                        }
+                        connection.reducers.quickMoveToStash({ stashId: containerId, itemInstanceId });
+                        break;
+                    case 'campfire':
+                        // CRITICAL: When broth pot is attached, redirect items to broth pot (not campfire fuel slots)
+                        // This prevents accidentally adding ingredients/water containers as fuel
+                        const campfireEntity = campfires.get(containerId.toString());
+                        if (campfireEntity?.attachedBrothPotId) {
+                            const attachedBrothPot = brothPots.get(campfireEntity.attachedBrothPotId.toString());
+                            // Type assertion until bindings regenerated
+                            const pot = attachedBrothPot as any;
+                            if (attachedBrothPot) {
+                                // If item is a water container AND water container slot is empty, use water slot
+                                if (isWaterContainer(itemInfo.definition.name) && !pot?.waterContainerInstanceId) {
+                                    try {
+                                        connection.reducers.quickMoveToBrothPotWaterContainer({
+                                            brothPotId: campfireEntity.attachedBrothPotId,
+                                            itemInstanceId
+                                        });
+                                        return; // Successfully handled
+                                    } catch (e: any) {
+                                        console.error(`[Inv CtxMenu] Error moving to water container slot:`, e);
+                                        return;
+                                    }
+                                }
+                                // Otherwise, send to broth pot ingredient slots (NOT campfire fuel!)
+                                try {
+                                    connection.reducers.quickMoveToBrothPot({
+                                        brothPotId: campfireEntity.attachedBrothPotId,
+                                        itemInstanceId
+                                    });
+                                    return; // Successfully handled
+                                } catch (e: any) {
+                                    console.error(`[Inv CtxMenu] Error moving to broth pot:`, e);
+                                    return;
+                                }
+                            }
+                        }
+                        // Only send to campfire fuel slots if NO broth pot is attached
+                        connection.reducers.quickMoveToCampfire({ campfireId: containerId, itemInstanceId });
+                        break;
+                    case 'furnace':
+                        connection.reducers.quickMoveToFurnace({ furnaceId: containerId, itemInstanceId });
+                        break;
+                    case 'barbecue':
+                        connection.reducers.quickMoveToBarbecue({ barbecueId: containerId, itemInstanceId });
+                        break;
+                    case 'fumarole':
+                        // CRITICAL: When broth pot is attached, NEVER send items to fumarole incineration slots
+                        // This prevents accidental item destruction when players want to cook
+                        const fumaroleEntity = fumaroles.get(containerId.toString());
+                        console.log('[Inv CtxMenu] Fumarole quick deposit:', {
+                            containerId,
+                            fumaroleEntity: fumaroleEntity ? {
+                                id: fumaroleEntity.id,
+                                attachedBrothPotId: fumaroleEntity.attachedBrothPotId
+                            } : null,
+                            itemName: itemInfo.definition.name
+                        });
+                        if (fumaroleEntity?.attachedBrothPotId) {
+                            const attachedPot = brothPots.get(fumaroleEntity.attachedBrothPotId.toString());
+                            // Type assertion until bindings regenerated
+                            const pot = attachedPot as any;
+                            if (attachedPot) {
+                                // If item is a water container AND water container slot is empty, use water slot
+                                if (isWaterContainer(itemInfo.definition.name) && !pot?.waterContainerInstanceId) {
+                                    try {
+                                        connection.reducers.quickMoveToBrothPotWaterContainer({
+                                            brothPotId: fumaroleEntity.attachedBrothPotId,
+                                            itemInstanceId
+                                        });
+                                        return; // Successfully handled
+                                    } catch (e: any) {
+                                        console.error(`[Inv CtxMenu] Error moving to water container slot:`, e);
+                                        return;
+                                    }
+                                }
+                                // Otherwise, send to broth pot ingredient slots (NOT fumarole incineration!)
+                                try {
+connection.reducers.quickMoveToBrothPot({
+                                            brothPotId: fumaroleEntity.attachedBrothPotId,
+                                            itemInstanceId
+                                        });
+                                    return; // Successfully handled
+                                } catch (e: any) {
+                                    console.error(`[Inv CtxMenu] Error moving to broth pot:`, e);
+                                    return;
+                                }
+                            }
+                        }
+                        // Only send to fumarole incineration slots if NO broth pot is attached
+                        connection.reducers.quickMoveToFumarole({ fumaroleId: containerId, itemInstanceId });
+                        break;
+                    case 'lantern':
+                        connection.reducers.quickMoveToLantern({ lanternId: containerId, itemInstanceId });
+                        break;
+                    case 'turret':
+                        connection.reducers.quickMoveToTurret({ turretId: containerId, itemInstanceId });
+                        break;
+                    case 'homestead_hearth':
+                        connection.reducers.quickMoveToHearth({ hearthId: containerId, itemInstanceId });
+                        break;
+                    case 'rain_collector':
+                        // Rain collectors use a different function signature with slot index
+                        connection.reducers.moveItemToRainCollector({ collectorId: containerId, itemInstanceId, targetSlotIndex: 0 });
+                        break;
+                   case 'broth_pot':
+                       connection.reducers.quickMoveToBrothPot({ brothPotId: containerId, itemInstanceId });
+                       break;
+                   default:
+                       console.warn(`[Inv CtxMenu] Unknown interaction type: ${currentInteraction.type}`);
+                       return;
+                }
+                return; // Successfully handled container interaction
+            } catch (e: any) {
+                console.error(`[Inv CtxMenu] Error moving to ${currentInteraction.type}:`, e);
+                return;
+            }
+        }
+        
+        // Check connection before default actions
+        if (!connection) {
+            console.error("[Inv CtxMenu] No connection available");
+            return;
+        }
+        
+        // Default actions when no container is open
+        const isArmor = itemInfo.definition.category.tag === 'Armor' && itemInfo.definition.equipmentSlotType !== null;
+        if (isArmor) {
+            try { 
+                connection.reducers.equipArmorFromInventory({ itemInstanceId }); 
+            } catch (e: any) { 
+                console.error("[Inv CtxMenu EquipArmor]", e); 
+            }
+        } else {
+            try {
+                // Explicitly target the first empty hotbar slot to avoid
+                // reducer-side "first available" mismatches with client-visible state.
+                let firstEmptyHotbarSlot: number | null = null;
+                if (playerIdentity) {
+                    const occupiedHotbarSlots = new Set<number>();
+                    inventoryItems.forEach((itemInstance) => {
+                        if (itemInstance.location.tag !== 'Hotbar') return;
+                        const hotbarData = itemInstance.location.value as any;
+                        if (hotbarData.ownerId && hotbarData.ownerId.isEqual(playerIdentity)) {
+                            occupiedHotbarSlots.add(Number(hotbarData.slotIndex));
+                        }
+                    });
+                    for (let slot = 0; slot < TOTAL_HOTBAR_SLOTS; slot++) {
+                        if (!occupiedHotbarSlots.has(slot)) {
+                            firstEmptyHotbarSlot = slot;
+                            break;
+                        }
+                    }
+                }
+
+                if (firstEmptyHotbarSlot !== null) {
+                    connection.reducers.moveItemToHotbar({ itemInstanceId, targetHotbarSlot: firstEmptyHotbarSlot });
+                } else {
+                    connection.reducers.moveToFirstAvailableHotbarSlot({ itemInstanceId });
+                }
+            } catch (e: any) {
+                console.error("[Inv CtxMenu Inv->Hotbar]", e);
+            }
+        }
+    }, [connection, interactionTarget, stashes, campfires, brothPots, draggedItemInfo, playerIdentity, inventoryItems]);
+
+    // Helper function to format stat numbers
+    const formatStatDisplay = (value: number, isPercentage: boolean = false, signed: boolean = true): string => {
+        const roundedValue = Math.round(value * 10) / 10;
+        const sign = signed && roundedValue > 0 ? '+' : '';
+        const percentage = isPercentage ? '%' : '';
+        return `${sign}${roundedValue}${percentage}`;
+    };
+
+    // These handlers will be identical to the ones above but are explicitly for external items
+    // to avoid any potential confusion if we ever needed to differentiate them.
+    const handleExternalItemMouseEnter = useCallback((item: PopulatedItem, event: React.MouseEvent<HTMLDivElement>) => {
+        // Prevent browser tooltip
+        event.currentTarget.removeAttribute('title');
+        
+        if (inventoryPanelRef.current) {
+            const panelRect = inventoryPanelRef.current.getBoundingClientRect();
+            // Position tooltip further to the left to avoid interfering with looting in external containers
+            const relativeX = Math.max(30, event.clientX - panelRect.left - 300); // Offset left by 300px, minimum 30px from edge
+            const relativeY = event.clientY - panelRect.top;
+
+            const stats: TooltipStats[] = [];
+            const def = item.definition;
+            const categoryTag = def.category.tag;
+
+            if (categoryTag === 'Tool') {
+                // Primary Yield for Tools
+                if (def.primaryTargetYieldMin !== undefined || def.primaryTargetYieldMax !== undefined) {
+                    const min = def.primaryTargetYieldMin ?? 0;
+                    const max = def.primaryTargetYieldMax ?? min;
+                    let yieldLabel = 'Primary Yield';
+                    if (def.primaryTargetType) {
+                        const targetTypeTag = def.primaryTargetType.tag === 'PlayerCorpse' ? 'Corpse' : def.primaryTargetType.tag;
+                        yieldLabel = `${targetTypeTag} Yield`;
+                    }
+                    stats.push({ label: yieldLabel, value: max > min ? `${min}-${max}` : `${min}` });
+                }
+            } else {
+                // Weapon Stats (Primary Damage)
+                if (def.primaryTargetDamageMin !== undefined || def.primaryTargetDamageMax !== undefined) {
+                    const min = def.primaryTargetDamageMin ?? 0;
+                    const max = def.primaryTargetDamageMax ?? min;
+                    stats.push({ label: 'Damage', value: max > min ? `${min}-${max}` : `${min}` });
+                }
+            }
+            
+            // Weapon Stats (PvP Damage) - handle ammunition differently
+            if (def.category.tag === 'Ammunition') {
+                // For ammunition, show effective damage with common weapons
+                const ammoDamageTooltip = getAmmoDamageTooltip(def, itemDefinitions);
+                if (ammoDamageTooltip) {
+                    stats.push({ label: 'Effective Damage', value: ammoDamageTooltip });
+                }
+            } else if (def.pvpDamageMin !== undefined || def.pvpDamageMax !== undefined) {
+                // For non-ammunition items, show raw damage values
+                const min = def.pvpDamageMin ?? 0;
+                const max = def.pvpDamageMax ?? min;
+                stats.push({ label: 'Damage', value: max > min ? `${min}-${max}` : `${min}` });
+            }
+            if (def.bleedDamagePerTick !== undefined && def.bleedDamagePerTick > 0 && def.bleedDurationSeconds !== undefined) {
+                stats.push({ label: 'Bleed', value: `${def.bleedDamagePerTick}/tick for ${def.bleedDurationSeconds}s` });
+            }
+
+            // Armor Stats - New System
+            if (def.armorResistances) {
+                const resistances = def.armorResistances;
+                
+                // Show melee resistance (most common)
+                if (resistances.meleeResistance !== undefined && resistances.meleeResistance !== 0) {
+                    stats.push({ 
+                        label: 'Melee Defense', 
+                        value: formatStatDisplay(resistances.meleeResistance * 100, true),
+                        color: resistances.meleeResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show projectile resistance
+                if (resistances.projectileResistance !== undefined && resistances.projectileResistance !== 0) {
+                    stats.push({ 
+                        label: 'Projectile Defense', 
+                        value: formatStatDisplay(resistances.projectileResistance * 100, true),
+                        color: resistances.projectileResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show slash resistance
+                if (resistances.slashResistance !== undefined && resistances.slashResistance !== 0) {
+                    stats.push({ 
+                        label: 'Slash Defense', 
+                        value: formatStatDisplay(resistances.slashResistance * 100, true),
+                        color: resistances.slashResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show pierce resistance
+                if (resistances.pierceResistance !== undefined && resistances.pierceResistance !== 0) {
+                    stats.push({ 
+                        label: 'Pierce Defense', 
+                        value: formatStatDisplay(resistances.pierceResistance * 100, true),
+                        color: resistances.pierceResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show blunt resistance
+                if (resistances.bluntResistance !== undefined && resistances.bluntResistance !== 0) {
+                    stats.push({ 
+                        label: 'Blunt Defense', 
+                        value: formatStatDisplay(resistances.bluntResistance * 100, true),
+                        color: resistances.bluntResistance > 0 ? '#d4af37' : '#d9534f'
+                    });
+                }
+                
+                // Show fire resistance (can be negative for vulnerability)
+                if (resistances.fireResistance !== undefined && resistances.fireResistance !== 0) {
+                    stats.push({ 
+                        label: 'Fire Resistance', 
+                        value: formatStatDisplay(resistances.fireResistance * 100, true),
+                        color: resistances.fireResistance > 0 ? '#ff6b35' : '#d9534f'
+                    });
+                }
+                
+                // Show cold resistance
+                if (resistances.coldResistance !== undefined && resistances.coldResistance !== 0) {
+                    stats.push({ 
+                        label: 'Cold Resistance', 
+                        value: formatStatDisplay(resistances.coldResistance * 100, true),
+                        color: resistances.coldResistance > 0 ? '#5bc0de' : '#d9534f'
+                    });
+                }
+            }
+            
+            // Legacy armor stat (fallback for old items)
+            if (def.damageResistance !== undefined && def.damageResistance > 0) {
+                stats.push({ label: 'Defense', value: formatStatDisplay(def.damageResistance * 100, true) });
+            }
+            
+            if (def.warmthBonus !== undefined && def.warmthBonus !== 0) {
+                stats.push({ label: 'Warmth', value: formatStatDisplay(def.warmthBonus), color: def.warmthBonus > 0 ? '#f0ad4e' : '#5bc0de' });
+            }
+
+            // Consumable Stats
+            if (def.consumableHealthGain !== undefined && def.consumableHealthGain !== 0) {
+                stats.push({ label: 'Health', value: `${def.consumableHealthGain > 0 ? '+' : ''}${def.consumableHealthGain}`, color: def.consumableHealthGain > 0 ? '#5cb85c' : '#d9534f' });
+            }
+            if (def.consumableHungerSatiated !== undefined && def.consumableHungerSatiated !== 0) {
+                stats.push({ label: 'Hunger', value: `${def.consumableHungerSatiated > 0 ? '+' : ''}${def.consumableHungerSatiated}`, color: '#f0ad4e' });
+            }
+            if (def.consumableThirstQuenched !== undefined && def.consumableThirstQuenched !== 0) {
+                stats.push({ label: 'Thirst', value: `${def.consumableThirstQuenched > 0 ? '+' : ''}${def.consumableThirstQuenched}`, color: '#5bc0de' });
+            }
+            if (def.consumableDurationSecs !== undefined && def.consumableDurationSecs > 0) {
+                stats.push({ label: 'Duration', value: `${def.consumableDurationSecs}s` });
+            }
+            if (def.fuelBurnDurationSecs !== undefined && def.fuelBurnDurationSecs > 0) {
+                stats.push({ label: 'Burn Time', value: `${def.fuelBurnDurationSecs}s` });
+            }
+
+            // Water Container Stats
+            if (isWaterContainer(def.name)) {
+                const waterContent = getWaterContent(item.instance);
+                const waterDisplay = formatWaterContent(item.instance, def.name);
+                stats.push({ 
+                    label: 'Water', 
+                    value: waterDisplay, 
+                    color: waterContent !== null ? '#5bc0de' : '#999' 
+                });
+            }
+
+            // Durability Stats
+            if (hasDurabilitySystem(def)) {
+                const durabilityDisplay = formatDurability(item.instance);
+                const durabilityColor = getDurabilityColor(item.instance, def);
+                const isFood = isFoodItem(def);
+                const hasExplicitSpoilage = def.spoilsAfterHours !== null && def.spoilsAfterHours !== undefined && def.spoilsAfterHours > 0;
+                
+                if (isFood || hasExplicitSpoilage) {
+                    // For food items and items with explicit spoilage time (like Queen Bee), show spoilage time prominently
+                    let spoilageTime: string | null = null;
+                    try {
+                        spoilageTime = formatFoodSpoilageTimeRemaining(item.instance, def, connection);
+                    } catch (error) {
+                        console.error('[Tooltip] Error calculating spoilage time:', error);
+                    }
+                    
+                    // For food/explicit spoilage: show spoilage time directly (not "Full (time)")
+                    // "Preserved" means spoilage is paused (item is in a pantry)
+                    // Otherwise show time remaining
+                    const spoilageValue = spoilageTime || durabilityDisplay;
+                    stats.push({ 
+                        label: 'Spoilage', 
+                        value: spoilageValue, 
+                        color: durabilityColor.replace('0.8)', '1)')
+                    });
+                } else {
+                    // For non-food items without explicit spoilage (weapons, tools), show durability
+                    stats.push({ 
+                        label: 'Durability', 
+                        value: durabilityDisplay, 
+                        color: durabilityColor.replace('0.8)', '1)')
+                    });
+                }
+            }
+
+            // Grenade fuse countdown (external container)
+            if (def.name === 'Grenade') {
+                const countdown = formatGrenadeCountdown(item.instance);
+                if (countdown) {
+                    stats.push({ 
+                        label: 'Fuse', 
+                        value: countdown, 
+                        color: countdown === 'Detonating…' ? '#ff4444' : '#ffaa00' 
+                    });
+                }
+            }
+
+            const content: TooltipContent = {
+                name: def.name,
+                description: def.description,
+                category: def.category.tag,
+                rarity: undefined, 
+                stats: stats.length > 0 ? stats : undefined,
+            };
+
+            setTooltipContent(content);
+            setTooltipPosition({ x: relativeX, y: relativeY });
+            setTooltipVisible(true);
+        }
+    }, [connection]);
+
+    const handleExternalItemMouseLeave = useCallback(() => {
+        setTooltipVisible(false);
+        setTooltipContent(null);
+    }, []);
+
+    const handleExternalItemMouseMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+        if (inventoryPanelRef.current && tooltipVisible) {
+            const panelRect = inventoryPanelRef.current.getBoundingClientRect();
+            // Position tooltip further to the left to avoid interfering with looting in external containers
+            const relativeX = Math.max(30, event.clientX - panelRect.left - 330); // Offset left by 300px, minimum 30px from edge
+            const relativeY = event.clientY - panelRect.top;
+            setTooltipPosition({ x: relativeX, y: relativeY });
+        }
+    }, [tooltipVisible]);
+
+    // Add the handler function
+    const handleStartSplitDrag = useCallback((item: PopulatedItem, quantity: number) => {
+        // console.log('[Split] Starting split drag operation:', { item, quantity });
+        setSplitDragInfo({ item, quantity });
+        
+        // Start the drag operation with the original item's location
+        const sourceLocation = item.instance.location;
+        // console.log('[Split] Item source location:', sourceLocation);
+        
+        let sourceSlotInfo: DragSourceSlotInfo;
+        
+        if (sourceLocation.tag === 'Inventory') {
+            sourceSlotInfo = {
+                type: 'inventory',
+                index: sourceLocation.value.slotIndex
+            };
+            // console.log('[Split] Created inventory source slot info:', sourceSlotInfo);
+        } else if (sourceLocation.tag === 'Hotbar') {
+            sourceSlotInfo = {
+                type: 'hotbar',
+                index: sourceLocation.value.slotIndex
+            };
+            // console.log('[Split] Created hotbar source slot info:', sourceSlotInfo);
+        } else {
+            console.error('[Split] Cannot split items from this location:', sourceLocation);
+            return;
+        }
+
+        // Find the actual item element
+        const itemElement = document.querySelector(`[data-slot-type="${sourceSlotInfo.type}"][data-slot-index="${sourceSlotInfo.index}"] > div`);
+        if (!itemElement) {
+            console.error('[Split] Could not find item element to drag');
+            return;
+        }
+
+        // Start the drag operation
+        // console.log('[Split] Starting drag with info:', {
+        //     itemId: item.instance.instanceId,
+        //     sourceSlot: sourceSlotInfo,
+        //     splitQuantity: quantity
+        // });
+        
+        onItemDragStart({
+            item,
+            sourceSlot: sourceSlotInfo,
+            splitQuantity: quantity
+        });
+
+        // Set the split quantity on the element
+        (itemElement as any).currentSplitQuantity = { current: quantity };
+
+        // Trigger ghost creation by simulating mouse events on the actual item element
+        const rect = itemElement.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // First simulate a mousedown event
+        const mouseDownEvent = new MouseEvent('mousedown', {
+            bubbles: true,
+            clientX: centerX,
+            clientY: centerY,
+            button: 0
+        });
+        itemElement.dispatchEvent(mouseDownEvent);
+
+        // Then simulate a mousemove event slightly offset
+        const mouseMoveEvent = new MouseEvent('mousemove', {
+            bubbles: true,
+            clientX: centerX + 10,
+            clientY: centerY + 10
+        });
+        document.dispatchEvent(mouseMoveEvent);
+        
+        // console.log('[Split] Dispatched synthetic mouse events for ghost creation');
+    }, [onItemDragStart]);
+
+    // --- Render --- 
+    return (
+        <div ref={inventoryPanelRef} data-id="inventory-panel" className={styles.inventoryPanel}>
+            <button className={styles.closeButton} onClick={handleClose}>X</button>
+
+            {/* Left Pane: Equipment */} 
+            <div className={styles.leftPane}>
+                <h3 className={styles.sectionTitle}>EQUIPMENT</h3>
+                <div className={styles.equipmentGrid}>
+                    {EQUIPMENT_SLOT_LAYOUT.map(slotInfo => {
+                        const item = itemsByEquipSlot.get(slotInfo.name);
+                        const currentSlotInfo: DragSourceSlotInfo = { type: 'equipment', index: slotInfo.name };
+                        return (
+                            <div key={`equip-${slotInfo.name}`} className={styles.equipmentSlot}>
+                                <DroppableSlot
+                                    slotInfo={currentSlotInfo}
+                                    onItemDrop={handleItemDropWithTracking}
+                                    className={styles.slot}
+                                    isDraggingOver={false} // Add state if needed
+                                >
+                                                                            {item && (
+                                            <DraggableItem
+                                                item={item}
+                                                sourceSlot={currentSlotInfo}
+                                                onItemDragStart={onItemDragStart}
+                                                onItemDrop={handleItemDropWithTracking}
+                                                onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => handleItemMouseEnter(item, e)}
+                                                onMouseLeave={handleItemMouseLeave}
+                                                onMouseMove={handleItemMouseMove}
+                                                // No context menu needed for equipped items? Or move back to inv?
+                                            />
+                                        )}
+                                        
+                                        {/* Water level indicator for water containers in equipment slots */}
+                                        {item && isWaterContainer(item.definition.name) && (() => {
+                                            const waterLevelPercentage = getWaterLevelPercentage(item.instance, item.definition.name);
+                                            const hasWater = waterLevelPercentage > 0;
+                                            
+                                            return (
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        left: '4px',
+                                                        top: '4px',
+                                                        bottom: '4px',
+                                                        width: '3px',
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                                        borderRadius: '1px',
+                                                        zIndex: 4,
+                                                        pointerEvents: 'none',
+                                                    }}
+                                                >
+                                                    {hasWater && (
+                                                        <div
+                                                            style={{
+                                                                position: 'absolute',
+                                                                bottom: '0px',
+                                                                left: '0px',
+                                                                right: '0px',
+                                                                height: `${waterLevelPercentage * 100}%`,
+                                                                backgroundColor: 'rgba(0, 150, 255, 0.8)',
+                                                                borderRadius: '1px',
+                                                                transition: 'height 0.3s ease-in-out',
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
+                                        
+                                        {/* Ammo bar indicator for magazine-based ranged weapons in equipment slots */}
+                                        {item && item.definition.category.tag === 'RangedWeapon' && (() => {
+                                            const weaponStats = rangedWeaponStats.get(item.definition.name);
+                                            const magazineCapacity = weaponStats?.magazineCapacity ?? 0;
+                                            
+                                            if (magazineCapacity === 0) return null;
+                                            
+                                            const isEquipped = localPlayerActiveEquipment?.equippedItemInstanceId === BigInt(item.instance.instanceId);
+                                            let loadedAmmoCount = 0;
+                                            if (isEquipped) {
+                                                loadedAmmoCount = (localPlayerActiveEquipment as any)?.loadedAmmoCount ?? 0;
+                                            } else if (item.instance.itemData) {
+                                                try {
+                                                    const itemData = JSON.parse(item.instance.itemData);
+                                                    loadedAmmoCount = itemData.loaded_ammo_count ?? 0;
+                                                } catch {
+                                                    loadedAmmoCount = 0;
+                                                }
+                                            }
+                                            
+                                            return (
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        left: '3px',
+                                                        top: '4px',
+                                                        bottom: '4px',
+                                                        width: '6px',
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                                        borderRadius: '2px',
+                                                        zIndex: 4,
+                                                        pointerEvents: 'none',
+                                                        display: 'flex',
+                                                        flexDirection: 'column-reverse',
+                                                        padding: '1px',
+                                                        boxSizing: 'border-box',
+                                                        border: '1px solid rgba(255, 200, 100, 0.4)',
+                                                    }}
+                                                >
+                                                    {Array.from({ length: magazineCapacity }).map((_, bulletIndex) => {
+                                                        const isFilled = bulletIndex < loadedAmmoCount;
+                                                        return (
+                                                            <div
+                                                                key={`equip-ammo-${bulletIndex}`}
+                                                                style={{
+                                                                    flex: 1,
+                                                                    marginTop: bulletIndex > 0 ? '1px' : '0px',
+                                                                    backgroundColor: isFilled 
+                                                                        ? 'rgba(255, 200, 80, 0.95)'
+                                                                        : 'rgba(60, 60, 60, 0.6)',
+                                                                    borderRadius: '1px',
+                                                                    boxShadow: isFilled 
+                                                                        ? '0 0 3px rgba(255, 180, 50, 0.8)' 
+                                                                        : 'none',
+                                                                    transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
+                                                                }}
+                                                            />
+                                                        );
+                                                    })}
+                                                </div>
+                                            );
+                                        })()}
+                                        
+                                        {/* Durability bar indicator for weapons, tools, torches, food in equipment slots (RIGHT side) */}
+                                        {/* Shows current durability in green/yellow/red and lost max durability (from repairs) in red at top */}
+                                        {item && hasDurabilitySystem(item.definition) && (
+                                            <DurabilityBar 
+                                                item={item.instance} 
+                                                itemDef={item.definition}
+                                                style={{ bottom: '14px' }} // Raised to avoid covering any slot indicators
+                                            />
+                                        )}
+                                        
+                                        {/* Broken item overlay for equipment slots or Spoiled food overlay */}
+                                        {item && hasDurabilitySystem(item.definition) && isItemBroken(item.instance) && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: '0px',
+                                                left: '0px',
+                                                width: '100%',
+                                                height: '100%',
+                                                backgroundColor: isFoodItem(item.definition)
+                                                    ? 'rgba(139, 69, 19, 0.6)' // Brownish overlay for spoiled food
+                                                    : 'rgba(80, 80, 80, 0.6)', // Gray overlay for broken items
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                borderRadius: '2px',
+                                                pointerEvents: 'none',
+                                                zIndex: 5
+                                            }}>
+                                                <span style={{
+                                                    fontSize: '16px',
+                                                    color: isFoodItem(item.definition)
+                                                        ? 'rgba(255, 200, 100, 0.9)' // Yellowish for spoiled food
+                                                        : 'rgba(255, 100, 100, 0.9)', // Red for broken items
+                                                    textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+                                                    userSelect: 'none'
+                                                }}>
+                                                    {isFoodItem(item.definition) ? '🦠' : '✖'}
+                                                </span>
+                                            </div>
+                                        )}
+                                </DroppableSlot>
+                                <div className={styles.slotLabel}>{slotInfo.name}</div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Armor Stats Panel */}
+                <ArmorStatsPanel equippedArmor={equippedArmorDefinitions} />
+            </div>
+
+            {/* Middle Pane: Inventory & Containers */} 
+            <div className={styles.middlePane}>
+                <h3 className={styles.sectionTitle}>INVENTORY</h3>
+                {/* Hot loot hint - only show when container is open */}
+                {interactionTarget && (
+                    <div 
+                        style={{
+                            fontSize: '10px',
+                            color: isHotLootActive ? '#00ffff' : 'rgba(0, 255, 255, 0.6)',
+                            textAlign: 'center',
+                            marginBottom: '8px',
+                            fontFamily: '"Press Start 2P", cursive',
+                            textShadow: isHotLootActive ? '0 0 8px rgba(0, 255, 255, 0.8)' : 'none',
+                            transition: 'all 0.2s ease',
+                        }}
+                    >
+                        {isHotLootActive ? '⚡ HOT LOOT ACTIVE ⚡' : '[ Hold H to hot loot ]'}
+                    </div>
+                )}
+                <InventorySearchBar
+                    searchTerm={inventorySearchTerm}
+                    onSearchChange={setInventorySearchTerm}
+                    placeholder="Search inventory..."
+                />
+                <div className={styles.inventoryGrid}>
+                    {Array.from({ length: TOTAL_INVENTORY_SLOTS }).map((_, index) => {
+                        const item = itemsByInvSlot.get(index);
+                        const currentSlotInfo: DragSourceSlotInfo = { type: 'inventory', index: index };
+                        const isSelected = item && selectedInventoryItem?.instance.instanceId === item.instance.instanceId;
+                        const matchesSearch = itemMatchesSearch(item, inventorySearchTerm);
+                        const hasSearchTerm = inventorySearchTerm.trim().length > 0;
+                        
+                        // Hot loot indicator for this slot
+                        const hotLootIndicator = getSlotIndicator?.('inventory', index);
+                        
+                        return (
+                            <DroppableSlot
+                                key={`inv-${index}`}
+                                slotInfo={currentSlotInfo}
+                                onItemDrop={handleItemDropWithTracking}
+                                className={`${styles.slot} ${isSelected ? styles.selectedSlot : ''}`}
+                                isDraggingOver={false}
+                                style={{
+                                    opacity: hasSearchTerm && !matchesSearch ? 0.3 : 1,
+                                    filter: hasSearchTerm && !matchesSearch ? 'grayscale(100%)' : 'none',
+                                    transition: 'opacity 0.2s ease, filter 0.2s ease',
+                                    // Only add highlight border if item matches search AND is not selected (selected state takes priority)
+                                    ...(matchesSearch && hasSearchTerm && !isSelected ? {
+                                        border: '2px solid #4CAF50',
+                                        boxShadow: '0 0 8px rgba(76, 175, 80, 0.5)'
+                                    } : {})
+                                }}
+                                isHotLootActive={isHotLootActive && !!interactionTarget && !!item}
+                                hotLootIndicatorProgress={hotLootIndicator?.progress}
+                                onHotLootHover={item && handleHotLootSlotHover ? () => handleHotLootSlotHover(item, currentSlotInfo, 'player') : undefined}
+                                onHotLootEnter={setHotLootCurrentHover ? () => setHotLootCurrentHover(item || null, currentSlotInfo, 'player') : undefined}
+                                onHotLootLeave={setHotLootCurrentHover ? () => setHotLootCurrentHover(null, null, null) : undefined}
+                            >
+                                {item && (
+                                    <DraggableItem
+                                        item={item}
+                                        sourceSlot={currentSlotInfo}
+                                        onItemDragStart={onItemDragStart}
+                                        onItemDrop={handleItemDropWithTracking}
+                                        onContextMenu={(event) => handleInventoryItemContextMenu(event, item)}
+                                        onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => handleItemMouseEnter(item, e)}
+                                        onMouseLeave={handleItemMouseLeave}
+                                        onMouseMove={handleItemMouseMove}
+                                        onClick={(e: React.MouseEvent<HTMLDivElement>) => handleInventoryItemClick(item, e)}
+                                    />
+                                )}
+
+                                {/* Fire emoji for hot combat ladle */}
+                                {item && isCombatLadleHot(item.instance, item.definition.name) && (
+                                    <span
+                                        style={{ position: 'absolute', top: '2px', left: '4px', fontSize: '12px', zIndex: 4, pointerEvents: 'none' }}
+                                        title="Hot! Use gloves to avoid burn damage"
+                                    >
+                                        🔥
+                                    </span>
+                                )}
+                                
+                                {/* Water level indicator for water containers */}
+                                {item && isWaterContainer(item.definition.name) && (() => {
+                                    const waterLevelPercentage = getWaterLevelPercentage(item.instance, item.definition.name);
+                                    const hasWater = waterLevelPercentage > 0;
+                                    
+                                    return (
+                                        <div
+                                            style={{
+                                                position: 'absolute',
+                                                left: '4px',
+                                                top: '4px',
+                                                bottom: '4px',
+                                                width: '3px',
+                                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                                borderRadius: '1px',
+                                                zIndex: 4,
+                                                pointerEvents: 'none',
+                                            }}
+                                        >
+                                            {hasWater && (
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        bottom: '0px',
+                                                        left: '0px',
+                                                        right: '0px',
+                                                        height: `${waterLevelPercentage * 100}%`,
+                                                        backgroundColor: 'rgba(0, 150, 255, 0.8)',
+                                                        borderRadius: '1px',
+                                                        transition: 'height 0.3s ease-in-out',
+                                                    }}
+                                                />
+                                            )}
+                                        </div>
+                                    );
+                                })()}
+                                
+                                {/* Ammo bar indicator for magazine-based ranged weapons */}
+                                {item && item.definition.category.tag === 'RangedWeapon' && (() => {
+                                    const weaponStats = rangedWeaponStats.get(item.definition.name);
+                                    const magazineCapacity = weaponStats?.magazineCapacity ?? 0;
+                                    
+                                    if (magazineCapacity === 0) return null;
+                                    
+                                    const isEquipped = localPlayerActiveEquipment?.equippedItemInstanceId === BigInt(item.instance.instanceId);
+                                    let loadedAmmoCount = 0;
+                                    if (isEquipped) {
+                                        loadedAmmoCount = (localPlayerActiveEquipment as any)?.loadedAmmoCount ?? 0;
+                                    } else if (item.instance.itemData) {
+                                        try {
+                                            const itemData = JSON.parse(item.instance.itemData);
+                                            loadedAmmoCount = itemData.loaded_ammo_count ?? 0;
+                                        } catch {
+                                            loadedAmmoCount = 0;
+                                        }
+                                    }
+                                    
+                                    return (
+                                        <div
+                                            style={{
+                                                position: 'absolute',
+                                                left: '3px',
+                                                top: '4px',
+                                                bottom: '4px',
+                                                width: '6px',
+                                                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                                borderRadius: '2px',
+                                                zIndex: 4,
+                                                pointerEvents: 'none',
+                                                display: 'flex',
+                                                flexDirection: 'column-reverse',
+                                                padding: '1px',
+                                                boxSizing: 'border-box',
+                                                border: '1px solid rgba(255, 200, 100, 0.4)',
+                                            }}
+                                        >
+                                            {Array.from({ length: magazineCapacity }).map((_, bulletIndex) => {
+                                                const isFilled = bulletIndex < loadedAmmoCount;
+                                                return (
+                                                    <div
+                                                        key={`ammo-${bulletIndex}`}
+                                                        style={{
+                                                            flex: 1,
+                                                            marginTop: bulletIndex > 0 ? '1px' : '0px',
+                                                            backgroundColor: isFilled 
+                                                                ? 'rgba(255, 200, 80, 0.95)'
+                                                                : 'rgba(60, 60, 60, 0.6)',
+                                                            borderRadius: '1px',
+                                                            boxShadow: isFilled 
+                                                                ? '0 0 3px rgba(255, 180, 50, 0.8)' 
+                                                                : 'none',
+                                                            transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
+                                                        }}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    );
+                                })()}
+                                
+                                {/* Durability bar indicator for weapons, tools, torches, food (RIGHT side) */}
+                                {/* Shows current durability in green/yellow/red and lost max durability (from repairs) in red at top */}
+                                {item && hasDurabilitySystem(item.definition) && (
+                                    <DurabilityBar 
+                                        item={item.instance} 
+                                        itemDef={item.definition}
+                                        style={{ bottom: '14px' }} // Raised to avoid covering any slot indicators
+                                    />
+                                )}
+                                
+                                {/* Broken item overlay or Spoiled food overlay */}
+                                {item && hasDurabilitySystem(item.definition) && isItemBroken(item.instance) && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '0px',
+                                        left: '0px',
+                                        width: '100%',
+                                        height: '100%',
+                                        backgroundColor: isFoodItem(item.definition)
+                                            ? 'rgba(139, 69, 19, 0.6)' // Brownish overlay for spoiled food
+                                            : 'rgba(80, 80, 80, 0.6)', // Gray overlay for broken items
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: '2px',
+                                        pointerEvents: 'none',
+                                        zIndex: 5
+                                    }}>
+                                        <span style={{
+                                            fontSize: '16px',
+                                            color: isFoodItem(item.definition)
+                                                ? 'rgba(255, 200, 100, 0.9)' // Yellowish for spoiled food
+                                                : 'rgba(255, 100, 100, 0.9)', // Red for broken items
+                                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+                                            userSelect: 'none'
+                                        }}>
+                                            {isFoodItem(item.definition) ? '🦠' : '✖'}
+                                        </span>
+                                    </div>
+                                )}
+                            </DroppableSlot>
+                        );
+                    })}
+                </div>
+
+                {/* NEW: Item Interaction Panel */}
+                {selectedInventoryItem && (
+                    <ItemInteractionPanel
+                        selectedItem={selectedInventoryItem}
+                        connection={connection}
+                        onClose={handleCloseItemInteraction}
+                        onStartSplitDrag={handleStartSplitDrag}
+                        onOpenBoneCarving={onOpenBoneCarving}
+                        onOpenRadio={onOpenRadio}
+                    />
+                )}
+            </div>
+
+            {/* Right Pane: Always shows External Container if interacting */}
+            <div className={styles.rightPane}> {/* Ensure rightPane class exists if needed */}
+                {(() => {
+                    // console.log('[InventoryUI Render] Right pane decision - interactionTarget:', interactionTarget);
+                    return interactionTarget ? (
+                        // If interacting, show the external container
+                        <ExternalContainerUI
+                            interactionTarget={interactionTarget}
+                            inventoryItems={inventoryItems}
+                            itemDefinitions={itemDefinitions}
+                            rangedWeaponStats={rangedWeaponStats}
+                            campfires={campfires}
+                            furnaces={furnaces}
+                            barbecues={barbecues}
+                            fumaroles={fumaroles}
+                            lanterns={lanterns}
+                            turrets={turrets}
+                            woodenStorageBoxes={woodenStorageBoxes}
+                            playerCorpses={playerCorpses}
+                            stashes={stashes}
+                            rainCollectors={rainCollectors}
+                            homesteadHearths={homesteadHearths}
+                            brothPots={brothPots}
+                            currentStorageBox={currentStorageBox}
+                            connection={connection}
+                            onItemDragStart={onItemDragStart}
+                            onItemDrop={handleItemDropWithTracking}
+                            playerId={playerIdentity ? playerIdentity.toHexString() : null}
+                            onExternalItemMouseEnter={handleExternalItemMouseEnter}
+                            onExternalItemMouseLeave={handleExternalItemMouseLeave}
+                            onExternalItemMouseMove={handleExternalItemMouseMove}
+                            worldState={worldState}
+                            players={players}
+                            activeConsumableEffects={activeConsumableEffects}
+                            chunkWeather={chunkWeather}
+                            isHotLootActive={isHotLootActive}
+                            getSlotIndicator={getSlotIndicator}
+                            onHotLootSlotHover={handleHotLootSlotHover || undefined}
+                            setHotLootCurrentHover={setHotLootCurrentHover || undefined}
+                            onSelectInventoryItem={onSelectInventoryItem}
+                        />
+                    ) : (
+                        // Otherwise, show the crafting UI
+                        <CraftingUI
+                            playerIdentity={playerIdentity}
+                            recipes={recipes}
+                            craftingQueueItems={craftingQueueItems}
+                            itemDefinitions={itemDefinitions}
+                            inventoryItems={inventoryItems}
+                            connection={connection}
+                            onCraftingSearchFocusChange={onCraftingSearchFocusChange}
+                            onItemMouseEnter={handleItemMouseEnter}
+                            onItemMouseLeave={handleItemMouseLeave}
+                            onItemMouseMove={handleItemMouseMove}
+                            purchasedMemoryNodes={purchasedMemoryNodes}
+                            activeConsumableEffects={activeConsumableEffects}
+                        />
+                    );
+                })()}
+            </div>
+            <Tooltip content={tooltipContent} visible={tooltipVisible} position={tooltipPosition} />
+        </div>
+    );
+};
+
+export default InventoryUI;

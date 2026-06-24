@@ -1,0 +1,264 @@
+import React, { useEffect, useRef, RefObject, useMemo, useCallback } from 'react';
+import { Message as SpacetimeDBMessage, Player as SpacetimeDBPlayer, PrivateMessage as SpacetimeDBPrivateMessage, TeamMessage as SpacetimeDBTeamMessage } from '../generated/types'; // Assuming Message and Player types are generated
+import { Identity } from 'spacetimedb'; // Import Identity directly from SDK
+import styles from './Chat.module.css';
+
+// Combined message type for internal use
+type CombinedMessage = (SpacetimeDBMessage | SpacetimeDBPrivateMessage | SpacetimeDBTeamMessage) & { 
+  isPrivate?: boolean; 
+  isTeam?: boolean;
+  senderDisplayNameOverride?: string;
+  // Optional title field (for messages with sender_title)
+  senderTitle?: string | null;
+};
+
+// Threshold for considering user "at bottom" - if within this many pixels, auto-scroll
+const SCROLL_BOTTOM_THRESHOLD = 100;
+
+interface ChatMessageHistoryProps {
+  messages: Map<string, SpacetimeDBMessage>; // Pass the messages map
+  privateMessages: Map<string, SpacetimeDBPrivateMessage>; // Add privateMessages prop
+  teamMessages: Map<string, SpacetimeDBTeamMessage>; // Team (matronage) messages
+  players: Map<string, SpacetimeDBPlayer>; // Pass players map to look up names
+  localPlayerIdentity: string | undefined; // Changed from string | null
+  messageEndRef: RefObject<HTMLDivElement>; // Add the ref parameter
+  // Matronage system for chat tags
+  matronageMembers?: Map<string, any>;
+  matronages?: Map<string, any>;
+}
+
+const ChatMessageHistory: React.FC<ChatMessageHistoryProps> = ({ 
+  messages, 
+  privateMessages,
+  teamMessages, 
+  players, 
+  localPlayerIdentity, 
+  messageEndRef,
+  matronageMembers,
+  matronages,
+}) => {
+  const historyRef = useRef<HTMLDivElement>(null);
+  // Track if user is at/near bottom for smart auto-scroll
+  const isUserAtBottomRef = useRef(true);
+  const prevMessageCountRef = useRef(0);
+
+  // Check if scroll position is near the bottom
+  const checkIfAtBottom = useCallback(() => {
+    if (!historyRef.current) return true;
+    const { scrollTop, scrollHeight, clientHeight } = historyRef.current;
+    return scrollHeight - scrollTop - clientHeight < SCROLL_BOTTOM_THRESHOLD;
+  }, []);
+
+  // Handle scroll events to track if user is at bottom
+  const handleScroll = useCallback(() => {
+    isUserAtBottomRef.current = checkIfAtBottom();
+  }, [checkIfAtBottom]);
+
+  // Memoize and sort all messages (public, private, and team)
+  const allSortedMessages = useMemo(() => {
+    const combined: CombinedMessage[] = [];
+
+    messages.forEach(msg => {
+      // Extract sender_title from the message if available
+      const msgWithTitle = msg as any;
+      combined.push({ 
+        ...msg, 
+        senderTitle: msgWithTitle.senderTitle ?? null 
+      });
+    });
+    privateMessages.forEach(msg => combined.push({ ...msg, isPrivate: true }));
+    teamMessages.forEach(msg => {
+      // Extract sender_title from team message if available
+      const msgWithTitle = msg as any;
+      combined.push({ 
+        ...msg, 
+        isTeam: true,
+        senderTitle: msgWithTitle.senderTitle ?? null
+      });
+    });
+
+    combined.sort((a, b) => {
+      const timeA = a.sent?.microsSinceUnixEpoch ?? 0n;
+      const timeB = b.sent?.microsSinceUnixEpoch ?? 0n;
+      if (timeA < timeB) return -1;
+      if (timeA > timeB) return 1;
+      return 0;
+    });
+    return combined;
+  }, [messages, privateMessages, teamMessages]);
+
+  // Smart auto-scroll: only scroll to bottom if user was already at the bottom
+  useEffect(() => {
+    const newMessageCount = allSortedMessages.length;
+    const hasNewMessages = newMessageCount > prevMessageCountRef.current;
+    
+    if (historyRef.current && hasNewMessages && isUserAtBottomRef.current) {
+      historyRef.current.scrollTop = historyRef.current.scrollHeight;
+    }
+    
+    prevMessageCountRef.current = newMessageCount;
+  }, [allSortedMessages]);
+
+  // Attach scroll listener
+  useEffect(() => {
+    const historyElement = historyRef.current;
+    if (historyElement) {
+      historyElement.addEventListener('scroll', handleScroll);
+      return () => historyElement.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll]);
+
+  const getPlayerName = (identity: Identity): string => {
+    const identityHex = identity.toHexString();
+    const player = players.get(identityHex);
+    return player?.username ?? identityHex.substring(0, 8); // Fallback to short ID
+  };
+
+  // Get matronage tag for a player (e.g., "[MatronageName]")
+  const getMatronageTag = (identity: Identity): string | null => {
+    if (!matronageMembers || !matronages) return null;
+    const identityHex = identity.toHexString();
+    const membership = matronageMembers.get(identityHex);
+    if (!membership) return null;
+    const matronageId = membership.matronageId?.toString();
+    const matronage = Array.from(matronages.values()).find(
+      (m: any) => m.id?.toString() === matronageId
+    );
+    return matronage?.name ? `[${matronage.name}]` : null;
+  };
+
+  // Function to determine if a sender is the module (SYSTEM for public messages)
+  // This is a placeholder. A robust way would be to get the module identity from the connection.
+  const isSenderSystemModule = (senderIdentity: Identity): boolean => {
+    // Crude check: if not a known player and not the local player, assume system for public messages.
+    // This is NOT robust. Ideally, compare with actual module identity if available.
+    const senderHex = senderIdentity.toHexString();
+    if (!players.has(senderHex) && senderHex !== localPlayerIdentity) {
+        // Further check: ensure it's not just an unknown player by checking if a player object COULD exist
+        // This is still not perfect. Best is to have module identity.
+        return true; // Tentatively assume system if sender is not in players map
+    }
+    return false;
+  };
+
+  return (
+    <div ref={historyRef} className={styles.messageHistory}>
+      {allSortedMessages.map(msg => {
+        let senderName: string;
+        let messageText = msg.text;
+        let messageStyle: React.CSSProperties = {};
+        const systemMessageColor = '#FFD700'; // Gold color for system messages
+        const whisperColor = '#FF69B4'; // Hot pink for whispers
+        const teamColor = '#40FF40'; // Green for team/matronage chat (WoW style)
+        let isSystemMsg = false;
+        let isWhisper = false;
+        let isTeamMessage = false;
+
+        let matronageTag: string | null = null;
+        let senderTitle: string | null = null;
+
+        if (msg.isTeam) {
+          // Team (Matronage) message
+          const teamMsg = msg as SpacetimeDBTeamMessage;
+          senderName = teamMsg.senderUsername;
+          senderTitle = msg.senderTitle ?? null;
+          isTeamMessage = true;
+          // Get matronage tag for sender
+          matronageTag = getMatronageTag(teamMsg.sender);
+        } else if (msg.isPrivate) {
+          const privateMsg = msg as SpacetimeDBPrivateMessage;
+          if (privateMsg.senderDisplayName === 'SYSTEM') {
+            senderName = 'SYSTEM';
+            isSystemMsg = true;
+          } else {
+            // It's a whisper from another player
+            senderName = privateMsg.senderDisplayName;
+            isWhisper = true;
+            // Note: We don't have sender identity for whispers, so we can't show matronage tag or title
+          }
+        } else {
+          const publicMsg = msg as SpacetimeDBMessage;
+          if (isSenderSystemModule(publicMsg.sender)) {
+            senderName = 'SYSTEM';
+            isSystemMsg = true;
+          } else {
+            senderName = getPlayerName(publicMsg.sender);
+            senderTitle = msg.senderTitle ?? null;
+            matronageTag = getMatronageTag(publicMsg.sender);
+          }
+        }
+
+        if (isSystemMsg) {
+            messageStyle = { color: systemMessageColor, fontStyle: 'italic' };
+        } else if (isWhisper) {
+            messageStyle = { 
+              color: whisperColor, 
+              fontStyle: 'italic',
+              backgroundColor: 'rgba(255, 105, 180, 0.1)',
+              borderLeft: '3px solid ' + whisperColor,
+              paddingLeft: '8px'
+            };
+        } else if (isTeamMessage) {
+            messageStyle = { 
+              color: teamColor,
+              backgroundColor: 'rgba(64, 255, 64, 0.1)',
+              borderLeft: '3px solid ' + teamColor,
+              paddingLeft: '8px'
+            };
+        }
+
+        // Use msg.id if it exists on both types and is unique, otherwise use index or generate key
+        const key = msg.id ? `${msg.isTeam ? 'team-' : msg.isPrivate ? 'priv-' : ''}${msg.id.toString()}` : Math.random().toString(); 
+
+        // Convert microseconds to Date for timestamp display
+        const timestamp = new Date(Number(msg.sent?.microsSinceUnixEpoch ?? 0n) / 1000);
+
+        // Build CSS classes
+        const messageClasses = [styles.message];
+        if (isWhisper) {
+          messageClasses.push(styles.whisperMessage);
+        } else if (isTeamMessage) {
+          messageClasses.push(styles.teamMessage);
+        }
+        
+        const senderNameClasses = [styles.senderName];
+        if (isWhisper) {
+          senderNameClasses.push(styles.whisperSenderName);
+        } else if (isTeamMessage) {
+          senderNameClasses.push(styles.teamSenderName);
+        }
+        
+        const messageTextClasses = [styles.messageText];
+        if (isWhisper) {
+          messageTextClasses.push(styles.whisperMessageText);
+        } else if (isTeamMessage) {
+          messageTextClasses.push(styles.teamMessageText);
+        }
+
+        return (
+          <div key={key} className={messageClasses.join(' ')} style={messageStyle}>
+            <div className={styles.messageHeader}>
+              <span className={senderNameClasses.join(' ')}>
+                {isTeamMessage && <span className={styles.teamPrefix}>[Team] </span>}
+                {matronageTag && (
+                  <span className={styles.matronageTag}>{matronageTag} </span>
+                )}
+                {senderTitle && (
+                  <span className={styles.titleTag}>«{senderTitle}» </span>
+                )}
+                {senderName}:
+              </span>
+              <span className={styles.timestamp}>
+                {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </span>
+            </div>
+            <span className={messageTextClasses.join(' ')}>{messageText}</span>
+          </div>
+        );
+      })}
+      <div ref={messageEndRef} />
+    </div>
+  );
+};
+
+export default ChatMessageHistory; 

@@ -1,0 +1,1940 @@
+import { drawDynamicGroundShadow, drawShadow } from './shadowUtils';
+import { imageManager } from './imageManager';
+import type { WildAnimal, AnimalSpecies, AnimalState } from '../../generated/types';
+import {
+    getAnimalCollisionBounds,
+    ANIMAL_COLLISION_SIZES
+} from '../animalCollisionUtils';
+import { UNDERWATER_TINT_FILTER } from './underwaterEffectsUtils';
+import { drawShorelineWaterLine, drawUnderwaterShadowOnly } from './swimmingEffectsUtils';
+import { renderCyberpunkAssetPlaceholder } from './cyberpunkAssetPlaceholder';
+
+// Import breeding data types for age-based rendering
+import type { CaribouBreedingData, WalrusBreedingData, CaribouAgeStage, WalrusAgeStage } from '../../generated/types';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ANIMATED SPRITE SHEETS (4x4 or 6x4 layout with walking animations)
+// ═══════════════════════════════════════════════════════════════════════════
+// Wildlife - 4x4 layout (4 frames × 4 directions)
+import walrusWalkingAnimatedSheet from '../../assets/walrus_walking_release.png';
+import foxWalkingAnimatedSheet from '../../assets/fox_walking_release.png';
+import tundraWolfWalkingAnimatedSheet from '../../assets/tundra_wolf_walking_release.png';
+import ternWalkingAnimatedSheet from '../../assets/tern_walking_release.png';
+import crowWalkingAnimatedSheet from '../../assets/crow_walking_release.png';
+import wolverineWalkingAnimatedSheet from '../../assets/wolverine_walking_release.png';
+import caribouWalkingAnimatedSheet from '../../assets/caribou_walking_release.png';
+import salmonSharkWalkingAnimatedSheet from '../../assets/salmon_shark_walking_release.png';
+import jellyfishWalkingAnimatedSheet from '../../assets/jellyfish_walking_release.png';
+import crabWalkingAnimatedSheet from '../../assets/crab_release_walking.png';
+import voleWalkingAnimatedSheet from '../../assets/vole_walking_release.png';
+// Alpine animals - 4x4 layout
+import polarBearWalkingAnimatedSheet from '../../assets/polar_bear_walking_release.png';
+import hareWalkingAnimatedSheet from '../../assets/hare_walking_release.png';
+import snowyOwlWalkingAnimatedSheet from '../../assets/owl_walking_release.png';
+import snowyOwlFlyingAnimatedSheet from '../../assets/owl_flying_release.png';
+// Flying sprites - 4x4 layout
+import ternFlyingAnimatedSheet from '../../assets/tern_flying_release.png';
+import crowFlyingAnimatedSheet from '../../assets/crow_flying_release.png';
+// Hostile NPCs - 6x4 layout (6 frames × 4 directions)
+import shoreboundWalkingAnimatedSheet from '../../assets/shorebound_walking_release.png';
+import shardkinWalkingAnimatedSheet from '../../assets/shardkin_walking_release.png';
+import drownedWatchWalkingAnimatedSheet from '../../assets/drowned_watch_walking_release.png';
+
+import {
+    getWildAnimalSplitSheetUrl,
+    getWildAnimalDirectionalStripLayout,
+    REGISTERED_DIRECTIONAL_SHEET_PRELOAD_URLS,
+} from './wildAnimalSplitSheetConfig';
+import {
+    getDirectionalWalkingStripSourceRect,
+    DEFAULT_DIRECTIONAL_WALKING_STRIP_LAYOUT,
+} from './npcDirectionalWalkingSheetAssets';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEGACY SPRITE SHEETS (3x3 static layout - no walking animations yet)
+// ═══════════════════════════════════════════════════════════════════════════
+// NOTE: Crab and Vole now use animated 4x4 sheets (crab_release_walking.png, vole_walking_release.png)
+// import crabWalkingSheet from '../../assets/crab_walking.png';
+// import voleWalkingSheet from '../../assets/vole_walking.png';
+import cableViperWalkingSheet from '../../assets/cable_viper_walking_release.png';
+
+
+// --- Legacy fallback (unused - all animals now use ANIMATED_SPRITE_CONFIGS 4x4) ---
+const SPRITE_SHEET_CONFIG = {
+    sheetWidth: 256,
+    sheetHeight: 256,
+    sheetCols: 4,
+    sheetRows: 4,
+    directionMap: {
+        'down': { row: 0, col: 0 }, 'right': { row: 1, col: 0 },
+        'left': { row: 2, col: 0 }, 'up': { row: 3, col: 0 },
+    } as Record<string, { row: number; col: number }>,
+};
+const FLYING_SPRITE_SHEET_CONFIG = {
+    ...SPRITE_SHEET_CONFIG,
+    directionMap: SPRITE_SHEET_CONFIG.directionMap,
+};
+
+// === ANIMATED SPRITE SHEET CONFIG (6x4 layout like player walking) ===
+// Used for hostile NPCs with proper walking animations (Shardkin, Shorebound, DrownedWatch)
+// Layout: 6 columns (animation frames), 4 rows (down, right, left, up)
+// 
+// Per-species configurations since each has different sprite sizes:
+//   - Shardkin:     48x48 per frame → 288x192 sheet
+//   - Shorebound:   64x64 per frame → 384x256 sheet (like player)
+//   - DrownedWatch: 96x96 per frame → 576x384 sheet
+interface AnimatedSpriteConfig {
+    sheetWidth: number;
+    sheetHeight: number;
+    frameWidth: number;
+    frameHeight: number;
+    cols: number;  // Number of animation frame columns
+    rows: number;  // Number of direction rows
+}
+
+const ANIMATED_SPRITE_CONFIGS: Record<string, AnimatedSpriteConfig> = {
+    // ═══════════════════════════════════════════════════════════════════════════
+    // WILDLIFE ANIMATED SPRITESHEETS
+    // Row order: Down, Right, Left, Up (same as player)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // CINDERFOX - Passive wildlife (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet (nearest-neighbor from 320x320)
+    // Renders at: 128x128 (2x scale)
+    'CinderFox': {
+        sheetWidth: 256,   // 64px × 4 frames
+        sheetHeight: 256,  // 64px × 4 rows
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // ARCTICWALRUS - Large passive wildlife (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'ArcticWalrus': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // TUNDRAWOLF - Large predator wildlife (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'TundraWolf': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // TERN - Coastal seabird (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'Tern': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // CROW - Inland scavenger bird (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'Crow': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // CARIBOU - Large herd herbivore (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'Caribou': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // SALMONSHARK - Aquatic apex predator (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'SalmonShark': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // JELLYFISH - Aquatic passive hazard (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'Jellyfish': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // WOLVERINE - Medium-sized but stocky and muscular predator (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'Wolverine': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // CABLEVIPER - Snake (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet (all animals 4x4)
+    'CableViper': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,
+        rows: 4,
+    },
+
+    // BEACHCRAB - Small coastal crustacean (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'BeachCrab': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // VOLE - Tiny skittish rodent (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'Vole': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ALPINE ANIMAL ANIMATED SPRITESHEETS (4x4 layout: 4 frames × 4 directions)
+    // Row order: Down, Right, Left, Up (same as player)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // POLARBEAR - Massive alpine apex predator (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'PolarBear': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // HARE - Fast alpine prey animal (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'Hare': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // SNOWYOWL - Alpine aggressive flying predator (4x4 layout: 4 frames × 4 directions)
+    // Phase 6: 64x64 per frame → 256x256 total sheet
+    'SnowyOwl': {
+        sheetWidth: 256,
+        sheetHeight: 256,
+        frameWidth: 64,
+        frameHeight: 64,
+        cols: 4,           // 4 animation frames
+        rows: 4,           // 4 directions
+    },
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // HOSTILE NPC ANIMATED SPRITESHEETS (6x4 layout: 6 frames × 4 directions)
+    // Row order: Down, Right, Left, Up (same as player)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // SHARDKIN - Small swarmer creature
+    // Phase 6: 38x38 per frame → 228x152 total sheet (0.8x from 288x192)
+    'Shardkin': {
+        sheetWidth: 228,
+        sheetHeight: 152,
+        frameWidth: 38,
+        frameHeight: 38,
+        cols: 6,
+        rows: 4,
+    },
+
+    // SHOREBOUND - Lean stalker, fast predator
+    // Phase 6: 51x51 per frame → 306x204 total sheet (0.8x from 384x256)
+    'Shorebound': {
+        sheetWidth: 306,
+        sheetHeight: 204,
+        frameWidth: 51,
+        frameHeight: 51,
+        cols: 6,
+        rows: 4,
+    },
+
+    // DROWNED WATCH - Massive brute, heavy boss-type
+    // Phase 6: 77x77 per frame → 462x308 total sheet (0.8x from 576x384)
+    'DrownedWatch': {
+        sheetWidth: 462,
+        sheetHeight: 308,
+        frameWidth: 77,
+        frameHeight: 77,
+        cols: 6,
+        rows: 4,
+    },
+};
+
+// Common layout for all animated spritesheets (6 cols x 4 rows)
+const ANIMATED_SHEET_COLS = 6;
+const ANIMATED_SHEET_ROWS = 4;
+
+// Direction to row mapping (matches player format - same for all species)
+const ANIMATED_DIRECTION_ROW_MAP: Record<string, number> = {
+    'down': 0,  // Row 0: facing down
+    'right': 1,  // Row 1: facing right
+    'left': 2,  // Row 2: facing left
+    'up': 3,  // Row 3: facing up
+};
+
+// Helper to check if species uses animated spritesheet
+function usesAnimatedSpritesheet(species: AnimalSpecies): boolean {
+    return species.tag in ANIMATED_SPRITE_CONFIGS;
+}
+
+// Get the animated config for a species (returns undefined if not animated)
+function getAnimatedConfig(species: AnimalSpecies): AnimatedSpriteConfig | undefined {
+    return ANIMATED_SPRITE_CONFIGS[species.tag];
+}
+
+// Calculate frame dimensions from sheet size
+const FRAME_WIDTH = Math.floor(SPRITE_SHEET_CONFIG.sheetWidth / SPRITE_SHEET_CONFIG.sheetCols);
+const FRAME_HEIGHT = Math.floor(SPRITE_SHEET_CONFIG.sheetHeight / SPRITE_SHEET_CONFIG.sheetRows);
+const FLYING_FRAME_WIDTH = Math.floor(FLYING_SPRITE_SHEET_CONFIG.sheetWidth / FLYING_SPRITE_SHEET_CONFIG.sheetCols);
+const FLYING_FRAME_HEIGHT = Math.floor(FLYING_SPRITE_SHEET_CONFIG.sheetHeight / FLYING_SPRITE_SHEET_CONFIG.sheetRows);
+
+// Map species to their sprite sheets (all animals now have sprite sheets)
+const speciesSpriteSheets: Record<string, string> = {
+    'CinderFox': foxWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'TundraWolf': tundraWolfWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'CableViper': cableViperWalkingSheet,
+    'ArcticWalrus': walrusWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'BeachCrab': crabWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'Tern': ternWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'Crow': crowWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'Vole': voleWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'Wolverine': wolverineWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'Caribou': caribouWalkingAnimatedSheet, // Use animated 4x4 spritesheet
+    'SalmonShark': salmonSharkWalkingAnimatedSheet, // Use animated 4x4 spritesheet (aquatic)
+    'Jellyfish': jellyfishWalkingAnimatedSheet, // Use animated 4x4 spritesheet (aquatic passive)
+    // Night hostile NPCs have custom sprites
+    'Shorebound': shoreboundWalkingAnimatedSheet, // NEW: Use animated 6x4 spritesheet
+    'Shardkin': shardkinWalkingAnimatedSheet, // NEW: Use animated 6x4 spritesheet
+    'DrownedWatch': drownedWatchWalkingAnimatedSheet, // NEW: Use animated 6x4 spritesheet (576x384, 96x96 frames)
+    // Alpine animals
+    'PolarBear': polarBearWalkingAnimatedSheet, // Alpine apex predator
+    'Hare': hareWalkingAnimatedSheet, // Alpine prey animal
+    'SnowyOwl': snowyOwlWalkingAnimatedSheet, // Alpine flying predator (grounded)
+};
+
+// Map species to their flying sprite sheets (for birds when in flight)
+const speciesFlyingSpriteSheets: Record<string, string> = {
+    'Tern': ternFlyingAnimatedSheet, // Use animated 4x4 flying spritesheet
+    'Crow': crowFlyingAnimatedSheet, // Use animated 4x4 flying spritesheet
+    'SnowyOwl': snowyOwlFlyingAnimatedSheet, // Alpine flying predator
+};
+
+// --- Constants for damage visual effects ---
+const ANIMAL_SHAKE_DURATION_MS = 200; // How long the shake lasts
+const ANIMAL_SHAKE_AMOUNT_PX = 4;     // Max pixels to offset (slightly more than players)
+const ANIMAL_HIT_FLASH_DURATION_MS = 180; // Slightly longer to make hit confirmation obvious on animals/hostile NPCs
+
+function getAnimalFlashAlpha(animal: WildAnimal): number {
+    // Hostile apparitions/NPCs need a stronger flash so hits are unmistakable at night.
+    if (animal.isHostileNpc) return 1.0;
+    if (animal.species.tag === 'BeachCrab' || animal.species.tag === 'Vole') return 1.0;
+    return 0.95;
+}
+
+// --- Hit state tracking for animals (similar to player system) ---
+interface AnimalHitState {
+    lastProcessedHitTime: bigint;
+    clientDetectionTime: number;
+    effectStartTime: number;
+}
+
+const animalHitStates = new Map<string, AnimalHitState>();
+
+// --- Optimistic shake: when local player hits an animal, trigger immediately ---
+const clientAnimalShakeStartTimes = new Map<string, number>();
+
+/** Trigger animal shake immediately (optimistic feedback) when local player hits them. */
+export function triggerAnimalShakeOptimistic(animalId: string): void {
+  clientAnimalShakeStartTimes.set(animalId, Date.now());
+}
+
+// --- Burrow effect tracking for visual feedback when animals burrow underground ---
+const BURROW_EFFECT_DURATION_MS = 800; // How long the dirt particles last
+const BURROW_PARTICLE_COUNT = 12; // Number of dirt particles to spawn
+
+interface BurrowEffectState {
+    posX: number;
+    posY: number;
+    startTime: number;
+    particles: Array<{
+        offsetX: number;
+        offsetY: number;
+        velocityX: number;
+        velocityY: number;
+        size: number;
+        color: string;
+    }>;
+}
+
+const activeBurrowEffects = new Map<string, BurrowEffectState>();
+
+// Track animals we've already processed for burrowing to avoid duplicate effects
+const processedBurrowAnimals = new Map<string, bigint>(); // animalId -> stateChangeTime
+
+/**
+ * Check if an animal just started burrowing and create effect if needed
+ */
+function checkAndCreateBurrowEffect(animal: WildAnimal, nowMs: number) {
+    const animalId = animal.id.toString();
+    const stateChangeTime = animal.stateChangeTime?.microsSinceUnixEpoch ?? 0n;
+
+    // Check if this animal is burrowed and we haven't already processed this burrow
+    if (animal.state.tag === 'Burrowed') {
+        const lastProcessed = processedBurrowAnimals.get(animalId);
+
+        if (lastProcessed !== stateChangeTime) {
+            // New burrow! Create the effect
+            processedBurrowAnimals.set(animalId, stateChangeTime);
+
+            // Generate random particles
+            const particles: BurrowEffectState['particles'] = [];
+            for (let i = 0; i < BURROW_PARTICLE_COUNT; i++) {
+                const angle = (Math.PI * 2 * i) / BURROW_PARTICLE_COUNT + (Math.random() - 0.5) * 0.5;
+                const speed = 40 + Math.random() * 60;
+                particles.push({
+                    offsetX: (Math.random() - 0.5) * 20,
+                    offsetY: (Math.random() - 0.5) * 10,
+                    velocityX: Math.cos(angle) * speed,
+                    velocityY: Math.sin(angle) * speed - 50, // Upward bias
+                    size: 3 + Math.random() * 4,
+                    color: Math.random() > 0.5 ? '#8B7355' : '#6B5344', // Brown/dirt colors
+                });
+            }
+
+            activeBurrowEffects.set(animalId, {
+                posX: animal.posX,
+                posY: animal.posY,
+                startTime: nowMs,
+                particles,
+            });
+        }
+    }
+}
+
+/**
+ * Process all wild animals to check for new burrow events
+ * This should be called each frame BEFORE renderBurrowEffects to detect newly burrowed animals
+ */
+export function processWildAnimalsForBurrowEffects(wildAnimals: Map<string, WildAnimal>, nowMs: number) {
+    wildAnimals.forEach(animal => {
+        checkAndCreateBurrowEffect(animal, nowMs);
+    });
+}
+
+/**
+ * Renders active burrow effects (dirt particles flying up from ground)
+ */
+export function renderBurrowEffects(ctx: CanvasRenderingContext2D, nowMs: number) {
+    const effectsToRemove: string[] = [];
+
+    activeBurrowEffects.forEach((effect, animalId) => {
+        const elapsed = nowMs - effect.startTime;
+
+        if (elapsed >= BURROW_EFFECT_DURATION_MS) {
+            effectsToRemove.push(animalId);
+            return;
+        }
+
+        const progress = elapsed / BURROW_EFFECT_DURATION_MS;
+        const alpha = 1 - progress; // Fade out over time
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // Render each particle
+        effect.particles.forEach(particle => {
+            const t = elapsed / 1000; // Time in seconds
+            const gravity = 150; // Gravity acceleration
+
+            // Calculate particle position with gravity
+            const px = effect.posX + particle.offsetX + particle.velocityX * t;
+            const py = effect.posY + particle.offsetY + particle.velocityY * t + 0.5 * gravity * t * t;
+
+            // Draw particle as a small dirt clump
+            ctx.fillStyle = particle.color;
+            ctx.beginPath();
+            ctx.arc(px, py, particle.size * (1 - progress * 0.5), 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        ctx.restore();
+    });
+
+    // Clean up finished effects
+    effectsToRemove.forEach(id => {
+        activeBurrowEffects.delete(id);
+        // Keep processedBurrowAnimals entry to prevent re-triggering
+    });
+}
+
+/**
+ * Clean up burrow tracking when animal no longer exists
+ */
+export function cleanupBurrowTracking(activeAnimalIds: Set<string>) {
+    // Remove tracking for animals that no longer exist
+    for (const animalId of processedBurrowAnimals.keys()) {
+        if (!activeAnimalIds.has(animalId)) {
+            processedBurrowAnimals.delete(animalId);
+            activeBurrowEffects.delete(animalId);
+        }
+    }
+}
+
+// --- Movement: linear segment from current draw pos → new server sample over ~AI tick interval ---
+// Exponential chase toward a target that jumps every ~125ms reads as a pump; constant-velocity chords do not.
+interface AnimalMovementState {
+    lastServerX: number;
+    lastServerY: number;
+    segFromX: number;
+    segFromY: number;
+    segToX: number;
+    segToY: number;
+    segStartMs: number;
+    segDurationMs: number;
+    /** performance.now() when we last started a segment from a new server snapshot. */
+    lastPacketApplyMs: number;
+    /** Previous rendered world position (for distance-based walk cycle). */
+    prevRenderX: number;
+    prevRenderY: number;
+    /** Fractional walk phase; advances by interpolated motion / stride (not wall clock). */
+    walkPhase: number;
+    /** Last frame time while pixel motion stalled but AI is still locomoting (bridges server tick gaps). */
+    lastVisualHoldMs?: number;
+}
+
+const animalMovementStates = new Map<string, AnimalMovementState>();
+
+/** Default when inter-arrival time is missing; keep in sync with server `AI_TICK_INTERVAL_MS`. */
+const WILD_ANIMAL_DEFAULT_SEGMENT_MS = 100;
+/** Floor ~1 frame so batched Spacetime updates do not stretch micro-deltas over 100ms (felt as lag vs server). */
+const WILD_ANIMAL_SEGMENT_MIN_MS = 16;
+/** Cap so a single segment does not chase a stale target for too long after network stalls. */
+const WILD_ANIMAL_SEGMENT_MAX_MS = 220;
+
+/** Server states where the animal should keep a walk cycle even between discrete position samples. */
+const LOCOMOTING_ANIMAL_STATE_TAGS = new Set<string>([
+    'Patrolling',
+    'Chasing',
+    'Fleeing',
+    'Investigating',
+    'Alert',
+    'Following',
+    'Protecting',
+    'Flying',
+    'FlyingChase',
+    'Grounded',
+    'Scavenging',
+    'Stealing',
+    'Swimming',
+    'SwimmingChase',
+    'Drifting',
+    'Stalking',
+    'Attacking',
+    'AttackingStructure',
+]);
+
+/** Large server corrections (respawn, etc.) — match prior wild-animal snap radius. */
+const MAX_INTERPOLATION_DISTANCE = 600;
+/** Pixels of interpolated travel per +1 walk frame index (scaled by on-screen width). */
+const WALK_STRIDE_PER_INDEX_FACTOR = 0.21;
+const WALK_SYNC_MAX_STEP_PX = 80;
+const WALK_PHASE_WRAP = 6000;
+
+/** 4-way facing for shadow footprint (matches sprite row mapping). */
+type FourWayFacing = 'down' | 'right' | 'left' | 'up';
+
+function normalizeWildAnimalFacingToFourWay(direction: string): FourWayFacing {
+    let normalizedDir = direction.toLowerCase();
+    if (normalizedDir === 'up_left' || normalizedDir === 'up-left' || normalizedDir === 'upleft') {
+        normalizedDir = 'left';
+    } else if (normalizedDir === 'up_right' || normalizedDir === 'up-right' || normalizedDir === 'upright') {
+        normalizedDir = 'right';
+    } else if (normalizedDir === 'down_left' || normalizedDir === 'down-left' || normalizedDir === 'downleft') {
+        normalizedDir = 'left';
+    } else if (normalizedDir === 'down_right' || normalizedDir === 'down-right' || normalizedDir === 'downright') {
+        normalizedDir = 'right';
+    }
+    if (normalizedDir === 'down' || normalizedDir === 'right' || normalizedDir === 'left' || normalizedDir === 'up') {
+        return normalizedDir;
+    }
+    return 'down';
+}
+
+/** Radians from +X: long axis of footprint aligns with facing (screen Y increases downward). */
+function fourWayFacingToShadowRotationRadians(facing: FourWayFacing): number {
+    switch (facing) {
+        case 'right':
+            return 0;
+        case 'down':
+            return Math.PI / 2;
+        case 'left':
+            return Math.PI;
+        case 'up':
+            return -Math.PI / 2;
+        default:
+            return Math.PI / 2;
+    }
+}
+
+/**
+ * Underfoot oval after dynamic silhouette — length/width swap with facing like the animal body;
+ * same blur/alpha feel as online players (playerRenderingUtils).
+ */
+function drawWildAnimalPlayerStyleUnderfootOval(
+    ctx: CanvasRenderingContext2D,
+    centerX: number,
+    centerY: number,
+    renderWidth: number,
+    renderHeight: number,
+    shakeX: number,
+    shakeY: number,
+    facingDirection: string,
+): void {
+    const shadowBaseYOffset = renderHeight * 0.4;
+    const ovalUpNudge = Math.round(Math.min(18, Math.max(6, renderHeight * 0.06)));
+    const facing = normalizeWildAnimalFacingToFourWay(facingDirection);
+    const horizontal = facing === 'left' || facing === 'right';
+    // Long axis ≈ sprite extent along travel direction; short axis across the body.
+    const halfLength = horizontal ? renderWidth * 0.48 : renderHeight * 0.48;
+    // Left/right: match player oval proportions (playerRenderingUtils: radiusY = radiusX * 0.4) — was too tall using 0.22*height.
+    const halfWidth = horizontal
+        ? halfLength * 0.4
+        : renderWidth * 0.22;
+    const rotation = fourWayFacingToShadowRotationRadians(facing);
+    // Match player online underfoot oval: blur(3px) at rest (playerRenderingUtils: 3 + jumpProgress*4, jump=0).
+    const shadowBlurAmount = 3;
+    const shadowAlpha = 0.5;
+    // When horizontal, nudge center up a touch so the squeezed oval sits slightly higher (bottom-up squeeze).
+    const horizontalUpNudge = horizontal ? Math.round(Math.min(10, Math.max(2, renderHeight * 0.035))) : 0;
+    ctx.save();
+    if (shadowBlurAmount > 0) {
+        ctx.filter = `blur(${shadowBlurAmount}px)`;
+    }
+    drawShadow(
+        ctx,
+        centerX + shakeX,
+        centerY + shadowBaseYOffset + shakeY - ovalUpNudge - horizontalUpNudge,
+        halfLength,
+        halfWidth,
+        shadowAlpha,
+        rotation,
+    );
+    ctx.restore();
+}
+
+// --- Reusable Offscreen Canvas for Tinting ---
+const offscreenCanvas = document.createElement('canvas');
+const offscreenCtx = offscreenCanvas.getContext('2d');
+
+// Re-export for convenience
+export type { WildAnimal, AnimalSpecies, AnimalState };
+
+interface WildAnimalRenderProps {
+    ctx: CanvasRenderingContext2D;
+    animal: WildAnimal;
+    nowMs: number;
+    cycleProgress: number;
+    animationFrame?: number;
+    localPlayerPosition?: { x: number; y: number } | null;
+    isLocalPlayerSnorkeling?: boolean; // For underwater rendering (sharks always underwater)
+    isOnWaterTile?: (worldX: number, worldY: number) => boolean;
+    // Breeding data for age-based sizing and pregnancy indicators
+    caribouBreedingData?: Map<string, CaribouBreedingData>;
+    walrusBreedingData?: Map<string, WalrusBreedingData>;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AGE-BASED SIZE SCALING FOR BREEDING SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+// Pups/Calves: 50% size, Juveniles: 75% size, Adults: 100% size
+
+/**
+ * Get the size multiplier for a caribou based on its age stage
+ */
+function getCaribouAgeMultiplier(breedingData: CaribouBreedingData | undefined): number {
+    if (!breedingData) return 1.0; // Default to adult size if no data
+
+    switch (breedingData.ageStage.tag) {
+        case 'Calf': return 0.5;      // 50% size for calves
+        case 'Juvenile': return 0.75; // 75% size for juveniles
+        case 'Adult': return 1.0;     // 100% size for adults
+        default: return 1.0;
+    }
+}
+
+/**
+ * Get the size multiplier for a walrus based on its age stage
+ */
+function getWalrusAgeMultiplier(breedingData: WalrusBreedingData | undefined): number {
+    if (!breedingData) return 1.0; // Default to adult size if no data
+
+    switch (breedingData.ageStage.tag) {
+        case 'Pup': return 0.5;       // 50% size for pups
+        case 'Juvenile': return 0.75; // 75% size for juveniles
+        case 'Adult': return 1.0;     // 100% size for adults
+        default: return 1.0;
+    }
+}
+
+/**
+ * Check if an animal is pregnant (works for both caribou and walrus)
+ */
+function isAnimalPregnant(
+    animal: WildAnimal,
+    caribouBreedingData?: Map<string, CaribouBreedingData>,
+    walrusBreedingData?: Map<string, WalrusBreedingData>
+): boolean {
+    const animalId = animal.id.toString();
+
+    if (animal.species.tag === 'Caribou' && caribouBreedingData) {
+        const data = caribouBreedingData.get(animalId);
+        return data?.isPregnant ?? false;
+    }
+
+    if (animal.species.tag === 'ArcticWalrus' && walrusBreedingData) {
+        const data = walrusBreedingData.get(animalId);
+        return data?.isPregnant ?? false;
+    }
+
+    return false;
+}
+
+// Get the sprite sheet for a species (considers flying state for birds)
+function getSpriteSheet(species: AnimalSpecies, isFlying: boolean = false): string {
+    // Check for flying sprite sheet if the animal is flying
+    if (isFlying && speciesFlyingSpriteSheets[species.tag]) {
+        return speciesFlyingSpriteSheets[species.tag];
+    }
+    return speciesSpriteSheets[species.tag] || foxWalkingAnimatedSheet; // Fallback to fox
+}
+
+// Get the source rectangle for an ANIMATED sprite (supports various layouts like 4x4 or 6x4)
+// Returns sprite frame based on direction, animation frame, and species-specific frame size
+function getAnimatedSpriteSourceRect(
+    species: AnimalSpecies,
+    direction: string,
+    animationFrame: number
+): { sx: number; sy: number; sw: number; sh: number } {
+    const config = getAnimatedConfig(species);
+    if (!config) {
+        // Fallback - shouldn't happen if usesAnimatedSpritesheet is checked first
+        return { sx: 0, sy: 0, sw: 48, sh: 48 };
+    }
+
+    const { frameWidth, frameHeight, cols } = config;
+
+    // Normalize direction to 4-way
+    let normalizedDir = direction.toLowerCase();
+
+    // Map diagonal directions to closest cardinal direction
+    if (normalizedDir === 'up_left' || normalizedDir === 'up-left' || normalizedDir === 'upleft') {
+        normalizedDir = 'left';
+    } else if (normalizedDir === 'up_right' || normalizedDir === 'up-right' || normalizedDir === 'upright') {
+        normalizedDir = 'right';
+    } else if (normalizedDir === 'down_left' || normalizedDir === 'down-left' || normalizedDir === 'downleft') {
+        normalizedDir = 'left';
+    } else if (normalizedDir === 'down_right' || normalizedDir === 'down-right' || normalizedDir === 'downright') {
+        normalizedDir = 'right';
+    }
+
+    // Default to 'down' if direction not found
+    if (ANIMATED_DIRECTION_ROW_MAP[normalizedDir] === undefined) {
+        normalizedDir = 'down';
+    }
+
+    const row = ANIMATED_DIRECTION_ROW_MAP[normalizedDir];
+    const col = animationFrame % cols; // Cycle through animation frames (using species-specific col count)
+
+    return {
+        sx: col * frameWidth,
+        sy: row * frameHeight,
+        sw: frameWidth,
+        sh: frameHeight,
+    };
+}
+
+function getWildAnimalAnimatedSpriteSourceRect(
+    species: AnimalSpecies,
+    direction: string,
+    animationFrame: number,
+    useDirectionalSplitSheet: boolean,
+): { sx: number; sy: number; sw: number; sh: number } {
+    if (useDirectionalSplitSheet) {
+        const layout =
+            getWildAnimalDirectionalStripLayout(species.tag) ?? DEFAULT_DIRECTIONAL_WALKING_STRIP_LAYOUT;
+        return getDirectionalWalkingStripSourceRect(animationFrame, layout);
+    }
+    return getAnimatedSpriteSourceRect(species, direction, animationFrame);
+}
+
+// Get the source rectangle for a sprite from the sheet based on direction (no animation)
+function getSpriteSourceRect(
+    direction: string,
+    isFlying: boolean = false
+): { sx: number; sy: number; sw: number; sh: number } {
+    const config = isFlying ? FLYING_SPRITE_SHEET_CONFIG : SPRITE_SHEET_CONFIG;
+    const frameWidth = isFlying ? FLYING_FRAME_WIDTH : FRAME_WIDTH;
+    const frameHeight = isFlying ? FLYING_FRAME_HEIGHT : FRAME_HEIGHT;
+    const { directionMap } = config;
+
+    // Normalize direction to 4-way (map 8-way to 4-way)
+    let normalizedDir = direction.toLowerCase();
+
+    // Map diagonal directions to closest cardinal direction
+    if (normalizedDir === 'up_left' || normalizedDir === 'up-left' || normalizedDir === 'upleft') {
+        normalizedDir = 'left';
+    } else if (normalizedDir === 'up_right' || normalizedDir === 'up-right' || normalizedDir === 'upright') {
+        normalizedDir = 'right';
+    } else if (normalizedDir === 'down_left' || normalizedDir === 'down-left' || normalizedDir === 'downleft') {
+        normalizedDir = 'left';
+    } else if (normalizedDir === 'down_right' || normalizedDir === 'down-right' || normalizedDir === 'downright') {
+        normalizedDir = 'right';
+    }
+
+    // Default to 'down' if direction not found
+    if (!directionMap[normalizedDir]) {
+        normalizedDir = 'down';
+    }
+
+    const { row, col } = directionMap[normalizedDir];
+
+    return {
+        sx: col * frameWidth,
+        sy: row * frameHeight,
+        sw: frameWidth,
+        sh: frameHeight,
+    };
+}
+
+// Get species-specific rendering properties
+function getSpeciesRenderingProps(species: AnimalSpecies) {
+    // Species-specific sizes
+    switch (species.tag) {
+        case 'ArcticWalrus':
+            // Walruses are large, hefty animals
+            return { width: 128, height: 128, shadowRadius: 40 };
+        case 'TundraWolf':
+            // Wolves are larger predators
+            return { width: 128, height: 128, shadowRadius: 40 };
+        case 'CinderFox':
+            // Foxes are larger
+            return { width: 128, height: 128, shadowRadius: 36 };
+        case 'CableViper':
+            // Vipers are larger snakes
+            return { width: 96, height: 96, shadowRadius: 28 };
+        case 'BeachCrab':
+            return { width: 64, height: 64, shadowRadius: 0 };
+        case 'Tern':
+            // Terns are small coastal seabirds
+            return { width: 64, height: 64, shadowRadius: 20 };
+        case 'Crow':
+            // Crows are small inland birds (same size as tern)
+            return { width: 64, height: 64, shadowRadius: 20 };
+        case 'Vole':
+            // Voles are tiny rodents - very small sprite
+            return { width: 48, height: 48, shadowRadius: 14 };
+        case 'Wolverine':
+            // Wolverines are medium-sized but stocky and muscular
+            return { width: 112, height: 112, shadowRadius: 36 };
+        case 'Caribou':
+            // Caribou are large herd herbivores with antlers
+            return { width: 128, height: 128, shadowRadius: 42 };
+        case 'SalmonShark':
+            // Salmon Sharks are large aquatic predators - always underwater
+            return { width: 160, height: 160, shadowRadius: 0 }; // No ground shadow (underwater)
+        case 'Jellyfish':
+            // Jellyfish are medium-sized aquatic hazards - always underwater
+            return { width: 96, height: 96, shadowRadius: 0 }; // No ground shadow (underwater)
+        // Night hostile NPCs (2x size for visibility and impact)
+        // ═══════════════════════════════════════════════════════════════════════
+        // HOSTILE NPCs - Sizes designed for clean 2x pixel scaling
+        // ═══════════════════════════════════════════════════════════════════════
+        case 'Shardkin':
+            // Swarmer - small hostile creature (48x48 sprite × 1.5 = 72x72)
+            // 0.75x player size (player is 96x96 render) - small but dangerous in groups
+            return { width: 72, height: 72, shadowRadius: 24 };
+        case 'Shorebound':
+            // Stalker - lean, fast predator (64x64 sprite × 1.5 = 96x96)
+            // Same size as player (player is 96x96 render)
+            return { width: 128, height: 128, shadowRadius: 32 };
+        case 'DrownedWatch':
+            // Brute - massive, heavy boss-type (96x96 sprite × 2 = 192x192)
+            // 2x player size (player is 96x96 render) - the "oh crap" moment
+            return { width: 192, height: 192, shadowRadius: 64 };
+        case 'Bee':
+            // Tiny insect - just a small black dot, no shadow
+            // Rendered as a simple circle, not a spritesheet
+            return { width: 6, height: 6, shadowRadius: 0 };
+        // ═══════════════════════════════════════════════════════════════════════
+        // ALPINE ANIMALS
+        // ═══════════════════════════════════════════════════════════════════════
+        case 'PolarBear':
+            // Polar bears are massive apex predators - largest land animal
+            return { width: 160, height: 160, shadowRadius: 48 };
+        case 'Hare':
+            // Hares are small fast prey animals
+            return { width: 80, height: 80, shadowRadius: 20 };
+        case 'SnowyOwl':
+            // Snowy owls are medium-sized aggressive flying predators
+            return { width: 96, height: 96, shadowRadius: 28 };
+        default:
+            return { width: 96, height: 96, shadowRadius: 32 };
+    }
+}
+
+/** True when the local player is snorkeling and this animal is only sensible above the water surface (flying birds, bees). */
+export function isWildAnimalOccludedWhenSnorkeling(animal: WildAnimal, isSnorkeling: boolean): boolean {
+    if (!isSnorkeling) return false;
+    const tag = animal.species.tag;
+    if (tag === 'Bee') return true;
+    return animal.isFlying === true && (tag === 'Tern' || tag === 'Crow' || tag === 'SnowyOwl');
+}
+
+// Main wild animal rendering function
+export function renderWildAnimal({
+    ctx,
+    animal,
+    nowMs,
+    cycleProgress,
+    animationFrame = 0,
+    localPlayerPosition,
+    isLocalPlayerSnorkeling = false,
+    isOnWaterTile,
+    caribouBreedingData,
+    walrusBreedingData
+}: WildAnimalRenderProps) {
+    // Check for burrow effect BEFORE skipping burrowed animals
+    // This allows us to detect when an animal JUST burrowed and create the particle effect
+    checkAndCreateBurrowEffect(animal, nowMs);
+
+    // BURROWED STATE: Animals that are burrowed underground are completely invisible
+    // This is used by voles to hide from predators and players
+    if (animal.state.tag === 'Burrowed') {
+        return; // Don't render - animal is underground
+    }
+
+    if (isWildAnimalOccludedWhenSnorkeling(animal, isLocalPlayerSnorkeling)) {
+        return;
+    }
+
+    const animalId = animal.id.toString();
+
+    // --- Movement: lerp from *current draw* → new server pos over measured inter-snapshot time (no tick pump) ---
+    const smoothNow = performance.now();
+    let renderPosX = animal.posX;
+    let renderPosY = animal.posY;
+
+    let movementState = animalMovementStates.get(animalId);
+    if (!movementState) {
+        movementState = {
+            lastServerX: animal.posX,
+            lastServerY: animal.posY,
+            segFromX: animal.posX,
+            segFromY: animal.posY,
+            segToX: animal.posX,
+            segToY: animal.posY,
+            segStartMs: smoothNow,
+            segDurationMs: WILD_ANIMAL_DEFAULT_SEGMENT_MS,
+            lastPacketApplyMs: smoothNow,
+            prevRenderX: animal.posX,
+            prevRenderY: animal.posY,
+            walkPhase: 0,
+        };
+        animalMovementStates.set(animalId, movementState);
+    } else {
+        const serverX = animal.posX;
+        const serverY = animal.posY;
+        const sdx = serverX - movementState.lastServerX;
+        const sdy = serverY - movementState.lastServerY;
+        const positionChanged = Math.abs(sdx) > 0.01 || Math.abs(sdy) > 0.01;
+
+        if (positionChanged) {
+            const teleportDist = Math.abs(sdx) + Math.abs(sdy);
+            if (teleportDist > MAX_INTERPOLATION_DISTANCE) {
+                movementState.segFromX = serverX;
+                movementState.segFromY = serverY;
+                movementState.segToX = serverX;
+                movementState.segToY = serverY;
+                movementState.segStartMs = smoothNow;
+                movementState.segDurationMs = 1;
+                movementState.lastPacketApplyMs = smoothNow;
+                movementState.lastServerX = serverX;
+                movementState.lastServerY = serverY;
+                movementState.walkPhase = 0;
+                movementState.prevRenderX = serverX;
+                movementState.prevRenderY = serverY;
+            } else {
+                const durPrev = Math.max(movementState.segDurationMs, 1);
+                let prevAlpha = (smoothNow - movementState.segStartMs) / durPrev;
+                if (prevAlpha < 0) prevAlpha = 0;
+                if (prevAlpha > 1) prevAlpha = 1;
+                const curX =
+                    movementState.segFromX +
+                    (movementState.segToX - movementState.segFromX) * prevAlpha;
+                const curY =
+                    movementState.segFromY +
+                    (movementState.segToY - movementState.segFromY) * prevAlpha;
+
+                let measured = smoothNow - movementState.lastPacketApplyMs;
+                if (!Number.isFinite(measured) || measured < 0) {
+                    measured = WILD_ANIMAL_DEFAULT_SEGMENT_MS;
+                }
+                // Use actual inter-arrival time. Old behavior replaced gaps <25ms with 100ms, which made
+                // clustered updates interpolate very slowly while collision/debug still showed raw server pos.
+                measured = Math.min(
+                    WILD_ANIMAL_SEGMENT_MAX_MS,
+                    Math.max(WILD_ANIMAL_SEGMENT_MIN_MS, measured),
+                );
+
+                movementState.segFromX = curX;
+                movementState.segFromY = curY;
+                movementState.segToX = serverX;
+                movementState.segToY = serverY;
+                movementState.segStartMs = smoothNow;
+                movementState.segDurationMs = measured;
+                movementState.lastPacketApplyMs = smoothNow;
+                movementState.lastServerX = serverX;
+                movementState.lastServerY = serverY;
+            }
+        }
+
+        const dur = Math.max(movementState.segDurationMs, 1);
+        let alpha = (smoothNow - movementState.segStartMs) / dur;
+        if (alpha < 0) alpha = 0;
+        if (alpha > 1) alpha = 1;
+        renderPosX =
+            movementState.segFromX + (movementState.segToX - movementState.segFromX) * alpha;
+        renderPosY =
+            movementState.segFromY + (movementState.segToY - movementState.segFromY) * alpha;
+    }
+
+    // --- Hit detection and effect timing (similar to player system) ---
+    const serverLastHitTimePropMicros = animal.lastHitTime?.microsSinceUnixEpoch ?? 0n;
+    let hitState = animalHitStates.get(animalId);
+    let isCurrentlyHit = false;
+    let hitEffectElapsed = 0;
+
+    // --- Optimistic shake: check if we (local player) just hit this animal ---
+    const optimisticStart = clientAnimalShakeStartTimes.get(animalId);
+    const hasActiveOptimisticShake = optimisticStart !== undefined && (nowMs - optimisticStart < ANIMAL_SHAKE_DURATION_MS);
+    const recentlyHadOptimisticShake = optimisticStart !== undefined && (nowMs - optimisticStart < 2000);
+    if (optimisticStart !== undefined && nowMs - optimisticStart > 2000) {
+        clientAnimalShakeStartTimes.delete(animalId); // Clean up expired optimistic entries
+    }
+
+    if (serverLastHitTimePropMicros > 0n) {
+        if (!hitState || serverLastHitTimePropMicros > hitState.lastProcessedHitTime) {
+            // NEW HIT DETECTED! Don't restart if we recently had optimistic shake (avoid double-shake)
+            const effectStartTime = recentlyHadOptimisticShake && optimisticStart ? optimisticStart : nowMs;
+            hitState = {
+                lastProcessedHitTime: serverLastHitTimePropMicros,
+                clientDetectionTime: nowMs,
+                effectStartTime
+            };
+            animalHitStates.set(animalId, hitState);
+        }
+
+        // Calculate effect timing based on when WE detected the hit
+        if (hitState) {
+            hitEffectElapsed = nowMs - hitState.effectStartTime;
+            isCurrentlyHit = hitEffectElapsed < ANIMAL_SHAKE_DURATION_MS;
+        }
+    } else if (hasActiveOptimisticShake && optimisticStart !== undefined) {
+        // No server hit yet, but we have optimistic shake (we just hit them)
+        hitEffectElapsed = nowMs - optimisticStart;
+        isCurrentlyHit = hitEffectElapsed < ANIMAL_SHAKE_DURATION_MS;
+    } else {
+        // No hit time from server - clear hit state
+        if (hitState) {
+            animalHitStates.delete(animalId);
+        }
+    }
+
+    // Same as players: do not key flash/shake off raw server lastHitTime (DOT ticks reset it).
+    const hitStateForEffects = animalHitStates.get(animalId);
+    let clientCombatEffectElapsed = hitStateForEffects ? nowMs - hitStateForEffects.effectStartTime : Infinity;
+    if (hasActiveOptimisticShake && optimisticStart !== undefined) {
+      clientCombatEffectElapsed = Math.min(clientCombatEffectElapsed, nowMs - optimisticStart);
+    }
+    const effectiveHitElapsed = clientCombatEffectElapsed;
+    const shouldShowCombatEffects =
+      isCurrentlyHit ||
+      hasActiveOptimisticShake ||
+      clientCombatEffectElapsed < ANIMAL_SHAKE_DURATION_MS;
+
+    // --- Shake Logic ---
+    let shakeX = 0;
+    let shakeY = 0;
+    if (animal.health > 0 && effectiveHitElapsed < ANIMAL_SHAKE_DURATION_MS) {
+        shakeX = (Math.random() - 0.5) * 2 * ANIMAL_SHAKE_AMOUNT_PX;
+        shakeY = (Math.random() - 0.5) * 2 * ANIMAL_SHAKE_AMOUNT_PX;
+    }
+
+    // --- Flash Logic ---
+    const isFlashing = effectiveHitElapsed < ANIMAL_HIT_FLASH_DURATION_MS;
+
+    // Get sprite sheet for this species (all animals use sprite sheets now)
+    // Use flying sprite sheet for birds when they are flying
+    // Birds use flying sprites when isFlying is true, walking sprites otherwise
+    const isBird = animal.species.tag === 'Tern' || animal.species.tag === 'Crow';
+    const useFlying = isBird && animal.isFlying === true;
+    const useAnimated = usesAnimatedSpritesheet(animal.species);
+    const splitSheetUrl = getWildAnimalSplitSheetUrl(animal.species.tag, animal.facingDirection);
+    const useDirectionalSplitSheet = splitSheetUrl !== undefined;
+    const spriteSheetSrc = splitSheetUrl ?? getSpriteSheet(animal.species, useFlying);
+    const spriteSheetImage = imageManager.getImage(spriteSheetSrc);
+
+    // Get the appropriate frame dimensions based on sprite type
+    let animatedConfig = useAnimated ? getAnimatedConfig(animal.species) : undefined;
+    if (useAnimated && useDirectionalSplitSheet) {
+        const stripLayout =
+            getWildAnimalDirectionalStripLayout(animal.species.tag) ?? DEFAULT_DIRECTIONAL_WALKING_STRIP_LAYOUT;
+        animatedConfig = {
+            sheetWidth: stripLayout.frameWidth * stripLayout.cols,
+            sheetHeight: stripLayout.frameHeight,
+            frameWidth: stripLayout.frameWidth,
+            frameHeight: stripLayout.frameHeight,
+            cols: stripLayout.cols,
+            rows: 1,
+        };
+    }
+    const props = getSpeciesRenderingProps(animal.species);
+
+    let ageBasedSizeMultiplier = 1.0;
+    const animalIdStr = animal.id.toString();
+    if (animal.species.tag === 'Caribou' && caribouBreedingData) {
+        const breedingData = caribouBreedingData.get(animalIdStr);
+        ageBasedSizeMultiplier = getCaribouAgeMultiplier(breedingData);
+    } else if (animal.species.tag === 'ArcticWalrus' && walrusBreedingData) {
+        const breedingData = walrusBreedingData.get(animalIdStr);
+        ageBasedSizeMultiplier = getWalrusAgeMultiplier(breedingData);
+    }
+
+    const flyingSizeMultiplier = (animal.species.tag === 'Tern' && useFlying) ? 1.3 : 1.0;
+    const renderWidth = props.width * flyingSizeMultiplier * ageBasedSizeMultiplier;
+    const renderHeight = props.height * flyingSizeMultiplier * ageBasedSizeMultiplier;
+
+    // Walk cycle driven by actual interpolated motion (matches feet to screen travel; avoids wall-clock / server-velocity mismatch).
+    let calculatedAnimFrame = 0;
+    if (useAnimated && movementState && animatedConfig) {
+        const cols = animatedConfig.cols;
+        const prx = movementState.prevRenderX ?? renderPosX;
+        const pry = movementState.prevRenderY ?? renderPosY;
+        const rawStep = Math.hypot(renderPosX - prx, renderPosY - pry);
+        const stepDist = Math.min(rawStep, WALK_SYNC_MAX_STEP_PX);
+
+        const distToTargetNow = Math.hypot(
+            movementState.segToX - renderPosX,
+            movementState.segToY - renderPosY,
+        );
+        // Small threshold: sub-pixel interpolation still counts as motion
+        const isMovingVisual = stepDist > 0.02 || distToTargetNow > 0.8;
+
+        let phase = movementState.walkPhase ?? 0;
+        const stridePx = Math.max(8, renderWidth * WALK_STRIDE_PER_INDEX_FACTOR);
+        const stateTag = animal.state.tag;
+
+        if (isMovingVisual) {
+            movementState.lastVisualHoldMs = undefined;
+            phase += stepDist / stridePx;
+            if (phase > WALK_PHASE_WRAP) {
+                phase = phase % cols;
+            }
+            movementState.walkPhase = phase;
+            calculatedAnimFrame = ((Math.floor(phase) % cols) + cols) % cols;
+        } else if (stateTag === 'Idle') {
+            // True stationary server state — first walk frame reads as idle stance for most sheets
+            calculatedAnimFrame = 0;
+            movementState.walkPhase = 0;
+            movementState.lastVisualHoldMs = undefined;
+        } else if (LOCOMOTING_ANIMAL_STATE_TAGS.has(stateTag)) {
+            // Between server ticks the lerp hits alpha=1 and stepDist drops to 0; we used to force frame 0 here,
+            // which pulsed walk→idle→walk every AI tick. Advance phase on wall clock during the gap instead.
+            const lastHold = movementState.lastVisualHoldMs ?? smoothNow;
+            const dtHold = Math.min(64, Math.max(0, smoothNow - lastHold));
+            movementState.lastVisualHoldMs = smoothNow;
+            // ~3.2 full sheet cycles per second of hold (tunable)
+            phase += ((dtHold / 1000) * 3.2 * cols) / 4;
+            if (phase > WALK_PHASE_WRAP) {
+                phase = phase % cols;
+            }
+            movementState.walkPhase = phase;
+            calculatedAnimFrame = ((Math.floor(phase) % cols) + cols) % cols;
+        } else {
+            calculatedAnimFrame = ((Math.floor(phase) % cols) + cols) % cols;
+            movementState.walkPhase = phase;
+        }
+
+        movementState.prevRenderX = renderPosX;
+        movementState.prevRenderY = renderPosY;
+    } else if (movementState) {
+        movementState.prevRenderX = renderPosX;
+        movementState.prevRenderY = renderPosY;
+    }
+
+    // Debug logging for bird sprite selection (enable to debug)
+    // if (isBird && Math.random() < 0.001) { // Log 0.1% of frames to avoid spam
+    //     console.log(`🐦 ${animal.species.tag} #${animal.id}: isFlying=${animal.isFlying}, state=${animal.state.tag}, sprite=${useFlying ? 'FLYING' : 'WALKING'}`);
+    // }
+
+    // Check if sprite sheet is loaded
+    const useSpriteSheet = spriteSheetImage && spriteSheetImage.complete;
+    const animalImage = spriteSheetImage;
+
+    // Bees are rendered as simple black dots - no spritesheet
+    const isBee = animal.species.tag === 'Bee';
+    const useImageFallback = isBee || !animalImage || !animalImage.complete;
+
+    const renderX = renderPosX - renderWidth / 2 + shakeX; // Apply shake to X (using interpolated position)
+    const renderY = renderPosY - renderHeight / 2 + shakeY; // Apply shake to Y (using interpolated position)
+
+    // No animals hide anymore - always fully visible
+    const alpha = 1.0;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // Enable crisp pixel scaling for animated sprites (nearest-neighbor instead of bilinear)
+    // This keeps pixel art sharp when scaling up (e.g., 48x48 sprite rendered at 72x72)
+    if (useAnimated) {
+        ctx.imageSmoothingEnabled = false;
+    }
+
+    // Note: No horizontal flipping needed - sprite sheets have all 4 directions
+    // Legacy flipping is only used for static images that don't have sprite sheets
+    const shouldFlip = !useSpriteSheet && animal.facingDirection === "right";
+    if (shouldFlip) {
+        ctx.scale(-1, 1); // Flip horizontally
+        ctx.translate(-renderPosX * 2, 0); // Adjust position after flipping
+    }
+
+    // Render shadow - flying birds get special detached oval shadows
+    const isCrabOnWater = animal.species.tag === 'BeachCrab' && isOnWaterTile?.(renderPosX, renderPosY) === true;
+
+    // Skip shadow for entities with shadowRadius 0 (bees, sharks)
+    if (props.shadowRadius > 0) {
+        ctx.save();
+
+        // At noon the silhouette shadow sits slightly below the feet; nudge pivot up (only this window).
+        const isNoonShadowWindow =
+            cycleProgress >= 0.35 && cycleProgress < 0.55;
+        const noonGroundShadowPivotYOffset = isNoonShadowWindow
+            ? Math.round(Math.min(24, Math.max(8, renderHeight * 0.055)))
+            : 0;
+
+        // Flying birds (Tern, Crow) get a special detached shadow
+        if (isBird && useFlying) {
+            // ═══════════════════════════════════════════════════════════════════════
+            // FLYING BIRD SHADOW - Simple detached oval that shows height
+            // ═══════════════════════════════════════════════════════════════════════
+            // Design principles:
+            // 1. Shadow is DETACHED from bird (offset diagonally down-right)
+            // 2. Shadow is SMALLER than grounded shadow (shows altitude)
+            // 3. Shadow is MORE TRANSPARENT (softer, lower contrast)
+            // 4. Shadow is a SIMPLE OVAL (not sprite silhouette)
+            // 5. Shadow does NOT animate with wing flaps
+
+            // Global light direction: coming from upper-left, so shadow goes down-right
+            const shadowOffsetX = 25;  // Offset to the right
+            const shadowOffsetY = 45;  // Offset downward (shows height separation)
+
+            // Shadow is smaller than the bird (shows altitude)
+            const baseShadowWidth = props.width * 0.5;  // 50% of grounded size
+            const baseShadowHeight = props.width * 0.15; // Flat oval
+
+            // Shadow is more transparent when flying (softer, less contrast)
+            const flyingShadowAlpha = 0.25;
+
+            // Shadow position: below and to the right of the bird
+            const shadowX = renderPosX + shadowOffsetX;
+            const shadowY = renderPosY + renderHeight / 2 + shadowOffsetY;
+
+            // Draw simple oval shadow with soft edges and blur (matching grounded shadow style)
+            ctx.filter = 'blur(4px)';
+            ctx.fillStyle = `rgba(0, 0, 0, ${flyingShadowAlpha})`;
+            ctx.beginPath();
+            ctx.ellipse(
+                shadowX,
+                shadowY,
+                baseShadowWidth,
+                baseShadowHeight,
+                0, 0, Math.PI * 2
+            );
+            ctx.fill();
+            ctx.filter = 'none';
+
+        } else if (useSpriteSheet && animalImage) {
+            // Animated animals are common in herds. Avoid regenerating a per-frame silhouette
+            // shadow; the player-style oval is stable, cheap, and still grounds the sprite.
+            drawWildAnimalPlayerStyleUnderfootOval(
+                ctx,
+                renderPosX,
+                renderPosY,
+                renderWidth,
+                renderHeight,
+                shakeX,
+                shakeY,
+                animal.facingDirection,
+            );
+        } else if (animalImage) {
+            // Static image - use directly for shadow
+            drawDynamicGroundShadow({
+                ctx,
+                entityImage: animalImage,
+                entityCenterX: renderPosX,
+                entityBaseY: renderPosY + renderHeight / 2,
+                imageDrawWidth: renderWidth,
+                imageDrawHeight: renderHeight,
+                cycleProgress: cycleProgress,
+                baseShadowColor: '0,0,0',
+                maxShadowAlpha: 0.6,
+                maxStretchFactor: 3.0,
+                minStretchFactor: 0.25,
+                shadowBlur: 2,
+                pivotYOffset: noonGroundShadowPivotYOffset,
+                shakeOffsetX: shakeX,
+                shakeOffsetY: shakeY,
+            });
+            drawWildAnimalPlayerStyleUnderfootOval(
+                ctx,
+                renderPosX,
+                renderPosY,
+                renderWidth,
+                renderHeight,
+                shakeX,
+                shakeY,
+                animal.facingDirection,
+            );
+        } else {
+            // Fallback ellipse shadow if no image available
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(
+                renderPosX + shakeX,
+                renderPosY + renderHeight / 2 - 5 + shakeY,
+                renderWidth / 2.5,
+                renderHeight / 8,
+                0, 0, Math.PI * 2
+            );
+            ctx.fill();
+            drawWildAnimalPlayerStyleUnderfootOval(
+                ctx,
+                renderPosX,
+                renderPosY,
+                renderWidth,
+                renderHeight,
+                shakeX,
+                shakeY,
+                animal.facingDirection,
+            );
+        }
+        ctx.restore();
+    } // End shadow rendering for entities with shadowRadius > 0
+
+    // 🦈🎐 AQUATIC CREATURE UNDERWATER RENDERING
+    // Sharks and Jellyfish are always underwater - apply visual effects based on viewer perspective
+    const isShark = animal.species.tag === 'SalmonShark';
+    const isJellyfishCreature = animal.species.tag === 'Jellyfish';
+    const isAquatic = isShark || isJellyfishCreature;
+    const viewingSharkFromAbove = isShark && !isLocalPlayerSnorkeling;
+    const viewingSharkFromUnderwater = isShark && isLocalPlayerSnorkeling;
+    const viewingJellyfishFromAbove = isJellyfishCreature && !isLocalPlayerSnorkeling;
+    const viewingJellyfishFromUnderwater = isJellyfishCreature && isLocalPlayerSnorkeling;
+    const viewingAquaticFromAbove = viewingSharkFromAbove || viewingJellyfishFromAbove;
+    const viewingAquaticFromUnderwater = viewingSharkFromUnderwater || viewingJellyfishFromUnderwater;
+
+    // Save filter state if we need to apply underwater effects
+    const savedFilter = ctx.filter;
+    if (viewingAquaticFromAbove) {
+        // Viewing aquatic creature from above water - apply underwater blur effect (like coral)
+        ctx.filter = 'blur(2px)';
+        ctx.globalAlpha = 0.7; // Slightly transparent when viewed through water
+    } else if (viewingAquaticFromUnderwater) {
+        // Viewing aquatic creature from underwater - use SAME teal tint as other underwater entities
+        // (players, corals, projectiles) for consistent visibility when snorkeling with Reed Diver's Helm
+        ctx.globalAlpha = 1.0;
+        ctx.filter = UNDERWATER_TINT_FILTER;
+    }
+
+    if (useImageFallback) {
+        // Draw fallback colored shape with shake applied
+        const centerX = renderPosX + shakeX; // Use interpolated position
+        const centerY = renderPosY + shakeY; // Use interpolated position
+
+        // Special rendering for bees - tiny black/yellow pixel-like dot
+        if (isBee) {
+            ctx.save();
+            ctx.imageSmoothingEnabled = false; // Crisp pixel look
+
+            // Main bee body - small black dot
+            const beeSize = isFlashing ? 8 : 6;
+            ctx.fillStyle = isFlashing ? '#FFFFFF' : '#1A1A1A';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, beeSize / 2, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Yellow stripe through middle (when not flashing)
+            if (!isFlashing) {
+                ctx.fillStyle = '#FFD700'; // Gold/yellow
+                ctx.fillRect(centerX - 2, centerY - 1, 4, 2);
+            }
+
+            ctx.restore();
+        } else {
+            renderCyberpunkAssetPlaceholder(ctx, {
+                x: centerX,
+                y: centerY,
+                width: renderWidth,
+                height: renderHeight,
+                nowMs,
+                shape: 'animal',
+                label: animal.species.tag,
+                alpha: isFlashing ? 1 : 0.88,
+            });
+        }
+    } else {
+        // --- Prepare sprite on offscreen canvas only when white flash tinting is needed ---
+        if (offscreenCtx && animalImage) {
+            // Get sprite frame info for sprite sheets
+            // Use animated sprite rect for animated species, standard for others
+            const spriteRect = useSpriteSheet
+                ? (useAnimated
+                    ? getWildAnimalAnimatedSpriteSourceRect(
+                        animal.species,
+                        animal.facingDirection,
+                        calculatedAnimFrame,
+                        useDirectionalSplitSheet,
+                    )
+                    : getSpriteSourceRect(animal.facingDirection, useFlying))
+                : null;
+
+            if (useSpriteSheet && spriteRect) {
+                const { sx, sy, sw, sh } = spriteRect;
+
+                if (isCrabOnWater) {
+                    drawUnderwaterShadowOnly(
+                        ctx,
+                        animalImage,
+                        sx,
+                        sy,
+                        renderX,
+                        renderY,
+                        renderWidth,
+                        renderHeight,
+                    );
+                }
+
+                if (isFlashing) {
+                    offscreenCanvas.width = sw;
+                    offscreenCanvas.height = sh;
+                    offscreenCtx.clearRect(0, 0, sw, sh);
+                    offscreenCtx.drawImage(
+                        animalImage,
+                        sx, sy, sw, sh,
+                        0, 0, sw, sh,
+                    );
+
+                    const flashAlpha = getAnimalFlashAlpha(animal);
+                    offscreenCtx.globalCompositeOperation = 'source-in';
+                    offscreenCtx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+                    offscreenCtx.fillRect(0, 0, sw, sh);
+                    offscreenCtx.globalCompositeOperation = 'source-over';
+
+                    ctx.drawImage(
+                        offscreenCanvas,
+                        renderX,
+                        renderY,
+                        renderWidth,
+                        renderHeight
+                    );
+                } else {
+                    ctx.drawImage(
+                        animalImage,
+                        sx, sy, sw, sh,
+                        renderX,
+                        renderY,
+                        renderWidth,
+                        renderHeight
+                    );
+                }
+            } else {
+                if (isFlashing) {
+                    offscreenCanvas.width = animalImage.width;
+                    offscreenCanvas.height = animalImage.height;
+                    offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+                    offscreenCtx.drawImage(animalImage, 0, 0);
+
+                    const flashAlpha = getAnimalFlashAlpha(animal);
+                    offscreenCtx.globalCompositeOperation = 'source-in';
+                    offscreenCtx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+                    offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+                    offscreenCtx.globalCompositeOperation = 'source-over';
+
+                    ctx.drawImage(
+                        offscreenCanvas,
+                        renderX,
+                        renderY,
+                        renderWidth,
+                        renderHeight
+                    );
+                } else {
+                    ctx.drawImage(
+                        animalImage,
+                        renderX,
+                        renderY,
+                        renderWidth,
+                        renderHeight
+                    );
+                }
+            }
+        } else {
+            // Fallback: draw image directly without flash effect
+            if (useSpriteSheet) {
+                // Use animated sprite rect for animated species, standard for others
+                const spriteRect = useAnimated
+                    ? getWildAnimalAnimatedSpriteSourceRect(
+                        animal.species,
+                        animal.facingDirection,
+                        calculatedAnimFrame,
+                        useDirectionalSplitSheet,
+                    )
+                    : getSpriteSourceRect(animal.facingDirection, useFlying);
+                ctx.drawImage(
+                    animalImage!,
+                    spriteRect.sx, spriteRect.sy, spriteRect.sw, spriteRect.sh,
+                    renderX,
+                    renderY,
+                    renderWidth,
+                    renderHeight
+                );
+            } else {
+                ctx.drawImage(
+                    animalImage!,
+                    renderX,
+                    renderY,
+                    renderWidth,
+                    renderHeight
+                );
+            }
+        }
+    }
+
+    // Restore filter after drawing - aquatic tint is applied via filter BEFORE draw (same as other entities)
+    if (viewingAquaticFromAbove) {
+        ctx.filter = savedFilter;
+        ctx.globalAlpha = 1.0;
+    } else if (viewingAquaticFromUnderwater) {
+        ctx.filter = savedFilter;
+    }
+
+    // 🎐⚡ JELLYFISH SHOCK GLOW EFFECT
+    // When jellyfish emits an electric shock, render a pulsing yellow glow
+    const isJellyfish = animal.species.tag === 'Jellyfish';
+    if (isJellyfish) {
+        const shockActiveUntilMicros = (animal as any).shockActiveUntil?.microsSinceUnixEpoch ?? 0n;
+        const nowMicros = BigInt(nowMs) * 1000n;
+        
+        if (shockActiveUntilMicros > 0n && nowMicros < shockActiveUntilMicros) {
+            // Shock is active - render yellow glow
+            ctx.save();
+            
+            // Calculate pulse intensity (0-1) based on remaining time
+            const remainingMicros = Number(shockActiveUntilMicros - nowMicros);
+            const totalDurationMicros = 500000; // 500ms total duration
+            const progress = Math.max(0, remainingMicros / totalDurationMicros);
+            
+            // Pulsing effect - starts bright, fades out
+            const glowIntensity = progress * (0.5 + 0.5 * Math.sin(nowMs * 0.02)); // Pulsing
+            
+            // Draw yellow glow overlay using additive blending
+            ctx.globalCompositeOperation = 'screen';
+            ctx.globalAlpha = glowIntensity * 0.8;
+            ctx.fillStyle = '#FFFF00'; // Bright yellow
+            
+            // Draw glow circle around jellyfish
+            const glowRadius = renderWidth * 1.2;
+            const gradient = ctx.createRadialGradient(
+                renderPosX + shakeX, renderPosY + shakeY, 0,
+                renderPosX + shakeX, renderPosY + shakeY, glowRadius
+            );
+            gradient.addColorStop(0, 'rgba(255, 255, 100, 0.9)');
+            gradient.addColorStop(0.3, 'rgba(255, 255, 0, 0.6)');
+            gradient.addColorStop(0.7, 'rgba(255, 200, 0, 0.3)');
+            gradient.addColorStop(1, 'rgba(255, 150, 0, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(renderPosX + shakeX, renderPosY + shakeY, glowRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add electric crackle lines around the jellyfish
+            ctx.strokeStyle = `rgba(255, 255, 100, ${glowIntensity * 0.9})`;
+            ctx.lineWidth = 2;
+            const numBolts = 6;
+            for (let i = 0; i < numBolts; i++) {
+                const angle = (i / numBolts) * Math.PI * 2 + (nowMs * 0.01);
+                const boltLength = glowRadius * 0.8 * (0.7 + 0.3 * Math.random());
+                const startX = renderPosX + shakeX + Math.cos(angle) * (renderWidth * 0.3);
+                const startY = renderPosY + shakeY + Math.sin(angle) * (renderHeight * 0.3);
+                const endX = renderPosX + shakeX + Math.cos(angle) * boltLength;
+                const endY = renderPosY + shakeY + Math.sin(angle) * boltLength;
+                
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                // Add zigzag for electric bolt effect
+                const midX = (startX + endX) / 2 + (Math.random() - 0.5) * 15;
+                const midY = (startY + endY) / 2 + (Math.random() - 0.5) * 15;
+                ctx.lineTo(midX, midY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+        
+        // Apply underwater blur for jellyfish when viewed from above (like shark)
+        const viewingJellyfishFromAbove = !isLocalPlayerSnorkeling;
+        if (viewingJellyfishFromAbove && !useImageFallback) {
+            // Already handled in the main rendering with the shark logic
+        }
+    }
+
+    if (isCrabOnWater) {
+        drawShorelineWaterLine(
+            ctx,
+            renderPosX + shakeX,
+            renderPosY + shakeY - renderHeight * 0.08,
+            renderWidth * 0.9,
+            renderHeight * 0.9,
+            nowMs,
+        );
+    }
+
+    ctx.restore();
+}
+
+// Preload wild animal images using imageManager
+export function preloadWildAnimalImages(): void {
+    // Animated sprite sheets (4x4 or 6x4 layout)
+    const animatedSpriteSheets = [
+        // Wildlife - 4x4 animated
+        walrusWalkingAnimatedSheet,
+        foxWalkingAnimatedSheet,
+        tundraWolfWalkingAnimatedSheet,
+        ternWalkingAnimatedSheet,
+        crowWalkingAnimatedSheet,
+        wolverineWalkingAnimatedSheet,
+        caribouWalkingAnimatedSheet,
+        salmonSharkWalkingAnimatedSheet,
+        jellyfishWalkingAnimatedSheet,
+        crabWalkingAnimatedSheet, // BeachCrab - 4x4 animated
+        voleWalkingAnimatedSheet, // Vole - 4x4 animated
+        // Alpine animals - 4x4 animated
+        polarBearWalkingAnimatedSheet,
+        hareWalkingAnimatedSheet,
+        snowyOwlWalkingAnimatedSheet,
+        // Hostile NPCs - 6x4 animated
+        shoreboundWalkingAnimatedSheet,
+        shardkinWalkingAnimatedSheet,
+        drownedWatchWalkingAnimatedSheet,
+        // Flying sprites - 4x4 animated
+        ternFlyingAnimatedSheet,
+        crowFlyingAnimatedSheet,
+        snowyOwlFlyingAnimatedSheet,
+    ];
+
+    // Legacy sprite sheets (3x3 static - no animated versions yet)
+    const legacySpriteSheets = [
+        // crabWalkingSheet, // Now using animated crab_release_walking.png
+        // voleWalkingSheet, // Now using animated vole_walking_release.png
+        cableViperWalkingSheet,
+    ];
+
+    // Preload all sprite sheets
+    [...animatedSpriteSheets, ...legacySpriteSheets].forEach(imageSrc => {
+        imageManager.preloadImage(imageSrc);
+    });
+
+    REGISTERED_DIRECTIONAL_SHEET_PRELOAD_URLS.forEach((url) => imageManager.preloadImage(url));
+}
+
+// Helper function to check if coordinates are within animal bounds
+export function isPointInAnimal(
+    x: number,
+    y: number,
+    animal: WildAnimal
+): boolean {
+    // Use the collision bounds system for consistent sizing
+    const bounds = getAnimalCollisionBounds(animal);
+
+    return x >= bounds.x && x <= bounds.x + bounds.width &&
+        y >= bounds.y && y <= bounds.y + bounds.height;
+}
+
+// --- THOUGHT BUBBLE RENDERING ---
+
+interface ThoughtBubbleProps {
+    ctx: CanvasRenderingContext2D;
+    animal: WildAnimal;
+    nowMs: number;
+    emoji: string;
+    duration: number;
+    startTime: number;
+}
+
+/**
+ * Renders a thought bubble with an emoji above a tamed animal
+ */
+export function renderAnimalThoughtBubble({
+    ctx,
+    animal,
+    nowMs,
+    emoji,
+    duration,
+    startTime,
+}: ThoughtBubbleProps) {
+    const elapsed = nowMs - startTime;
+
+    // Don't render if effect has expired
+    if (elapsed >= duration) {
+        return;
+    }
+
+    // Calculate bubble position above the animal
+    const bubbleX = animal.posX;
+    const bubbleY = animal.posY - 80; // Position above the animal
+
+    // Calculate fade effect for the last 500ms
+    const fadeStartTime = duration - 500;
+    let alpha = 1.0;
+    if (elapsed > fadeStartTime) {
+        alpha = 1.0 - ((elapsed - fadeStartTime) / 500);
+    }
+
+    // Add slight bob animation
+    const bobOffset = Math.sin((elapsed * 0.008)) * 3; // Gentle bobbing motion
+    const finalY = bubbleY + bobOffset;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // Draw thought bubble background
+    const bubbleRadius = 25;
+    const tailHeight = 8;
+
+    // Bubble gradient
+    const gradient = ctx.createRadialGradient(bubbleX, finalY, 0, bubbleX, finalY, bubbleRadius);
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+    gradient.addColorStop(1, 'rgba(240, 240, 240, 0.85)');
+
+    // Main bubble circle
+    ctx.fillStyle = gradient;
+    ctx.strokeStyle = 'rgba(100, 100, 100, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(bubbleX, finalY, bubbleRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Thought bubble tail (small circles)
+    const tailPositions = [
+        { x: bubbleX - 10, y: finalY + bubbleRadius + 5, radius: 4 },
+        { x: bubbleX - 18, y: finalY + bubbleRadius + 12, radius: 3 },
+        { x: bubbleX - 24, y: finalY + bubbleRadius + 18, radius: 2 },
+    ];
+
+    tailPositions.forEach(pos => {
+        ctx.fillStyle = gradient;
+        ctx.strokeStyle = 'rgba(100, 100, 100, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    });
+
+    // Draw emoji
+    ctx.fillStyle = 'black';
+    ctx.font = '24px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(emoji, bubbleX, finalY);
+
+    ctx.restore();
+}
+
+/**
+ * Renders taming-related thought bubbles for wild animals
+ */
+export function renderTamingThoughtBubbles({
+    ctx,
+    animal,
+    nowMs,
+}: {
+    ctx: CanvasRenderingContext2D;
+    animal: WildAnimal;
+    nowMs: number;
+}) {
+    // Check for heart effect (when animal is tamed)
+    if (animal.heartEffectUntil) {
+        const heartEffectEndTime = Number(animal.heartEffectUntil.microsSinceUnixEpoch) / 1000; // Convert to milliseconds
+        const heartEffectStartTime = heartEffectEndTime - 3000; // 3 second duration
+
+        if (nowMs >= heartEffectStartTime && nowMs <= heartEffectEndTime) {
+            renderAnimalThoughtBubble({
+                ctx,
+                animal,
+                nowMs,
+                emoji: '💖',
+                duration: 3000,
+                startTime: heartEffectStartTime,
+            });
+        }
+    }
+
+    // Check for crying effect (when tamed animal is hit by owner)
+    if (animal.cryingEffectUntil) {
+        const cryingEffectEndTime = Number(animal.cryingEffectUntil.microsSinceUnixEpoch) / 1000; // Convert to milliseconds
+        const cryingEffectStartTime = cryingEffectEndTime - 3000; // 3 second duration
+
+        if (nowMs >= cryingEffectStartTime && nowMs <= cryingEffectEndTime) {
+            renderAnimalThoughtBubble({
+                ctx,
+                animal,
+                nowMs,
+                emoji: '😢',
+                duration: 3000,
+                startTime: cryingEffectStartTime,
+            });
+        }
+    }
+
+    // Additional thought bubbles can be added here for other emotions/states
+}
+
+/**
+ * Renders pregnancy indicator thought bubble for breeding animals
+ * Shows a small 🤰 indicator above pregnant caribou and walruses (both tamed and wild)
+ * The indicator gently pulses to draw attention without being intrusive
+ */
+export function renderPregnancyIndicator({
+    ctx,
+    animal,
+    nowMs,
+    caribouBreedingData,
+    walrusBreedingData,
+}: {
+    ctx: CanvasRenderingContext2D;
+    animal: WildAnimal;
+    nowMs: number;
+    caribouBreedingData?: Map<string, CaribouBreedingData>;
+    walrusBreedingData?: Map<string, WalrusBreedingData>;
+}) {
+    // Check if this animal is pregnant
+    const isPregnant = isAnimalPregnant(animal, caribouBreedingData, walrusBreedingData);
+    if (!isPregnant) return;
+
+    // Position indicator above the animal (slightly offset from center)
+    const indicatorX = animal.posX + 20;
+    const indicatorY = animal.posY - 60;
+
+    // Gentle pulsing animation (0.8 to 1.0 scale)
+    const pulsePhase = (nowMs / 1500) * Math.PI; // 1.5 second cycle
+    const pulseScale = 0.9 + 0.1 * Math.sin(pulsePhase);
+
+    // Gentle bob animation (up/down 3px)
+    const bobOffset = Math.sin(nowMs / 800) * 3;
+
+    ctx.save();
+
+    // Draw small thought bubble with pregnancy emoji
+    const bubbleRadius = 16 * pulseScale;
+    const finalY = indicatorY + bobOffset;
+
+    // Bubble background - soft pink tint for pregnancy
+    const gradient = ctx.createRadialGradient(indicatorX, finalY, 0, indicatorX, finalY, bubbleRadius);
+    gradient.addColorStop(0, 'rgba(255, 220, 230, 0.95)'); // Soft pink center
+    gradient.addColorStop(1, 'rgba(255, 200, 210, 0.85)'); // Slightly darker pink edge
+
+    // Main bubble circle
+    ctx.fillStyle = gradient;
+    ctx.strokeStyle = 'rgba(200, 100, 130, 0.5)'; // Soft pink border
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(indicatorX, finalY, bubbleRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Small tail circles pointing to animal
+    const tailPositions = [
+        { x: indicatorX - 8, y: finalY + bubbleRadius + 3, radius: 3 },
+        { x: indicatorX - 12, y: finalY + bubbleRadius + 8, radius: 2 },
+    ];
+
+    tailPositions.forEach(pos => {
+        ctx.fillStyle = gradient;
+        ctx.strokeStyle = 'rgba(200, 100, 130, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, pos.radius * pulseScale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    });
+
+    // Draw pregnancy emoji (🤰 or simpler 💕 for visibility at small sizes)
+    ctx.fillStyle = 'black';
+    ctx.font = `${Math.round(18 * pulseScale)}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('💕', indicatorX, finalY); // Using hearts for better visibility at small sizes
+
+    ctx.restore();
+}

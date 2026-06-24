@@ -1,0 +1,376 @@
+/* SOVA Voice Interface Styles */
+/* Updated cyberpunk aesthetic matching the game's visual language */
+
+.voice-interface-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.voice-interface-rings {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dark panel background - matches game UI style */
+.voice-interface-rings::before {
+  content: '';
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(0, 255, 136, 0.4);
+  box-shadow: 
+    0 0 40px rgba(0, 255, 136, 0.2),
+    0 0 80px rgba(0, 0, 0, 0.8),
+    inset 0 0 40px rgba(0, 255, 136, 0.05);
+  z-index: -1;
+}
+
+/* Enhanced background when recording */
+.voice-interface-rings:has(.recording)::before {
+  background: linear-gradient(145deg, rgba(10, 35, 45, 0.98), rgba(5, 25, 35, 0.99));
+  border-color: rgba(0, 255, 136, 0.7);
+  box-shadow: 
+    0 0 50px rgba(0, 255, 136, 0.4),
+    0 0 100px rgba(0, 0, 0, 0.9),
+    inset 0 0 50px rgba(0, 255, 136, 0.1);
+}
+
+/* Scan line effect overlay */
+.voice-interface-rings::after {
+  content: '';
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 255, 136, 0.02) 3px,
+    rgba(0, 255, 136, 0.02) 6px
+  );
+  z-index: 20;
+  pointer-events: none;
+  animation: scanlineMove 8s linear infinite;
+}
+
+/* Outer Ring - Primary accent */
+.voice-interface-outer-ring {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 255, 136, 0.8);
+  box-shadow: 
+    0 0 25px rgba(0, 255, 136, 0.5), 
+    inset 0 0 25px rgba(0, 255, 136, 0.1);
+}
+
+.voice-interface-outer-ring.recording {
+  animation: voice-pulse-green 1.5s infinite;
+  border-color: #00ff88;
+  box-shadow: 
+    0 0 40px rgba(0, 255, 136, 0.7), 
+    inset 0 0 30px rgba(0, 255, 136, 0.2),
+    0 0 80px rgba(0, 255, 136, 0.3);
+}
+
+/* Middle Ring - Rotating accent */
+.voice-interface-middle-ring {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 212, 255, 0.6);
+  border-top: 2px solid transparent;
+  border-right: 2px solid transparent;
+  box-shadow: 
+    0 0 20px rgba(0, 212, 255, 0.4);
+}
+
+.voice-interface-middle-ring.recording {
+  animation: voice-rotate 2s linear infinite;
+  border-color: #00d4ff;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  box-shadow: 
+    0 0 35px rgba(0, 212, 255, 0.6);
+}
+
+/* Inner Ring - Counter-rotating */
+.voice-interface-inner-ring {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 0.5);
+  border-bottom: 2px solid transparent;
+  border-left: 2px solid transparent;
+  box-shadow: 
+    0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.voice-interface-inner-ring.recording {
+  animation: voice-rotate 1.5s linear infinite reverse;
+  border-color: rgba(0, 255, 136, 0.8);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  box-shadow: 
+    0 0 25px rgba(0, 255, 136, 0.5);
+}
+
+/* Center Circle - SOVA core */
+.voice-interface-center {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 0.6);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 136, 0.4), 
+    inset 0 0 30px rgba(0, 255, 136, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  background: linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* Center scan line */
+.voice-interface-center::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.8), transparent);
+  animation: centerScan 2s linear infinite;
+}
+
+.voice-interface-center.recording {
+  background: linear-gradient(145deg, rgba(10, 40, 50, 0.98), rgba(5, 30, 40, 0.99));
+  box-shadow: 
+    0 0 35px rgba(0, 255, 136, 0.7), 
+    inset 0 0 40px rgba(0, 255, 136, 0.15);
+  border-color: #00ff88;
+}
+
+.voice-interface-center.idle {
+  background: linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+}
+
+/* SOVA Icon */
+.voice-interface-sova-icon {
+  width: 75px;
+  height: 75px;
+  filter: brightness(1.1) contrast(1.1) drop-shadow(0 0 6px rgba(0, 255, 136, 0.3));
+  transition: all 0.3s ease;
+}
+
+.voice-interface-sova-icon.recording {
+  filter: brightness(1.3) contrast(1.2) 
+          drop-shadow(0 0 15px rgba(0, 255, 136, 0.8)) 
+          drop-shadow(0 0 25px rgba(0, 255, 136, 0.4));
+  transform: scale(1.05);
+}
+
+/* Processing Indicator */
+.voice-interface-processing {
+  color: #00ff88;
+  animation: voice-pulse-green 0.5s infinite;
+  font-size: 32px;
+  text-shadow: 0 0 15px #00ff88, 0 0 30px rgba(0, 255, 136, 0.5);
+}
+
+/* Error Indicator */
+.voice-interface-error {
+  color: #ff4444;
+  font-size: 32px;
+  text-shadow: 0 0 15px #ff4444;
+}
+
+/* SOVA Label */
+.voice-interface-label {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #00ff88;
+  font-size: 14px;
+  font-family: "Press Start 2P", cursive;
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.8), 0 0 25px rgba(0, 255, 136, 0.4);
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, rgba(15, 30, 50, 0.95), rgba(10, 20, 40, 0.98));
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+/* Status Text */
+.voice-interface-status {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(0, 255, 136, 0.9);
+  font-size: 10px;
+  font-family: "Press Start 2P", cursive;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+  white-space: nowrap;
+  background: linear-gradient(135deg, rgba(15, 30, 50, 0.95), rgba(10, 20, 40, 0.98));
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.15);
+  letter-spacing: 1px;
+}
+
+/* Error Message */
+.voice-interface-error-message {
+  position: absolute;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff6666;
+  font-size: 9px;
+  font-family: "Press Start 2P", cursive;
+  text-align: center;
+  max-width: 320px;
+  word-wrap: break-word;
+  background: linear-gradient(135deg, rgba(40, 15, 20, 0.95), rgba(30, 10, 15, 0.98));
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 102, 102, 0.4);
+  text-shadow: 0 0 8px rgba(255, 102, 102, 0.5);
+  box-shadow: 0 0 20px rgba(255, 102, 102, 0.2);
+  line-height: 1.5;
+}
+
+/* Transcribed Text Preview */
+.voice-interface-transcription {
+  position: absolute;
+  bottom: -140px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #00d4ff;
+  font-size: 9px;
+  font-family: "Press Start 2P", cursive;
+  text-align: center;
+  max-width: 400px;
+  word-wrap: break-word;
+  background: linear-gradient(135deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+  padding: 14px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+  box-shadow: 
+    0 0 25px rgba(0, 212, 255, 0.2),
+    inset 0 0 20px rgba(0, 212, 255, 0.05);
+  animation: text-pulse 2s infinite;
+  backdrop-filter: blur(8px);
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+}
+
+/* Animations */
+@keyframes voice-pulse-green {
+  0% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.03); 
+    opacity: 0.85; 
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+}
+
+@keyframes voice-rotate {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+@keyframes text-pulse {
+  0% { 
+    opacity: 0.9; 
+    transform: translateX(-50%) scale(1);
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateX(-50%) scale(1.01);
+  }
+  100% { 
+    opacity: 0.9; 
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes scanlineMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100px;
+  }
+}
+
+@keyframes centerScan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+/* Additional glow effects for recording state */
+.voice-interface-rings:has(.recording) {
+  filter: drop-shadow(0 0 25px rgba(0, 255, 136, 0.3));
+}
+
+/* Outer glow pulse when recording */
+.voice-interface-rings:has(.recording) .voice-interface-outer-ring::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 60%, rgba(0, 255, 136, 0.15) 100%);
+  animation: voice-pulse-green 2s infinite;
+}
+
+/* Data stream decorations */
+.voice-interface-label::before {
+  content: '◈';
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.voice-interface-label::after {
+  content: '◈';
+  margin-left: 8px;
+  opacity: 0.7;
+}

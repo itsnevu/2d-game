@@ -1,0 +1,40 @@
+name: Discord - Git commits
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    # Only run on the public repo; skip when pushing to origin (private/other remote)
+    if: github.repository == 'SeloSlav/2d-multiplayer-survival-mmorpg'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Post commit(s) to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          COMPARE_URL: ${{ github.event.compare }}
+          PUSHER: ${{ github.actor }}
+        run: |
+          set -e
+
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "::error::DISCORD_WEBHOOK_URL secret not set. Add it in Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+
+          COMMITS=$(python3 .github/scripts/discord-commit-helper.py)
+          export CONTENT="**${REPO}** pushed to **${BRANCH}** by **${PUSHER}**
+          ${COMMITS}
+          <${COMPARE_URL}>"
+
+          python3 .github/scripts/discord-commit-helper.py post

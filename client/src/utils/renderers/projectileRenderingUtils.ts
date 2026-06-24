@@ -1,0 +1,758 @@
+import { Projectile as SpacetimeDBProjectile } from '../../generated/types';
+import {
+  NPC_PROJECTILE_SPECTRAL_BOLT,
+  NPC_PROJECTILE_SPECTRAL_SHARD,
+  NPC_PROJECTILE_VENOM_SPITTLE,
+  PROJECTILE_GRAVITY,
+  PROJECTILE_SOURCE_MONUMENT_TURRET,
+  PROJECTILE_SOURCE_NPC,
+  PROJECTILE_SOURCE_PLAYER,
+  PROJECTILE_SOURCE_TURRET,
+} from '../../config/projectileConstants';
+import { sampleProjectileState } from '../projectileSampling';
+// Full 64x64px rendering for all projectiles
+const DEFAULT_ARROW_SCALE = 0.7; // Full size arrows (Hunting Bow)
+const CROSSBOW_ARROW_SCALE = 0.7; // Full size crossbow bolts
+const BULLET_SCALE = 0.35; // Half size bullets from pistols (was 0.7)
+const DEFAULT_THROWN_SCALE = 0.7; // Full size thrown items
+const WEAPON_THROWN_SCALE = 1.0; // Full size thrown weapons (melee weapons like combat ladle)
+const ARROW_SPRITE_OFFSET_X = 0; // Pixels to offset drawing from calculated center, if sprite isn't centered
+const ARROW_SPRITE_OFFSET_Y = 0; // Pixels to offset drawing from calculated center, if sprite isn't centered
+
+// Client-side projectile lifetime limits for cleanup (in case server is slow)
+const MAX_PROJECTILE_LIFETIME_MS = 12000; // 12 seconds max
+const MAX_PROJECTILE_DISTANCE = 1200; // Max distance before client cleanup
+const PROJECTILE_TRACKING_DELETE_GRACE_MS = 100; // Minimal grace for subscription churn; normal hit/delete is immediate
+const PROJECTILE_INITIAL_CATCHUP_WINDOW_MS = 120;
+
+// --- Client-side animation tracking for projectiles ---
+const clientProjectileStartTimes = new Map<string, number>(); // projectileId -> first-seen performance.now timestamp
+const clientProjectileInitialElapsedMs = new Map<string, number>(); // projectileId -> clamped estimated elapsed at first sight
+const projectileMissingSince = new Map<string, number>(); // projectileId -> first timestamp seen missing from current set
+const projectileDrawnKeysThisPass = new Set<string>();
+let activeProjectileRenderPassToken = -1;
+
+/** Collision circle for client-side projectile hit prediction (matches server radii) */
+export interface ProjectileCollisionCircle {
+  cx: number;
+  cy: number;
+  radius: number;
+  /** When set, projectiles from this owner skip this circle (exclude shooter) */
+  ownerIdentity?: string;
+}
+
+// Server radii (must match projectile.rs) for client-side collision prediction
+const TREE_R = 30; const TREE_Y = 10;
+const STONE_R = 25; const STONE_Y = 5;
+const ANIMAL_R = 32;
+const BARREL_R = 28; const BARREL_Y = 10;
+const PLAYER_R = 48;
+const BOX_R = 28; const BOX_Y = 5;
+const BOX_TYPE_BACKPACK = 4;
+const CAMPFIRE_R = 32; const CAMPFIRE_Y = -5;
+const STASH_R = 25;
+const SLEEPING_BAG_R = 28;
+const FURNACE_R = 40; const FURNACE_Y = 5;
+const LANTERN_R = 25; const LANTERN_Y = 0;
+const RUNE_STONE_R = 80; const RUNE_STONE_Y = 100;
+const BASALT_R = 35; const BASALT_Y = 40;
+const ANIMAL_CORPSE_R = 20; const ANIMAL_CORPSE_Y = 5;
+const PLAYER_CORPSE_R = 25; const PLAYER_CORPSE_Y = 5;
+const RAIN_COLLECTOR_R = 35; const RAIN_COLLECTOR_Y = 5;
+const BARBECUE_R = 40; const BARBECUE_Y = 5;
+const HEARTH_R = 60; const HEARTH_Y = 5;
+const LIVING_CORAL_R = 25;
+
+/** Returns first impact point (x, y, t) where segment hits circle, or null. t in [0,1]. */
+export function lineCircleFirstImpactPoint(
+  x1: number, y1: number, x2: number, y2: number,
+  cx: number, cy: number, radius: number
+): { x: number; y: number; t: number } | null {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const fx = x1 - cx;
+  const fy = y1 - cy;
+  const a = dx * dx + dy * dy;
+  if (a < 1e-8) return null;
+  const b = 2 * (fx * dx + fy * dy);
+  const c = fx * fx + fy * fy - radius * radius;
+  const discriminant = b * b - 4 * a * c;
+  if (discriminant < 0) return null;
+  const sqrtD = Math.sqrt(discriminant);
+  const t1 = (-b - sqrtD) / (2 * a);
+  const t2 = (-b + sqrtD) / (2 * a);
+  const t = (t1 >= 0 && t1 <= 1) ? t1 : (t2 >= 0 && t2 <= 1) ? t2 : null;
+  if (t == null) return null;
+  return { x: x1 + t * dx, y: y1 + t * dy, t };
+}
+
+interface RenderProjectileProps {
+  ctx: CanvasRenderingContext2D;
+  projectile: SpacetimeDBProjectile;
+  arrowImage: HTMLImageElement;
+  currentTimeMs: number;
+  itemDefinitions?: Map<string, any>; // NEW: Add itemDefinitions to determine weapon type
+  applyUnderwaterTint?: boolean; // Apply teal underwater tint when projectile is underwater
+  /** Client-side collision prediction: clamp render position at first hit */
+  collisionCircles?: ProjectileCollisionCircle[];
+}
+
+export function getProjectileTrackingKey(projectile: SpacetimeDBProjectile): string {
+  const clientShotId = projectile.clientShotId?.trim?.() ?? '';
+  return clientShotId.length > 0 ? clientShotId : projectile.id.toString();
+}
+
+export function getProjectileVisualDedupKey(projectile: SpacetimeDBProjectile): string {
+  const clientShotId = projectile.clientShotId?.trim?.() ?? '';
+  if (clientShotId.length > 0) {
+    return clientShotId;
+  }
+  return projectile.id.toString();
+}
+
+export function beginProjectileRenderPass(passToken: number): void {
+  if (activeProjectileRenderPassToken === passToken) return;
+  activeProjectileRenderPassToken = passToken;
+  projectileDrawnKeysThisPass.clear();
+}
+
+function getClientShotTimestampMs(projectile: SpacetimeDBProjectile): number | null {
+  const clientShotId = projectile.clientShotId?.trim?.() ?? '';
+  if (!clientShotId) return null;
+
+  const parts = clientShotId.split(':');
+  if (parts.length < 3) return null;
+
+  const timestampMs = Number(parts[parts.length - 2]);
+  return Number.isFinite(timestampMs) ? timestampMs : null;
+}
+
+export const renderProjectile = ({
+  ctx,
+  projectile,
+  arrowImage,
+  currentTimeMs,
+  itemDefinitions, // NEW: Add itemDefinitions parameter
+  applyUnderwaterTint = false, // Apply teal underwater tint when projectile is underwater
+  collisionCircles,
+}: RenderProjectileProps) => {
+  // IMPORTANT: Check for NPC/turret projectiles FIRST - they use primitive rendering, not images
+  const isNpcOrTurretProjectile = projectile.sourceType === PROJECTILE_SOURCE_NPC || 
+                                   projectile.sourceType === PROJECTILE_SOURCE_TURRET ||
+                                   projectile.sourceType === PROJECTILE_SOURCE_MONUMENT_TURRET;
+  
+  // If sprite isn't ready yet, keep rendering with a primitive fallback so
+  // the projectile arc remains visible from spawn.
+  const hasValidSprite = !!arrowImage && arrowImage.complete && arrowImage.naturalHeight > 0;
+  const usePrimitiveSpriteFallback = !isNpcOrTurretProjectile && !hasValidSprite;
+
+  const projectileId = getProjectileVisualDedupKey(projectile);
+  if (projectileDrawnKeysThisPass.has(projectileId)) {
+    return;
+  }
+  projectileDrawnKeysThisPass.add(projectileId);
+
+  // Anchor to authoritative timing, but ease late arrivals in from spawn instead
+  // of popping them halfway through the arc on first render.
+  const serverStartMs = Number(projectile.startTime.microsSinceUnixEpoch / 1000n);
+  let firstSeenPerfMs = clientProjectileStartTimes.get(projectileId);
+  let catchUpTargetMs = clientProjectileInitialElapsedMs.get(projectileId);
+  if (firstSeenPerfMs === undefined || catchUpTargetMs === undefined) {
+    firstSeenPerfMs = currentTimeMs;
+    clientProjectileStartTimes.set(projectileId, firstSeenPerfMs);
+    const shotTimestampMs = getClientShotTimestampMs(projectile);
+    const elapsedOriginMs = shotTimestampMs ?? serverStartMs;
+    const estimatedElapsedMs = Date.now() - elapsedOriginMs;
+    // Keep total reconciliation modest so long-latency shots do not overtake far ahead,
+    // but still allow the projectile to converge to the server timeline quickly.
+    catchUpTargetMs = Math.min(180, Math.max(0, estimatedElapsedMs));
+    clientProjectileInitialElapsedMs.set(projectileId, catchUpTargetMs);
+  }
+  const elapsedSinceFirstSeenMs = Math.max(0, currentTimeMs - firstSeenPerfMs);
+  const catchUpProgress = Math.min(1, elapsedSinceFirstSeenMs / PROJECTILE_INITIAL_CATCHUP_WINDOW_MS);
+  const easedCatchUpMs = catchUpTargetMs * catchUpProgress;
+  const elapsedTimeSeconds = (elapsedSinceFirstSeenMs + easedCatchUpMs) / 1000;
+  projectileMissingSince.delete(projectileId);
+  void collisionCircles;
+  
+  // Client-side safety checks to prevent projectiles from lingering indefinitely
+  const distanceTraveled = Math.sqrt(
+    Math.pow(projectile.startPosX - (projectile.startPosX + projectile.velocityX * elapsedTimeSeconds), 2) +
+    Math.pow(projectile.startPosY - (projectile.startPosY + projectile.velocityY * elapsedTimeSeconds), 2)
+  );
+  
+  const maxRenderableDistance = Math.min(
+    MAX_PROJECTILE_DISTANCE,
+    Math.max(32, projectile.maxRange + 16) // small tolerance for sprite size/sub-frame drift
+  );
+  // Don't render if projectile has exceeded reasonable limits (client-side cleanup)
+  if (elapsedTimeSeconds > 15 || distanceTraveled > maxRenderableDistance) {
+    // Clean up tracking for this projectile
+    clientProjectileStartTimes.delete(projectileId);
+    clientProjectileInitialElapsedMs.delete(projectileId);
+    projectileMissingSince.delete(projectileId);
+    return;
+  }
+  
+  const sampledState = sampleProjectileState(projectile, elapsedTimeSeconds, itemDefinitions);
+  let currentX = sampledState.x;
+  let currentY = sampledState.y;
+  const isThrown = sampledState.isThrown;
+  const isBullet = sampledState.isBullet;
+
+  if (projectile.sourceType === PROJECTILE_SOURCE_PLAYER && collisionCircles && collisionCircles.length > 0) {
+    const ownerId = projectile.ownerId?.toHexString?.();
+    let closestHit: { x: number; y: number; t: number } | null = null;
+    for (const { cx, cy, radius, ownerIdentity } of collisionCircles) {
+      if (ownerIdentity && ownerId && ownerIdentity === ownerId) continue;
+      const hit = lineCircleFirstImpactPoint(
+        projectile.startPosX,
+        projectile.startPosY,
+        currentX,
+        currentY,
+        cx,
+        cy,
+        radius,
+      );
+      if (hit && (!closestHit || hit.t < closestHit.t)) {
+        closestHit = hit;
+      }
+    }
+    if (closestHit) {
+      currentX = closestHit.x;
+      currentY = closestHit.y;
+    }
+  }
+
+  // Calculate rotation based on velocity vector
+  let angle: number;
+  if (isThrown) {
+    // Check if this is a spear/harpoon type weapon (should fly straight, not spin)
+    let isSpearType = false;
+    if (itemDefinitions) {
+      const thrownItemDef = itemDefinitions.get(projectile.itemDefId.toString());
+      if (thrownItemDef) {
+        const name = thrownItemDef.name;
+        isSpearType = name === "Wooden Spear" || name === "Stone Spear" || name === "Reed Harpoon";
+      }
+    }
+    
+    if (isSpearType) {
+      // Spears and harpoons fly straight, pointing in direction of travel
+      angle = Math.atan2(projectile.velocityY, projectile.velocityX) + (Math.PI / 4);
+    } else {
+      // Other thrown items (skulls, clubs, etc.) spin while flying
+      const baseAngle = Math.atan2(projectile.velocityY, projectile.velocityX) + (Math.PI / 4);
+      const spinSpeed = 8.0; // Rotations per second - adjust for desired spin rate
+      const spinAngle = spinSpeed * 2 * Math.PI * elapsedTimeSeconds;
+      angle = baseAngle + spinAngle;
+    }
+  } else {
+    angle = Math.atan2(sampledState.instantaneousVelocityY, projectile.velocityX) + (Math.PI / 4);
+  }
+
+  // Determine scale dynamically based on item definition to match equipped item rendering
+  let scale: number;
+  if (isBullet) {
+    scale = BULLET_SCALE; // Bullets stay small
+  } else if (isThrown) {
+    // Thrown items: match equipped item scale (0.9 for weapons, 0.7 for non-weapons)
+    if (itemDefinitions) {
+      const thrownItemDef = itemDefinitions.get(projectile.itemDefId.toString());
+      if (thrownItemDef) {
+        const isMeleeWeapon = thrownItemDef.category?.tag === "Weapon";
+        scale = isMeleeWeapon ? WEAPON_THROWN_SCALE : DEFAULT_THROWN_SCALE;
+      } else {
+        scale = DEFAULT_THROWN_SCALE; // Default if definition not found
+      }
+    } else {
+      scale = DEFAULT_THROWN_SCALE; // Default if itemDefinitions not provided
+    }
+  } else {
+    // Arrows: match equipped arrow scale (0.3 for bow, 0.28 for crossbow)
+    if (itemDefinitions) {
+      const weaponDef = itemDefinitions.get(projectile.itemDefId.toString());
+      if (weaponDef?.name === "Crossbow") {
+        scale = CROSSBOW_ARROW_SCALE;
+      } else {
+        scale = DEFAULT_ARROW_SCALE; // Default to bow arrow scale
+      }
+    } else {
+      scale = DEFAULT_ARROW_SCALE; // Default if itemDefinitions not provided
+    }
+  }
+  
+  const drawWidth = hasValidSprite ? arrowImage.naturalWidth * scale : 0;
+  const drawHeight = hasValidSprite ? arrowImage.naturalHeight * scale : 0;
+
+  ctx.save();
+  
+  // Check if this is an NPC projectile (source_type = 2)
+  const isNpcProjectile = projectile.sourceType === PROJECTILE_SOURCE_NPC;
+  
+  if (isNpcProjectile) {
+    // NPC projectile rendering (debug log removed for performance)
+    
+    // NPC projectiles use no gravity - they travel in straight lines
+    // Render based on npc_projectile_type
+    const npcType = projectile.npcProjectileType;
+    
+    if (npcType === NPC_PROJECTILE_SPECTRAL_SHARD) {
+      // === SHARDKIN SPECTRAL SHARD ===
+      // Blue/purple ice shard with crystalline trail
+      const shardLength = 12;
+      const shardWidth = 4;
+      const rotation = Math.atan2(projectile.velocityY, projectile.velocityX);
+      
+      // Draw trailing particles
+      const trailLength = 6;
+      for (let i = 1; i < trailLength; i++) {
+        const trailTime = elapsedTimeSeconds - (i * 0.03);
+        if (trailTime < 0) continue;
+        
+        const trailX = projectile.startPosX + (projectile.velocityX * trailTime);
+        const trailY = projectile.startPosY + (projectile.velocityY * trailTime);
+        const alpha = 0.5 * (1 - i / trailLength);
+        
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = `rgba(100, 180, 255, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(trailX, trailY, shardWidth * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      
+      // Draw main shard (diamond shape)
+      ctx.save();
+      ctx.translate(currentX, currentY);
+      ctx.rotate(rotation);
+      
+      // Outer glow
+      const glowGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, shardLength);
+      glowGradient.addColorStop(0, 'rgba(150, 200, 255, 0.8)');
+      glowGradient.addColorStop(0.5, 'rgba(100, 150, 255, 0.4)');
+      glowGradient.addColorStop(1, 'rgba(80, 100, 200, 0)');
+      ctx.fillStyle = glowGradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, shardLength, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Main shard body (elongated diamond)
+      ctx.fillStyle = 'rgba(180, 220, 255, 0.9)';
+      ctx.beginPath();
+      ctx.moveTo(shardLength, 0);
+      ctx.lineTo(0, shardWidth);
+      ctx.lineTo(-shardLength * 0.4, 0);
+      ctx.lineTo(0, -shardWidth);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Inner bright core
+      ctx.fillStyle = 'rgba(220, 240, 255, 1)';
+      ctx.beginPath();
+      ctx.moveTo(shardLength * 0.6, 0);
+      ctx.lineTo(0, shardWidth * 0.5);
+      ctx.lineTo(-shardLength * 0.2, 0);
+      ctx.lineTo(0, -shardWidth * 0.5);
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.restore();
+      
+    } else if (npcType === NPC_PROJECTILE_SPECTRAL_BOLT) {
+      // === SHOREBOUND SPECTRAL BOLT ===
+      // Ghostly white/cyan ethereal projectile with wispy trail
+      const boltLength = 16;
+      const boltWidth = 6;
+      const rotation = Math.atan2(projectile.velocityY, projectile.velocityX);
+      
+      // Draw wispy trailing particles
+      const trailLength = 8;
+      for (let i = 1; i < trailLength; i++) {
+        const trailTime = elapsedTimeSeconds - (i * 0.04);
+        if (trailTime < 0) continue;
+        
+        const trailX = projectile.startPosX + (projectile.velocityX * trailTime);
+        const trailY = projectile.startPosY + (projectile.velocityY * trailTime);
+        const alpha = 0.6 * (1 - i / trailLength);
+        
+        // Wispy effect with slight random offset
+        const wobble = Math.sin(trailTime * 20 + i) * 3;
+        
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = `rgba(200, 230, 255, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(trailX, trailY + wobble, boltWidth * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      
+      // Draw main bolt
+      ctx.save();
+      ctx.translate(currentX, currentY);
+      ctx.rotate(rotation);
+      
+      // Outer ghostly glow
+      const ghostGlow = ctx.createRadialGradient(0, 0, 0, 0, 0, boltLength * 1.2);
+      ghostGlow.addColorStop(0, 'rgba(220, 240, 255, 0.7)');
+      ghostGlow.addColorStop(0.4, 'rgba(180, 220, 255, 0.3)');
+      ghostGlow.addColorStop(1, 'rgba(150, 200, 255, 0)');
+      ctx.fillStyle = ghostGlow;
+      ctx.beginPath();
+      ctx.arc(0, 0, boltLength * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Main spectral body (elongated oval)
+      ctx.fillStyle = 'rgba(230, 245, 255, 0.8)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, boltLength, boltWidth, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Inner bright core
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      ctx.beginPath();
+      ctx.ellipse(boltLength * 0.2, 0, boltLength * 0.5, boltWidth * 0.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+      
+    } else if (npcType === NPC_PROJECTILE_VENOM_SPITTLE) {
+      // === VIPER VENOM SPITTLE ===
+      // Green toxic glob with dripping trail
+      const globRadius = 7;
+      const rotation = Math.atan2(projectile.velocityY, projectile.velocityX);
+      
+      // Draw dripping trail
+      const trailLength = 7;
+      for (let i = 1; i < trailLength; i++) {
+        const trailTime = elapsedTimeSeconds - (i * 0.045);
+        if (trailTime < 0) continue;
+        
+        const trailX = projectile.startPosX + (projectile.velocityX * trailTime);
+        const trailY = projectile.startPosY + (projectile.velocityY * trailTime);
+        const alpha = 0.5 * (1 - i / trailLength);
+        
+        // Dripping effect - trail particles fall slightly
+        const drip = i * 2;
+        
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = `rgba(100, 200, 50, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(trailX, trailY + drip, globRadius * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      
+      // Draw outer toxic glow
+      const toxicGlow = ctx.createRadialGradient(
+        currentX, currentY, globRadius * 0.5,
+        currentX, currentY, globRadius * 2
+      );
+      toxicGlow.addColorStop(0, 'rgba(150, 255, 50, 0.6)');
+      toxicGlow.addColorStop(0.5, 'rgba(100, 200, 30, 0.3)');
+      toxicGlow.addColorStop(1, 'rgba(50, 150, 20, 0)');
+      ctx.fillStyle = toxicGlow;
+      ctx.beginPath();
+      ctx.arc(currentX, currentY, globRadius * 2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Draw main venom glob
+      const venomGradient = ctx.createRadialGradient(
+        currentX, currentY, 0,
+        currentX, currentY, globRadius
+      );
+      venomGradient.addColorStop(0, '#90EE90'); // Light green center
+      venomGradient.addColorStop(0.5, '#32CD32'); // Lime green
+      venomGradient.addColorStop(0.8, '#228B22'); // Forest green
+      venomGradient.addColorStop(1, '#006400'); // Dark green edge
+      
+      ctx.fillStyle = venomGradient;
+      ctx.beginPath();
+      ctx.arc(currentX, currentY, globRadius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Add bubble/highlight for liquid effect
+      ctx.fillStyle = 'rgba(200, 255, 150, 0.7)';
+      ctx.beginPath();
+      ctx.arc(currentX - globRadius * 0.3, currentY - globRadius * 0.3, globRadius * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Small secondary bubble
+      ctx.fillStyle = 'rgba(180, 255, 130, 0.5)';
+      ctx.beginPath();
+      ctx.arc(currentX + globRadius * 0.4, currentY - globRadius * 0.1, globRadius * 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    ctx.restore();
+    return; // NPC projectile rendered, exit early
+  }
+  
+  // Check if this is a turret tallow projectile (source_type = 1 or 3 for monument turret)
+  const isTurretTallow = projectile.sourceType === PROJECTILE_SOURCE_TURRET || projectile.sourceType === PROJECTILE_SOURCE_MONUMENT_TURRET;
+  
+  if (isTurretTallow) {
+    // Regular turret tallow has full gravity (molten globs arc), monument turrets fire straight
+    const tallowGravityMultiplier = projectile.sourceType === PROJECTILE_SOURCE_MONUMENT_TURRET ? 0.0 : 1.0;
+    const tallowGravityEffect = 0.5 * PROJECTILE_GRAVITY * tallowGravityMultiplier * elapsedTimeSeconds * elapsedTimeSeconds;
+    const tallowCurrentY = projectile.startPosY + (projectile.velocityY * elapsedTimeSeconds) + tallowGravityEffect;
+    
+    // Render tallow glob as a glowing orange circle with particle trail
+    const globRadius = 8; // Base radius for the tallow glob
+    const glowRadius = globRadius + 4; // Outer glow radius
+    
+    // Calculate trail positions (last few positions for particle effect)
+    const trailLength = 5;
+    const trailPositions: Array<{ x: number; y: number; alpha: number }> = [];
+    for (let i = 0; i < trailLength; i++) {
+      const trailTime = elapsedTimeSeconds - (i * 0.05); // 50ms between trail points
+      if (trailTime < 0) continue;
+      
+      const trailX = projectile.startPosX + (projectile.velocityX * trailTime);
+      const trailGravityEffect = 0.5 * PROJECTILE_GRAVITY * tallowGravityMultiplier * trailTime * trailTime;
+      const trailY = projectile.startPosY + (projectile.velocityY * trailTime) + trailGravityEffect;
+      
+      trailPositions.push({
+        x: trailX,
+        y: trailY,
+        alpha: 0.3 * (1 - i / trailLength) // Fade out along trail
+      });
+    }
+    
+    // Draw particle trail (behind the glob)
+    trailPositions.forEach((pos, index) => {
+      if (index === 0) return; // Skip first (same as glob position)
+      
+      ctx.save();
+      ctx.globalAlpha = pos.alpha;
+      ctx.fillStyle = `rgba(255, 140, 0, ${pos.alpha})`; // Orange with alpha
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, globRadius * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    
+    // Draw outer glow
+    const glowGradient = ctx.createRadialGradient(
+      currentX, tallowCurrentY, globRadius,
+      currentX, tallowCurrentY, glowRadius
+    );
+    glowGradient.addColorStop(0, 'rgba(255, 200, 100, 0.8)'); // Bright orange center
+    glowGradient.addColorStop(0.5, 'rgba(255, 140, 0, 0.4)'); // Orange middle
+    glowGradient.addColorStop(1, 'rgba(255, 100, 0, 0)'); // Fade to transparent
+    
+    ctx.fillStyle = glowGradient;
+    ctx.beginPath();
+    ctx.arc(currentX, tallowCurrentY, glowRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Draw main glob
+    const globGradient = ctx.createRadialGradient(
+      currentX, tallowCurrentY, 0,
+      currentX, tallowCurrentY, globRadius
+    );
+    globGradient.addColorStop(0, '#FFD700'); // Bright yellow center
+    globGradient.addColorStop(0.7, '#FF8C00'); // Orange
+    globGradient.addColorStop(1, '#FF4500'); // Dark orange edge
+    
+    ctx.fillStyle = globGradient;
+    ctx.beginPath();
+    ctx.arc(currentX, tallowCurrentY, globRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Add small highlight for 3D effect
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.beginPath();
+    ctx.arc(currentX - globRadius * 0.3, tallowCurrentY - globRadius * 0.3, globRadius * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    // Regular projectile rendering (arrows, bullets, thrown items)
+    // Apply teal underwater tint when projectile is underwater (consistent with other underwater entities)
+    if (applyUnderwaterTint) {
+      ctx.filter = 'sepia(20%) hue-rotate(140deg) saturate(120%)';
+    }
+    
+    // Use sub-pixel positioning for smoother movement
+    ctx.translate(Math.round(currentX * 10) / 10 + ARROW_SPRITE_OFFSET_X, Math.round(currentY * 10) / 10 + ARROW_SPRITE_OFFSET_Y);
+    ctx.rotate(angle);
+    ctx.scale(-1, 1); // Flip horizontally for correct arrow orientation
+    
+    if (usePrimitiveSpriteFallback) {
+      // Temporary fallback while icon image is still loading: arrow-like streak
+      // oriented by projectile angle so flight arc is always visible.
+      const fallbackLength = isBullet ? 14 : 20;
+      const fallbackHalfWidth = isBullet ? 1.6 : 2.2;
+      const tailOffset = -fallbackLength * 0.55;
+      const tipOffset = fallbackLength * 0.45;
+
+      // Soft glow for readability over varied terrain.
+      ctx.strokeStyle = isBullet ? 'rgba(255, 240, 170, 0.9)' : 'rgba(245, 230, 190, 0.95)';
+      ctx.lineWidth = fallbackHalfWidth * 2.2;
+      ctx.beginPath();
+      ctx.moveTo(tailOffset, 0);
+      ctx.lineTo(tipOffset, 0);
+      ctx.stroke();
+
+      // Core shaft.
+      ctx.strokeStyle = isBullet ? 'rgba(255, 215, 120, 1)' : 'rgba(140, 95, 55, 1)';
+      ctx.lineWidth = fallbackHalfWidth;
+      ctx.beginPath();
+      ctx.moveTo(tailOffset, 0);
+      ctx.lineTo(tipOffset, 0);
+      ctx.stroke();
+
+      // Point tip.
+      ctx.fillStyle = isBullet ? 'rgba(255, 230, 160, 1)' : 'rgba(200, 200, 200, 1)';
+      ctx.beginPath();
+      ctx.moveTo(tipOffset, 0);
+      ctx.lineTo(tipOffset - 4, -2.2);
+      ctx.lineTo(tipOffset - 4, 2.2);
+      ctx.closePath();
+      ctx.fill();
+    } else {
+      // Draw the image centered on its new origin
+      ctx.drawImage(
+        arrowImage,
+        -drawWidth / 2, 
+        -drawHeight / 2,
+        drawWidth,
+        drawHeight
+      );
+    }
+  }
+  
+  ctx.restore();
+};
+
+/** Build collision circles from Y-sorted entities for client-side projectile hit prediction */
+export function buildProjectileCollisionCircles(
+  entities: Array<{ type: string; entity: any }>
+): ProjectileCollisionCircle[] {
+  const circles: ProjectileCollisionCircle[] = [];
+  for (const { type, entity } of entities) {
+    if (!entity) continue;
+    switch (type) {
+      case 'tree':
+        circles.push({ cx: entity.posX, cy: entity.posY + TREE_Y, radius: TREE_R });
+        break;
+      case 'stone':
+        circles.push({ cx: entity.posX, cy: entity.posY + STONE_Y, radius: STONE_R });
+        break;
+      case 'rune_stone':
+        circles.push({ cx: entity.posX, cy: entity.posY - RUNE_STONE_Y, radius: RUNE_STONE_R });
+        break;
+      case 'basalt_column':
+        circles.push({ cx: entity.posX, cy: entity.posY - BASALT_Y, radius: BASALT_R });
+        break;
+      case 'wild_animal':
+        circles.push({ cx: entity.posX, cy: entity.posY, radius: ANIMAL_R });
+        break;
+      case 'barrel':
+        circles.push({ cx: entity.posX, cy: entity.posY + BARREL_Y, radius: BARREL_R });
+        break;
+      case 'player':
+        circles.push({
+          cx: entity.positionX, cy: entity.positionY, radius: PLAYER_R,
+          ownerIdentity: entity.identity?.toHexString?.(),
+        });
+        break;
+      case 'wooden_storage_box':
+        if (entity.boxType !== BOX_TYPE_BACKPACK) {
+          circles.push({ cx: entity.posX, cy: entity.posY + BOX_Y, radius: BOX_R });
+        }
+        break;
+      case 'campfire':
+        circles.push({ cx: entity.posX, cy: entity.posY + CAMPFIRE_Y, radius: CAMPFIRE_R });
+        break;
+      case 'stash':
+        circles.push({ cx: entity.posX, cy: entity.posY, radius: STASH_R });
+        break;
+      case 'sleeping_bag':
+        circles.push({ cx: entity.posX, cy: entity.posY, radius: SLEEPING_BAG_R });
+        break;
+      case 'furnace':
+        circles.push({ cx: entity.posX, cy: entity.posY - FURNACE_Y, radius: FURNACE_R });
+        break;
+      case 'barbecue':
+        circles.push({ cx: entity.posX, cy: entity.posY - BARBECUE_Y, radius: BARBECUE_R });
+        break;
+      case 'lantern':
+        circles.push({ cx: entity.posX, cy: entity.posY + LANTERN_Y, radius: LANTERN_R });
+        break;
+      case 'homestead_hearth':
+        circles.push({ cx: entity.posX, cy: entity.posY - HEARTH_Y, radius: HEARTH_R });
+        break;
+      case 'animal_corpse':
+        circles.push({ cx: entity.posX, cy: entity.posY - ANIMAL_CORPSE_Y, radius: ANIMAL_CORPSE_R });
+        break;
+      case 'player_corpse':
+        circles.push({ cx: entity.posX, cy: entity.posY - PLAYER_CORPSE_Y, radius: PLAYER_CORPSE_R });
+        break;
+      case 'rain_collector':
+        circles.push({ cx: entity.posX, cy: entity.posY - RAIN_COLLECTOR_Y, radius: RAIN_COLLECTOR_R });
+        break;
+      case 'living_coral':
+        circles.push({ cx: entity.posX, cy: entity.posY, radius: LIVING_CORAL_R });
+        break;
+      case 'harvestable_resource':
+        circles.push({ cx: entity.posX, cy: entity.posY, radius: STONE_R });
+        break;
+      default:
+        break;
+    }
+  }
+  return circles;
+}
+
+// Cleanup entries for projectiles that no longer exist (hit something, max range, etc.)
+// Call with current projectile IDs from useSpacetimeTables - prevents unbounded growth during combat
+export const cleanupProjectileTrackingForDeleted = (currentProjectileIds: Set<string>) => {
+  const now = performance.now();
+  let removed = 0;
+
+  for (const projectileId of Array.from(clientProjectileStartTimes.keys())) {
+    if (currentProjectileIds.has(projectileId)) {
+      projectileMissingSince.delete(projectileId);
+      continue;
+    }
+
+    const missingSince = projectileMissingSince.get(projectileId);
+    if (missingSince === undefined) {
+      projectileMissingSince.set(projectileId, now);
+      continue;
+    }
+
+    if (now - missingSince >= PROJECTILE_TRACKING_DELETE_GRACE_MS) {
+      clientProjectileStartTimes.delete(projectileId);
+      clientProjectileInitialElapsedMs.delete(projectileId);
+      projectileMissingSince.delete(projectileId);
+      removed += 1;
+    }
+  }
+  if (removed > 0) console.log(`🏹 [CLIENT CLEANUP] Removed ${removed} stale projectile tracking entries`);
+};
+
+// Fallback: Remove entries older than max lifetime (in case cleanupProjectileTrackingForDeleted isn't called)
+export const cleanupOldProjectileTracking = () => {
+  const currentTime = performance.now();
+  const toDelete: string[] = [];
+  
+  for (const [projectileId, startTime] of clientProjectileStartTimes.entries()) {
+    if (currentTime - startTime > MAX_PROJECTILE_LIFETIME_MS) {
+      toDelete.push(projectileId);
+    }
+  }
+  
+  for (const projectileId of toDelete) {
+    clientProjectileStartTimes.delete(projectileId);
+    clientProjectileInitialElapsedMs.delete(projectileId);
+    projectileMissingSince.delete(projectileId);
+  }
+  
+  if (toDelete.length > 0) {
+    console.log(`🏹 [CLIENT CLEANUP] Removed ${toDelete.length} old projectile tracking entries (time-based)`);
+  }
+};

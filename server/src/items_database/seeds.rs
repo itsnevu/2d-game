@@ -1,0 +1,610 @@
+use super::builders::{ItemBuilder, basic_seed};
+use crate::items::{ItemDefinition, ItemCategory};
+
+pub fn get_seed_definitions() -> Vec<ItemDefinition> {
+    vec![
+        // === ALL SEEDS AND PLANTING MATERIALS ===
+        // All seeds are Placeable (plantable) and also edible with varying nutritional values
+        // Raw seeds provide better nutrition, cooked/toasted seeds are enhanced, burnt seeds are harmful
+
+        // === LARGE NUTRITIOUS SEEDS ===
+        
+        // Pumpkin Seeds - Large, nutritious seeds (CAN BE TOASTED - popular snack)
+        ItemBuilder::new("Pumpkin Seeds", "Large edible seeds from pumpkins. Can be planted to grow pumpkin plants or toasted for enhanced nutrition.", ItemCategory::Placeable)
+            .icon("pumpkin_seeds.png")
+            .stackable(50)
+            .respawn_time(720) // 12 minutes
+            .consumable(2.0, 8.0, -2.0) // health, hunger, thirst
+            .cookable(30.0, "Toasted Pumpkin Seeds") // Toasts into enhanced snack
+            .build(),
+
+        // Toasted Pumpkin Seeds - Enhanced nutrition when toasted
+        ItemBuilder::new("Toasted Pumpkin Seeds", "Toasted pumpkin seeds with enhanced flavor and nutrition. Cannot be planted.", ItemCategory::Consumable)
+            .icon("toasted_pumpkin_seeds.png")
+            .stackable(50)
+            .respawn_time(0) // Made by cooking
+            .consumable(5.0, 15.0, -1.0) // health, hunger, thirst
+            .cookable(25.0, "Charcoal") // Overcooking burns them to charcoal
+            .build(),
+
+        // Sunflower Seeds - Popular edible seeds (CAN BE TOASTED - popular snack)
+        ItemBuilder::new("Sunflower Seeds", "Nutritious edible seeds from sunflowers. Can be planted to grow sunflower plants or toasted for enhanced nutrition.", ItemCategory::Placeable)
+            .icon("sunflower_seeds.png")
+            .stackable(50)
+            .respawn_time(600) // 10 minutes
+            .consumable(3.0, 6.0, -3.0) // health, hunger, thirst
+            .cookable(28.0, "Toasted Sunflower Seeds") // Toasts into enhanced snack
+            .build(),
+
+        // Toasted Sunflower Seeds - Enhanced when toasted
+        ItemBuilder::new("Toasted Sunflower Seeds", "Toasted sunflower seeds with rich, nutty flavor. Cannot be planted.", ItemCategory::Consumable)
+            .icon("toasted_sunflower_seeds.png")
+            .stackable(50)
+            .respawn_time(0)
+            .consumable(6.0, 12.0, -2.0) // health, hunger, thirst
+            .cookable(25.0, "Charcoal") // Overcooking burns them to charcoal
+            .build(),
+
+        // Flax Seeds - High in omega fatty acids (CAN BE TOASTED - improves digestibility)
+        ItemBuilder::new("Flax Seeds", "Tiny seeds rich in healthy oils. Can be planted to grow flax plants or toasted for better digestibility.", ItemCategory::Placeable)
+            .icon("flax_seeds.png")
+            .stackable(60)
+            .respawn_time(480) // 8 minutes
+            .consumable(2.0, 4.0, -1.0) // health, hunger, thirst
+            .cookable(25.0, "Toasted Flax Seeds") // Toasts into enhanced version
+            .build(),
+
+        // Toasted Flax Seeds - Enhanced digestibility
+        ItemBuilder::new("Toasted Flax Seeds", "Lightly toasted flax seeds that are easier to digest. Cannot be planted.", ItemCategory::Consumable)
+            .icon("toasted_flax_seeds.png")
+            .stackable(60)
+            .respawn_time(0)
+            .consumable(5.0, 8.0, 0.0) // health, hunger, thirst
+            .cookable(22.0, "Charcoal") // Overcooking burns them to charcoal
+            .build(),
+
+        // === GRAIN SEEDS ===
+
+        // === VEGETABLE SEEDS ===
+
+        // Carrot Seeds - Minimal nutrition
+        ItemBuilder::new("Carrot Seeds", "Tiny carrot seeds. Can be planted to grow carrots or eaten for minimal nutrition.", ItemCategory::Placeable)
+            .icon("carrot_seeds.png")
+            .stackable(80)
+            .respawn_time(420) // 7 minutes
+            .consumable(0.0, 0.5, -0.5) // health, hunger, thirst
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // Beet Seeds - Emergency food
+        ItemBuilder::new("Beet Seeds", "Small beet seeds. Can be planted to grow beets or eaten in emergencies.", ItemCategory::Placeable)
+            .icon("beet_seeds.png")
+            .stackable(80)
+            .respawn_time(420)
+            .consumable(0.0, 0.5, 0.0) // health, hunger, thirst
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Cabbage Seeds - Cold-hardy vegetable seeds
+        ItemBuilder::new("Cabbage Seeds", "Seeds for growing cabbage. Can be eaten but provide minimal nutrition.", ItemCategory::Placeable)
+            .icon("cabbage_seeds.png")
+            .stackable(80)
+            .respawn_time(420) // 7 minutes
+            .consumable(0.0, 0.5, 0.0) // health, hunger, thirst - minimal nutrition
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        ItemBuilder::new("Fennel Seeds", "Aromatic fennel seeds. Plant to grow fennel or use as a spice. Mild anise flavor.", ItemCategory::Placeable)
+            .icon("fennel_seeds.png")
+            .stackable(80)
+            .respawn_time(450) // 7.5 minutes
+            .consumable(2.0, 1.0, 0.0) // health, hunger, thirst - aromatic seeds, slightly medicinal
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Kamchatka Lily Bulb - both food AND seed (like Horseradish Root pattern)
+        // Can be COOKED for food OR PULVERIZED for flour
+        ItemBuilder::new("Kamchatka Lily Bulb", "A starchy, nutritious bulb from the Kamchatka Lily. Can be eaten raw, cooked for better nutrition, or pulverized into flour. Also plantable.", ItemCategory::Placeable)
+            .icon("kamchatka_lily_bulb.png")
+            .stackable(15)
+            .respawn_time(400) // ~7 minutes
+            .consumable(25.0, 35.0, 5.0) // High health/hunger - nutritious raw bulb
+            .cookable(40.0, "Cooked Kamchatka Lily Bulb") // Cooks to food, pulverize for flour
+            .extractable("Flour", 2, 3, "Pulverize")
+            .build(),
+
+        // === NEW ALEUTIAN PLANTS ===
+        
+        // Angelica Seeds - from Wild Celery, can be planted or pulverized to flour
+        ItemBuilder::new("Angelica Seeds", "Aromatic seeds from wild celery (Angelica). Can be planted, used as a spice, or pulverized into flour. Traditional Aleut food.", ItemCategory::Placeable)
+            .icon("angelica_seeds.png")
+            .stackable(60)
+            .respawn_time(400)
+            .consumable(2.0, 2.0, 0.0) // Slightly medicinal/aromatic
+            .cookable(25.0, "Charcoal") // Seeds char when cooked, pulverize for flour
+            .extractable("Flour", 1, 2, "Pulverize")
+            .build(),
+        
+        // Silverweed Root - starchy coastal root, both food AND seed
+        // Can be COOKED for food OR PULVERIZED for flour
+        ItemBuilder::new("Silverweed Root", "A starchy root from the silverweed plant. Can be eaten raw, cooked for better nutrition, or pulverized into flour. Also plantable.", ItemCategory::Placeable)
+            .icon("silverweed_root.png")
+            .stackable(20)
+            .respawn_time(350)
+            .consumable(15.0, 25.0, 5.0) // Good nutrition - starchy root
+            .cookable(35.0, "Cooked Silverweed Root") // Cooks to food, pulverize for flour
+            .extractable("Flour", 2, 3, "Pulverize")
+            .build(),
+        
+        // Nagoonberry Seeds - for planting Arctic raspberries
+        ItemBuilder::new("Nagoonberry Seeds", "Tiny seeds from the prized nagoonberry. Can be planted to grow nagoonberry bushes.", ItemCategory::Placeable)
+            .icon("nagoonberry_seeds.png")
+            .stackable(80)
+            .respawn_time(500)
+            .consumable(0.5, 0.5, 0.5) // Minimal nutrition
+            .cookable(18.0, "Charcoal") // Too small for anything
+            .build(),
+        
+        // Bistort Bulbils - tiny starchy bulbils, both food AND seed
+        // Can be COOKED for food OR PULVERIZED for flour
+        ItemBuilder::new("Bistort Bulbils", "Tiny starchy bulbils from alpine bistort. Can be eaten raw, cooked for better nutrition, or pulverized into flour. A unique viviparous plant.", ItemCategory::Placeable)
+            .icon("bistort_bulbils.png")
+            .stackable(40)
+            .respawn_time(380)
+            .consumable(10.0, 18.0, 3.0) // Good nutrition - starchy
+            .cookable(30.0, "Cooked Bistort Bulbils") // Cooks to food, pulverize for flour
+            .extractable("Flour", 2, 3, "Pulverize")
+            .build(),
+
+        // === ADDITIONAL VEGETABLE SEEDS ===
+
+
+
+        // Chicory Seeds - Bitter herb seeds
+        ItemBuilder::new("Chicory Seeds", "Seeds for growing chicory. Can be eaten but are quite bitter.", ItemCategory::Placeable)
+            .icon("chicory_seeds.png")
+            .stackable(70)
+            .respawn_time(360) // 6 minutes
+            .consumable(0.5, 1.0, -0.5) // health, hunger, thirst
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Salsify Seeds - Root vegetable seeds
+        ItemBuilder::new("Salsify Seeds", "Seeds for growing salsify root. Can be eaten for minimal nutrition.", ItemCategory::Placeable)
+            .icon("salsify_seeds.png")
+            .stackable(70)
+            .respawn_time(480) // 8 minutes
+            .consumable(0.0, 1.0, 0.0) // health, hunger, thirst
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // === HERB & MEDICINAL SEEDS ===
+
+        // Yarrow Seeds - Medicinal herb seeds
+        ItemBuilder::new("Yarrow Seeds", "Seeds for growing yarrow. Can be eaten but have a bitter, medicinal taste.", ItemCategory::Placeable)
+            .icon("yarrow_seeds.png")
+            .stackable(60)
+            .respawn_time(480) // 8 minutes
+            .consumable(1.0, 0.5, -0.5) // health, hunger, thirst - medicinal properties
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Chamomile Seeds - Calming herb seeds
+        ItemBuilder::new("Chamomile Seeds", "Seeds for growing chamomile. Can be eaten but are very small and provide little nutrition.", ItemCategory::Placeable)
+            .icon("chamomile_seeds.png")
+            .stackable(80)
+            .respawn_time(360) // 6 minutes
+            .consumable(0.5, 0.5, 0.5) // health, hunger, thirst - mild calming effect
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // Valerian Seeds - Sedative herb seeds
+        ItemBuilder::new("Valerian Seeds", "Seeds for growing valerian. Can be eaten but have a very strong, unpleasant taste.", ItemCategory::Placeable)
+            .icon("valerian_seeds.png")
+            .stackable(50)
+            .respawn_time(600) // 10 minutes
+            .consumable(1.0, -0.5, -1.0) // health, hunger, thirst - medicinal but unpalatable
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Mugwort Seeds - Bitter herb seeds
+        ItemBuilder::new("Mugwort Seeds", "Seeds for growing mugwort. Can be eaten but are quite bitter and aromatic.", ItemCategory::Placeable)
+            .icon("mugwort_seeds.png")
+            .stackable(60)
+            .respawn_time(420) // 7 minutes
+            .consumable(0.5, 0.5, -0.5) // health, hunger, thirst
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Ginseng Seeds - Rare medicinal seeds
+        ItemBuilder::new("Ginseng Seeds", "Rare seeds for growing Siberian ginseng. Can be eaten but provide minimal nutrition.", ItemCategory::Placeable)
+            .icon("ginseng_seeds.png")
+            .stackable(20)
+            .respawn_time(1800) // 30 minutes - very rare
+            .consumable(2.0, 0.5, 0.0) // health, hunger, thirst - medicinal properties
+            .cookable(25.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // === SPECIAL PLANTING MATERIALS ===
+
+        // Bear Garlic - Wild garlic (food IS the seed, like potatoes)
+        ItemBuilder::new("Bear Garlic", "Wild garlic with a strong, pungent flavor. Can be eaten, cooked, or planted to grow more. Provides good nutrition and natural antimicrobial properties.", ItemCategory::Placeable)
+            .icon("bear_garlic.png")
+            .stackable(16)
+            .respawn_time(280)
+            .consumable(7.0, 10.0, 3.0) // health, hunger, thirst
+            .cookable(38.0, "Roasted Bear Garlic")
+            .build(),
+
+        // Mint Cuttings - Mint propagation material
+        ItemBuilder::new("Mint Cuttings", "Fresh mint cuttings for planting. Can be eaten for a refreshing taste.", ItemCategory::Placeable)
+            .icon("mint_cuttings.png")
+            .stackable(40)
+            .respawn_time(300) // 5 minutes - spreads fast
+            .consumable(0.5, 0.5, 2.0) // health, hunger, thirst - refreshing
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - cuttings just char
+            .build(),
+
+        // Horseradish Root - both food AND seed (plant roots to grow more horseradish)
+        ItemBuilder::new("Horseradish Root", "A pungent root vegetable. Can be eaten raw, cooked, or planted to grow more horseradish. Strong, spicy flavor.", ItemCategory::Placeable)
+            .icon("horseradish_root.png")
+            .stackable(12)
+            .respawn_time(220)
+            .consumable(5.0, 8.0, 3.0) // Same as the old "Horseradish" consumable
+            .cookable(40.0, "Cooked Horseradish") // Now cooks properly
+            .build(),
+
+
+
+        // === FIBER PLANT SEEDS ===
+
+        // Dogbane Seeds - Fiber plant seeds
+        ItemBuilder::new("Dogbane Seeds", "Seeds for growing dogbane fiber plants. Can be eaten but provide minimal nutrition.", ItemCategory::Placeable)
+            .icon("dogbane_seeds.png")
+            .stackable(50)
+            .respawn_time(600) // 10 minutes
+            .consumable(0.0, 1.0, -0.5) // health, hunger, thirst
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Bog Cotton Seeds - Water fiber plant seeds
+        ItemBuilder::new("Bog Cotton Seeds", "Seeds for growing bog cotton. Can be eaten but are quite fibrous and hard to digest.", ItemCategory::Placeable)
+            .icon("bog_cotton_seeds.png")
+            .stackable(60)
+            .respawn_time(480) // 8 minutes
+            .consumable(0.0, 0.5, -1.0) // health, hunger, thirst
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // === MUSHROOM SPORES ===
+
+        // Chanterelle Spores - Edible mushroom spores
+        ItemBuilder::new("Chanterelle Spores", "Spores for growing chanterelle mushrooms. Can be eaten but provide minimal nutrition.", ItemCategory::Placeable)
+            .icon("mushroom_spore.png")
+            .stackable(20)
+            .respawn_time(900) // 15 minutes
+            .consumable(0.5, 1.0, 0.0) // health, hunger, thirst
+            .cookable(15.0, "Charcoal") // Burns directly to charcoal - spores just char instantly
+            .build(),
+
+        // Porcini Spores - Premium mushroom spores
+        ItemBuilder::new("Porcini Spores", "Spores for growing porcini mushrooms. Can be eaten but are very small.", ItemCategory::Placeable)
+            .icon("mushroom_spore.png")
+            .stackable(15)
+            .respawn_time(1200) // 20 minutes
+            .consumable(1.0, 1.0, 0.0) // health, hunger, thirst
+            .cookable(15.0, "Charcoal") // Burns directly to charcoal - spores just char instantly
+            .build(),
+
+        // Shaggy Ink Cap Spores - Common mushroom spores
+        ItemBuilder::new("Shaggy Ink Cap Spores", "Spores for growing shaggy ink cap mushrooms. Can be eaten but are very small.", ItemCategory::Placeable)
+            .icon("mushroom_spore.png")
+            .stackable(30)
+            .respawn_time(600) // 10 minutes
+            .consumable(0.5, 0.5, 0.0) // health, hunger, thirst
+            .cookable(15.0, "Charcoal") // Burns directly to charcoal - spores just char instantly
+            .build(),
+
+        // Fly Agaric Spores - Toxic mushroom spores
+        ItemBuilder::new("Fly Agaric Spores", "Spores for growing fly agaric mushrooms. Toxic if eaten.", ItemCategory::Placeable)
+            .icon("mushroom_spore.png")
+            .stackable(20)
+            .respawn_time(800) // 13 minutes
+            .consumable(-3.0, -1.0, -2.0) // health, hunger, thirst - toxic
+            .cookable(15.0, "Charcoal") // Burns directly to charcoal - spores just char instantly
+            .build(),
+
+        // Deadly Webcap Spores - Extremely toxic spores
+        ItemBuilder::new("Deadly Webcap Spores", "Spores for growing deadly webcap mushrooms. Extremely toxic if eaten.", ItemCategory::Placeable)
+            .icon("mushroom_spore.png")
+            .stackable(10)
+            .respawn_time(1800) // 30 minutes - very rare
+            .consumable(-8.0, -3.0, -5.0) // health, hunger, thirst - extremely toxic
+            .cookable(15.0, "Charcoal") // Burns directly to charcoal - spores just char instantly
+            .build(),
+
+        // Destroying Angel Spores - Lethal mushroom spores
+        ItemBuilder::new("Destroying Angel Spores", "Spores for growing destroying angel mushrooms. Lethal if eaten.", ItemCategory::Placeable)
+            .icon("mushroom_spore.png")
+            .stackable(5)
+            .respawn_time(2400) // 40 minutes - extremely rare
+            .consumable(-15.0, -5.0, -10.0) // health, hunger, thirst - lethal
+            .cookable(15.0, "Charcoal") // Burns directly to charcoal - spores just char instantly
+            .build(),
+
+        // === BERRY SEEDS ===
+
+        // Lingonberry Seeds - Tart berry seeds
+        ItemBuilder::new("Lingonberry Seeds", "Seeds for growing lingonberry bushes. Can be eaten but are very small and tart.", ItemCategory::Placeable)
+            .icon("lingonberry_seeds.png")
+            .stackable(80)
+            .respawn_time(900) // 15 minutes
+            .consumable(0.5, 1.0, 1.0) // health, hunger, thirst - small but refreshing
+            .cookable(18.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // Cloudberry Seeds - Rare arctic berry seeds
+        ItemBuilder::new("Cloudberry Seeds", "Seeds for growing cloudberry plants. Can be eaten but are very small.", ItemCategory::Placeable)
+            .icon("cloudberry_seeds.png")
+            .stackable(60)
+            .respawn_time(1200) // 20 minutes
+            .consumable(1.0, 1.0, 1.0) // health, hunger, thirst - nutritious but small
+            .cookable(18.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // Bilberry Seeds - Wild blueberry seeds
+        ItemBuilder::new("Bilberry Seeds", "Seeds for growing bilberry bushes. Can be eaten but are very tiny.", ItemCategory::Placeable)
+            .icon("bilberry_seeds.png")
+            .stackable(100)
+            .respawn_time(600) // 10 minutes
+            .consumable(0.5, 0.5, 1.0) // health, hunger, thirst - sweet but tiny
+            .cookable(18.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // Wild Strawberries - Food IS the seed (like potatoes, berries contain seeds)
+        ItemBuilder::new("Wild Strawberries", "Tiny but intensely flavored wild strawberries. Can be eaten, cooked, or planted to grow more. Much more aromatic than cultivated varieties.", ItemCategory::Placeable)
+            .icon("wild_strawberries.png")
+            .stackable(35)
+            .respawn_time(180)
+            .consumable(5.0, 8.0, 5.0) // health, hunger, thirst
+            .cookable(15.0, "Charcoal")
+            .extractable("Berry Mash", 1, 1, "Mash")
+            .build(),
+
+        // Rowan Seeds - Mountain ash seeds
+        ItemBuilder::new("Rowan Seeds", "Seeds for growing rowan trees. Can be eaten but are quite bitter.", ItemCategory::Placeable)
+            .icon("rowan_seeds.png")
+            .stackable(50)
+            .respawn_time(1800) // 30 minutes
+            .consumable(0.5, 1.0, -1.0) // health, hunger, thirst - bitter
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Cranberry Seeds - Bog berry seeds
+        ItemBuilder::new("Cranberry Seeds", "Seeds for growing cranberry plants. Can be eaten but are very tart and small.", ItemCategory::Placeable)
+            .icon("cranberry_seeds.png")
+            .stackable(80)
+            .respawn_time(900) // 15 minutes
+            .consumable(1.0, 1.0, 0.5) // health, hunger, thirst - tart but healthy
+            .cookable(18.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // === TOXIC PLANT SEEDS ===
+
+        // Mandrake Seeds - Extremely rare and dangerous
+        ItemBuilder::new("Mandrake Seeds", "Rare seeds for growing mandrake plants. Highly toxic if eaten.", ItemCategory::Placeable)
+            .icon("mandrake_seeds.png")
+            .stackable(5)
+            .respawn_time(3600) // 60 minutes - extremely rare
+            .consumable(-10.0, -2.0, -5.0) // health, hunger, thirst - very toxic
+            .cookable(25.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Belladonna Seeds - Deadly nightshade seeds
+        ItemBuilder::new("Belladonna Seeds", "Seeds for growing belladonna plants. Deadly if eaten.", ItemCategory::Placeable)
+            .icon("belladonna_seeds.png")
+            .stackable(10)
+            .respawn_time(2400) // 40 minutes
+            .consumable(-12.0, -3.0, -6.0) // health, hunger, thirst - deadly
+            .cookable(25.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Henbane Seeds - Toxic herb seeds
+        ItemBuilder::new("Henbane Seeds", "Seeds for growing henbane plants. Toxic if eaten.", ItemCategory::Placeable)
+            .icon("henbane_seeds.png")
+            .stackable(15)
+            .respawn_time(1800) // 30 minutes
+            .consumable(-8.0, -2.0, -4.0) // health, hunger, thirst - toxic
+            .cookable(25.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Datura Seeds - Hallucinogenic plant seeds
+        ItemBuilder::new("Datura Seeds", "Seeds for growing datura plants. Highly toxic and hallucinogenic if eaten.", ItemCategory::Placeable)
+            .icon("datura_seeds.png")
+            .stackable(10)
+            .respawn_time(2100) // 35 minutes
+            .consumable(-10.0, -3.0, -5.0) // health, hunger, thirst - toxic and hallucinogenic
+            .cookable(25.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Wolfsbane Seeds - Extremely toxic flower seeds
+        ItemBuilder::new("Wolfsbane Seeds", "Seeds for growing wolfsbane plants. Extremely toxic if eaten.", ItemCategory::Placeable)
+            .icon("wolfsbane_seeds.png")
+            .stackable(8)
+            .respawn_time(2700) // 45 minutes
+            .consumable(-15.0, -4.0, -8.0) // health, hunger, thirst - extremely toxic
+            .cookable(25.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // === ROOT VEGETABLES (food IS the seed) ===
+
+        // Potato - Plant potatoes to grow potatoes (realistic farming)
+        ItemBuilder::new("Potato", "A raw potato. Can be eaten, cooked, or planted to grow more potatoes. Starchy and filling.", ItemCategory::Placeable)
+            .icon("potato.png")
+            .stackable(20)
+            .respawn_time(200)
+            .consumable(6.0, 15.0, 2.0) // Same nutrition as before
+            .cookable(30.0, "Cooked Potato")
+            .build(),
+
+        // === OTHER PLANTING MATERIALS ===
+
+        // Corn Seeds - Large seeds
+        ItemBuilder::new("Corn Seeds", "Large seeds for planting corn. Can be eaten but are quite hard.", ItemCategory::Placeable)
+            .icon("corn_seeds.png")
+            .stackable(20)
+            .respawn_time(1200) // 20 minutes - valuable crop
+            .consumable(0.0, 1.0, -2.0) // health, hunger, thirst
+            .cookable(30.0, "Charcoal") // Burns directly to charcoal - hard kernels just char
+            .build(),
+
+        // Nettle Seeds - Fiber crop seeds
+        ItemBuilder::new("Nettle Seeds", "Seeds for growing nettle plants. Edible but can cause mouth irritation.", ItemCategory::Placeable)
+            .icon("nettle_seeds.png")
+            .stackable(30)
+            .respawn_time(600) // 10 minutes
+            .consumable(-0.5, 1.0, -1.0) // health, hunger, thirst
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Reed Rhizome - Water plant propagation (NOT a seed, but plantable)
+        ItemBuilder::new("Reed Rhizome", "Root cutting from reed plants. Can be deployed to grow reed stalks near water. Not edible.", ItemCategory::Placeable)
+            .icon("reed_rhizome.png")
+            .stackable(15)
+            .respawn_time(720) // 12 minutes
+            .consumable(-3.0, -5.0, -5.0) // health, hunger, thirst
+            .cookable(35.0, "Charcoal") // Burns directly to charcoal - rhizome just chars
+            .build(),
+
+        // Seaweed Frond - Underwater plant propagation (vegetative reproduction via frond cutting)
+        ItemBuilder::new("Seaweed Frond", "A segment of seaweed thallus that can regrow into a full plant. Plant on any water tile.", ItemCategory::Placeable)
+            .icon("seaweed_frond.png")
+            .stackable(20)
+            .respawn_time(600) // 10 minutes
+            .consumable(-1.0, 2.0, 2.0) // health, hunger, thirst - slightly edible but slimy
+            .cookable(25.0, "Dried Seaweed") // Drying improves it
+            .build(),
+
+        // === ARCTIC/SUBARCTIC PLANT SEEDS (Botanically accurate for Aleutian Islands) ===
+
+        // Scurvy Grass Seeds - Arctic vitamin C source
+        ItemBuilder::new("Scurvy Grass Seeds", "Seeds for growing scurvy grass. Can be eaten but have a peppery, bitter taste. Rich in vitamin C.", ItemCategory::Placeable)
+            .icon("scurvy_grass_seeds.png")
+            .stackable(60)
+            .respawn_time(300) // 5 minutes - hardy, fast-growing
+            .consumable(1.0, 0.5, 0.5) // health, hunger, thirst - vitamin C boost
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Crowberry Seeds - Hardy subarctic berries
+        ItemBuilder::new("Crowberry Seeds", "Seeds for growing crowberry plants. Can be eaten but are very small and tart.", ItemCategory::Placeable)
+            .icon("crowberry_seeds.png")
+            .stackable(80)
+            .respawn_time(1200) // 20 minutes - slow-growing perennial
+            .consumable(0.5, 0.5, 1.0) // health, hunger, thirst - small but refreshing
+            .cookable(18.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // Fireweed Seeds - Common tundra plant seeds
+        ItemBuilder::new("Fireweed Seeds", "Seeds for growing fireweed. A common tundra plant with edible shoots. Can be eaten but provide minimal nutrition.", ItemCategory::Placeable)
+            .icon("fireweed_seeds.png")
+            .stackable(70)
+            .respawn_time(900) // 15 minutes - common tundra plant
+            .consumable(0.5, 1.0, 0.0) // health, hunger, thirst - minimal nutrition
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Sea Plantain Seeds - Maritime plant seeds
+        ItemBuilder::new("Sea Plantain Seeds", "Seeds for growing sea plantain. Can be eaten but have a salty, slightly bitter taste.", ItemCategory::Placeable)
+            .icon("sea_plantain_seeds.png")
+            .stackable(70)
+            .respawn_time(600) // 10 minutes - salt-tolerant
+            .consumable(0.5, 1.0, -1.0) // health, hunger, thirst - salty
+            .cookable(20.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Glasswort Seeds - Salt-tolerant succulent seeds
+        ItemBuilder::new("Glasswort Seeds", "Seeds for growing glasswort. Can be eaten but are very salty and crunchy.", ItemCategory::Placeable)
+            .icon("glasswort_seeds.png")
+            .stackable(50)
+            .respawn_time(720) // 12 minutes - specialized coastal plant
+            .consumable(1.0, 1.0, -2.0) // health, hunger, thirst - very salty
+            .cookable(22.0, "Charcoal") // Burns directly to charcoal - small seeds just char
+            .build(),
+
+        // Beach Lyme Grass Seeds - Coastal grass seeds (beach-only planting) - TRADITIONAL FLOUR SOURCE
+        // Can be PULVERIZED into flour (traditional Aleut method)
+        ItemBuilder::new("Beach Lyme Grass Seeds", "Seeds for growing beach lyme grass. Can only be planted on beach tiles. Can be pulverized into flour - a traditional Aleut food source.", ItemCategory::Placeable)
+            .icon("beach_lyme_grass_seeds.png")
+            .stackable(60)
+            .respawn_time(480) // 8 minutes - fast-growing coastal grass
+            .consumable(0.5, 0.5, 0.0) // health, hunger, thirst - minimal nutrition
+            .cookable(22.0, "Charcoal") // Seeds char when cooked, pulverize for flour
+            .extractable("Flour", 1, 2, "Pulverize")
+            .build(),
+
+        // === ALPINE PLANT SPORES/SEEDS ===
+
+        // Arctic Poppy Seeds - Rare alpine flower seeds
+        ItemBuilder::new("Arctic Poppy Seeds", "Seeds for growing arctic poppies. These hardy alpine flowers grow year-round in harsh conditions. Can be eaten but are very small.", ItemCategory::Placeable)
+            .icon("arctic_poppy_seeds.png")
+            .stackable(40)
+            .respawn_time(1800) // 30 minutes - rare alpine flower
+            .consumable(0.5, 0.5, 0.5) // health, hunger, thirst - minimal nutrition
+            .cookable(18.0, "Charcoal") // Burns directly to charcoal - tiny seeds just char
+            .build(),
+
+        // === TREE SEEDS (for player tree planting) ===
+
+        // Pinecone - Plantable conifer seed (from chopping conifer trees)
+        // Grows into spruce, hemlock, or pine depending on biome
+        // NOTE: Pine nuts inside are very nutritious when roasted properly!
+        ItemBuilder::new("Pinecone", "A mature pinecone containing viable seeds. Can be planted to grow a conifer tree (spruce, hemlock, or pine depending on terrain). The pine nuts inside are edible and very nutritious when roasted.", ItemCategory::Placeable)
+            .icon("pinecone.png")
+            .stackable(20)
+            .respawn_time(300)
+            .fuel(2.0) // Light fuel value
+            .consumable(1.0, 3.0, -1.0) // health, hunger, thirst - raw pine nuts are edible but mild
+            .cookable(35.0, "Cooked Pinecone") // Roasting releases the nutritious pine nuts
+            .build(),
+
+        // Birch Catkin - Plantable deciduous seed (from chopping deciduous trees)
+        // Grows into birch, alder, or willow depending on biome
+        ItemBuilder::new("Birch Catkin", "A drooping flower cluster containing seeds. Can be planted to grow a deciduous tree (birch, alder, or willow depending on terrain). Has mild medicinal properties.", ItemCategory::Placeable)
+            .icon("birch_catkin.png")
+            .stackable(30)
+            .respawn_time(300)
+            .consumable(2.0, 1.0, 0.5) // health, hunger, thirst - mild medicinal properties
+            .cookable(20.0, "Charcoal") // Overcooking burns them
+            .build(),
+
+        // Crab Apple Seeds - Plantable fruit tree seeds
+        // Obtained by eating or processing crab apples
+        ItemBuilder::new("Crab Apple Seeds", "Tiny seeds extracted from crab apples. Can be planted to grow a crab apple tree - a hardy small tree that thrives in temperate areas.", ItemCategory::Placeable)
+            .icon("crab_apple_seeds.png")
+            .stackable(40)
+            .respawn_time(360)
+            .consumable(0.0, 0.5, -0.5) // health, hunger, thirst - minimal nutrition
+            .cookable(18.0, "Charcoal") // Tiny seeds just char
+            .build(),
+
+        // Hazelnuts - Plantable nut (the nut itself is the seed!)
+        // Dropped from Hazelnut Trees when chopped (plural to match what trees drop)
+        ItemBuilder::new("Hazelnuts", "Small, round nuts with hard shells. Can be planted to grow a hazelnut tree, or eaten for nutrition. Better when roasted.", ItemCategory::Placeable)
+            .icon("hazelnuts.png")
+            .stackable(30)
+            .respawn_time(220)
+            .consumable(8.0, 15.0, -2.0) // health, hunger, thirst - good raw, slightly dry
+            .cookable(35.0, "Roasted Hazelnuts") // Roasts into enhanced snack
+            .build(),
+
+        // Olive Pit - Rare GMO tree pit from sea flotsam and olive consumption
+        ItemBuilder::new("Olive Pit", "A rare SELO olive pit. Engineered to survive in any climate. Plant it to grow an olive tree.", ItemCategory::Placeable)
+            .icon("olive_pit.png")
+            .stackable(20)
+            .respawn_time(900) // Rare progression seed
+            .consumable(0.0, 0.5, -0.5) // Not very edible
+            .cookable(20.0, "Charcoal") // Tiny seed chars when heated
+            .build(),
+    ]
+}

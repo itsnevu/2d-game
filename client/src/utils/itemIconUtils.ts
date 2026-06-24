@@ -1,0 +1,1414 @@
+// client/src/utils/itemIconUtils.ts
+
+// Import default/error icon
+import errorIcon from '../assets/items/error.png';
+
+// === MATERIALS ===
+// Basic crafting materials, metals, bones, and advanced materials
+
+import woodIcon from '../assets/items/wood.png';
+import stoneIcon from '../assets/items/stone.png';
+import plantFiberIcon from '../assets/items/plant_fiber.png';
+import soggyPlantFiberIcon from '../assets/items/plant_fiber_soggy.png';
+import clothIcon from '../assets/items/cloth.png';
+import charcoalIcon from '../assets/items/charcoal.png';
+import coalIcon from '../assets/items/coal.png';
+import ropeIcon from '../assets/items/rope.png';
+import reedStalkIcon from '../assets/items/reed_stalk.png';
+
+// Metal materials
+import metalOreIcon from '../assets/items/metal_ore.png';
+import metalFragmentsIcon from '../assets/items/metal_fragments.png';
+import tinCanIcon from '../assets/items/tin_can.png';
+import scrapBatteriesIcon from '../assets/items/scrap_batteries.png';
+
+// Fishing junk items
+import oldBootIcon from '../assets/items/old_boot.png';
+import rustyHookIcon from '../assets/items/rusty_hook.png';
+import seaweedIcon from '../assets/items/seaweed.png';
+import driedSeaweedIcon from '../assets/items/dried_seaweed.png';
+import aleutCharmIcon from '../assets/items/aleut_charm.png';
+import shellFragmentIcon from '../assets/items/shell_fragment.png';
+import seaGlassIcon from '../assets/items/sea_glass.png';
+import whaleBoneFragmentIcon from '../assets/items/whale_bone_fragment.png';
+import sulfurIcon from '../assets/items/sulfur.png';
+import sulfurOreIcon from '../assets/items/sulfur_ore.png';
+import gunpowderIcon from '../assets/items/gunpowder.png';
+
+// Coral reef materials
+import coralFragmentsIcon from '../assets/items/coral_fragments.png';
+import limestoneIcon from '../assets/items/limestone.png';
+import shellIcon from '../assets/items/shell.png';
+import pearlIcon from '../assets/items/pearl.png';
+
+// Bone materials
+import boneIcon from '../assets/items/bone.png';
+import boneFragmentsIcon from '../assets/items/bone_fragments.png';
+import animalFatIcon from '../assets/items/animal_fat.png';
+
+// Tree bark and seed materials
+import pineBarkIcon from '../assets/items/tree_bark.png';
+import birchBarkIcon from '../assets/items/tree_bark_birch.png';
+import pineconeIcon from '../assets/items/pinecone.png';
+import cookedPineconeIcon from '../assets/items/cooked_pinecone.png';
+import birchCatkinIcon from '../assets/items/birch_catkin.png';
+import crabApplesIcon from '../assets/items/crab_apples.png';
+import cookedCrabApplesIcon from '../assets/items/cooked_crab_apples.png';
+import crabAppleSeedsIcon from '../assets/items/crab_apple_seeds.png';
+import hazelnutIcon from '../assets/items/hazelnuts.png';
+import cookedHazelnutIcon from '../assets/items/cooked_hazelnuts.png';
+import olivesIcon from '../assets/items/olives.png';
+import olivePitIcon from '../assets/items/olive_pit.png';
+
+// Animal materials
+import animalHideIcon from '../assets/items/animal_hide.png';
+import animalLeatherIcon from '../assets/items/animal_leather.png';
+import cableViperGlandIcon from '../assets/items/cable_viper_gland.png';
+import foxFurIcon from '../assets/items/fox_fur.png';
+import wolfFurIcon from '../assets/items/wolf_fur.png';
+import viperScaleIcon from '../assets/items/viper_scale.png';
+
+// Bird feathers
+import ternFeathersIcon from '../assets/items/tern_feathers.png';
+import crowFeathersIcon from '../assets/items/crow_feathers.png';
+import owlFeathersIcon from '../assets/items/owl_feathers.png';
+
+// Technological materials
+import memoryShardIcon from '../assets/items/memory_shard.png';
+
+// Ceremonial materials
+import matronsMarkIcon from '../assets/items/matrons_mark.png';
+
+// === TOOLS ===
+// Gathering tools, utility tools, medical tools, light sources
+
+import stoneHatchetIcon from '../assets/items/stone_hatchet.png';
+import metalHatchetIcon from '../assets/items/metal_hatchet.png';
+import stonePickaxeIcon from '../assets/items/stone_pickaxe.png';
+import metalPickaxeIcon from '../assets/items/metal_pickaxe.png';
+import stoneTillerIcon from '../assets/items/stone_tiller.png';
+import divingPickIcon from '../assets/items/diving_pick.png';
+import rockItemIcon from '../assets/items/rock_item.png';
+import combatLadleIcon from '../assets/items/combat_ladle.png';
+import boneClubIcon from '../assets/items/bone_club.png';
+import boneKnifeIcon from '../assets/items/bone_knife.png';
+import tidebreakerBladeIcon from '../assets/items/tidebreaker_blade.png';
+import repairHammerIcon from '../assets/items/repair_hammer.png';
+
+// Light sources
+import torchIcon from '../assets/items/torch.png';
+import torchFlameIcon from '../assets/items/torch_on.png';
+import flashlightIcon from '../assets/items/flashlight.png';
+
+// Medical tools
+import bandageIcon from '../assets/items/bandage.png';
+import medKitIcon from '../assets/items/med_kit.png';
+import seloOliveOilIcon from '../assets/items/selo_olive_oil.png';
+import antiVenomIcon from '../assets/items/anti_venom.png';
+
+// Utility tools
+import blueprintIcon from '../assets/items/blueprint.png';
+import reedSnorkelIcon from '../assets/items/reed_snorkel.png';
+import reedFlippersIcon from '../assets/items/reed_flippers.png';
+import boneHookIcon from '../assets/items/fishing_gaff_hook.png';
+import fishingRodIcon from '../assets/items/reed_fishing_rod.png';
+import fishTrapIcon from '../assets/items/fish_trap.png';
+import reedBellowsIcon from '../assets/items/reed_bellows.png';
+import reedWaterBottleIcon from '../assets/items/reed_water_bottle.png';
+import waterJugIcon from '../assets/items/water_jug.png';
+import fieldCauldronIcon from '../assets/items/field_cauldron.png';
+import brothPotIcon from '../assets/items/broth_pot_icon.png';
+
+// === WEAPONS ===
+// Melee weapons, ranged weapons, skulls
+
+import spearIcon from '../assets/items/spear.png';
+import stoneSpearIcon from '../assets/items/stone_spear.png';
+import reedHarpoonIcon from '../assets/items/reed_harpoon.png';
+
+import huntingBowIcon from '../assets/items/bow.png';
+import crossbowIcon from '../assets/items/crossbow.png';
+import reedHarpoonGunIcon from '../assets/items/reed_harpoon_gun.png';
+
+// Military weapons
+import macheteIcon from '../assets/items/machete.png';
+import sovietBayonetIcon from '../assets/items/soviet_bayonet.png';
+import navalCutlassIcon from '../assets/items/naval_cutlass.png';
+import engineersMaulIcon from '../assets/items/engineers_maul.png';
+import militaryCrowbarIcon from '../assets/items/military_crowbar.png';
+import makarovPmIcon from '../assets/items/makarov_pm.png';
+import pp91KedrIcon from '../assets/items/pp91_kedr.png';
+
+// Skull weapons
+import skullIcon from '../assets/items/skull.png';
+import foxSkullIcon from '../assets/items/fox_skull.png';
+import wolfSkullIcon from '../assets/items/wolf_skull.png';
+import viperSkullIcon from '../assets/items/viper_skull.png';
+import walrusSkullIcon from '../assets/items/walrus_skull.png';
+import voleSkullIcon from '../assets/items/vole_skull.png';
+import wolverineSkullIcon from '../assets/items/wolverine_skull.png';
+// Alpine animal skulls
+import polarBearSkullIcon from '../assets/items/polar_bear_skull.png';
+import hareSkullIcon from '../assets/items/hare_skull.png';
+import owlSkullIcon from '../assets/items/owl_skull.png';
+// Coastal bird skulls
+import ternSkullIcon from '../assets/items/tern_skull.png';
+import crowSkullIcon from '../assets/items/crow_skull.png';
+// Aquatic animal skull
+import sharkSkullIcon from '../assets/items/shark_skull.png';
+
+// Utility melee weapons
+import kayakPaddleIcon from '../assets/items/kayak_paddle.png';
+import scytheIcon from '../assets/items/scythe.png';
+
+// Craftable melee weapons
+import stoneMaceIcon from '../assets/items/stone_mace.png';
+import warHammerIcon from '../assets/items/war_hammer.png';
+import boneShivIcon from '../assets/items/bone_shiv.png';
+import metalDaggerIcon from '../assets/items/metal_dagger.png';
+import battleAxeIcon from '../assets/items/battle_axe.png';
+
+// === AMMUNITION ===
+// Arrows and projectiles
+
+import woodenArrowIcon from '../assets/items/wooden_arrow.png';
+import boneArrowIcon from '../assets/items/bone_arrow.png';
+import fireArrowIcon from '../assets/items/fire_arrow.png';
+import hollowReedArrowIcon from '../assets/items/hollow_reed_arrow.png';
+
+// Bullets
+import pistolRoundIcon from '../assets/items/9x18mm_round.png';
+
+// Harpoon darts
+import reedHarpoonDartIcon from '../assets/items/reed_harpoon_dart.png';
+
+// === ARMOR ===
+// Protective equipment and clothing
+
+// Cloth armor
+import clothShirtIcon from '../assets/items/cloth_shirt.png';
+import clothPantsIcon from '../assets/items/cloth_pants.png';
+import clothHatIcon from '../assets/items/cloth_hood.png';
+import clothGlovesIcon from '../assets/items/cloth_gloves.png';
+import clothBootsIcon from '../assets/items/cloth_boots.png';
+import burlapCapeIcon from '../assets/items/burlap_cape.png';
+import tallowHeadLampIcon from '../assets/items/tallow_head_lamp.png';
+
+// Bone armor
+import boneHelmetIcon from '../assets/items/bone_helmet.png';
+import boneChestplateIcon from '../assets/items/bone_chestplate.png';
+import boneLeggingsIcon from '../assets/items/bone_leggings.png';
+import boneGauntletsIcon from '../assets/items/bone_gauntlets.png';
+import boneBootsIcon from '../assets/items/bone_boots.png';
+
+// Wooden armor
+import woodenHelmetIcon from '../assets/items/wooden_helmet.png';
+import woodenChestplateIcon from '../assets/items/wooden_chestplate.png';
+import woodenLeggingsIcon from '../assets/items/wooden_leggings.png';
+import woodenGauntletsIcon from '../assets/items/wooden_gauntlets.png';
+import woodenBootsIcon from '../assets/items/wooden_boots.png';
+
+// Leather armor
+import leatherHelmetIcon from '../assets/items/leather_helmet.png';
+import leatherChestplateIcon from '../assets/items/leather_chestplate.png';
+import leatherLeggingsIcon from '../assets/items/leather_leggings.png';
+import leatherGauntletsIcon from '../assets/items/leather_gauntlets.png';
+import leatherBootsIcon from '../assets/items/leather_boots.png';
+import leatherMantleIcon from '../assets/items/leather_mantle.png';
+
+// Scale armor
+import scaleHelmetIcon from '../assets/items/scale_helmet.png';
+import scaleChestplateIcon from '../assets/items/scale_chestplate.png';
+import scaleLeggingsIcon from '../assets/items/scale_leggings.png';
+import scaleGauntletsIcon from '../assets/items/scale_gauntlets.png';
+import scaleBootsIcon from '../assets/items/scale_boots.png';
+
+// Fox fur armor
+import foxFurHoodIcon from '../assets/items/fox_fur_hood.png';
+import foxFurCoatIcon from '../assets/items/fox_fur_coat.png';
+import foxFurLeggingsIcon from '../assets/items/fox_fur_leggings.png';
+import foxFurGlovesIcon from '../assets/items/fox_fur_gloves.png';
+import foxFurBootsIcon from '../assets/items/fox_fur_boots.png';
+
+// Wolf fur armor
+import wolfFurHoodIcon from '../assets/items/wolf_fur_hood.png';
+import wolfFurCoatIcon from '../assets/items/wolf_fur_coat.png';
+import wolfFurLeggingsIcon from '../assets/items/wolf_fur_leggings.png';
+import wolfFurGlovesIcon from '../assets/items/wolf_fur_gloves.png';
+import wolfFurBootsIcon from '../assets/items/wolf_fur_boots.png';
+
+// Containers (wearable storage)
+import burlapSackIcon from '../assets/items/burlap_sack.png';
+import burlapBackpackIcon from '../assets/items/burlap_backpack.png';
+
+// Bone Totems (Aleutian spirit carvings)
+import kayuxAmuletIcon from '../assets/items/kayux_amulet.png';
+import sabaakaxTotemIcon from '../assets/items/sabaakax_totem.png';
+import qaxaadaxTotemIcon from '../assets/items/qaxaadax_totem.png';
+import tugixTotemIcon from '../assets/items/tugix_totem.png';
+import tunuxCharmIcon from '../assets/items/tunux_charm.png';
+import qilaxTotemIcon from '../assets/items/qilax_totem.png';
+import tanuuxTotemIcon from '../assets/items/tanuux_totem.png';
+import ulaxCharmIcon from '../assets/items/ulax_charm.png';
+import angunaxTotemIcon from '../assets/items/angunax_totem.png';
+import alaxTotemIcon from '../assets/items/alax_totem.png';
+import tayngaxTotemIcon from '../assets/items/tayngax_totem.png';
+import qaangaxTotemIcon from '../assets/items/qaangax_totem.png';
+
+// Bone Carving Kit
+import boneCarvingKitIcon from '../assets/items/bone_carving_kit.png';
+
+// Transistor Radio
+import transistorRadioIcon from '../assets/items/radio.png';
+
+// === CONSUMABLES ===
+// Food, medicine, and edible items
+
+// Basic crops
+import pumpkinIcon from '../assets/items/pumpkin.png';
+import cookedPumpkinIcon from '../assets/items/cooked_pumpkin.png';
+import potatoIcon from '../assets/items/potato.png';
+import cookedPotatoIcon from '../assets/items/cooked_potato.png';
+
+// Vegetables
+import carrotIcon from '../assets/items/carrot.png';
+import cookedCarrotIcon from '../assets/items/cooked_carrot.png';
+import cornIcon from '../assets/items/corn.png';
+import cookedCornIcon from '../assets/items/cooked_corn.png';
+import beetsIcon from '../assets/items/beet.png';
+import cookedBeetIcon from '../assets/items/cooked_beet.png';
+import horseradishIcon from '../assets/items/horseradish.png';
+import salsifyIcon from '../assets/items/salsify.png';
+import cookedSalsifyIcon from '../assets/items/cooked_salsify.png';
+import cabbageIcon from '../assets/items/cabbage.png';
+import cookedCabbageIcon from '../assets/items/cooked_cabbage.png';
+import fireweedShootsIcon from '../assets/items/fireweed_shoots.png';
+
+// Fennel
+import fennelIcon from '../assets/items/fennel.png';
+import cookedFennelIcon from '../assets/items/cooked_fennel.png';
+import fennelFrondsIcon from '../assets/items/fennel_fronds.png';
+import fennelSeedsIcon from '../assets/items/fennel_seeds.png';
+
+// Aleutian Plants (new additions)
+import kamchatkaLilyBulbIcon from '../assets/items/kamchatka_lily_bulb.png';
+import cookedKamchatkaLilyBulbIcon from '../assets/items/cooked_kamchatka_lily_bulb.png';
+import wildCeleryStalksIcon from '../assets/items/wild_celery_stalks.png';
+import cookedWildCeleryIcon from '../assets/items/cooked_wild_celery.png';
+import angelicaSeedsIcon from '../assets/items/angelica_seeds.png';
+import silverweedRootIcon from '../assets/items/silverweed_root.png';
+import cookedSilverweedRootIcon from '../assets/items/cooked_silverweed_root.png';
+import nagoonberriesIcon from '../assets/items/nagoonberries.png';
+import nagoonberrySeedsIcon from '../assets/items/nagoonberry_seeds.png';
+import bistortBulbilsIcon from '../assets/items/bistort_bulbils.png';
+import cookedBistortBulbilsIcon from '../assets/items/cooked_bistort_bulbils.png';
+
+// Flour and Bread
+import flourIcon from '../assets/items/flour.png';
+import aleutianBreadIcon from '../assets/items/aleutian_bread.png';
+import berryAleutianBreadIcon from '../assets/items/berry_aleutian_bread.png';
+
+// Mushrooms
+import flyAgaricIcon from '../assets/items/fly_agaric.png';
+import porciniIcon from '../assets/items/porcini.png';
+import cookedPorciniIcon from '../assets/items/cooked_porcini.png';
+import deadlyWebcapIcon from '../assets/items/deadly_webcap.png';
+import destroyingAngelIcon from '../assets/items/destroying_angel.png';
+import shaggylnkCapIcon from '../assets/items/shaggy_ink_cap.png';
+import cookedShaggyInkCapIcon from '../assets/items/cooked_shaggy_ink_cap.png';
+import chanterelleIcon from '../assets/items/chanterelle.png';
+import cookedChanterelleIcon from '../assets/items/cooked_chanterelle.png';
+
+// Herbs & medicinal plants
+import chicoryIcon from '../assets/items/chicory.png';
+import cookedChicoryIcon from '../assets/items/cooked_chicory.png';
+import yarrowIcon from '../assets/items/yarrow.png';
+import chamomileIcon from '../assets/items/chamomile.png';
+import mintIcon from '../assets/items/mint.png';
+import mintCuttingsIcon from '../assets/items/mint_cuttings.png';
+import valerianIcon from '../assets/items/valerian.png';
+import valerianLeavesIcon from '../assets/items/valerian_leaves.png';
+import mugwortIcon from '../assets/items/mugwort.png';
+
+import bearGarlicIcon from '../assets/items/bear_garlic.png';
+import roastedBearGarlicIcon from '../assets/items/roasted_bear_garlic.png';
+import siberianGinsengIcon from '../assets/items/siberian_ginseng.png';
+import ginsengLeavesIcon from '../assets/items/ginseng_leaves.png';
+import nettleLeavesIcon from '../assets/items/nettle_leaves.png';
+import cookedNettleLeavesIcon from '../assets/items/cooked_nettle_leaves.png';
+
+// Arctic/Subarctic plants (botanically accurate for Aleutian Islands)
+import scurvyGrassIcon from '../assets/items/scurvy_grass.png';
+import crowberriesIcon from '../assets/items/crowberry.png';
+import seaPlantainIcon from '../assets/items/sea_plantain.png';
+import glasswortIcon from '../assets/items/glasswort.png';
+
+// Alpine plants
+import arcticPoppyIcon from '../assets/items/arctic_poppy.png';
+
+// Toxic/Medicinal plants (some grow in harsh northern climates)
+import mandrakeIcon from '../assets/items/mandrake.png';
+import belladonnaIcon from '../assets/items/belladonna.png';
+import henbaneIcon from '../assets/items/henbane.png';
+import daturaIcon from '../assets/items/datura.png';
+import wolfsbaneIcon from '../assets/items/wolfsbane.png';
+
+// Fiber plants
+import bogCottonIcon from '../assets/items/bog_cotton.png';
+import dogbaneFiberIcon from '../assets/items/dogbane.png';
+
+// Other plants
+import sunflowerIcon from '../assets/items/sunflower.png';
+import cookedSunflowerIcon from '../assets/items/cooked_sunflower.png';
+import sunflowerSeedsIcon from '../assets/items/sunflower_seeds.png';
+
+// Berries (subarctic/boreal region berries)
+import lingonberriesIcon from '../assets/items/lingonberries.png';
+import cloudberriesIcon from '../assets/items/cloudberries.png';
+import bilberriesIcon from '../assets/items/bilberries.png';
+import wildStrawberriesIcon from '../assets/items/wild_strawberries.png';
+import rowanBerriesIcon from '../assets/items/rowan_berries.png';
+import cranberriesIcon from '../assets/items/cranberries.png';
+
+// Animal meat
+import rawHumanFleshIcon from '../assets/items/human_meat.png';
+import cookedHumanFleshIcon from '../assets/items/cooked_human_meat.png';
+import rawWolfMeatIcon from '../assets/items/wolf_meat.png';
+import cookedWolfMeatIcon from '../assets/items/cooked_wolf_meat.png';
+import rawFoxMeatIcon from '../assets/items/fox_meat.png';
+import coookedFoxMeatIcon from '../assets/items/cooked_fox_meat.png';
+import rawViperMeatlIcon from '../assets/items/viper_meat.png';
+import cookedViperMeatIcon from '../assets/items/cooked_viper_meat.png';
+import rawCrabMeatIcon from '../assets/items/crab_meat.png';
+import cookedCrabMeatIcon from '../assets/items/cooked_crab_meat.png';
+import crabCarapaceIcon from '../assets/items/crab_carapace.png';
+import crabClawIcon from '../assets/items/crab_claw.png';
+import bearMeatIcon from '../assets/items/bear_meat.png';
+import cookedBearMeatIcon from '../assets/items/cooked_bear_meat.png';
+import boarMeatIcon from '../assets/items/boar_meat.png';
+import chickenMeatIcon from '../assets/items/chicken_meat.png';
+import rawCrowMeatIcon from '../assets/items/raw_crow_meat.png';
+import cookedCrowMeatIcon from '../assets/items/cooked_crow_meat.png';
+import rawTernMeatIcon from '../assets/items/raw_tern_meat.png';
+import cookedTernMeatIcon from '../assets/items/cooked_tern_meat.png';
+import rawVoleMeatIcon from '../assets/items/vole_meat.png';
+import cookedVoleMeatIcon from '../assets/items/cooked_vole_meat.png';
+import rawWolverineMeatIcon from '../assets/items/wolverine_meat.png';
+import cookedWolverineMeatIcon from '../assets/items/cooked_wolverine_meat.png';
+import rawCaribouMeatIcon from '../assets/items/caribou_meat.png';
+import cookedCaribouMeatIcon from '../assets/items/cooked_caribou_meat.png';
+// Alpine and missing animal meats (bear meat icons already exist above)
+import rawWalrusMeatIcon from '../assets/items/walrus_meat.png';
+import cookedWalrusMeatIcon from '../assets/items/cooked_walrus_meat.png';
+import rawHareMeatIcon from '../assets/items/hare_meat.png';
+import cookedHareMeatIcon from '../assets/items/cooked_hare_meat.png';
+import rawOwlMeatIcon from '../assets/items/owl_meat.png';
+import cookedOwlMeatIcon from '../assets/items/cooked_owl_meat.png';
+// Aquatic creature items
+import rawSharkMeatIcon from '../assets/items/raw_shark_meat.png';
+import cookedSharkMeatIcon from '../assets/items/cooked_shark_meat.png';
+import sharkFinIcon from '../assets/items/shark_fin.png';
+import jellyfishGelIcon from '../assets/items/jellyfish_gel.png';
+import jellyfishMembraneIcon from '../assets/items/jellyfish_membrane.png';
+import jellyfishStingerIcon from '../assets/items/jellyfish_stinger.png';
+import jellyfishCompressIcon from '../assets/items/jellyfish_compress.png';
+import sharkFinFlippersIcon from '../assets/items/shark_fin_flippers.png';
+import babushkasBootsOfSpeedIcon from '../assets/items/babushkas_boots_of_speed.png';
+import venomArrowIcon from '../assets/items/venom_arrow.png';
+import venomHarpoonDartIcon from '../assets/items/venom_harpoon_dart.png';
+
+// Fish - Raw fish icons
+import rawTwigfishIcon from '../assets/items/raw_twigfish.png';
+import rawHerringIcon from '../assets/items/raw_herring.png';
+import rawSmeltIcon from '../assets/items/raw_smelt.png';
+import rawBlackKatyChitonIcon from '../assets/items/raw_black_katy_chiton.png';
+import rawSeaUrchinIcon from '../assets/items/raw_sea_urchin.png';
+import rawBlueMusselIcon from '../assets/items/raw_blue_mussel.png';
+import cookedBlueMusselIcon from '../assets/items/cooked_blue_mussel.png';
+import rawGreenlingIcon from '../assets/items/raw_greenling.png';
+import rawSculpinIcon from '../assets/items/raw_sculpin.png';
+import rawPacificCodIcon from '../assets/items/raw_pacific_cod.png';
+import rawDollyVardenIcon from '../assets/items/raw_dolly_varden.png';
+import rawRockfishIcon from '../assets/items/raw_rockfish.png';
+import rawSteelheadIcon from '../assets/items/raw_steelhead.png';
+import rawPinkSalmonIcon from '../assets/items/raw_pink_salmon.png';
+import rawSockeyeSalmonIcon from '../assets/items/raw_sockeye_salmon.png';
+import rawKingSalmonIcon from '../assets/items/raw_king_salmon.png';
+import rawHalibutIcon from '../assets/items/raw_halibut.png';
+
+// Fish - Cooked versions (burnt items use cooked icons with visual filter)
+import cookedTwigfishIcon from '../assets/items/cooked_twigfish.png';
+import cookedHerringIcon from '../assets/items/cooked_herring.png';
+import cookedSmeltIcon from '../assets/items/cooked_smelt.png';
+import cookedGreenlingIcon from '../assets/items/cooked_greenling.png';
+import cookedSculpinIcon from '../assets/items/cooked_sculpin.png';
+import cookedPacificCodIcon from '../assets/items/cooked_pacific_cod.png';
+import cookedDollyVardenIcon from '../assets/items/cooked_dolly_varden.png';
+import cookedRockfishIcon from '../assets/items/cooked_rockfish.png';
+import cookedSteelheadIcon from '../assets/items/cooked_steelhead.png';
+import cookedPinkSalmonIcon from '../assets/items/cooked_pink_salmon.png';
+import cookedSockeyeSalmonIcon from '../assets/items/cooked_sockeye_salmon.png';
+import cookedKingSalmonIcon from '../assets/items/cooked_king_salmon.png';
+import cookedHalibutIcon from '../assets/items/cooked_halibut.png';
+import cookedBlackKatyChitonIcon from '../assets/items/cooked_black_katy_chiton.png';
+import cookedSeaUrchinIcon from '../assets/items/cooked_sea_urchin.png';
+
+// Specialty foods
+import tallowIcon from '../assets/items/tallow.png';
+import tinOfSpratsIcon from '../assets/items/tin_of_sprats.png';
+import fermentedCabbageJarIcon from '../assets/items/fermented_cabbage_jar.png';
+import oldHardtackBiscuitsIcon from '../assets/items/old_hardtack_biscuits.png';
+import expiredSovietChocolateIcon from '../assets/items/expired_soviet_chocolate.png';
+import mysteryCanIcon from '../assets/items/mystery_can.png';
+
+// Russian Military IRP (Individual Ration Pack) items
+import cannedMeatIcon from '../assets/items/canned_meat.png';
+import cannedKashaIcon from '../assets/items/canned_kasha.png';
+import cannedPateIcon from '../assets/items/canned_pate.png';
+import condensedMilkIcon from '../assets/items/condensed_milk.png';
+import sugarPacketsIcon from '../assets/items/sugar_packets.png';
+import blackTeaTinIcon from '../assets/items/black_tea_tin.png';
+import instantCoffeeTinIcon from '../assets/items/instant_coffee_tin.png';
+import vitaminDrinkIcon from '../assets/items/vitamin_drink.png';
+import validolTabletsIcon from '../assets/items/validol_tablets.png';
+import chewingGumIcon from '../assets/items/chewing_gum.png';
+import brokenLighterIcon from '../assets/items/broken_lighter.png';
+import wetWipesIcon from '../assets/items/wet_wipes.png';
+import paperNapkinsIcon from '../assets/items/paper_napkins.png';
+import plasticSpoonIcon from '../assets/items/plastic_spoon.png';
+import saltPepperPackIcon from '../assets/items/salt_pepper_pack.png';
+
+// Brewed soups
+import soupStoneSoupIcon from '../assets/items/soup_stone_soup.png';
+
+// === COOKING STATION RECIPES ===
+// Advanced gourmet meals that require a Cooking Station
+import vegetableStewIcon from '../assets/items/vegetable_stew.png';
+import rootMedleyIcon from '../assets/items/root_medley.png';
+import stuffedPumpkinIcon from '../assets/items/stuffed_pumpkin.png';
+import fishPieIcon from '../assets/items/fish_pie.png';
+import seafoodPlatterIcon from '../assets/items/seafood_platter.png';
+import salmonBakeIcon from '../assets/items/salmon_bake.png';
+import crabCakesIcon from '../assets/items/crab_cakes.png';
+import huntersFeastIcon from '../assets/items/hunters_feast.png';
+import herbCrustedMeatIcon from '../assets/items/herb_crusted_meat.png';
+import bearRoastIcon from '../assets/items/bear_roast.png';
+import mushroomMedleyIcon from '../assets/items/mushroom_medley.png';
+import stuffedMushroomsIcon from '../assets/items/stuffed_mushrooms.png';
+import berryTartIcon from '../assets/items/berry_tart.png';
+import mixedBerryBowlIcon from '../assets/items/mixed_berry_bowl.png';
+
+// === DAIRY & FERMENTATION ===
+// Milk products and fermented goods
+import milkIcon from '../assets/items/milk.png';
+import warmMilkIcon from '../assets/items/warm_milk.png';
+import cheeseIcon from '../assets/items/cheese.png';
+import yogurtIcon from '../assets/items/yogurt.png';
+import yeastIcon from '../assets/items/yeast.png';
+
+// Mashes and fermented bases
+import berryMashIcon from '../assets/items/berry_mash.png';
+
+import rootMashIcon from '../assets/items/root_mash.png';
+
+// Alcoholic beverages
+import grainBeerIcon from '../assets/items/grain_beer.png';
+import berryWineIcon from '../assets/items/berry_wine.png';
+import rootWineIcon from '../assets/items/root_wine.png';
+import vinegarIcon from '../assets/items/vinegar.png';
+
+// Bee products
+import honeyIcon from '../assets/items/honey.png';
+import honeycombIcon from '../assets/items/honeycomb.png';
+import queenBeeIcon from '../assets/items/queen_bee.png';
+
+// Preserves (long-lasting foods)
+import meadIcon from '../assets/items/mead.png';
+import berryJamIcon from '../assets/items/berry_jam.png';
+import pickledVegetablesIcon from '../assets/items/pickled_vegetables.png';
+import pickledFishIcon from '../assets/items/pickled_fish.png';
+import meatJerkyIcon from '../assets/items/meat_jerky.png';
+import driedFishIcon from '../assets/items/dried_fish.png';
+
+// === SEEDS ===
+// All plantable items
+
+import seedPotatoIcon from '../assets/items/seed_potato.png';
+import hempSeedsIcon from '../assets/items/hemp_seeds.png';
+import pumpkinSeedsIcon from '../assets/items/pumpkin_seeds.png';
+import mushroomSporeIcon from '../assets/items/mushroom_spore.png';
+import reedRhizomeIcon from '../assets/items/reed_rhizome.png';
+import seaweedFrondIcon from '../assets/items/seaweed_frond.png';
+import flaxSeedsIcon from '../assets/items/flax_seeds.png';
+import bearGarlicBulbsIcon from '../assets/items/bear_garlic_bulbs.png';
+import ginsengSeedsIcon from '../assets/items/ginseng_seeds.png';
+import yarrowSeedsIcon from '../assets/items/yarrow_seeds.png';
+import mugwortSeedsIcon from '../assets/items/mugwort_seeds.png';
+import valerianSeedsIcon from '../assets/items/valerian_seeds.png';
+
+import nettleSeedsIcon from '../assets/items/nettle_seeds.png';
+import carrotSeedsIcon from '../assets/items/carrot_seeds.png';
+import cornSeedsIcon from '../assets/items/corn_seeds.png';
+import chamomileSeedsIcon from '../assets/items/chamomile_seeds.png';
+import chicorySeedsIcon from '../assets/items/chicory_seeds.png';
+import salsifySeedsIcon from '../assets/items/salsify_seeds.png';
+import cabbageSeedsIcon from '../assets/items/cabbage_seeds.png';
+
+// Arctic/Subarctic plant seeds
+import scurvyGrassSeedsIcon from '../assets/items/scurvy_grass_seeds.png';
+import crowberrySeedsIcon from '../assets/items/crowberry_seeds.png';
+import fireweedSeedsIcon from '../assets/items/fireweed_seeds.png';
+import seaPlantainSeedsIcon from '../assets/items/sea_plantain_seeds.png';
+import glasswortSeedsIcon from '../assets/items/glasswort_seeds.png';
+import beachLymeGrassSeedsIcon from '../assets/items/beach_lyme_grass_seeds.png';
+import bogCottonSeedsIcon from '../assets/items/bog_cotton_seeds.png';
+
+// Alpine plant spores/seeds
+import arcticPoppySeedsIcon from '../assets/items/arctic_poppy_seeds.png';
+
+// Berry seeds (subarctic/boreal region berries)
+import lingonberrySeedsIcon from '../assets/items/lingonberry_seeds.png';
+import cloudberrySeedsIcon from '../assets/items/cloudberry_seeds.png';
+import bilberrySeedsIcon from '../assets/items/bilberry_seeds.png';
+import wildStrawberrySeedsIcon from '../assets/items/wild_strawberry_seeds.png';
+import rowanberrySeedsIcon from '../assets/items/rowanberry_seeds.png';
+import cranberrySeedsIcon from '../assets/items/cranberry_seeds.png';
+
+// Toxic/Medicinal plant seeds (placeholder imports for future assets)
+import mandrakeSeedsIcon from '../assets/items/mandrake_seeds.png';
+import belladonnaSeedsIcon from '../assets/items/belladonna_seeds.png';
+import henbaneSeedsIcon from '../assets/items/henbane_seeds.png';
+import daturaSeedsIcon from '../assets/items/datura_seeds.png';
+import wolfsbaneSeedsIcon from '../assets/items/wolfsbane_seeds.png';
+
+// Farming supplies
+import fertilizerIcon from '../assets/items/fertilizer.png';
+
+// === PLACEABLES ===
+// Structures, containers, and deployable items
+
+import campFireIcon from '../assets/items/campfire.png';
+import campfireOffIcon from '../assets/items/campfire_off.png';
+import furnaceIcon from '../assets/items/furnace_simple.png';
+import largeFurnaceIcon from '../assets/items/large_furnace.png';
+import stashIcon from '../assets/items/stash.png';
+import woodenStorageBoxIcon from '../assets/items/wooden_storage_box.png';
+import largeWoodenStorageBoxIcon from '../assets/items/large_wood_box.png';
+import refrigeratorIcon from '../assets/items/refrigerator.png';
+import compostIcon from '../assets/items/compost.png';
+import tanningRackIcon from '../assets/items/tanning_rack.png';
+import repairBenchIcon from '../assets/items/repair_bench.png';
+import cookingStationIcon from '../assets/items/cooking_station.png';
+import barbecueIcon from '../assets/items/barbecue.png';
+import scarecrowIcon from '../assets/items/scarecrow.png';
+import sleepingBagIcon from '../assets/items/sleeping_bag.png';
+import shelterIcon from '../assets/items/shelter.png';
+import tallowLampIcon from '../assets/items/lantern_off.png';
+import reedRainCollectorIcon from '../assets/items/reed_rain_collector.png';
+import hearthIcon from '../assets/items/hearth.png';
+import woodenBeehiveIcon from '../assets/items/beehive_wooden.png'; // Player-made beehive icon
+
+// Trophy decorations
+import wolfPeltIcon from '../assets/items/wolf_pelt.png';
+import foxPeltIcon from '../assets/items/fox_pelt.png';
+import polarBearPeltIcon from '../assets/items/polar_bear_pelt.png';
+import walrusPeltIcon from '../assets/items/walrus_pelt.png';
+import caribouAntlersIcon from '../assets/items/caribou_antlers.png';
+
+// Building components
+import woodDoorIcon from '../assets/items/wood_door.png';
+import metalDoorIcon from '../assets/items/metal_door.png';
+
+// Explosives
+import babushkaSurpriseIcon from '../assets/items/babushka_surprise.png';
+import matriarchWrathIcon from '../assets/items/matriarch_wrath.png';
+
+// Corruption Wards
+import ancestralWardIcon from '../assets/items/ancestral_ward.png';
+import signalDisruptorIcon from '../assets/items/signal_disruptor.png';
+import memoryBeaconIcon from '../assets/items/memory_beacon.png';
+import turretTallowIcon from '../assets/items/turret_tallow.png';
+
+// Misc/Special
+import deathMarkerIcon from '../assets/items/death_marker.png';
+
+// Create a mapping from the asset name (stored in DB) to the imported module path
+const iconMap: { [key: string]: string | undefined } = {
+  // === MATERIALS ===
+  'wood.png': woodIcon,
+  'stone.png': stoneIcon,
+  'plant_fiber.png': plantFiberIcon,
+  'plant_fiber_soggy.png': soggyPlantFiberIcon,
+  'cloth.png': clothIcon,
+  'charcoal.png': charcoalIcon,
+  'coal.png': coalIcon,
+  'rope.png': ropeIcon,
+  'reed_stalk.png': reedStalkIcon,
+  
+  // Metal materials
+  'metal_ore.png': metalOreIcon,
+  'metal.png': metalOreIcon, // Server uses "metal.png" for Metal Ore, map to metal_ore.png asset
+  'metal_fragments.png': metalFragmentsIcon,
+  'tin_can.png': tinCanIcon,
+  'scrap_batteries.png': scrapBatteriesIcon,
+  
+  // Fishing junk items
+  'old_boot.png': oldBootIcon,
+  'rusty_hook.png': rustyHookIcon,
+  'seaweed.png': seaweedIcon,
+  'dried_seaweed.png': driedSeaweedIcon,
+  'aleut_charm.png': aleutCharmIcon,
+  'shell_fragment.png': shellFragmentIcon,
+  'sea_glass.png': seaGlassIcon,
+  'whale_bone_fragment.png': whaleBoneFragmentIcon,
+  
+  // Coral reef materials
+  'coral_fragments.png': coralFragmentsIcon, // Actual coral fragments icon
+  'limestone.png': limestoneIcon, 
+  'shell.png': shellIcon,
+  'pearl.png': pearlIcon,
+  
+  // Sulfur materials
+  'sulfur.png': sulfurIcon, // Used for both Sulfur Ore and refined Sulfur
+  'sulfur_ore.png': sulfurOreIcon, // Alternative name if server uses this
+  'gunpowder.png': gunpowderIcon,
+  
+  // Bone materials
+  'bone.png': boneIcon,
+  'bone_fragments.png': boneFragmentsIcon,
+  'animal_fat.png': animalFatIcon,
+  
+  // Tree bark and seed materials
+  'tree_bark.png': pineBarkIcon,
+  'tree_bark_birch.png': birchBarkIcon,
+  'pinecone.png': pineconeIcon,
+  'cooked_pinecone.png': cookedPineconeIcon,
+  'birch_catkin.png': birchCatkinIcon,
+  'crab_apples.png': crabApplesIcon,
+  'cooked_crab_apples.png': cookedCrabApplesIcon,
+  'crab_apple_seeds.png': crabAppleSeedsIcon,
+  'hazelnuts.png': hazelnutIcon,
+  'cooked_hazelnuts.png': cookedHazelnutIcon,
+  'olives.png': olivesIcon,
+  'olive_pit.png': olivePitIcon,
+  
+  // Animal materials
+  'animal_hide.png': animalHideIcon,
+  'animal_leather.png': animalLeatherIcon,
+  'cable_viper_gland.png': cableViperGlandIcon,
+  'fox_fur.png': foxFurIcon,
+  'wolf_fur.png': wolfFurIcon,
+  'viper_scale.png': viperScaleIcon,
+
+  // Bird feathers
+  'tern_feathers.png': ternFeathersIcon,
+  'crow_feathers.png': crowFeathersIcon,
+  'owl_feathers.png': owlFeathersIcon,
+
+  // Technological materials
+  'memory_shard.png': memoryShardIcon,
+
+  // Ceremonial materials
+  'matrons_mark.png': matronsMarkIcon,
+
+  // === TOOLS ===
+  'stone_hatchet.png': stoneHatchetIcon,
+  'metal_hatchet.png': metalHatchetIcon,
+  'stone_pickaxe.png': stonePickaxeIcon,
+  'metal_pickaxe.png': metalPickaxeIcon,
+  'stone_tiller.png': stoneTillerIcon,
+  'rock_item.png': rockItemIcon,
+  'combat_ladle.png': combatLadleIcon,
+  'bone_club.png': boneClubIcon,
+  'bone_knife.png': boneKnifeIcon,
+  'tidebreaker_blade.png': tidebreakerBladeIcon,
+  'repair_hammer.png': repairHammerIcon,
+  
+  // Light sources
+  'torch.png': torchIcon,
+  'torch_on.png': torchFlameIcon,
+  'flashlight.png': flashlightIcon,
+  
+  // Medical tools
+  'bandage.png': bandageIcon,
+  'med_kit.png': medKitIcon,
+  'selo_olive_oil.png': seloOliveOilIcon,
+  'anti_venom.png': antiVenomIcon,
+  
+  // Diving tools
+  'diving_pick.png': divingPickIcon, // Actual diving pick icon
+  
+  // Aquatic gear
+  'reed_flippers.png': reedFlippersIcon,
+  
+  // Utility tools
+  'blueprint.png': blueprintIcon,
+  'reed_snorkel.png': reedSnorkelIcon,
+  'fishing_gaff_hook.png': boneHookIcon,
+  'reed_fishing_rod.png': fishingRodIcon,
+  'fish_trap.png': fishTrapIcon,
+  'reed_bellows.png': reedBellowsIcon,
+  'reed_water_bottle.png': reedWaterBottleIcon,
+  'water_jug.png': waterJugIcon,
+  'field_cauldron.png': fieldCauldronIcon,
+  // Static icon for AI brews when Retrodiffusion is disabled (user can replace with custom design)
+  'broth_pot_icon.png': brothPotIcon,
+
+  // === WEAPONS ===
+  'spear.png': spearIcon,
+  'stone_spear.png': stoneSpearIcon,
+  'reed_harpoon.png': reedHarpoonIcon,
+  'bow.png': huntingBowIcon,
+  'crossbow.png': crossbowIcon,
+  'reed_harpoon_gun.png': reedHarpoonGunIcon,
+  
+  // Military weapons
+  'machete.png': macheteIcon,
+  'soviet_bayonet.png': sovietBayonetIcon,
+  'naval_cutlass.png': navalCutlassIcon,
+  'engineers_maul.png': engineersMaulIcon,
+  'military_crowbar.png': militaryCrowbarIcon,
+  'makarov_pm.png': makarovPmIcon,
+  'pp91_kedr.png': pp91KedrIcon,
+  
+  // Skull weapons
+  'skull.png': skullIcon,
+  'fox_skull.png': foxSkullIcon,
+  'wolf_skull.png': wolfSkullIcon,
+  'viper_skull.png': viperSkullIcon,
+  'walrus_skull.png': walrusSkullIcon,
+  'vole_skull.png': voleSkullIcon,
+  'wolverine_skull.png': wolverineSkullIcon,
+  // Alpine animal skulls
+  'polar_bear_skull.png': polarBearSkullIcon,
+  'hare_skull.png': hareSkullIcon,
+  'owl_skull.png': owlSkullIcon,
+  // Coastal bird skulls
+  'tern_skull.png': ternSkullIcon,
+  'crow_skull.png': crowSkullIcon,
+  // Aquatic animal skull
+  'shark_skull.png': sharkSkullIcon,
+  
+  // Utility melee weapons
+  'kayak_paddle.png': kayakPaddleIcon,
+  'scythe.png': scytheIcon,
+  
+  // Craftable melee weapons
+  'stone_mace.png': stoneMaceIcon,
+  'war_hammer.png': warHammerIcon,
+  'bone_shiv.png': boneShivIcon,
+  'metal_dagger.png': metalDaggerIcon,
+  'battle_axe.png': battleAxeIcon,
+
+  // === AMMUNITION ===
+  'wooden_arrow.png': woodenArrowIcon,
+  'bone_arrow.png': boneArrowIcon,
+  'fire_arrow.png': fireArrowIcon,
+  'hollow_reed_arrow.png': hollowReedArrowIcon,
+  '9x18mm_round.png': pistolRoundIcon,
+  'reed_harpoon_dart.png': reedHarpoonDartIcon,
+
+  // === ARMOR ===
+  // Cloth armor
+  'cloth_shirt.png': clothShirtIcon,
+  'cloth_pants.png': clothPantsIcon,
+  'cloth_hood.png': clothHatIcon,
+  'cloth_gloves.png': clothGlovesIcon,
+  'cloth_boots.png': clothBootsIcon,
+  'burlap_cape.png': burlapCapeIcon,
+  'tallow_head_lamp.png': tallowHeadLampIcon,
+  
+  // Bone armor
+  'bone_helmet.png': boneHelmetIcon,
+  'bone_chestplate.png': boneChestplateIcon,
+  'bone_leggings.png': boneLeggingsIcon,
+  'bone_gauntlets.png': boneGauntletsIcon,
+  'bone_boots.png': boneBootsIcon,
+  
+  // Wooden armor
+  'wooden_helmet.png': woodenHelmetIcon,
+  'wooden_chestplate.png': woodenChestplateIcon,
+  'wooden_leggings.png': woodenLeggingsIcon,
+  'wooden_gauntlets.png': woodenGauntletsIcon,
+  'wooden_boots.png': woodenBootsIcon,
+  
+  // Leather armor
+  'leather_helmet.png': leatherHelmetIcon,
+  'leather_chestplate.png': leatherChestplateIcon,
+  'leather_leggings.png': leatherLeggingsIcon,
+  'leather_gauntlets.png': leatherGauntletsIcon,
+  'leather_boots.png': leatherBootsIcon,
+  'leather_mantle.png': leatherMantleIcon,
+  
+  // Scale armor
+  'scale_helmet.png': scaleHelmetIcon,
+  'scale_chestplate.png': scaleChestplateIcon,
+  'scale_leggings.png': scaleLeggingsIcon,
+  'scale_gauntlets.png': scaleGauntletsIcon,
+  'scale_boots.png': scaleBootsIcon,
+  
+  // Fox fur armor
+  'fox_fur_hood.png': foxFurHoodIcon,
+  'fox_fur_coat.png': foxFurCoatIcon,
+  'fox_fur_leggings.png': foxFurLeggingsIcon,
+  'fox_fur_gloves.png': foxFurGlovesIcon,
+  'fox_fur_boots.png': foxFurBootsIcon,
+  
+  // Wolf fur armor
+  'wolf_fur_hood.png': wolfFurHoodIcon,
+  'wolf_fur_coat.png': wolfFurCoatIcon,
+  'wolf_fur_leggings.png': wolfFurLeggingsIcon,
+  'wolf_fur_gloves.png': wolfFurGlovesIcon,
+  'wolf_fur_boots.png': wolfFurBootsIcon,
+  
+  // Containers (wearable storage)
+  'burlap_sack.png': burlapSackIcon,
+  'burlap_backpack.png': burlapBackpackIcon,
+  
+  // Bone Totems (Aleutian spirit carvings)
+  'kayux_amulet.png': kayuxAmuletIcon,
+  'sabaakax_totem.png': sabaakaxTotemIcon,
+  'qaxaadax_totem.png': qaxaadaxTotemIcon,
+  'tugix_totem.png': tugixTotemIcon,
+  'tunux_charm.png': tunuxCharmIcon,
+  'qilax_totem.png': qilaxTotemIcon,
+  'tanuux_totem.png': tanuuxTotemIcon,
+  'ulax_charm.png': ulaxCharmIcon,
+  'angunax_totem.png': angunaxTotemIcon,
+  'alax_totem.png': alaxTotemIcon,
+  'tayngax_totem.png': tayngaxTotemIcon,
+  'qaangax_totem.png': qaangaxTotemIcon,
+  
+  // Bone Carving Kit
+  'bone_carving_kit.png': boneCarvingKitIcon,
+  
+  // Transistor Radio
+  'radio.png': transistorRadioIcon,
+
+  // === CONSUMABLES ===
+  // Basic crops (burnt icons use cooked icons with visual filter applied by DraggableItem)
+  'pumpkin.png': pumpkinIcon,
+  'cooked_pumpkin.png': cookedPumpkinIcon,
+  'potato.png': potatoIcon,
+  'cooked_potato.png': cookedPotatoIcon,
+  // Vegetables
+  'carrot.png': carrotIcon,
+  'cooked_carrot.png': cookedCarrotIcon,
+  'corn.png': cornIcon,
+  'cooked_corn.png': cookedCornIcon,
+  'beet.png': beetsIcon,
+  'cooked_beet.png': cookedBeetIcon,
+  'horseradish.png': horseradishIcon,
+  'salsify.png': salsifyIcon,
+  'cooked_salsify.png': cookedSalsifyIcon,
+  'cabbage.png': cabbageIcon,
+  'cooked_cabbage.png': cookedCabbageIcon,
+  'fireweed_shoots.png': fireweedShootsIcon,
+  
+  // Fennel
+  'fennel.png': fennelIcon,
+  'cooked_fennel.png': cookedFennelIcon,
+  'fennel_fronds.png': fennelFrondsIcon,
+  'fennel_seeds.png': fennelSeedsIcon,
+  
+  // Aleutian Plants (new additions)
+  'kamchatka_lily_bulb.png': kamchatkaLilyBulbIcon,
+  'cooked_kamchatka_lily_bulb.png': cookedKamchatkaLilyBulbIcon,
+  'wild_celery_stalks.png': wildCeleryStalksIcon,
+  'cooked_wild_celery.png': cookedWildCeleryIcon,
+  'angelica_seeds.png': angelicaSeedsIcon,
+  'silverweed_root.png': silverweedRootIcon,
+  'cooked_silverweed_root.png': cookedSilverweedRootIcon,
+  'nagoonberries.png': nagoonberriesIcon,
+  'nagoonberry_seeds.png': nagoonberrySeedsIcon,
+  'bistort_bulbils.png': bistortBulbilsIcon,
+  'cooked_bistort_bulbils.png': cookedBistortBulbilsIcon,
+  
+  // Flour and Bread
+  'flour.png': flourIcon,
+  'aleutian_bread.png': aleutianBreadIcon,
+  'berry_aleutian_bread.png': berryAleutianBreadIcon,
+  
+  // Mushrooms
+  'fly_agaric.png': flyAgaricIcon,
+  'porcini.png': porciniIcon,
+  'cooked_porcini.png': cookedPorciniIcon,
+  'deadly_webcap.png': deadlyWebcapIcon,
+  'destroying_angel.png': destroyingAngelIcon,
+  'shaggy_ink_cap.png': shaggylnkCapIcon,
+  'cooked_shaggy_ink_cap.png': cookedShaggyInkCapIcon,
+  'chanterelle.png': chanterelleIcon,
+  'cooked_chanterelle.png': cookedChanterelleIcon,
+
+  // Mushroom spores (all use same graphic)
+  'mushroom_spore.png': mushroomSporeIcon,
+  'fly_agaric_spores.png': mushroomSporeIcon,
+  'porcini_spores.png': mushroomSporeIcon,
+  'deadly_webcap_spores.png': mushroomSporeIcon,
+  'destroying_angel_spores.png': mushroomSporeIcon,
+  'shaggy_ink_cap_spores.png': mushroomSporeIcon,
+  'chanterelle_spores.png': mushroomSporeIcon,
+  
+  // Herbs & medicinal plants
+  'chicory.png': chicoryIcon,
+  'cooked_chicory.png': cookedChicoryIcon,
+  'yarrow.png': yarrowIcon,
+  'chamomile.png': chamomileIcon,
+  'mint.png': mintIcon,
+  'mint_cuttings.png': mintCuttingsIcon,
+  'valerian.png': valerianIcon,
+  'valerian_leaves.png': valerianLeavesIcon,
+  'mugwort.png': mugwortIcon,
+  'bear_garlic.png': bearGarlicIcon,
+  'roasted_bear_garlic.png': roastedBearGarlicIcon,
+  'siberian_ginseng.png': siberianGinsengIcon,
+  'ginseng_leaves.png': ginsengLeavesIcon,
+  'nettle_leaves.png': nettleLeavesIcon,
+  'cooked_nettle_leaves.png': cookedNettleLeavesIcon,
+  
+  // Arctic/Subarctic plants (botanically accurate for Aleutian Islands)
+  'scurvy_grass.png': scurvyGrassIcon,
+  'crowberry.png': crowberriesIcon,
+  'sea_plantain.png': seaPlantainIcon,
+  'glasswort.png': glasswortIcon,
+  
+  // Alpine plants
+  'arctic_poppy.png': arcticPoppyIcon,
+  
+  // Toxic/Medicinal plants (some grow in harsh northern climates)
+  'mandrake.png': mandrakeIcon,
+  'belladonna.png': belladonnaIcon,
+  'henbane.png': henbaneIcon,
+  'datura.png': daturaIcon,
+  'wolfsbane.png': wolfsbaneIcon,
+  
+  // Fiber plants
+  'bog_cotton.png': bogCottonIcon,
+  'dogbane.png': dogbaneFiberIcon,
+  
+  // Other plants
+  'sunflower.png': sunflowerIcon,
+  'cooked_sunflower.png': cookedSunflowerIcon,
+  'sunflower_seeds.png': sunflowerSeedsIcon,
+  
+  // Berries (subarctic/boreal region berries)
+  'lingonberries.png': lingonberriesIcon,
+  'cloudberries.png': cloudberriesIcon,
+  'bilberries.png': bilberriesIcon,
+  'wild_strawberries.png': wildStrawberriesIcon,
+  'rowan_berries.png': rowanBerriesIcon,
+  'cranberries.png': cranberriesIcon,
+  
+  // Animal meat
+  'human_meat.png': rawHumanFleshIcon,
+  'cooked_human_meat.png': cookedHumanFleshIcon,
+  'wolf_meat.png': rawWolfMeatIcon,
+  'cooked_wolf_meat.png': cookedWolfMeatIcon,
+  'fox_meat.png': rawFoxMeatIcon,
+  'cooked_fox_meat.png': coookedFoxMeatIcon,
+  'viper_meat.png': rawViperMeatlIcon,
+  'cooked_viper_meat.png': cookedViperMeatIcon,
+  'crab_meat.png': rawCrabMeatIcon,
+  'cooked_crab_meat.png': cookedCrabMeatIcon,
+  'crab_carapace.png': crabCarapaceIcon,
+  'crab_claw.png': crabClawIcon,
+  'bear_meat.png': bearMeatIcon,
+  'cooked_bear_meat.png': cookedBearMeatIcon,
+  'boar_meat.png': boarMeatIcon,
+  'chicken_meat.png': chickenMeatIcon,
+  'raw_crow_meat.png': rawCrowMeatIcon,
+  'cooked_crow_meat.png': cookedCrowMeatIcon,
+  'raw_tern_meat.png': rawTernMeatIcon,
+  'cooked_tern_meat.png': cookedTernMeatIcon,
+  'vole_meat.png': rawVoleMeatIcon,
+  'cooked_vole_meat.png': cookedVoleMeatIcon,
+  'wolverine_meat.png': rawWolverineMeatIcon,
+  'cooked_wolverine_meat.png': cookedWolverineMeatIcon,
+  'caribou_meat.png': rawCaribouMeatIcon,
+  'cooked_caribou_meat.png': cookedCaribouMeatIcon,
+  // Alpine and missing animal meats (bear meat already mapped above)
+  'walrus_meat.png': rawWalrusMeatIcon,
+  'cooked_walrus_meat.png': cookedWalrusMeatIcon,
+  'hare_meat.png': rawHareMeatIcon,
+  'cooked_hare_meat.png': cookedHareMeatIcon,
+  'owl_meat.png': rawOwlMeatIcon,
+  'cooked_owl_meat.png': cookedOwlMeatIcon,
+  // Aquatic creature items
+  'raw_shark_meat.png': rawSharkMeatIcon,
+  'cooked_shark_meat.png': cookedSharkMeatIcon,
+  'burnt_shark_meat.png': errorIcon, // Uses burnt meat placeholder
+  'shark_fin.png': sharkFinIcon,
+  'jellyfish_gel.png': jellyfishGelIcon,
+  'jellyfish_membrane.png': jellyfishMembraneIcon,
+  'jellyfish_stinger.png': jellyfishStingerIcon,
+  'jellyfish_compress.png': jellyfishCompressIcon,
+  'shark_fin_flippers.png': sharkFinFlippersIcon,
+  'babushkas_boots_of_speed.png': babushkasBootsOfSpeedIcon,
+  'venom_arrow.png': venomArrowIcon,
+  'venom_harpoon_dart.png': venomHarpoonDartIcon,
+  
+  // Fish - Raw fish
+  'raw_twigfish.png': rawTwigfishIcon,
+  'raw_herring.png': rawHerringIcon,
+  'raw_smelt.png': rawSmeltIcon,
+  'raw_black_katy_chiton.png': rawBlackKatyChitonIcon,
+  'raw_sea_urchin.png': rawSeaUrchinIcon,
+  'raw_blue_mussel.png': rawBlueMusselIcon,
+  'cooked_blue_mussel.png': cookedBlueMusselIcon,
+  'raw_greenling.png': rawGreenlingIcon,
+  'raw_sculpin.png': rawSculpinIcon,
+  'raw_pacific_cod.png': rawPacificCodIcon,
+  'raw_dolly_varden.png': rawDollyVardenIcon,
+  'raw_rockfish.png': rawRockfishIcon,
+  'raw_steelhead.png': rawSteelheadIcon,
+  'raw_pink_salmon.png': rawPinkSalmonIcon,
+  'raw_sockeye_salmon.png': rawSockeyeSalmonIcon,
+  'raw_king_salmon.png': rawKingSalmonIcon,
+  'raw_halibut.png': rawHalibutIcon,
+  
+  // Fish - Cooked versions (burnt items use cooked icons with visual filter)
+  'cooked_twigfish.png': cookedTwigfishIcon,
+  'cooked_herring.png': cookedHerringIcon,
+  'cooked_smelt.png': cookedSmeltIcon,
+  'cooked_greenling.png': cookedGreenlingIcon,
+  'cooked_sculpin.png': cookedSculpinIcon,
+  'cooked_pacific_cod.png': cookedPacificCodIcon,
+  'cooked_dolly_varden.png': cookedDollyVardenIcon,
+  'cooked_rockfish.png': cookedRockfishIcon,
+  'cooked_steelhead.png': cookedSteelheadIcon,
+  'cooked_pink_salmon.png': cookedPinkSalmonIcon,
+  'cooked_sockeye_salmon.png': cookedSockeyeSalmonIcon,
+  'cooked_king_salmon.png': cookedKingSalmonIcon,
+  'cooked_halibut.png': cookedHalibutIcon,
+  'cooked_black_katy_chiton.png': cookedBlackKatyChitonIcon,
+  'cooked_sea_urchin.png': cookedSeaUrchinIcon,
+  
+  // Specialty foods
+  'tallow.png': tallowIcon,
+  'tin_of_sprats.png': tinOfSpratsIcon,
+  'fermented_cabbage_jar.png': fermentedCabbageJarIcon,
+  'old_hardtack_biscuits.png': oldHardtackBiscuitsIcon,
+  'expired_soviet_chocolate.png': expiredSovietChocolateIcon,
+  'mystery_can.png': mysteryCanIcon,
+
+  // Russian Military IRP (Individual Ration Pack) items
+  'canned_meat.png': cannedMeatIcon,
+  'canned_kasha.png': cannedKashaIcon,
+  'canned_pate.png': cannedPateIcon,
+  'condensed_milk.png': condensedMilkIcon,
+  'sugar_packets.png': sugarPacketsIcon,
+  'black_tea_tin.png': blackTeaTinIcon,
+  'instant_coffee_tin.png': instantCoffeeTinIcon,
+  'vitamin_drink.png': vitaminDrinkIcon,
+  'validol_tablets.png': validolTabletsIcon,
+  'chewing_gum.png': chewingGumIcon,
+  'broken_lighter.png': brokenLighterIcon,
+  'wet_wipes.png': wetWipesIcon,
+  'paper_napkins.png': paperNapkinsIcon,
+  'plastic_spoon.png': plasticSpoonIcon,
+  'salt_pepper_pack.png': saltPepperPackIcon,
+
+  // === SEEDS ===
+  'seed_potato.png': seedPotatoIcon,
+  'hemp_seeds.png': hempSeedsIcon,
+  'pumpkin_seeds.png': pumpkinSeedsIcon,
+  'reed_rhizome.png': reedRhizomeIcon,
+  'seaweed_frond.png': seaweedFrondIcon,
+  'flax_seeds.png': flaxSeedsIcon,
+  'bear_garlic_bulbs.png': bearGarlicBulbsIcon,
+  'ginseng_seeds.png': ginsengSeedsIcon,
+  'yarrow_seeds.png': yarrowSeedsIcon,
+  'mugwort_seeds.png': mugwortSeedsIcon,
+  'valerian_seeds.png': valerianSeedsIcon,
+  'nettle_seeds.png': nettleSeedsIcon,
+  'carrot_seeds.png': carrotSeedsIcon,
+  'corn_seeds.png': cornSeedsIcon,
+  'chamomile_seeds.png': chamomileSeedsIcon,
+  'chicory_seeds.png': chicorySeedsIcon,
+  'salsify_seeds.png': salsifySeedsIcon,
+  'cabbage_seeds.png': cabbageSeedsIcon,
+  
+  // Arctic/Subarctic plant seeds
+  'scurvy_grass_seeds.png': scurvyGrassSeedsIcon,
+  'crowberry_seeds.png': crowberrySeedsIcon,
+  'fireweed_seeds.png': fireweedSeedsIcon,
+  'sea_plantain_seeds.png': seaPlantainSeedsIcon,
+  'glasswort_seeds.png': glasswortSeedsIcon,
+  'beach_lyme_grass_seeds.png': beachLymeGrassSeedsIcon,
+  'bog_cotton_seeds.png': bogCottonSeedsIcon,
+  
+  // Alpine plant spores/seeds
+  'arctic_poppy_seeds.png': arcticPoppySeedsIcon,
+  
+  // Berry seeds (subarctic/boreal region berries)
+  'lingonberry_seeds.png': lingonberrySeedsIcon,
+  'cloudberry_seeds.png': cloudberrySeedsIcon,
+  'bilberry_seeds.png': bilberrySeedsIcon,
+  'wild_strawberry_seeds.png': wildStrawberrySeedsIcon,
+  'rowanberry_seeds.png': rowanberrySeedsIcon,
+  'cranberry_seeds.png': cranberrySeedsIcon,
+  
+  // Toxic/Medicinal plant seeds (will work once you create the assets)
+  'mandrake_seeds.png': mandrakeSeedsIcon,
+  'belladonna_seeds.png': belladonnaSeedsIcon,
+  'henbane_seeds.png': henbaneSeedsIcon,
+  'datura_seeds.png': daturaSeedsIcon,
+  'wolfsbane_seeds.png': wolfsbaneSeedsIcon,
+
+  // Farming supplies
+  'fertilizer.png': fertilizerIcon,
+
+  // === PLACEABLES ===
+  'campfire.png': campFireIcon,
+  'campfire_off.png': campfireOffIcon,
+  'furnace_simple.png': furnaceIcon,
+  'large_furnace.png': largeFurnaceIcon,
+  'stash.png': stashIcon,
+  'wooden_storage_box.png': woodenStorageBoxIcon,
+  'large_wood_box.png': largeWoodenStorageBoxIcon,
+  'refrigerator.png': refrigeratorIcon,
+  'compost.png': compostIcon,
+  'tanning_rack.png': tanningRackIcon,
+  'repair_bench.png': repairBenchIcon,
+  'cooking_station.png': cookingStationIcon,
+  'barbecue.png': barbecueIcon,
+  'scarecrow.png': scarecrowIcon,
+  'sleeping_bag.png': sleepingBagIcon,
+  'shelter.png': shelterIcon,
+  'lantern_off.png': tallowLampIcon,
+  'reed_rain_collector.png': reedRainCollectorIcon,
+  'hearth.png': hearthIcon,
+  'beehive_wooden.png': woodenBeehiveIcon, // Player-made beehive
+  
+  // Trophy decorations
+  'wolf_pelt.png': wolfPeltIcon,
+  'fox_pelt.png': foxPeltIcon,
+  'polar_bear_pelt.png': polarBearPeltIcon,
+  'walrus_pelt.png': walrusPeltIcon,
+  'caribou_antlers.png': caribouAntlersIcon,
+  
+  // Building components
+  'wood_door.png': woodDoorIcon,
+  'metal_door.png': metalDoorIcon,
+  
+  // Explosives
+  'babushka_surprise.png': babushkaSurpriseIcon,
+  'grenade.png': babushkaSurpriseIcon, // Placeholder until dedicated grenade icon exists
+  'flare.png': torchFlameIcon,        // Placeholder until dedicated flare icon exists
+  'matriarch_wrath.png': matriarchWrathIcon,
+  
+  // Corruption Wards
+  'ancestral_ward.png': ancestralWardIcon,
+  'signal_disruptor.png': signalDisruptorIcon,
+  'memory_beacon.png': memoryBeaconIcon,
+  'turret_tallow.png': turretTallowIcon,
+  
+  // Misc/Special
+  'death_marker.png': deathMarkerIcon,
+
+  // === BREWED SOUPS ===
+  'soup_stone_soup.png': soupStoneSoupIcon,
+
+  // === COOKING STATION RECIPES ===
+  // Advanced gourmet meals
+  'vegetable_stew.png': vegetableStewIcon,
+  'root_medley.png': rootMedleyIcon,
+  'stuffed_pumpkin.png': stuffedPumpkinIcon,
+  'fish_pie.png': fishPieIcon,
+  'seafood_platter.png': seafoodPlatterIcon,
+  'salmon_bake.png': salmonBakeIcon,
+  'crab_cakes.png': crabCakesIcon,
+  'hunters_feast.png': huntersFeastIcon,
+  'herb_crusted_meat.png': herbCrustedMeatIcon,
+  'bear_roast.png': bearRoastIcon,
+  'mushroom_medley.png': mushroomMedleyIcon,
+  'stuffed_mushrooms.png': stuffedMushroomsIcon,
+  'berry_tart.png': berryTartIcon,
+  'mixed_berry_bowl.png': mixedBerryBowlIcon,
+  
+  // === DAIRY & FERMENTATION ===
+  'milk.png': milkIcon,
+  'warm_milk.png': warmMilkIcon,
+  'cheese.png': cheeseIcon,
+  'yogurt.png': yogurtIcon,
+  'yeast.png': yeastIcon,
+  'berry_mash.png': berryMashIcon,
+  'root_mash.png': rootMashIcon,
+  'grain_beer.png': grainBeerIcon,
+  'berry_wine.png': berryWineIcon,
+  'root_wine.png': rootWineIcon,
+  'vinegar.png': vinegarIcon,
+  
+  // === BEE PRODUCTS ===
+  'honey.png': honeyIcon,
+  'honeycomb.png': honeycombIcon,
+  'queen_bee.png': queenBeeIcon,
+  
+  // === PRESERVES ===
+  'mead.png': meadIcon,
+  'berry_jam.png': berryJamIcon,
+  'pickled_vegetables.png': pickledVegetablesIcon,
+  'pickled_fish.png': pickledFishIcon,
+  'meat_jerky.png': meatJerkyIcon,
+  'dried_fish.png': driedFishIcon,
+};
+
+/**
+ * Helper function to check if an item name indicates it's a burnt food item.
+ * Used by DraggableItem to apply visual filters.
+ */
+export function isBurntItem(itemName: string | undefined | null): boolean {
+    if (!itemName) return false;
+    return itemName.startsWith('Burnt ');
+}
+
+/**
+ * Helper function to check if an item name indicates it's a spoiled food item.
+ * Used by DraggableItem to apply a sickly greenish visual filter.
+ */
+export function isSpoiledItem(itemName: string | undefined | null): boolean {
+    if (!itemName) return false;
+    return itemName.startsWith('Spoiled ');
+}
+
+/**
+ * Context for icon display: 'crafting' shows lit/fancy versions (e.g. torch_on, campfire lit),
+ * 'dropped' shows unlit versions for world drops. Omit for default behavior.
+ */
+export type ItemIconContext = 'crafting' | 'dropped';
+
+/**
+ * Converts a burnt icon asset name to its cooked equivalent.
+ * burnt_xxx.png -> cooked_xxx.png
+ * Returns original if not a burnt icon or no cooked equivalent exists.
+ */
+function getBurntToCoookedIcon(assetName: string): string | null {
+    if (!assetName.startsWith('burnt_')) return null;
+    
+    // Convert burnt_xxx.png to cooked_xxx.png
+    const cookedName = assetName.replace('burnt_', 'cooked_');
+    
+    // Check if the cooked version exists in our icon map
+    if (iconMap[cookedName]) {
+        return cookedName;
+    }
+    
+    return null;
+}
+
+// Export a function that provides the fallback logic
+// When context is 'crafting', torch and campfire use their "lit" versions for menus.
+// When context is 'dropped' or omitted, they use "off" versions for ground drops.
+export function getItemIcon(assetName: string | undefined | null, context?: ItemIconContext): string {
+    if (!assetName) {
+        console.log('[ItemIconUtils] assetName is missing, returning errorIcon');
+        return errorIcon; // Return error icon if assetName is missing
+    }
+    
+    // Context-specific overrides: crafting menus show lit versions, dropped items show off versions
+    if (context === 'crafting') {
+        if (assetName === 'torch.png') return torchFlameIcon;   // torch_on (lit) for crafting
+        if (assetName === 'campfire.png') return campFireIcon;  // campfire (lit) for crafting - already correct
+    }
+    if (context === 'dropped') {
+        if (assetName === 'torch.png') return torchIcon;        // torch (off) for dropped
+        if (assetName === 'campfire.png') return campfireOffIcon; // campfire_off for dropped
+    }
+    
+    // Check for AI-generated base64 data URL icons first
+    // These are stored directly as data:image/png;base64,... or just the base64 string
+    if (assetName.startsWith('data:image/')) {
+        // Already a complete data URL, return as-is
+        return assetName;
+    }
+    
+    // Check if it's a raw base64 string (AI-generated icon)
+    // Common base64 image prefixes:
+    // PNG: iVBORw0KGgo (PNG magic bytes)
+    // JPEG: /9j/ (JPEG magic bytes)
+    // GIF: R0lGOD (GIF magic bytes)
+    // WebP: UklGR (RIFF header for WebP)
+    if (assetName.startsWith('iVBORw0KGgo')) {
+        return `data:image/png;base64,${assetName}`;
+    }
+    if (assetName.startsWith('/9j/')) {
+        return `data:image/jpeg;base64,${assetName}`;
+    }
+    if (assetName.startsWith('R0lGOD')) {
+        return `data:image/gif;base64,${assetName}`;
+    }
+    if (assetName.startsWith('UklGR')) {
+        return `data:image/webp;base64,${assetName}`;
+    }
+    
+    // Generic check for very long strings that look like base64 (likely AI-generated icons)
+    // Base64 encoded images are typically 1000+ characters and contain only base64 chars
+    if (assetName.length > 500 && /^[A-Za-z0-9+/=]+$/.test(assetName)) {
+        console.log('[ItemIconUtils] Detected likely base64 image data, assuming PNG');
+        return `data:image/png;base64,${assetName}`;
+    }
+    
+    // Check if this is a burnt item - use cooked icon instead if available
+    // This saves creating separate burnt icons for every food type
+    if (assetName.startsWith('burnt_')) {
+        const cookedIconName = getBurntToCoookedIcon(assetName);
+        if (cookedIconName && iconMap[cookedIconName]) {
+            return iconMap[cookedIconName]!;
+        }
+    }
+    
+    const iconPath = iconMap[assetName];
+    if (iconPath) {
+        return iconPath; // Return exact match if found
+    }
+    
+    // Fallback patterns for groups of similar items
+    if (assetName.includes('spores.png')) {
+        console.log(`[ItemIconUtils] Using mushroom spore icon for spores: ${assetName}`);
+        return mushroomSporeIcon; // All spores use the same icon
+    }
+    
+    // No match found - use error icon
+    console.log(`[ItemIconUtils] No icon found in map for '${assetName}', returning errorIcon`);
+    return errorIcon;
+}
+
+const HOT_LADLE_DURATION_MS = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+/** Returns true if the combat ladle is currently hot (heated and not expired) */
+export function isCombatLadleHot(item: { itemData?: string | null }, itemName: string): boolean {
+  if (itemName !== 'Combat Ladle' || !item.itemData) return false;
+  try {
+    const data = JSON.parse(item.itemData);
+    if (data?.is_hot !== true) return false;
+    if (data?.heated_at_micros) {
+      const heatedAtMs = data.heated_at_micros / 1000;
+      return (Date.now() - heatedAtMs) < HOT_LADLE_DURATION_MS;
+    }
+    return true; // Legacy data without timestamp — treat as hot
+  } catch {
+    return false;
+  }
+}
+
+/** Returns remaining hot time in seconds, or 0 if expired/not hot */
+export function getCombatLadleRemainingHotSecs(item: { itemData?: string | null }, itemName: string): number {
+  if (itemName !== 'Combat Ladle' || !item.itemData) return 0;
+  try {
+    const data = JSON.parse(item.itemData);
+    if (data?.is_hot !== true || !data?.heated_at_micros) return 0;
+    const heatedAtMs = data.heated_at_micros / 1000;
+    const remaining = (heatedAtMs + HOT_LADLE_DURATION_MS - Date.now()) / 1000;
+    return Math.max(0, remaining);
+  } catch {
+    return 0;
+  }
+}
+
+// Keep the itemIcons map export if it's used elsewhere, but prefer getItemIcon
+export const itemIcons = iconMap; // Deprecate direct use of this?
+
+// Deprecate this function? getItemIcon replaces it.
+// export function getItemIconPath(assetName: string): string | undefined {
+//   return itemIcons[assetName];
+// } 

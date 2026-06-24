@@ -1,0 +1,823 @@
+use spacetimedb::{Identity, Timestamp, ReducerContext, Table, ScheduleAt};
+use log;
+use rand::Rng;
+
+// Import table traits needed for database access
+use crate::player as PlayerTableTrait;
+use crate::tree::tree as TreeTableTrait;
+use crate::stone::stone as StoneTableTrait;
+use crate::wooden_storage_box::{self as WoodenStorageBoxModule, wooden_storage_box as WoodenStorageBoxTableTrait, WoodenStorageBox, PLAYER_BOX_COLLISION_DISTANCE_SQUARED, BOX_COLLISION_Y_OFFSET};
+use crate::campfire::{self as CampfireModule, campfire as CampfireTableTrait, Campfire, PLAYER_CAMPFIRE_COLLISION_DISTANCE_SQUARED, CAMPFIRE_COLLISION_Y_OFFSET};
+use crate::grass::grass as GrassTableTrait;
+use crate::player_stats::stat_thresholds_config as StatThresholdsConfigTableTrait;
+
+// Import constants from lib.rs
+use crate::{PLAYER_RADIUS, PLAYER_SPEED, WORLD_WIDTH_PX, WORLD_HEIGHT_PX, WATER_SPEED_PENALTY, is_player_on_water, is_player_jumping, get_effective_player_radius};
+
+// Import constants from player_stats module
+use crate::player_stats::{SPRINT_SPEED_MULTIPLIER, JUMP_COOLDOWN_MS};
+
+// Import exhausted effect constants and functions
+use crate::active_effects::{EXHAUSTED_SPEED_PENALTY, player_has_exhausted_effect};
+
+// Import constants from environment module
+use crate::environment::{calculate_chunk_index, WORLD_WIDTH_CHUNKS};
+
+// Import building module for wall collision checks
+use crate::building::{wall_cell as WallCellTableTrait, FOUNDATION_TILE_SIZE_PX};
+
+// Import grass types
+use crate::grass::GrassAppearanceType;
+
+// Import sound event functions
+use crate::sound_events::emit_walking_sound;
+use crate::sound_events::emit_swimming_sound;
+use crate::sound_events::emit_snorkel_emerge_sound;
+use crate::shared_config::{DODGE_ROLL_COOLDOWN_MS, DODGE_ROLL_DISTANCE_PX, DODGE_ROLL_DURATION_MS, DODGE_ROLL_SPEED_PX_PER_SEC};
+pub const DODGE_ROLL_DISTANCE: f32 = DODGE_ROLL_DISTANCE_PX;
+pub const DODGE_ROLL_SPEED: f32 = DODGE_ROLL_SPEED_PX_PER_SEC;
+
+// Table to track dodge roll state for each player
+#[spacetimedb::table(accessor = player_dodge_roll_state, public)]
+#[derive(Clone, Debug)]
+pub struct PlayerDodgeRollState {
+    #[primary_key]
+    player_id: Identity,
+    start_time_ms: u64,
+    start_x: f32,
+    start_y: f32,
+    target_x: f32,
+    target_y: f32,
+    direction: String, // "up", "down", "left", "right"
+    last_dodge_time_ms: u64, // For cooldown tracking
+}
+
+// Schedule table for dodge roll state cleanup
+#[spacetimedb::table(accessor = dodge_roll_cleanup_schedule, scheduled(cleanup_expired_dodge_rolls))]
+#[derive(Clone)]
+pub struct DodgeRollCleanupSchedule {
+    #[primary_key]
+    #[auto_inc]
+    pub id: u64,
+    pub scheduled_at: spacetimedb::ScheduleAt,
+}
+
+// Table to track walking sound cadence for each player
+#[spacetimedb::table(accessor = player_walking_sound_state, public)]
+#[derive(Clone, Debug)]
+pub struct PlayerWalkingSoundState {
+    #[primary_key]
+    player_id: Identity,
+    last_walking_sound_time_ms: u64,
+    total_distance_since_last_sound: f32, // Accumulated distance for cadence
+    last_swimming_sound_time_ms: u64, // Track swimming sound timing separately
+    total_swimming_distance_since_last_sound: f32, // Accumulated swimming distance for cadence
+}
+
+/*
+ * ===================================================
+ *              PLAYER MOVEMENT REDUCERS
+ * ===================================================
+ * 
+ * This section contains reducers that handle various
+ * player movement states and actions:
+ * 
+ * - Sprinting: Allows players to move faster at the
+ *             cost of stamina
+ * 
+ * - Crouching: Reduces player speed and potentially
+ *             affects other mechanics
+ * 
+ * - Jumping:   Enables vertical movement with cooldown
+ *             restrictions
+ * 
+ * - Dodge Roll: Quick movement in facing direction
+ *              with cooldown restrictions
+ * 
+ * All movement actions require the player to be alive
+ * and conscious.
+ * ===================================================
+ */
+
+/// Reducer that handles player sprint state changes.
+/// 
+/// This reducer is called by the client when a player wants to start or stop sprinting.
+/// It verifies the player is alive and not knocked out before allowing the sprint state change.
+#[spacetimedb::reducer]
+pub fn set_sprinting(ctx: &ReducerContext, sprinting: bool) -> Result<(), String> {
+    let sender_id = ctx.sender();
+    let players = ctx.db.player();
+
+    if let Some(mut player) = players.identity().find(&sender_id) {
+        // Don't allow sprinting if dead or knocked out
+        if player.is_dead {
+            return Err("Cannot sprint while dead.".to_string());
+        }
+        if player.is_knocked_out {
+            return Err("Cannot sprint while knocked out.".to_string());
+        }
+
+        // Players can sprint while crouching (sprinting speed applies even when crouched)
+        // Players can sprint in water (with speed penalty applied during movement calculation)
+
+        // Only update if the state is actually changing
+        if player.is_sprinting != sprinting {
+            player.is_sprinting = sprinting;
+            player.last_update = ctx.timestamp; // Update timestamp when sprint state changes
+            players.identity().update(player);
+            log::debug!("Player {:?} set sprinting to {}", sender_id, sprinting);
+        }
+        Ok(())
+    } else {
+        Err("Player not found".to_string())
+    }
+}
+
+/// Reducer that handles player crouch toggle requests.
+/// 
+/// This reducer is called by the client when a player attempts to toggle crouching.
+/// It checks if the player is alive and not knocked out before allowing the crouch state to change.
+/// The crouching state affects player movement speed and potentially other gameplay mechanics.
+#[spacetimedb::reducer]
+pub fn toggle_crouch(ctx: &ReducerContext) -> Result<(), String> {
+    let sender_id = ctx.sender();
+    let players = ctx.db.player();
+
+    if let Some(mut player) = players.identity().find(&sender_id) {
+        // Don't allow crouching if dead or knocked out
+        if player.is_dead {
+            return Err("Cannot crouch while dead.".to_string());
+        }
+        if player.is_knocked_out {
+            return Err("Cannot crouch while knocked out.".to_string());
+        }
+
+        // Don't allow any crouching action when on water
+        if is_player_on_water(ctx, player.position_x, player.position_y) {
+            return Err("Cannot crouch on water.".to_string());
+        }
+
+        player.is_crouching = !player.is_crouching;
+        player.last_update = ctx.timestamp; // Update timestamp when crouching state changes
+        
+        // Store the state for logging before moving the player struct
+        let crouching_active_for_log = player.is_crouching;
+
+        players.identity().update(player); // player is moved here
+        
+        log::info!(
+            "Player {:?} toggled crouching. Active: {}",
+            sender_id, crouching_active_for_log // Use the stored value for logging
+        );
+        Ok(())
+    } else {
+        Err("Player not found".to_string())
+    }
+}
+
+/// Reducer that handles player jump requests.
+/// 
+/// This reducer is called by the client when a player attempts to jump.
+/// It checks if the player is alive and not knocked out, then verifies
+/// the jump cooldown before allowing the jump to occur.
+#[spacetimedb::reducer]
+pub fn jump(ctx: &ReducerContext) -> Result<(), String> {
+   let identity = ctx.sender();
+   
+   let players = ctx.db.player();
+   if let Some(mut player) = players.identity().find(&identity) {
+       // Don't allow jumping if dead
+       if player.is_dead {
+           return Err("Cannot jump while dead.".to_string());
+       }
+
+       // Don't allow jumping if knocked out
+       if player.is_knocked_out {
+           return Err("Cannot jump while knocked out.".to_string());
+       }
+
+       // Don't allow jumping while crouching
+       if player.is_crouching {
+           return Err("Cannot jump while crouching.".to_string());
+       }
+
+       // ADD: Don't allow jumping on water
+       if is_player_on_water(ctx, player.position_x, player.position_y) {
+           return Err("Cannot jump on water.".to_string());
+       }
+
+       let now_micros = ctx.timestamp.to_micros_since_unix_epoch();
+       let now_ms = (now_micros / 1000) as u64;
+
+       // Check if the player is already jumping (within cooldown)
+       if player.jump_start_time_ms > 0 && now_ms < player.jump_start_time_ms + JUMP_COOLDOWN_MS {
+           let cooldown_remaining = (player.jump_start_time_ms + JUMP_COOLDOWN_MS) - now_ms;
+           return Err("Cannot jump again so soon.".to_string());
+       }
+
+       // Proceed with the jump
+       player.jump_start_time_ms = now_ms;
+       player.last_update = ctx.timestamp; // Update timestamp on jump
+       players.identity().update(player);
+       Ok(())
+   } else {
+       Err("Player not found".to_string())
+   }
+}
+
+
+
+/// Reducer that handles player dodge roll requests.
+/// 
+/// This reducer is called by the client when a player attempts to dodge roll.
+/// It checks if the player can dodge roll (not crouching, not dead, not knocked out),
+/// verifies the cooldown, and initiates the dodge roll in the specified direction.
+/// Supports 8-directional movement including diagonals.
+#[spacetimedb::reducer]
+pub fn dodge_roll(ctx: &ReducerContext, move_x: f32, move_y: f32) -> Result<(), String> {
+    let sender_id = ctx.sender();
+    let players = ctx.db.player();
+    let dodge_roll_states = ctx.db.player_dodge_roll_state();
+
+    let current_player = players.identity()
+        .find(&sender_id)
+        .ok_or_else(|| "Player not found".to_string())?;
+
+    // Don't allow dodge rolling if dead
+    if current_player.is_dead {
+        return Err("Cannot dodge roll while dead.".to_string());
+    }
+
+    // Don't allow dodge rolling if knocked out
+    if current_player.is_knocked_out {
+        return Err("Cannot dodge roll while knocked out.".to_string());
+    }
+
+    // Don't allow dodge rolling while crouching
+    if current_player.is_crouching {
+        return Err("Cannot dodge roll while crouching.".to_string());
+    }
+
+    // Don't allow dodge rolling on water
+    if is_player_on_water(ctx, current_player.position_x, current_player.position_y) {
+        return Err("Cannot dodge roll on water.".to_string());
+    }
+
+    let now_ms = (ctx.timestamp.to_micros_since_unix_epoch() / 1000) as u64;
+
+    // Check if player is already dodge rolling
+    if let Some(existing_dodge) = dodge_roll_states.player_id().find(&sender_id) {
+        let elapsed_ms = now_ms.saturating_sub(existing_dodge.start_time_ms);
+        if elapsed_ms < DODGE_ROLL_DURATION_MS {
+            return Err("Already dodge rolling.".to_string());
+        }
+    }
+
+    // Check cooldown
+    if let Some(existing_dodge) = dodge_roll_states.player_id().find(&sender_id) {
+        let time_since_last_dodge = now_ms.saturating_sub(existing_dodge.last_dodge_time_ms);
+        if time_since_last_dodge < DODGE_ROLL_COOLDOWN_MS {
+            return Err(format!("Dodge roll on cooldown. Wait {:.1}s", 
+                             (DODGE_ROLL_COOLDOWN_MS - time_since_last_dodge) as f32 / 1000.0));
+        }
+    }
+
+    // Check if player is providing movement input
+    if move_x == 0.0 && move_y == 0.0 {
+        return Err("Must be moving to dodge roll. Hold a movement key (WASD) while pressing dodge.".to_string());
+    }
+
+    // Calculate dodge direction based on movement input (we know movement input exists due to earlier check)
+    // Normalize the movement vector to get proper direction
+    let magnitude = (move_x * move_x + move_y * move_y).sqrt();
+    let (dodge_dx, dodge_dy) = if magnitude > 0.0 {
+        (move_x / magnitude, move_y / magnitude)
+    } else {
+        // This shouldn't happen due to our earlier check, but fallback just in case
+        (0.0, 1.0)
+    };
+
+    // Calculate target position
+    let target_x = current_player.position_x + (dodge_dx * DODGE_ROLL_DISTANCE);
+    let target_y = current_player.position_y + (dodge_dy * DODGE_ROLL_DISTANCE);
+
+    // Clamp target to world bounds
+    // Note: Collision detection is handled client-side during interpolation
+    let effective_radius = get_effective_player_radius(current_player.is_crouching);
+    let clamped_target_x = target_x.max(effective_radius).min(WORLD_WIDTH_PX - effective_radius);
+    let clamped_target_y = target_y.max(effective_radius).min(WORLD_HEIGHT_PX - effective_radius);
+
+    // Determine direction string for 8-directional support
+    let direction_string = if dodge_dx == 0.0 && dodge_dy < 0.0 {
+        "up".to_string()
+    } else if dodge_dx == 0.0 && dodge_dy > 0.0 {
+        "down".to_string()
+    } else if dodge_dx < 0.0 && dodge_dy == 0.0 {
+        "left".to_string()
+    } else if dodge_dx > 0.0 && dodge_dy == 0.0 {
+        "right".to_string()
+    } else if dodge_dx < 0.0 && dodge_dy < 0.0 {
+        "up_left".to_string()
+    } else if dodge_dx > 0.0 && dodge_dy < 0.0 {
+        "up_right".to_string()
+    } else if dodge_dx < 0.0 && dodge_dy > 0.0 {
+        "down_left".to_string()
+    } else if dodge_dx > 0.0 && dodge_dy > 0.0 {
+        "down_right".to_string()
+    } else {
+        current_player.direction.clone() // Fallback to player's facing direction
+    };
+
+    // Create or update dodge roll state
+    let dodge_state = PlayerDodgeRollState {
+        player_id: sender_id,
+        start_time_ms: now_ms,
+        start_x: current_player.position_x,
+        start_y: current_player.position_y,
+        target_x: clamped_target_x,
+        target_y: clamped_target_y,
+        direction: direction_string.clone(),
+        last_dodge_time_ms: now_ms,
+    };
+
+    // Insert or update the dodge roll state
+    if dodge_roll_states.player_id().find(&sender_id).is_some() {
+        dodge_roll_states.player_id().update(dodge_state);
+    } else {
+        match dodge_roll_states.try_insert(dodge_state) {
+            Ok(_) => {},
+            Err(e) => {
+                log::error!("Failed to insert dodge roll state for player {:?}: {}", sender_id, e);
+                return Err("Failed to start dodge roll.".to_string());
+            }
+        }
+    }
+
+    log::info!("Player {:?} dodge rolled from ({:.1}, {:.1}) to ({:.1}, {:.1}) in direction: {}", 
+               sender_id, current_player.position_x, current_player.position_y, 
+               clamped_target_x, clamped_target_y, direction_string);
+
+    Ok(())
+}
+
+// === SIMPLE CLIENT-AUTHORITATIVE MOVEMENT SYSTEM ===
+
+/// Simple movement validation constants
+const BASE_MAX_MOVEMENT_SPEED: f32 = PLAYER_SPEED * SPRINT_SPEED_MULTIPLIER * 6.0; // 3360 px/s max (320 * 1.75 * 6) - buffer for client prediction + rubber band prevention
+const MAX_TELEPORT_DISTANCE: f32 = 1200.0; // Increased from 800px for better lag tolerance and high frame rates
+const POSITION_UPDATE_TIMEOUT_MS: u64 = 30000; // 30 seconds (increased from 20s for very high ping)
+
+/// Calculate the maximum allowed movement speed for a player, accounting for broth effects, exhausted effect, and armor
+fn get_max_movement_speed_for_player(ctx: &ReducerContext, player_id: Identity) -> f32 {
+    let mut speed_multiplier = 1.0;
+    
+    // Exhausted effect (25% speed reduction when hunger/thirst/warmth is low)
+    let has_exhausted_effect = player_has_exhausted_effect(ctx, player_id);
+    if has_exhausted_effect {
+        speed_multiplier *= EXHAUSTED_SPEED_PENALTY;
+    }
+    
+    // <<< BROTH EFFECTS: SpeedBoost and Intoxicated >>>
+    // SpeedBoost broth gives 25% speed increase
+    if crate::active_effects::player_has_speed_boost_effect(ctx, player_id) {
+        speed_multiplier *= crate::active_effects::SPEED_BOOST_MULTIPLIER;
+    }
+    
+    // Intoxicated (drunk) broth gives 15% speed reduction (clumsy movement)
+    if crate::active_effects::player_has_intoxicated_effect(ctx, player_id) {
+        speed_multiplier *= crate::active_effects::INTOXICATED_SPEED_PENALTY;
+    }
+    // <<< END BROTH EFFECTS >>>
+    
+    // Armor movement speed modifier (e.g., Babushka's Boots of Speed: 4.0 = 5x land speed)
+    let armor_modifier = crate::armor::calculate_movement_speed_modifier(ctx, player_id);
+    speed_multiplier *= 1.0 + armor_modifier;
+    
+    BASE_MAX_MOVEMENT_SPEED * speed_multiplier
+}
+
+// === WALKING SOUND CONSTANTS ===
+const WALKING_SOUND_DISTANCE_THRESHOLD: f32 = 80.0; // Minimum distance for a footstep (normal walking)
+const SPRINTING_SOUND_DISTANCE_THRESHOLD: f32 = 110.0; // Distance for footstep when sprinting (faster cadence)
+const WALKING_SOUND_MIN_TIME_MS: u64 = 300; // Minimum time between footsteps (normal walking)
+const SPRINTING_SOUND_MIN_TIME_MS: u64 = 250; // Minimum time between footsteps when sprinting (less aggressive)
+
+// === SWIMMING SOUND CONSTANTS ===
+const SWIMMING_SOUND_DISTANCE_THRESHOLD: f32 = 90.0; // Minimum distance for a swimming stroke (normal swimming)
+const FAST_SWIMMING_SOUND_DISTANCE_THRESHOLD: f32 = 120.0; // Distance for swimming stroke when sprinting in water
+const SWIMMING_SOUND_MIN_TIME_MS: u64 = 350; // Minimum time between swimming strokes (normal swimming)
+const FAST_SWIMMING_SOUND_MIN_TIME_MS: u64 = 280; // Minimum time between swimming strokes when sprinting in water (less aggressive)
+
+/// Simple timestamped position update from client
+/// This replaces complex prediction with simple client-authoritative movement
+#[spacetimedb::reducer]
+pub fn update_player_position_simple(
+    ctx: &ReducerContext,
+    new_x: f32,
+    new_y: f32,
+    client_timestamp_ms: u64,
+    is_sprinting: bool,
+    facing_direction: String,
+    client_sequence: u64,
+) -> Result<(), String> {
+    let sender_id = ctx.sender();
+    let players = ctx.db.player();
+    
+    let mut current_player = players.identity()
+        .find(sender_id)
+        .ok_or_else(|| "Player not found".to_string())?;
+
+    // --- Basic validation checks ---
+    
+    // 1. Check if player is dead
+    if current_player.is_dead {
+        log::trace!("Ignoring position update for dead player {:?}", sender_id);
+        return Err("Player is dead".to_string());
+    }
+
+    // 2. Check if player is knocked out - severely restrict movement but allow facing direction updates
+    if current_player.is_knocked_out {
+        // Allow very limited movement for knocked out players (crawling)
+        let distance_moved = ((new_x - current_player.position_x).powi(2) + 
+                             (new_y - current_player.position_y).powi(2)).sqrt();
+        
+        const KNOCKED_OUT_MAX_MOVEMENT_PER_UPDATE: f32 = 5.0; // Very slow crawling
+        if distance_moved > KNOCKED_OUT_MAX_MOVEMENT_PER_UPDATE {
+            log::trace!("Knocked out player {:?} attempted to move too far: {:.1}px (max: {}px), but allowing facing direction update", 
+                       sender_id, distance_moved, KNOCKED_OUT_MAX_MOVEMENT_PER_UPDATE);
+            
+            // Don't reject the entire update - just update facing direction without moving
+            current_player.direction = facing_direction;
+            current_player.last_update = ctx.timestamp;
+            players.identity().update(current_player);
+            return Ok(()); // Accept the facing direction update
+        }
+        
+        // Force knocked out players to not sprint
+        if is_sprinting {
+            log::trace!("Knocked out player {:?} attempted to sprint", sender_id);
+            return Err("Cannot sprint while knocked out".to_string());
+        }
+    }
+
+    // 2b. Check if player is stunned - completely immobilize, only allow facing direction updates
+    if crate::active_effects::player_has_stun_effect(ctx, sender_id) {
+        let distance_moved = ((new_x - current_player.position_x).powi(2) + 
+                             (new_y - current_player.position_y).powi(2)).sqrt();
+        
+        if distance_moved > 0.5 { // Any significant movement is blocked
+            log::trace!("Stunned player {:?} attempted to move {:.1}px, but is stunned. Allowing facing direction update only.", 
+                       sender_id, distance_moved);
+            
+            // Don't reject the entire update - just update facing direction without moving
+            current_player.direction = facing_direction.clone();
+            current_player.last_update = ctx.timestamp;
+            players.identity().update(current_player);
+            return Ok(()); // Accept the facing direction update
+        }
+    }
+
+    // 2. Check world bounds
+    let effective_radius = get_effective_player_radius(current_player.is_crouching);
+    if new_x < effective_radius || new_x > WORLD_WIDTH_PX - effective_radius ||
+       new_y < effective_radius || new_y > WORLD_HEIGHT_PX - effective_radius {
+        log::warn!("Player {:?} position out of bounds: ({}, {})", sender_id, new_x, new_y);
+        return Err("Position out of world bounds".to_string());
+    }
+
+    // 3. Calculate movement distance for sound detection
+    let distance_moved = ((new_x - current_player.position_x).powi(2) + 
+                         (new_y - current_player.position_y).powi(2)).sqrt();
+    
+    // Current timestamp (used for jump detection, sound timing, etc.)
+    let now_ms = (ctx.timestamp.to_micros_since_unix_epoch() / 1000) as u64;
+    
+    // === DIAGNOSTIC LOGGING DISABLED FOR PERFORMANCE ===
+    // Speed/movement anomaly detection was removed to reduce per-update overhead.
+    // The calculations below (time_delta, max_expected_distance) are no longer needed.
+    // Re-enable for debugging suspected desync/cheating only.
+    // 
+    // let last_update_ms = (current_player.last_update.to_micros_since_unix_epoch() / 1000) as u64;
+    // let time_delta_ms = now_ms.saturating_sub(last_update_ms);
+    // let delta_seconds = time_delta_ms as f32 / 1000.0;
+    // let max_expected_speed = PLAYER_SPEED * SPRINT_SPEED_MULTIPLIER * 1.5;
+    // let max_expected_distance = max_expected_speed * delta_seconds;
+    // 
+    // if distance_moved > 50.0 {
+    //     let speed_this_frame = if delta_seconds > 0.001 { distance_moved / delta_seconds } else { 0.0 };
+    //     if distance_moved > max_expected_distance * 2.0 && time_delta_ms > 10 {
+    //         log::warn!("[MOVEMENT_DIAGNOSTIC] SPEED_ANOMALY: ...");
+    //     }
+    //     if distance_moved > 500.0 {
+    //         log::warn!("[MOVEMENT_DIAGNOSTIC] LARGE_JUMP: ...");
+    //     }
+    // }
+    // let expected_sequence = current_player.client_movement_sequence + 1;
+    // if client_sequence > expected_sequence + 5 {
+    //     log::info!("[MOVEMENT_DIAGNOSTIC] SEQUENCE_GAP: ...");
+    // }
+    // === END DISABLED DIAGNOSTIC LOGGING ===
+    
+    // DISABLED: Speed-based validation causes rubber banding due to client prediction
+    // The client has sophisticated prediction that can legitimately exceed speed limits
+    // during lag compensation, frame rate variations, and network irregularities
+
+    // 5. Timestamp validation DISABLED to prevent rubber banding
+    // The client handles prediction and lag compensation better than server-side validation
+    // DISABLED: Check timestamp age (prevent replay attacks) - More lenient
+    // if now_ms.saturating_sub(client_timestamp_ms) > POSITION_UPDATE_TIMEOUT_MS {
+    //     log::warn!("Player {:?} position update too old: {}ms", sender_id, now_ms.saturating_sub(client_timestamp_ms));
+    //     return Err("Position update too old".to_string());
+    // }
+
+    // --- Apply CLIENT-FRIENDLY collision detection ---
+    // For client-authoritative movement, we need to be less aggressive to maintain smoothness
+    
+    // === PERFORMANCE FIX: Skip DB write entirely for negligible changes ===
+    // Each player table update triggers subscription fan-out to ALL connected clients (N^2 scaling).
+    // By skipping writes when nothing meaningful changed, we eliminate thousands of
+    // unnecessary network messages per second with 20+ players.
+    let direction_changed = current_player.direction != facing_direction;
+    let sprint_changed = current_player.is_sprinting != is_sprinting;
+    
+    if distance_moved < 1.0 && !direction_changed && !sprint_changed {
+        // Nothing visually meaningful changed - skip DB write entirely.
+        // The client's local prediction keeps movement smooth; the ref (playersRef)
+        // on each client already has the latest data from the local prediction system.
+        // No subscription fan-out occurs, saving O(N) messages per skipped update.
+        return Ok(());
+    }
+
+    // Always update sequence and basics
+    current_player.client_movement_sequence = client_sequence;
+    current_player.direction = facing_direction;
+    current_player.last_update = ctx.timestamp;
+
+    // OPTIMIZATION: Batch micro-movements to reduce collision checks during sprinting
+    if distance_moved < 3.0 {
+        // For small movements, just update without expensive processing to reduce server load
+        // Skip water detection, sound processing, and other expensive operations
+        current_player.position_x = new_x;
+        current_player.position_y = new_y;
+        current_player.is_sprinting = is_sprinting;
+        // Keep existing water status for micro-movements
+        
+        // Update player without expensive processing
+        players.identity().update(current_player);
+        return Ok(());
+    }
+
+    // For larger movements, perform full collision detection
+    // GET: Effective player radius based on crouching state
+    let effective_radius = get_effective_player_radius(current_player.is_crouching);
+
+    // World bounds clamping (same as original)
+    let clamped_x = new_x.max(effective_radius).min(WORLD_WIDTH_PX - effective_radius);
+    let clamped_y = new_y.max(effective_radius).min(WORLD_HEIGHT_PX - effective_radius);
+
+    // Calculate how far the client wants to move
+    let movement_distance = ((clamped_x - current_player.position_x).powi(2) + (clamped_y - current_player.position_y).powi(2)).sqrt();
+    
+    // CLIENT-AUTHORITATIVE: Trust client collision detection entirely
+    // Server-side collision detection causes rubber banding due to minor differences
+    // The client has sophisticated prediction and collision - let it handle movement
+    let (final_x, final_y) = (clamped_x, clamped_y);
+    
+    // DISABLED: Server collision detection
+    // Server collision creates micro-differences that cause rubber banding
+    // Client collision is more responsive and handles prediction better
+
+    // --- Water detection for new position (OPTIMIZED) ---
+    // Only check water status if player moved to a different tile to avoid expensive DB lookups
+    let old_tile_x = (current_player.position_x / crate::TILE_SIZE_PX as f32).floor() as i32;
+    let old_tile_y = (current_player.position_y / crate::TILE_SIZE_PX as f32).floor() as i32;
+    let new_tile_x = (final_x / crate::TILE_SIZE_PX as f32).floor() as i32;
+    let new_tile_y = (final_y / crate::TILE_SIZE_PX as f32).floor() as i32;
+    
+    let is_on_water = if old_tile_x != new_tile_x || old_tile_y != new_tile_y {
+        // Player moved to a different tile, check water status
+        is_player_on_water(ctx, final_x, final_y)
+    } else {
+        // Player is still on the same tile, keep current water status
+        current_player.is_on_water
+    };
+    
+    let is_jumping = is_player_jumping(current_player.jump_start_time_ms, now_ms);
+
+    // --- Extinguish burn effects and apply wet effect if player entered water ---
+    if is_on_water && !current_player.is_on_water {
+        // Player just entered water - extinguish any burn effects
+        crate::active_effects::extinguish_burn_effects(ctx, sender_id, "entering water");
+        // Apply wet effect when entering water (water always = 100% wetness cap)
+        if let Err(e) = crate::wet::apply_wet_effect(ctx, sender_id, 1.0, "entering water") {
+            log::warn!("Failed to apply wet effect when player {:?} entered water: {}", sender_id, e);
+        }
+    }
+
+    // --- Auto-disable crouching when on water ---
+    let mut was_crouching_disabled = false;
+    if is_on_water && current_player.is_crouching {
+        current_player.is_crouching = false;
+        was_crouching_disabled = true;
+        log::info!("Player {:?} auto-disabled crouching when entering/moving in water", sender_id);
+    }
+
+    // --- Auto-disable snorkeling when leaving water (includes leaving HotSpringWater tiles) ---
+    if current_player.is_snorkeling && !is_on_water {
+        current_player.is_snorkeling = false;
+        emit_snorkel_emerge_sound(ctx, final_x, final_y, sender_id);
+        log::info!("Player {:?} auto-emerged from snorkel when leaving water", sender_id);
+    }
+
+    // --- Movement Sound Logic (Walking & Swimming) - OPTIMIZED ---
+    // Only process sounds for meaningful movements to reduce database load
+    // Increased threshold from 3.0 to 8.0 to reduce sound processing frequency
+    if movement_distance > 8.0 && // Only process sounds for larger movements
+       !current_player.is_dead && 
+       !current_player.is_knocked_out &&
+       !is_jumping {   // No movement sounds while jumping
+        
+        let walking_sound_states = ctx.db.player_walking_sound_state();
+        
+        // Get or create walking sound state for this player
+        let mut walking_state = walking_sound_states.player_id().find(&sender_id).unwrap_or_else(|| {
+            PlayerWalkingSoundState {
+                player_id: sender_id,
+                last_walking_sound_time_ms: 0,
+                total_distance_since_last_sound: 0.0,
+                last_swimming_sound_time_ms: 0,
+                total_swimming_distance_since_last_sound: 0.0,
+            }
+        });
+        
+        if is_on_water {
+            // --- Swimming Sound Logic ---
+            // Note: Swimming sounds are NOT affected by silent movement (fox fur boots).
+            // Fox fur boots only silence land walking/sprinting sounds, not swimming sounds.
+            // Add movement distance to accumulated swimming total
+            walking_state.total_swimming_distance_since_last_sound += movement_distance;
+            
+            // Determine thresholds based on movement speed (sprinting in water)
+            let (distance_threshold, time_threshold_ms) = if is_sprinting {
+                (FAST_SWIMMING_SOUND_DISTANCE_THRESHOLD, FAST_SWIMMING_SOUND_MIN_TIME_MS)
+            } else {
+                (SWIMMING_SOUND_DISTANCE_THRESHOLD, SWIMMING_SOUND_MIN_TIME_MS)
+            };
+            
+            // Check if enough distance and time has passed for a swimming stroke
+            let time_since_last_stroke = now_ms.saturating_sub(walking_state.last_swimming_sound_time_ms);
+            
+            if walking_state.total_swimming_distance_since_last_sound >= distance_threshold && 
+               time_since_last_stroke >= time_threshold_ms {
+                
+                // Emit swimming sound (always, regardless of fox fur boots)
+                emit_swimming_sound(ctx, final_x, final_y, sender_id);
+                
+                // Reset accumulated swimming distance and update time
+                walking_state.total_swimming_distance_since_last_sound = 0.0;
+                walking_state.last_swimming_sound_time_ms = now_ms;
+                
+                log::debug!("Player {:?} swimming stroke at ({:.1}, {:.1}) - sprinting: {}, distance: {:.1}", 
+                           sender_id, final_x, final_y, is_sprinting, movement_distance);
+            }
+        } else if !current_player.is_crouching {
+            // --- Walking Sound Logic (on land, not crouching) ---
+            // Add movement distance to accumulated total
+            walking_state.total_distance_since_last_sound += movement_distance;
+            
+            // Determine thresholds based on movement speed
+            let (distance_threshold, time_threshold_ms) = if is_sprinting {
+                (SPRINTING_SOUND_DISTANCE_THRESHOLD, SPRINTING_SOUND_MIN_TIME_MS)
+            } else {
+                (WALKING_SOUND_DISTANCE_THRESHOLD, WALKING_SOUND_MIN_TIME_MS)
+            };
+            
+            // Check if enough distance and time has passed for a footstep
+            let time_since_last_footstep = now_ms.saturating_sub(walking_state.last_walking_sound_time_ms);
+            
+            if walking_state.total_distance_since_last_sound >= distance_threshold && 
+               time_since_last_footstep >= time_threshold_ms {
+                
+                // Check for silent movement (Fox Fur Boots)
+                let has_silent_movement = crate::armor::has_silent_movement(ctx, sender_id);
+                
+                if !has_silent_movement {
+                    // Emit walking sound only if not wearing fox fur boots
+                    emit_walking_sound(ctx, final_x, final_y, sender_id);
+                    
+                    log::debug!("Player {:?} footstep at ({:.1}, {:.1}) - sprinting: {}, distance: {:.1}", 
+                               sender_id, final_x, final_y, is_sprinting, movement_distance);
+                } else {
+                    log::debug!("Player {:?} silent footstep at ({:.1}, {:.1}) - fox fur boots equipped", 
+                               sender_id, final_x, final_y);
+                }
+                
+                // Reset accumulated distance and update time (regardless of sound emission)
+                walking_state.total_distance_since_last_sound = 0.0;
+                walking_state.last_walking_sound_time_ms = now_ms;
+            }
+        }
+        
+        // Update or insert the walking sound state
+        if walking_sound_states.player_id().find(&sender_id).is_some() {
+            walking_sound_states.player_id().update(walking_state);
+        } else {
+            if let Err(e) = walking_sound_states.try_insert(walking_state) {
+                log::warn!("Failed to insert walking sound state for player {:?}: {}", sender_id, e);
+            }
+        }
+    }
+
+    // Fire patch damage is now handled by scheduled reducer (like campfires)
+    // No need to check collision on every movement
+
+    // --- Update player state directly (no re-fetch to avoid race conditions) ---
+    current_player.position_x = final_x;
+    current_player.position_y = final_y;
+    current_player.is_sprinting = is_sprinting; // Allow sprinting in water
+    current_player.is_on_water = is_on_water;
+    // Note: is_crouching is already updated above when auto-disabled on water
+
+    // Always update the player
+    players.identity().update(current_player);
+
+    // Log crouching state changes for debugging
+    if was_crouching_disabled {
+        log::debug!("Player {:?} crouching auto-disabled due to water at ({:.1}, {:.1})", sender_id, final_x, final_y);
+    }
+
+    // Only log successful updates very rarely to reduce spam
+    if ctx.rng().gen_bool(0.001) { // 0.1% of successful updates
+        log::debug!("Player {:?} position updated to ({:.1}, {:.1})", sender_id, final_x, final_y);
+    }
+
+    Ok(())
+}
+
+/// Scheduled reducer that cleans up expired dodge roll states.
+/// 
+/// This reducer is called periodically (every 100ms) to remove dodge roll states
+/// that are older than the animation duration (500ms). This prevents stale states
+/// from accumulating in the database and confusing clients on reconnect.
+#[spacetimedb::reducer]
+pub fn cleanup_expired_dodge_rolls(ctx: &ReducerContext, _args: DodgeRollCleanupSchedule) -> Result<(), String> {
+    // Security check: only the module itself can call this
+    if ctx.sender() != ctx.identity() {
+        return Err("Only the module can call cleanup_expired_dodge_rolls".to_string());
+    }
+
+    let now_ms = (ctx.timestamp.to_micros_since_unix_epoch() / 1000) as u64;
+    let dodge_roll_states = ctx.db.player_dodge_roll_state();
+    
+    let mut deleted_count = 0;
+    let states_to_delete: Vec<Identity> = dodge_roll_states.iter()
+        .filter(|state| {
+            let elapsed = now_ms.saturating_sub(state.start_time_ms);
+            elapsed > DODGE_ROLL_DURATION_MS
+        })
+        .map(|state| state.player_id)
+        .collect();
+    
+    for player_id in states_to_delete {
+        dodge_roll_states.player_id().delete(&player_id);
+        deleted_count += 1;
+    }
+    
+    if deleted_count > 0 {
+        log::info!("Cleaned up {} expired dodge roll states", deleted_count);
+    }
+    
+    Ok(())
+}
+
+/// Initialize the dodge roll cleanup system.
+/// 
+/// This function sets up a periodic task that runs every 500ms to clean up
+/// expired dodge roll states (older than 500ms).
+/// 
+/// OPTIMIZATION: Changed from 100ms to 500ms (matches dodge roll duration).
+/// Since dodge rolls last 500ms, there's no benefit to checking more frequently.
+/// This reduces scheduled reducer calls by 80%.
+pub fn init_dodge_roll_cleanup_system(ctx: &ReducerContext) -> Result<(), String> {
+    // Check if already scheduled
+    if ctx.db.dodge_roll_cleanup_schedule().iter().next().is_some() {
+        log::info!("Dodge roll cleanup system already initialized.");
+        return Ok(());
+    }
+    
+    // Schedule cleanup to run every 500ms (matches dodge roll duration)
+    // No benefit to running more frequently since dodge rolls last 500ms
+    let cleanup_interval_micros = 500_000i64; // 500ms in microseconds
+    
+    crate::try_insert_schedule!(
+        ctx.db.dodge_roll_cleanup_schedule(),
+        DodgeRollCleanupSchedule {
+            id: 0,
+            scheduled_at: ScheduleAt::Interval(spacetimedb::TimeDuration::from_micros(cleanup_interval_micros)),
+        },
+        "Dodge roll cleanup"
+    );
+    
+    log::info!("Dodge roll cleanup system initialized successfully (runs every 500ms)");
+    Ok(())
+}

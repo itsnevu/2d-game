@@ -1,0 +1,648 @@
+/**
+ * Centralized Entity Visual Configuration
+ * 
+ * This file defines visual bounds for all interactable entities.
+ * These values are used consistently across:
+ * - Interaction outline (blue box)
+ * - E label positioning (auto-centered on top of blue box)
+ * - Placement preview positioning
+ * 
+ * All positions are relative to the entity's posX/posY from the server.
+ */
+
+import { TILE_SIZE } from '../config/gameConfig';
+
+export interface EntityVisualBounds {
+  // Visual bounds center offset from entity's posX/posY
+  centerOffsetX: number;  // Usually 0 (centered horizontally)
+  centerOffsetY: number;  // Negative = up from posY, Positive = down from posY
+  
+  // Dimensions of the interaction box
+  width: number;
+  height: number;
+  
+  // Server-side placement Y offset (if any)
+  // When placing, server stores: pos_y = click_y + placementYOffset
+  placementYOffset: number;
+  
+  // Sprite dimensions for placement preview
+  spriteWidth: number;
+  spriteHeight: number;
+}
+
+/**
+ * Visual configuration for all interactable entities.
+ * 
+ * To add a new entity:
+ * 1. Add its config here with appropriate bounds
+ * 2. The interaction outline, E label, and placement preview will all use these values
+ * 
+ * To fix misalignment:
+ * 1. Adjust centerOffsetY to move the blue box up (negative) or down (positive)
+ * 2. Adjust width/height to resize the blue box
+ * 3. Adjust placementYOffset if server applies an offset during placement
+ * 
+ * Note: E label is ALWAYS centered horizontally on top of the blue box (no adjustment needed)
+ */
+// ============================================================================
+// STANDARDIZED MONUMENT COMPOUND BUILDING CONSTANTS
+// All monument compound buildings (large furnace, rain collector, cooking station,
+// repair bench, bank) are 480x480 sprites with a 96px anchor Y offset.
+// They share identical interaction box and collision dimensions.
+// ============================================================================
+export const MONUMENT_BUILDING = {
+  SPRITE_SIZE: 480,
+  ANCHOR_Y_OFFSET: 96,
+  // Sprite covers posY - 384 (top) to posY + 96 (bottom)
+  // Visual center is at posY - 144
+  VISUAL_CENTER_OFFSET_Y: -144,
+  // Interaction box: covers full sprite
+  INTERACTION_WIDTH: 440,
+  INTERACTION_HEIGHT: 480,
+  // AABB collision matches ALK substations: 350x160 (bottom 1/3 of 480px sprite)
+  COLLISION_WIDTH: 350,
+  COLLISION_HEIGHT: 160,
+} as const;
+
+export const ENTITY_VISUAL_CONFIG: Record<string, EntityVisualBounds> = {
+  // Cooking appliances
+  campfire: {
+    centerOffsetX: 0,
+    centerOffsetY: -48,  // Box centered 48px above posY
+    width: 64,
+    height: 96,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  furnace: {
+    centerOffsetX: 0,
+    centerOffsetY: -64,  // Box centered 64px above posY
+    width: 96,
+    height: 128,
+    placementYOffset: 0,
+    spriteWidth: 96,
+    spriteHeight: 96,
+  },
+  
+  large_furnace: {
+    centerOffsetX: 0,
+    centerOffsetY: -140,  // Visual center relative to posY (256px sprite, slightly higher)
+    width: 200,           // Interaction box width
+    height: 260,          // Interaction box height (larger for easier engagement)
+    placementYOffset: 0,  // Cursor at center of preview (server adds offset)
+    spriteWidth: 256,
+    spriteHeight: 256,
+  },
+  
+  monument_large_furnace: {
+    centerOffsetX: 0,
+    centerOffsetY: MONUMENT_BUILDING.VISUAL_CENTER_OFFSET_Y,
+    width: MONUMENT_BUILDING.INTERACTION_WIDTH,
+    height: MONUMENT_BUILDING.INTERACTION_HEIGHT,
+    placementYOffset: 0,
+    spriteWidth: MONUMENT_BUILDING.SPRITE_SIZE,
+    spriteHeight: MONUMENT_BUILDING.SPRITE_SIZE,
+  },
+  
+  barbecue: {
+    centerOffsetX: 0,
+    centerOffsetY: 0,     // Center-anchored: sprite centered on posY, collision at visual center
+    width: 72,
+    height: 96,
+    placementYOffset: 0,  // No offset: cursor is at visual center, server stores exactly where clicked
+    spriteWidth: 128,
+    spriteHeight: 128,
+  },
+  
+  // Storage containers
+  // NOTE: Server adds BOX_COLLISION_Y_OFFSET (+52) to Y for all box types.
+  // Stored posY = worldY + 52. Render: drawY = posY - height - 20 = worldY - height + 32.
+  // Preview: previewTopY = (mouseY + offset) - height/2. For match: offset = -height/2 + 32.
+  wooden_storage_box: {
+    centerOffsetX: 0,
+    centerOffsetY: -52,   // Relative to stored posY: -(64/2 + 20) = -52
+    width: 64,
+    height: 64,
+    placementYOffset: 0,  // -64/2 + 32 = 0 (server +52 cancels out)
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  large_wooden_storage_box: {
+    centerOffsetX: 0,
+    centerOffsetY: -68,   // Relative to stored posY: -(96/2 + 20) = -68
+    width: 96,
+    height: 96,
+    placementYOffset: -16, // -96/2 + 32 = -16
+    spriteWidth: 96,
+    spriteHeight: 96,
+  },
+  
+  compost: {
+    centerOffsetX: 0,
+    centerOffsetY: -116,  // Relative to stored posY: -(192/2 + 20) = -116
+    width: 192,           // Match actual sprite size
+    height: 192,
+    placementYOffset: -64, // -192/2 + 32 = -64
+    spriteWidth: 192,
+    spriteHeight: 192,
+  },
+
+  // Same footprint / server offset as compost (wooden box +52 Y, 192×192 sprite)
+  tanning_rack: {
+    centerOffsetX: 0,
+    centerOffsetY: -116,
+    width: 192,
+    height: 192,
+    placementYOffset: -64,
+    spriteWidth: 192,
+    spriteHeight: 192,
+  },
+  
+  refrigerator: {
+    centerOffsetX: 0,
+    centerOffsetY: -68,   // Sprite renders at posY - 116, center at posY - 68 (96x96 squared)
+    width: 80,            // Interaction box width
+    height: 80,           // Interaction box height
+    placementYOffset: -16, // Server adds +52, sprite is 96px (larger than 64px normal box)
+    spriteWidth: 96,
+    spriteHeight: 96,
+  },
+  
+  repair_bench: {
+    centerOffsetX: 0,
+    centerOffsetY: -80,   // Lowered from -116: bench content in lower portion, allows interaction from bottom
+    width: 192,           // Match actual sprite size
+    height: 192,
+    placementYOffset: -64, // -192/2 + 32 = -64
+    spriteWidth: 192,
+    spriteHeight: 192,
+  },
+  
+  cooking_station: {
+    centerOffsetX: 0,
+    centerOffsetY: -116,  // Relative to stored posY: -(192/2 + 20) = -116
+    width: 192,           // Match actual sprite size
+    height: 192,
+    placementYOffset: -64, // -192/2 + 32 = -64
+    spriteWidth: 192,
+    spriteHeight: 192,
+  },
+  
+  scarecrow: {
+    centerOffsetX: 0,
+    centerOffsetY: -100,  // Relative to stored posY: -(160/2 + 20) = -100
+    width: 160,           // Match actual sprite size (160x160)
+    height: 160,
+    placementYOffset: -48, // -160/2 + 32 = -48
+    spriteWidth: 160,
+    spriteHeight: 160,
+  },
+  
+  military_ration: {
+    centerOffsetX: 0,
+    centerOffsetY: -58,   // Same as wooden_storage_box (64x64 sprite)
+    width: 64,
+    height: 72,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  military_crate: {
+    centerOffsetX: 0,
+    centerOffsetY: -58,   // Same as military_ration (64x64 sprite)
+    width: 64,
+    height: 72,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  mine_cart: {
+    centerOffsetX: 0,
+    centerOffsetY: -58,   // Adjusted for 128x128 sprite
+    width: 64,
+    height: 72,
+    placementYOffset: 0,
+    spriteWidth: 128,
+    spriteHeight: 128,
+  },
+  
+  fish_trap: {
+    centerOffsetX: 0,
+    centerOffsetY: -68,   // Sprite is 96x96, similar to refrigerator
+    width: 80,            // Interaction box width
+    height: 80,           // Interaction box height
+    placementYOffset: -16, // Compensate for 96px sprite vs 64px normal box
+    spriteWidth: 96,
+    spriteHeight: 96,
+  },
+  
+  wild_beehive: {
+    centerOffsetX: 0,
+    centerOffsetY: -55,   // Adjusted for 120x120 sprite (25% larger), renders at posY - 140, center at posY - 80, but adjusted for visual consistency
+    width: 100,           // Interaction box width - 25% larger: 80 * 1.25 = 100
+    height: 100,          // Interaction box height - 25% larger: 80 * 1.25 = 100
+    placementYOffset: -20, // Compensate for 120px sprite vs 64px normal box (increased proportionally)
+    spriteWidth: 120,     // 25% larger: 96 * 1.25 = 120
+    spriteHeight: 120,    // 25% larger: 96 * 1.25 = 120
+  },
+
+  // Player beehive: 256x256 sprite, drawY = posY - 256 - 20, center at posY - 148
+  player_beehive: {
+    centerOffsetX: 0,
+    centerOffsetY: -92,   // Visual center: posY - 276 + 128 = posY - 148 (256px sprite, bottom-anchored)
+    width: 164,            // Match actual sprite size
+    height: 182,
+    placementYOffset: 4,   // Server adds +152; preview center aligns with final sprite
+    spriteWidth: 256,
+    spriteHeight: 256,
+  },
+  
+  stash: {
+    centerOffsetX: 0,
+    centerOffsetY: -24,
+    width: 48,
+    height: 48,
+    placementYOffset: 0,
+    spriteWidth: 48,
+    spriteHeight: 48,
+  },
+  
+  barrel: {
+    centerOffsetX: 0,
+    centerOffsetY: -24,
+    width: 48,
+    height: 48,
+    placementYOffset: 0,
+    spriteWidth: 48,
+    spriteHeight: 48,
+  },
+  
+  // Structures
+  cairn: {
+    centerOffsetX: 0,
+    centerOffsetY: -70,  // Reduced from -48 for lower visual offset
+    width: 120,          // Reduced from 180 for smaller interaction box
+    height: 160,         // Reduced from 220 for smaller interaction box
+    placementYOffset: 0,
+    spriteWidth: 192,
+    spriteHeight: 192,
+  },
+  
+  lantern: {
+    centerOffsetX: 0,
+    centerOffsetY: -34,  // Visual center: posY - 28 - 6 = posY - 34 (half of 56px + 6px offset)
+    width: 48,
+    height: 56,
+    placementYOffset: 0,  // Cursor at center (server adds +34)
+    spriteWidth: 48,
+    spriteHeight: 56,
+  },
+  
+  // === WARD ENTITIES ===
+  // Wards are 256x256 sprites rendered with lanternRenderingUtils:
+  //   drawX = posX - width/2 = posX - 128
+  //   drawY = posY - height - 6 = posY - 262 (sprite TOP edge)
+  // 
+  // Server stores pos_y = click_y + 134, so:
+  //   drawY = (click_y + 134) - 262 = click_y - 128
+  // 
+  // Client preview with placementYOffset = 0:
+  //   preview top = click_y - 128 (cursor at center) ✓
+  // 
+  // Visual center relative to posY:
+  //   centerY = posY - 262 + 128 = posY - 134
+  
+  ancestral_ward: {
+    centerOffsetX: 0,
+    centerOffsetY: -134,  // Visual center relative to posY
+    width: 200,           // Interaction box width (smaller than sprite for precision)
+    height: 220,          // Interaction box height
+    placementYOffset: 0,  // Cursor at center of preview (server adds +134)
+    spriteWidth: 256,
+    spriteHeight: 256,
+  },
+  
+  signal_disruptor: {
+    centerOffsetX: 0,
+    centerOffsetY: -134,  // Visual center relative to posY
+    width: 200,           // Interaction box width
+    height: 220,          // Interaction box height
+    placementYOffset: 0,  // Cursor at center of preview (server adds +134)
+    spriteWidth: 256,
+    spriteHeight: 256,
+  },
+  
+  memory_beacon: {
+    centerOffsetX: 0,
+    centerOffsetY: -134,  // Visual center relative to posY
+    width: 200,           // Interaction box width
+    height: 220,          // Interaction box height
+    placementYOffset: 0,  // Cursor at center of preview (server adds +134)
+    spriteWidth: 256,
+    spriteHeight: 256,
+  },
+  
+  turret: {
+    centerOffsetX: 0,
+    centerOffsetY: 50,     // Sprite centered on posY - interaction box centered too
+    width: 200,           // Interaction box width
+    height: 200,          // Interaction box height
+    placementYOffset: 0,  // Preview centered on cursor - placed exactly there
+    spriteWidth: 256,
+    spriteHeight: 256,
+  },
+  
+  rain_collector: {
+    centerOffsetX: 0,
+    centerOffsetY: -68,   // 256x256 sprite at posY - 220, visual center at posY - 92
+    width: 200,           // Interaction box width for 256x256 sprite
+    height: 260,          // Interaction box height for 256x256 sprite
+    placementYOffset: -92, // Match visual center (posY - 92) for preview alignment
+    spriteWidth: 256,
+    spriteHeight: 256,
+  },
+
+  monument_rain_collector: {
+    centerOffsetX: 0,
+    centerOffsetY: -104,  // Tighter square: top ~80px of sprite is empty, shift center down from -144
+    width: 460,           // Square box matching visible content width
+    height: 440,          // Reduced from 480 - cropped ~80px of empty space from top
+    placementYOffset: 0,
+    spriteWidth: MONUMENT_BUILDING.SPRITE_SIZE,
+    spriteHeight: MONUMENT_BUILDING.SPRITE_SIZE,
+  },
+  
+  // Monument cooking station (ALK Food Processor) - 384x384 building sprite, base-anchored (96px offset)
+  // Sprite covers posY - 288 (top) to posY + 96 (bottom), building content in lower portion
+  monument_cooking_station: {
+    centerOffsetX: 0,
+    centerOffsetY: -55,   // Lowered from -100: base-anchored content sits near ground level
+    width: 320,           // Interaction box matching visible building content width
+    height: 280,          // Reduced: covers actual building content, not empty top of sprite
+    placementYOffset: 0,
+    spriteWidth: 384,
+    spriteHeight: 384,
+  },
+  
+  // Monument repair bench (ALK Weapons Depot) - 384x384 building sprite, base-anchored (96px offset)
+  // Same pattern as monument_cooking_station: building content in lower portion, box centered on bench
+  monument_repair_bench: {
+    centerOffsetX: 0,
+    centerOffsetY: -55,   // Lowered from -100: base-anchored content sits near ground level (matches monument_cooking_station)
+    width: 320,           // Interaction box matching visible building content width (matches monument_cooking_station)
+    height: 280,          // Covers actual building content, not empty top of sprite
+    placementYOffset: 0,
+    spriteWidth: 384,
+    spriteHeight: 384,
+  },
+  
+  // Monument compost (ALK Bio Processor) - 384x384 building sprite, base-anchored (96px offset)
+  // Sprite covers posY - 288 (top) to posY + 96 (bottom), building content in lower portion
+  monument_compost: {
+    centerOffsetX: 0,
+    centerOffsetY: -55,   // Lowered from -100: base-anchored content sits near ground level
+    width: 320,           // Interaction box matching visible building content width
+    height: 280,          // Reduced: covers actual building content, not empty top of sprite
+    placementYOffset: 0,
+    spriteWidth: 384,
+    spriteHeight: 384,
+  },
+  
+  homestead_hearth: {
+    centerOffsetX: 0,
+    centerOffsetY: -63,
+    width: 96,
+    height: 96,
+    placementYOffset: 0,
+    spriteWidth: 96,
+    spriteHeight: 96,
+  },
+  
+  fumarole: {
+    centerOffsetX: 0,
+    centerOffsetY: 0,
+    width: 96,
+    height: 96,
+    placementYOffset: 0,
+    spriteWidth: 96,
+    spriteHeight: 96,
+  },
+  
+  // Corpses/entities
+  player_corpse: {
+    centerOffsetX: 0,
+    centerOffsetY: 0,
+    width: 80,
+    height: 72,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  // Special buildings
+  alk_station: {
+    centerOffsetX: 0,
+    centerOffsetY: -200,
+    width: 450,  // Increased from 350 to better accommodate image content
+    height: 550, // Increased from 500 to better accommodate image content
+    placementYOffset: 0,
+    spriteWidth: 350,
+    spriteHeight: 500,
+  },
+  
+  // Items and misc
+  dropped_item: {
+    centerOffsetX: 0,
+    centerOffsetY: -10,
+    width: 32,
+    height: 32,
+    placementYOffset: 0,
+    spriteWidth: 32,
+    spriteHeight: 32,
+  },
+  
+  harvestable_resource: {
+    centerOffsetX: 0,
+    centerOffsetY: -32,  // Standard resource visual center
+    width: 64,
+    height: 64,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  sleeping_bag: {
+    centerOffsetX: 0,
+    centerOffsetY: -48,   // Relative to stored posY: -(96/2) = -48 (no -20 render offset for sleeping bag)
+    width: 96,
+    height: 96,
+    placementYOffset: 0,  // Server adds +48 (half height), offset = 48 - 96/2 = 0
+    spriteWidth: 96,
+    spriteHeight: 96,
+  },
+  
+  knocked_out_player: {
+    centerOffsetX: 0,
+    centerOffsetY: -15,
+    width: 64,
+    height: 48,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  broth_pot: {
+    centerOffsetX: 0,
+    centerOffsetY: -30,
+    width: 64,
+    height: 64,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+  
+  door: {
+    centerOffsetX: 0,
+    centerOffsetY: -66,  // Doors render 44px higher, so offset accounts for this
+    width: 64,
+    height: 96,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 128,
+  },
+  
+  rune_stone: {
+    centerOffsetX: 0,
+    centerOffsetY: -24,  // AABB collision center offset (matches collision)
+    width: 48,           // 48x48 AABB collision
+    height: 48,
+    placementYOffset: 0,
+    spriteWidth: 300,    // Visual sprite width (doubled)
+    spriteHeight: 300,   // Visual sprite height (doubled)
+  },
+  
+  // Animals
+  milkable_animal: {
+    centerOffsetX: 0,
+    centerOffsetY: -32,  // Visual center for animals (similar to harvestable_resource)
+    width: 80,           // Interaction box covers animal sprite
+    height: 64,
+    placementYOffset: 0,
+    spriteWidth: 64,
+    spriteHeight: 64,
+  },
+};
+
+/**
+ * Get visual config for an entity type.
+ * Returns undefined if not found (entity will use default/custom handling).
+ */
+export function getEntityVisualConfig(entityType: string): EntityVisualBounds | undefined {
+  return ENTITY_VISUAL_CONFIG[entityType.toLowerCase()];
+}
+
+/**
+ * Centralized indicator heights for hold-interaction progress circles.
+ * Overrides config when sprite height differs from interaction box.
+ */
+export const ENTITY_INDICATOR_HEIGHTS: Record<string, number> = {
+  campfire: 96,
+  barbecue: 128,     // Sprite height (config has 96 for interaction box)
+  lantern: 56,
+  door: 96,
+  stash: 48,
+  homestead_hearth: 125,  // Hearth visual 125x125
+  knocked_out_player: 48,
+};
+
+/** Get indicator height for an entity type; falls back to config.height when not in overrides. */
+export function getIndicatorHeight(entityType: string): number {
+  const override = ENTITY_INDICATOR_HEIGHTS[entityType];
+  if (override !== undefined) return override;
+  const config = ENTITY_VISUAL_CONFIG[entityType];
+  return config?.height ?? TILE_SIZE;
+}
+
+/**
+ * Calculate the E label position based on entity visual bounds.
+ * Label is ALWAYS centered horizontally, overlapping with top band of the blue box.
+ * 
+ * @param entityPosX - Entity's world X position
+ * @param entityPosY - Entity's world Y position
+ * @param config - Entity visual configuration
+ */
+export function getLabelPosition(
+  entityPosX: number,
+  entityPosY: number,
+  config: EntityVisualBounds
+): { x: number; y: number } {
+  const boxCenterY = entityPosY + config.centerOffsetY;
+  const boxTop = boxCenterY - config.height / 2;
+  
+  return {
+    x: entityPosX + config.centerOffsetX,  // Centered horizontally
+    y: boxTop + 5,                         // 20px down from top (overlaps with top band)
+  };
+}
+
+/**
+ * Calculate the interaction indicator position (center of the blue box).
+ * Used for circular progress indicators during interactions.
+ * 
+ * @param entityPosX - Entity's world X position
+ * @param entityPosY - Entity's world Y position
+ * @param config - Entity visual configuration
+ */
+export function getIndicatorPosition(
+  entityPosX: number,
+  entityPosY: number,
+  config: EntityVisualBounds
+): { x: number; y: number } {
+  return {
+    x: entityPosX + config.centerOffsetX,  // Centered horizontally
+    y: entityPosY + config.centerOffsetY,  // Center of blue box
+  };
+}
+
+/**
+ * Calculate placement preview position.
+ * Accounts for server-side placement offset so preview matches final position.
+ */
+export function getPlacementPreviewPosition(
+  mouseX: number,
+  mouseY: number,
+  config: EntityVisualBounds
+): { x: number; y: number; width: number; height: number } {
+  // Server will store pos_y = mouseY + placementYOffset
+  // Sprite is drawn centered on posY
+  // So preview should be centered on (mouseY + placementYOffset)
+  const actualPosY = mouseY + config.placementYOffset;
+  
+  return {
+    x: mouseX - config.spriteWidth / 2,
+    y: actualPosY - config.spriteHeight / 2,
+    width: config.spriteWidth,
+    height: config.spriteHeight,
+  };
+}
+
+/**
+ * Get interaction outline parameters for an entity.
+ */
+export function getInteractionOutlineParams(
+  entityPosX: number,
+  entityPosY: number,
+  config: EntityVisualBounds
+): { x: number; y: number; width: number; height: number } {
+  return {
+    x: entityPosX + config.centerOffsetX,
+    y: entityPosY + config.centerOffsetY,
+    width: config.width,
+    height: config.height,
+  };
+}
