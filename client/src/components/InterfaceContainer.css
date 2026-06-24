@@ -7,13 +7,13 @@
     rgba(20, 30, 45, 0.95) 100%
   );
   border: 2px solid;
-  border-image: linear-gradient(135deg, #00d4ff, #7c3aed, #00d4ff) 1;
+  border-image: linear-gradient(135deg, #5c8e32, #2d4715, #5c8e32) 1;
   border-radius: 0;
   box-shadow: 
-    0 0 30px rgba(0, 212, 255, 0.2),
-    0 0 60px rgba(124, 58, 237, 0.1),
-    inset 0 1px 0 rgba(0, 212, 255, 0.2),
-    inset 0 -1px 0 rgba(124, 58, 237, 0.2);
+    0 0 30px rgba(92, 142, 50, 0.2),
+    0 0 60px rgba(45, 71, 21, 0.1),
+    inset 0 1px 0 rgba(92, 142, 50, 0.2),
+    inset 0 -1px 0 rgba(45, 71, 21, 0.2);
   backdrop-filter: blur(10px);
   overflow: visible;
   pointer-events: all;
@@ -32,17 +32,17 @@
 
 .interface-container *::-webkit-scrollbar-track {
   background: rgba(15, 23, 35, 0.9);
-  border-left: 1px solid rgba(0, 212, 255, 0.2);
+  border-left: 1px solid rgba(92, 142, 50, 0.2);
 }
 
 .interface-container *::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(0, 212, 255, 0.5) 0%, rgba(124, 58, 237, 0.5) 100%);
-  border-left: 1px solid rgba(0, 212, 255, 0.4);
+  background: linear-gradient(180deg, rgba(92, 142, 50, 0.5) 0%, rgba(45, 71, 21, 0.5) 100%);
+  border-left: 1px solid rgba(92, 142, 50, 0.4);
 }
 
 .interface-container *::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(0, 212, 255, 0.7) 0%, rgba(124, 58, 237, 0.7) 100%);
-  border-left: 1px solid rgba(0, 212, 255, 0.6);
+  background: linear-gradient(180deg, rgba(92, 142, 50, 0.7) 0%, rgba(45, 71, 21, 0.7) 100%);
+  border-left: 1px solid rgba(92, 142, 50, 0.6);
 }
 
 .interface-container *::-webkit-scrollbar-corner {
@@ -52,7 +52,7 @@
 /* Firefox scrollbar styling */
 .interface-container * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 212, 255, 0.5) rgba(15, 23, 35, 0.9);
+  scrollbar-color: rgba(92, 142, 50, 0.5) rgba(15, 23, 35, 0.9);
 }
 
 .interface-content {
@@ -77,8 +77,8 @@
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 212, 255, 0.015) 2px,
-    rgba(0, 212, 255, 0.015) 4px
+    rgba(92, 142, 50, 0.015) 2px,
+    rgba(92, 142, 50, 0.015) 4px
   );
   pointer-events: none;
   z-index: 100;
@@ -120,8 +120,8 @@
     padding: 0;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(220, 38, 38, 0.5));
-    border: 2px solid rgba(239, 68, 68, 0.6);
+    background: linear-gradient(135deg, rgba(92, 142, 50, 0.4), rgba(220, 38, 38, 0.5));
+    border: 2px solid rgba(92, 142, 50, 0.6);
     border-radius: 8px;
     color: #fff;
     font-size: 28px;
@@ -130,14 +130,14 @@
     line-height: 1;
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 12px rgba(92, 142, 50, 0.4);
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
   .interface-container-close-mobile:hover {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.6), rgba(220, 38, 38, 0.7));
-    box-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
+    background: linear-gradient(135deg, rgba(92, 142, 50, 0.6), rgba(220, 38, 38, 0.7));
+    box-shadow: 0 0 16px rgba(92, 142, 50, 0.6);
     transform: scale(1.05);
   }
 

@@ -142,7 +142,7 @@
 /* Console container */
 .console-container {
     background: rgba(0, 0, 0, 0.85);
-    border: 2px solid #00aaff;
+    border: 2px solid #5c8e32;
     border-radius: 12px;
     box-shadow: 
         0 0 30px rgba(0, 170, 255, 0.3),
@@ -171,7 +171,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #00aaff, transparent);
+    background: linear-gradient(90deg, transparent, #5c8e32, transparent);
     animation: scan-line 3s ease-in-out infinite;
 }
 
@@ -182,13 +182,13 @@
 
 /* Console header */
 .console-header {
-    border-bottom: 1px solid #00aaff;
+    border-bottom: 1px solid #5c8e32;
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
 
 .console-title {
-    color: #00ddff;
+    color: #86be52;
     font-size: 18px;
     font-weight: bold;
     letter-spacing: 2px;
@@ -236,7 +236,7 @@
 }
 
 .log-prefix {
-    color: #00aaff;
+    color: #5c8e32;
     margin-right: 10px;
     font-weight: bold;
     flex-shrink: 0;
@@ -255,7 +255,7 @@
 }
 
 .cursor {
-    color: #00ddff;
+    color: #86be52;
     animation: blink 1s infinite;
     font-size: 16px;
     text-shadow: 0 0 10px rgba(0, 221, 255, 0.8);
@@ -268,7 +268,7 @@
 
 /* Console footer */
 .console-footer {
-    border-top: 1px solid #00aaff;
+    border-top: 1px solid #5c8e32;
     padding-top: 15px;
     margin-top: 20px;
 }
@@ -315,7 +315,7 @@
 
 /* Loading state for status dots */
 .status-dot.loading {
-    background: #00aaff;
+    background: #5c8e32;
     box-shadow: 0 0 10px rgba(0, 170, 255, 0.6);
     animation: pulse-blue 1s infinite;
 }
@@ -336,7 +336,7 @@
     margin: 15px 0;
     padding: 12px 15px;
     background: rgba(0, 20, 40, 0.6);
-    border: 1px solid #00aaff;
+    border: 1px solid #5c8e32;
     border-radius: 4px;
     box-shadow: 
         0 0 10px rgba(0, 170, 255, 0.2),
@@ -353,7 +353,7 @@
 }
 
 .asset-progress-label {
-    color: #00ddff;
+    color: #86be52;
     font-weight: bold;
 }
 
@@ -375,15 +375,15 @@
 .asset-progress-fill {
     height: 100%;
     background: linear-gradient(90deg, 
-        #00aaff 0%, 
-        #00ddff 40%, 
-        #00ff88 70%, 
+        #5c8e32 0%, 
+        #86be52 40%, 
+        #86be52 70%, 
         #00ff00 100%
     );
     border-radius: 1px;
     transition: width 0.15s ease-out;
     box-shadow: 
-        0 0 10px rgba(0, 255, 136, 0.5),
+        0 0 10px rgba(134, 190, 82, 0.5),
         inset 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
@@ -695,7 +695,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #00ddff, transparent);
+    background: linear-gradient(90deg, transparent, #86be52, transparent);
     animation: error-scan-line 2s ease-in-out infinite;
 }
 
@@ -706,7 +706,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #00ddff, transparent);
+    background: linear-gradient(90deg, transparent, #86be52, transparent);
     animation: error-scan-line 2s ease-in-out infinite reverse;
 }
 
@@ -730,7 +730,7 @@
 }
 
 .error-icon {
-    color: #00ddff;
+    color: #86be52;
     font-size: 14px;
     margin-right: 6px;
     margin-top: 6px;
@@ -763,7 +763,7 @@
 }
 
 .error-title {
-    color: #00aaff;
+    color: #5c8e32;
     font-size: 14px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -844,13 +844,13 @@
 .continue-prompt {
     margin-top: 20px;
     padding-top: 15px;
-    border-top: 1px solid #00aaff;
+    border-top: 1px solid #5c8e32;
     animation: fade-in 0.8s ease-out;
 }
 
 .continue-button {
-    background: linear-gradient(135deg, #001122 0%, #003366 50%, #00aaff 100%);
-    border: 2px solid #00aaff;
+    background: linear-gradient(135deg, #001122 0%, #2d4715 50%, #5c8e32 100%);
+    border: 2px solid #5c8e32;
     border-radius: 8px;
     color: #e0e0e0;
     cursor: pointer;
@@ -897,7 +897,7 @@
     box-shadow: 
         0 5px 25px rgba(0, 170, 255, 0.5),
         inset 0 0 15px rgba(0, 170, 255, 0.2);
-    border-color: #00ddff;
+    border-color: #86be52;
     color: #ffffff;
 }
 
@@ -988,7 +988,7 @@
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.9);
-    border: 2px solid #00ddff;
+    border: 2px solid #86be52;
     border-radius: 8px;
     padding: 15px 20px;
     z-index: 1000;
@@ -1014,7 +1014,7 @@
 }
 
 .audio-prompt-title {
-    color: #00ddff;
+    color: #86be52;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -1029,8 +1029,8 @@
 }
 
 .enable-audio-button {
-    background: linear-gradient(135deg, #003366 0%, #00aaff 100%);
-    border: 1px solid #00ddff;
+    background: linear-gradient(135deg, #2d4715 0%, #5c8e32 100%);
+    border: 1px solid #86be52;
     border-radius: 4px;
     color: #ffffff;
     cursor: pointer;
@@ -1050,7 +1050,7 @@
 }
 
 .enable-audio-button:hover {
-    background: linear-gradient(135deg, #0066aa 0%, #00ddff 100%);
+    background: linear-gradient(135deg, #2d4715 0%, #86be52 100%);
     transform: translateY(-1px);
     box-shadow: 0 2px 15px rgba(0, 170, 255, 0.5);
 }
@@ -1061,13 +1061,13 @@
 
 @keyframes audio-prompt-pulse {
     0%, 100% { 
-        border-color: #00ddff;
+        border-color: #86be52;
         box-shadow: 
             0 0 20px rgba(0, 221, 255, 0.4),
             inset 0 0 10px rgba(0, 221, 255, 0.1);
     }
     50% { 
-        border-color: #00aaff;
+        border-color: #5c8e32;
         box-shadow: 
             0 0 30px rgba(0, 221, 255, 0.6),
             inset 0 0 15px rgba(0, 221, 255, 0.2);

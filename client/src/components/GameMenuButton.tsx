@@ -15,7 +15,7 @@ const GameMenuButton: React.FC<GameMenuButtonProps> = ({ onClick }) => {
                 zIndex: 999,
                 background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.9), rgba(10, 30, 70, 0.95))',
                 color: '#00ffff',
-                border: '2px solid #00aaff',
+                border: '2px solid #5c8e32',
                 borderRadius: '8px',
                 padding: '10px 12px',
                 fontFamily: '"Press Start 2P", cursive',

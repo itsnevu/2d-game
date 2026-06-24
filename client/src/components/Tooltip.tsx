@@ -106,7 +106,7 @@ const Tooltip: React.FC<TooltipProps> = ({ content, visible, position }) => {
               <span className={styles.craftingCostName}>{cost.name}</span>
               <span 
                 className={styles.craftingCostValue}
-                style={{ color: cost.hasEnough ? '#00ff88' : '#ff3366' }}
+                style={{ color: cost.hasEnough ? '#86be52' : '#ff3366' }}
               >
                 {cost.available}/{cost.required}
               </span>
@@ -135,7 +135,7 @@ const Tooltip: React.FC<TooltipProps> = ({ content, visible, position }) => {
                   <span className={styles.alternativeName}>{alt.name}</span>
                   <span
                     className={styles.alternativeCount}
-                    style={{ color: hasEnough ? '#00ff88' : alt.available > 0 ? '#f0ad4e' : '#ff3366' }}
+                    style={{ color: hasEnough ? '#86be52' : alt.available > 0 ? '#f0ad4e' : '#ff3366' }}
                   >
                     {alt.available}
                   </span>
@@ -147,7 +147,7 @@ const Tooltip: React.FC<TooltipProps> = ({ content, visible, position }) => {
             <span>Combined:</span>
             <span style={{
               color: content.alternativesRequired && content.alternatives.reduce((s, a) => s + a.available, 0) >= content.alternativesRequired
-                ? '#00ff88' : '#ff3366',
+                ? '#86be52' : '#ff3366',
               fontWeight: 'bold',
             }}>
               {content.alternatives.reduce((s, a) => s + a.available, 0)}

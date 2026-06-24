@@ -155,17 +155,17 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '12px 16px',
-        background: 'linear-gradient(90deg, rgba(0, 212, 255, 0.15) 0%, transparent 100%)',
+        background: 'linear-gradient(90deg, rgba(92, 142, 50, 0.15) 0%, transparent 100%)',
         borderBottom: 'none',
         marginBottom: '0',
         flexShrink: 0,
       }}>
          <h2 style={{
-           color: '#00d4ff',
+           color: '#5c8e32',
            margin: 0,
            fontSize: '1.2rem',
            fontWeight: 'bold',
-           textShadow: '0 0 10px rgba(0, 212, 255, 0.5)',
+           textShadow: '0 0 10px rgba(92, 142, 50, 0.5)',
            letterSpacing: '2px',
            display: 'flex',
            alignItems: 'center',
@@ -187,11 +187,11 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
           disabled={isLoading}
           style={{
             background: isLoading 
-              ? 'rgba(0, 212, 255, 0.2)' 
-              : 'rgba(0, 212, 255, 0.15)',
-            border: '1px solid rgba(0, 212, 255, 0.5)',
+              ? 'rgba(92, 142, 50, 0.2)' 
+              : 'rgba(92, 142, 50, 0.15)',
+            border: '1px solid rgba(92, 142, 50, 0.5)',
             borderRadius: '0',
-            color: isLoading ? 'rgba(0, 212, 255, 0.6)' : '#00d4ff',
+            color: isLoading ? 'rgba(92, 142, 50, 0.6)' : '#5c8e32',
             padding: '6px 14px',
             cursor: isLoading ? 'not-allowed' : 'pointer',
             fontSize: '11px',
@@ -199,21 +199,21 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
             letterSpacing: '1px',
             transition: 'all 0.2s ease',
             opacity: isLoading ? 0.5 : 1,
-            textShadow: isLoading ? 'none' : '0 0 6px rgba(0, 212, 255, 0.6)',
-            boxShadow: isLoading ? 'none' : 'inset 0 0 8px rgba(0, 212, 255, 0.2)',
+            textShadow: isLoading ? 'none' : '0 0 6px rgba(92, 142, 50, 0.6)',
+            boxShadow: isLoading ? 'none' : 'inset 0 0 8px rgba(92, 142, 50, 0.2)',
           }}
           onMouseEnter={(e) => {
             if (!isLoading) {
-              e.currentTarget.style.background = 'rgba(0, 212, 255, 0.25)';
-              e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.8)';
-              e.currentTarget.style.boxShadow = 'inset 0 0 12px rgba(0, 212, 255, 0.3), 0 0 8px rgba(0, 212, 255, 0.4)';
+              e.currentTarget.style.background = 'rgba(92, 142, 50, 0.25)';
+              e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.8)';
+              e.currentTarget.style.boxShadow = 'inset 0 0 12px rgba(92, 142, 50, 0.3), 0 0 8px rgba(92, 142, 50, 0.4)';
             }
           }}
           onMouseLeave={(e) => {
             if (!isLoading) {
-              e.currentTarget.style.background = 'rgba(0, 212, 255, 0.15)';
-              e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.5)';
-              e.currentTarget.style.boxShadow = 'inset 0 0 8px rgba(0, 212, 255, 0.2)';
+              e.currentTarget.style.background = 'rgba(92, 142, 50, 0.15)';
+              e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.5)';
+              e.currentTarget.style.boxShadow = 'inset 0 0 8px rgba(92, 142, 50, 0.2)';
             }
           }}
         >
@@ -228,7 +228,7 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
         gap: '8px',
         padding: '8px 12px',
         background: 'rgba(0, 0, 0, 0.3)',
-        borderBottom: '1px solid rgba(0, 212, 255, 0.3)',
+        borderBottom: '1px solid rgba(92, 142, 50, 0.3)',
       }}>
         {(Object.keys(CATEGORY_DISPLAY_NAMES) as LeaderboardCategory[]).map((category) => (
           <button
@@ -236,9 +236,9 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
             onClick={() => setSelectedCategory(category)}
             style={{
               background: selectedCategory === category
-                ? 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)'
-                : 'rgba(0, 212, 255, 0.1)',
-              border: `1px solid ${selectedCategory === category ? '#00d4ff' : 'rgba(0, 212, 255, 0.3)'}`,
+                ? 'linear-gradient(135deg, #5c8e32 0%, #2d4715 100%)'
+                : 'rgba(92, 142, 50, 0.1)',
+              border: `1px solid ${selectedCategory === category ? '#5c8e32' : 'rgba(92, 142, 50, 0.3)'}`,
               borderRadius: '4px',
               color: '#ffffff',
               padding: '6px 12px',
@@ -250,14 +250,14 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
             }}
             onMouseEnter={(e) => {
               if (selectedCategory !== category) {
-                e.currentTarget.style.background = 'rgba(0, 212, 255, 0.2)';
-                e.currentTarget.style.borderColor = '#00d4ff';
+                e.currentTarget.style.background = 'rgba(92, 142, 50, 0.2)';
+                e.currentTarget.style.borderColor = '#5c8e32';
               }
             }}
             onMouseLeave={(e) => {
               if (selectedCategory !== category) {
-                e.currentTarget.style.background = 'rgba(0, 212, 255, 0.1)';
-                e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.3)';
+                e.currentTarget.style.background = 'rgba(92, 142, 50, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.3)';
               }
             }}
           >
@@ -310,27 +310,27 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
                   key={entry.id.toString()}
                   style={{
                     background: isPlayer
-                      ? 'linear-gradient(90deg, rgba(0, 212, 255, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%)'
+                      ? 'linear-gradient(90deg, rgba(92, 142, 50, 0.2) 0%, rgba(45, 71, 21, 0.2) 100%)'
                       : 'rgba(0, 0, 0, 0.3)',
-                    border: `1px solid ${isPlayer ? '#00d4ff' : 'rgba(0, 212, 255, 0.2)'}`,
+                    border: `1px solid ${isPlayer ? '#5c8e32' : 'rgba(92, 142, 50, 0.2)'}`,
                     borderRadius: '4px',
                     padding: '12px 16px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     transition: 'all 0.2s ease',
-                    boxShadow: isPlayer ? '0 0 10px rgba(0, 212, 255, 0.3)' : 'none',
+                    boxShadow: isPlayer ? '0 0 10px rgba(92, 142, 50, 0.3)' : 'none',
                   }}
                   onMouseEnter={(e) => {
                     if (!isPlayer) {
-                      e.currentTarget.style.background = 'rgba(0, 212, 255, 0.1)';
-                      e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.4)';
+                      e.currentTarget.style.background = 'rgba(92, 142, 50, 0.1)';
+                      e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.4)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isPlayer) {
                       e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                      e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.2)';
+                      e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.2)';
                     }
                   }}
                 >
@@ -352,7 +352,7 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
                     }}>
                       <div style={{
                         fontWeight: isPlayer ? 'bold' : 'normal',
-                        color: isPlayer ? '#00d4ff' : '#ffffff',
+                        color: isPlayer ? '#5c8e32' : '#ffffff',
                         fontSize: '14px',
                         marginBottom: '4px',
                       }}>
@@ -361,7 +361,7 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
                           <span style={{
                             marginLeft: '8px',
                             fontSize: '11px',
-                            color: '#7c3aed',
+                            color: '#2d4715',
                           }}>(YOU)</span>
                         )}
                       </div>
@@ -370,7 +370,7 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
                   <div style={{
                     fontSize: '16px',
                     fontWeight: 'bold',
-                    color: '#00d4ff',
+                    color: '#5c8e32',
                     textAlign: 'right',
                   }}>
                     {formatValue(entry.value, selectedCategory)}
@@ -395,7 +395,7 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
       <div style={{
         padding: '10px 16px',
         background: 'rgba(0, 0, 0, 0.3)',
-        borderTop: '1px solid rgba(0, 212, 255, 0.3)',
+        borderTop: '1px solid rgba(92, 142, 50, 0.3)',
         fontSize: '11px',
         color: 'rgba(255, 255, 255, 0.6)',
         textAlign: 'center',

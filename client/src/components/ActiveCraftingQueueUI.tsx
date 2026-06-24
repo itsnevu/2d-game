@@ -98,9 +98,9 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         color: '#00ffff',
         padding: '10px 14px',
         borderRadius: '2px',
-        border: isNearComplete ? '1px solid #00ff88' : '1px solid #00ffff',
+        border: isNearComplete ? '1px solid #86be52' : '1px solid #00ffff',
         boxShadow: isNearComplete 
-          ? '0 0 20px rgba(0, 255, 136, 0.7), inset 0 0 20px rgba(0, 255, 136, 0.1)' 
+          ? '0 0 20px rgba(134, 190, 82, 0.7), inset 0 0 20px rgba(134, 190, 82, 0.1)' 
           : '0 0 15px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.05)',
         fontFamily: "'Courier New', 'Consolas', 'Monaco', monospace",
         fontSize: '11px',
@@ -199,9 +199,9 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         justifyContent: 'center',
         backgroundColor: 'rgba(0, 255, 255, 0.15)',
         borderRadius: '2px',
-        border: isNearComplete ? '1px solid #00ff88' : '1px solid rgba(0, 255, 255, 0.5)',
+        border: isNearComplete ? '1px solid #86be52' : '1px solid rgba(0, 255, 255, 0.5)',
         boxShadow: isNearComplete 
-          ? '0 0 12px rgba(0, 255, 136, 0.6), inset 0 0 8px rgba(0, 255, 136, 0.2)' 
+          ? '0 0 12px rgba(134, 190, 82, 0.6), inset 0 0 8px rgba(134, 190, 82, 0.2)' 
           : '0 0 10px rgba(0, 255, 255, 0.4), inset 0 0 8px rgba(0, 255, 255, 0.1)',
         position: 'relative',
         zIndex: 2,
@@ -215,7 +215,7 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
             height: '22px', 
             imageRendering: 'pixelated',
             filter: isNearComplete 
-              ? 'drop-shadow(0 0 4px rgba(0, 255, 136, 0.8))' 
+              ? 'drop-shadow(0 0 4px rgba(134, 190, 82, 0.8))' 
               : 'drop-shadow(0 0 3px rgba(0, 255, 255, 0.6))',
           }}
         />
@@ -233,10 +233,10 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
           {itemName}
         </div>
         <div style={{ 
-          color: isNearComplete ? '#00ff88' : '#00ccff',
+          color: isNearComplete ? '#86be52' : '#00ccff',
           fontSize: '10px',
           textShadow: isNearComplete 
-            ? '0 0 8px rgba(0, 255, 136, 0.8)' 
+            ? '0 0 8px rgba(134, 190, 82, 0.8)' 
             : '0 0 6px rgba(0, 204, 255, 0.6)',
           fontWeight: 'bold',
         }}>
@@ -265,10 +265,10 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
           right: 0,
           height: `${progressPercent}%`,
           background: isNearComplete 
-            ? 'linear-gradient(to top, #00ff88, #00ffaa)' 
+            ? 'linear-gradient(to top, #86be52, #00ffaa)' 
             : 'linear-gradient(to top, #0099ff, #00ffff)',
           boxShadow: isNearComplete 
-            ? '0 0 12px rgba(0, 255, 136, 0.8)' 
+            ? '0 0 12px rgba(134, 190, 82, 0.8)' 
             : '0 0 10px rgba(0, 255, 255, 0.6)',
           transition: 'height 0.5s ease-out, background 0.3s ease-out, box-shadow 0.3s ease-out',
         }}>
@@ -292,8 +292,8 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         left: 0,
         width: '8px',
         height: '8px',
-        borderTop: isNearComplete ? '2px solid #00ff88' : '2px solid #00ffff',
-        borderLeft: isNearComplete ? '2px solid #00ff88' : '2px solid #00ffff',
+        borderTop: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
+        borderLeft: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
         zIndex: 2,
       }} />
       <div style={{
@@ -302,8 +302,8 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         right: 0,
         width: '8px',
         height: '8px',
-        borderBottom: isNearComplete ? '2px solid #00ff88' : '2px solid #00ffff',
-        borderRight: isNearComplete ? '2px solid #00ff88' : '2px solid #00ffff',
+        borderBottom: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
+        borderRight: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
         zIndex: 2,
       }} />
     </div>

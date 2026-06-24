@@ -76,10 +76,10 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
         padding: '16px 24px',
         borderRadius: '4px',
         border: isFirstDiscovery 
-          ? '2px solid #00ff88' 
+          ? '2px solid #86be52' 
           : '1px solid rgba(0, 255, 255, 0.5)',
         boxShadow: isFirstDiscovery 
-          ? '0 0 30px rgba(0, 255, 136, 0.6), 0 0 60px rgba(0, 255, 136, 0.3), inset 0 0 30px rgba(0, 255, 136, 0.1)' 
+          ? '0 0 30px rgba(134, 190, 82, 0.6), 0 0 60px rgba(134, 190, 82, 0.3), inset 0 0 30px rgba(134, 190, 82, 0.1)' 
           : '0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.05)',
         fontFamily: "'Courier New', 'Consolas', 'Monaco', monospace",
         zIndex: 1000,
@@ -115,10 +115,10 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'rgba(0, 255, 136, 0.15)',
+          backgroundColor: 'rgba(134, 190, 82, 0.15)',
           borderRadius: '4px',
-          border: '1px solid rgba(0, 255, 136, 0.4)',
-          boxShadow: '0 0 12px rgba(0, 255, 136, 0.4)',
+          border: '1px solid rgba(134, 190, 82, 0.4)',
+          boxShadow: '0 0 12px rgba(134, 190, 82, 0.4)',
         }}>
           <img 
             src={cairnIcon}
@@ -127,7 +127,7 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
               width: '24px', 
               height: '24px', 
               imageRendering: 'pixelated',
-              filter: 'drop-shadow(0 0 4px rgba(0, 255, 136, 0.8))',
+              filter: 'drop-shadow(0 0 4px rgba(134, 190, 82, 0.8))',
             }}
           />
         </div>
@@ -136,9 +136,9 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
           fontWeight: 'bold',
           textTransform: 'uppercase',
           letterSpacing: '2px',
-          color: isFirstDiscovery ? '#00ff88' : '#00ffff',
+          color: isFirstDiscovery ? '#86be52' : '#00ffff',
           textShadow: isFirstDiscovery 
-            ? '0 0 10px rgba(0, 255, 136, 0.8)' 
+            ? '0 0 10px rgba(134, 190, 82, 0.8)' 
             : '0 0 8px rgba(0, 255, 255, 0.6)',
         }}>
           {isFirstDiscovery ? 'CAIRN DISCOVERED' : 'CAIRN LORE'}
@@ -176,8 +176,8 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
         <span style={{ 
           fontSize: '18px',
           fontWeight: 'bold',
-          color: '#00ff88',
-          textShadow: '0 0 8px rgba(0, 255, 136, 0.8)',
+          color: '#86be52',
+          textShadow: '0 0 8px rgba(134, 190, 82, 0.8)',
         }}>
           {cairnNumber}
         </span>
@@ -209,8 +209,8 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
         <div style={{
           width: `${(cairnNumber / totalCairns) * 100}%`,
           height: '100%',
-          backgroundColor: '#00ff88',
-          boxShadow: '0 0 8px rgba(0, 255, 136, 0.8)',
+          backgroundColor: '#86be52',
+          boxShadow: '0 0 8px rgba(134, 190, 82, 0.8)',
           transition: 'width 0.5s ease-out',
         }} />
       </div>
@@ -222,8 +222,8 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
         left: 0,
         width: '12px',
         height: '12px',
-        borderTop: '2px solid #00ff88',
-        borderLeft: '2px solid #00ff88',
+        borderTop: '2px solid #86be52',
+        borderLeft: '2px solid #86be52',
         zIndex: 2,
       }} />
       <div style={{
@@ -232,8 +232,8 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
         right: 0,
         width: '12px',
         height: '12px',
-        borderTop: '2px solid #00ff88',
-        borderRight: '2px solid #00ff88',
+        borderTop: '2px solid #86be52',
+        borderRight: '2px solid #86be52',
         zIndex: 2,
       }} />
       <div style={{
@@ -242,8 +242,8 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
         left: 0,
         width: '12px',
         height: '12px',
-        borderBottom: '2px solid #00ff88',
-        borderLeft: '2px solid #00ff88',
+        borderBottom: '2px solid #86be52',
+        borderLeft: '2px solid #86be52',
         zIndex: 2,
       }} />
       <div style={{
@@ -252,8 +252,8 @@ const CairnUnlockNotification: React.FC<CairnUnlockNotificationProps> = ({
         right: 0,
         width: '12px',
         height: '12px',
-        borderBottom: '2px solid #00ff88',
-        borderRight: '2px solid #00ff88',
+        borderBottom: '2px solid #86be52',
+        borderRight: '2px solid #86be52',
         zIndex: 2,
       }} />
     </div>

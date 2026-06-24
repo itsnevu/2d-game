@@ -31,10 +31,10 @@ function getObjectiveLabel(quest: TutorialQuestDefinition, which: 'primary' | 's
 
 // Style constants - Cyberpunk theme
 const UI_BG_COLOR = 'linear-gradient(135deg, rgba(10, 5, 20, 0.98), rgba(15, 8, 30, 0.99))';
-const UI_BORDER_COLOR = '#00aaff';
+const UI_BORDER_COLOR = '#5c8e32';
 const UI_SHADOW = '0 0 50px rgba(0, 170, 255, 0.4), inset 0 0 30px rgba(0, 170, 255, 0.15)';
 const UI_FONT_FAMILY = '"Press Start 2P", cursive';
-const SOVA_PURPLE = '#c084fc';
+const SOVA_PURPLE = '#86be52';
 const SOVA_CYAN = '#00ffff';
 const GLOW_CYAN = '0 0 15px rgba(0, 255, 255, 0.6)';
 
@@ -156,7 +156,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
             case 'Locked': return '#6b7280';
             case 'Available': return '#fbbf24';
             case 'InProgress': return SOVA_CYAN;
-            case 'Completed': return '#4ade80';
+            case 'Completed': return '#c4e89c';
             case 'Expired': return '#f87171';
             default: return '#9ca3af';
         }
@@ -190,18 +190,18 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                     border: 1px solid rgba(0, 170, 255, 0.3);
                 }
                 .quest-panel-scroll::-webkit-scrollbar-thumb {
-                    background: linear-gradient(180deg, #00aaff, #0066aa);
+                    background: linear-gradient(180deg, #5c8e32, #2d4715);
                     border-radius: 6px;
                     border: 2px solid rgba(0, 20, 40, 0.8);
                     box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
                 }
                 .quest-panel-scroll::-webkit-scrollbar-thumb:hover {
-                    background: linear-gradient(180deg, #00ffff, #00aaff);
+                    background: linear-gradient(180deg, #00ffff, #5c8e32);
                     box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
                 }
                 .quest-panel-scroll {
                     scrollbar-width: thin;
-                    scrollbar-color: #00aaff rgba(0, 20, 40, 0.8);
+                    scrollbar-color: #5c8e32 rgba(0, 20, 40, 0.8);
                 }
             `}</style>
 
@@ -242,7 +242,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                     alignItems: 'center',
                     padding: '20px 24px',
                     borderBottom: `2px solid ${UI_BORDER_COLOR}`,
-                    background: 'linear-gradient(90deg, rgba(0, 170, 255, 0.15), rgba(192, 132, 252, 0.15), rgba(0, 170, 255, 0.15))',
+                    background: 'linear-gradient(90deg, rgba(0, 170, 255, 0.15), rgba(134, 190, 82, 0.15), rgba(0, 170, 255, 0.15))',
                     flexShrink: 0,
                 }}>
                     <div style={{
@@ -259,7 +259,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                     </div>
                     <button 
                         style={{
-                            background: 'rgba(192, 132, 252, 0.1)',
+                            background: 'rgba(134, 190, 82, 0.1)',
                             border: `2px solid ${SOVA_PURPLE}`,
                             borderRadius: '6px',
                             color: SOVA_PURPLE,
@@ -268,16 +268,16 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             cursor: 'pointer',
                             fontFamily: UI_FONT_FAMILY,
                             transition: 'all 0.2s ease',
-                            textShadow: '0 0 10px rgba(192, 132, 252, 0.5)',
+                            textShadow: '0 0 10px rgba(134, 190, 82, 0.5)',
                         }}
                         onClick={onClose}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.background = SOVA_PURPLE;
                             e.currentTarget.style.color = '#fff';
-                            e.currentTarget.style.boxShadow = '0 0 20px rgba(192, 132, 252, 0.6)';
+                            e.currentTarget.style.boxShadow = '0 0 20px rgba(134, 190, 82, 0.6)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(192, 132, 252, 0.1)';
+                            e.currentTarget.style.background = 'rgba(134, 190, 82, 0.1)';
                             e.currentTarget.style.color = SOVA_PURPLE;
                             e.currentTarget.style.boxShadow = 'none';
                         }}
@@ -300,7 +300,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             flex: 1,
                             padding: isMobile ? '14px 12px' : '16px 20px',
                             background: activeTab === 'mission' 
-                                ? 'linear-gradient(180deg, rgba(192, 132, 252, 0.2), rgba(192, 132, 252, 0.05))'
+                                ? 'linear-gradient(180deg, rgba(134, 190, 82, 0.2), rgba(134, 190, 82, 0.05))'
                                 : 'transparent',
                             border: 'none',
                             borderBottom: activeTab === 'mission' 
@@ -318,12 +318,12 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             gap: '10px',
                             textTransform: 'uppercase',
                             letterSpacing: '1px',
-                            textShadow: activeTab === 'mission' ? '0 0 15px rgba(192, 132, 252, 0.5)' : 'none',
+                            textShadow: activeTab === 'mission' ? '0 0 15px rgba(134, 190, 82, 0.5)' : 'none',
                         }}
                         onMouseEnter={(e) => {
                             if (activeTab !== 'mission') {
                                 e.currentTarget.style.color = SOVA_PURPLE;
-                                e.currentTarget.style.background = 'rgba(192, 132, 252, 0.1)';
+                                e.currentTarget.style.background = 'rgba(134, 190, 82, 0.1)';
                             }
                         }}
                         onMouseLeave={(e) => {
@@ -337,7 +337,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         <span>Primary Mission</span>
                         {tutorialProgress?.tutorialCompleted && (
                             <span style={{ 
-                                color: '#4ade80', 
+                                color: '#c4e89c', 
                                 fontSize: isMobile ? '8px' : '10px',
                                 padding: '2px 6px',
                                 background: 'rgba(74, 222, 128, 0.2)',
@@ -395,7 +395,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         {tutorialProgress?.tutorialCompleted ? (
                             <span style={{ 
                                 color: dailyQuestsWithDefs.filter(d => d.quest.status.tag === 'Completed').length === dailyQuestsWithDefs.length && dailyQuestsWithDefs.length > 0
-                                    ? '#4ade80' 
+                                    ? '#c4e89c' 
                                     : '#9ca3af', 
                                 fontSize: isMobile ? '10px' : '12px',
                                 padding: '2px 8px',
@@ -462,7 +462,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         <span style={{ display: isMobile ? 'none' : 'inline' }}>Audio Logs</span>
                         <span style={{ display: isMobile ? 'inline' : 'none' }}>Audio</span>
                         <span style={{ 
-                            color: unlockedTutorials.length > 0 ? '#4ade80' : '#9ca3af', 
+                            color: unlockedTutorials.length > 0 ? '#c4e89c' : '#9ca3af', 
                             fontSize: isMobile ? '10px' : '12px',
                             padding: '2px 8px',
                             background: 'rgba(0, 0, 0, 0.4)',
@@ -490,11 +490,11 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         <>
                         {currentTutorialQuest ? (
                             <div style={{
-                                background: 'linear-gradient(135deg, rgba(192, 132, 252, 0.12), rgba(0, 170, 255, 0.08))',
+                                background: 'linear-gradient(135deg, rgba(134, 190, 82, 0.12), rgba(0, 170, 255, 0.08))',
                                 border: `2px solid ${SOVA_PURPLE}`,
                                 borderRadius: '12px',
                                 padding: '20px',
-                                boxShadow: '0 0 25px rgba(192, 132, 252, 0.15)',
+                                boxShadow: '0 0 25px rgba(134, 190, 82, 0.15)',
                             }}>
                                 <div style={{
                                     color: '#fff',
@@ -573,7 +573,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                             borderRadius: '7px',
                                             overflow: 'hidden',
                                             marginBottom: '6px',
-                                            border: '1px solid rgba(192, 132, 252, 0.3)',
+                                            border: '1px solid rgba(134, 190, 82, 0.3)',
                                         }}>
                                             <div style={{
                                                 width: `${Math.min(((tutorialProgress as any)?.secondaryQuestProgress || 0) / (currentTutorialQuest as any).secondaryTargetAmount * 100, 100)}%`,
@@ -581,10 +581,10 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                 background: `linear-gradient(90deg, ${SOVA_PURPLE}, #f472b6)`,
                                                 borderRadius: '7px',
                                                 transition: 'width 0.3s ease',
-                                                boxShadow: '0 0 15px rgba(192, 132, 252, 0.5)',
+                                                boxShadow: '0 0 15px rgba(134, 190, 82, 0.5)',
                                             }} />
                                         </div>
-                                        <div style={{ color: SOVA_PURPLE, fontSize: isMobile ? '11px' : '13px', textShadow: '0 0 10px rgba(192, 132, 252, 0.5)' }}>
+                                        <div style={{ color: SOVA_PURPLE, fontSize: isMobile ? '11px' : '13px', textShadow: '0 0 10px rgba(134, 190, 82, 0.5)' }}>
                                             {(tutorialProgress as any)?.secondaryQuestProgress || 0} / {(currentTutorialQuest as any).secondaryTargetAmount}
                                         </div>
                                     </div>
@@ -607,7 +607,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                     <div style={{ 
                                         marginTop: '18px', 
                                         padding: '14px 18px', 
-                                        background: 'rgba(192, 132, 252, 0.08)', 
+                                        background: 'rgba(134, 190, 82, 0.08)', 
                                         borderRadius: '8px',
                                         borderLeft: `4px solid ${SOVA_PURPLE}`,
                                     }}>
@@ -685,7 +685,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                     width: '32px',
                                                     height: '32px',
                                                     borderRadius: '6px',
-                                                    backgroundColor: isCompleted ? '#4ade80' : isCurrent ? SOVA_PURPLE : '#374151',
+                                                    backgroundColor: isCompleted ? '#c4e89c' : isCurrent ? SOVA_PURPLE : '#374151',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -755,7 +755,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                     style={{
                                         marginTop: '20px',
                                         padding: '12px 24px',
-                                        background: 'linear-gradient(135deg, rgba(192, 132, 252, 0.3), rgba(0, 170, 255, 0.2))',
+                                        background: 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 170, 255, 0.2))',
                                         border: `2px solid ${SOVA_PURPLE}`,
                                         borderRadius: '8px',
                                         color: SOVA_PURPLE,
@@ -769,10 +769,10 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.background = SOVA_PURPLE;
                                         e.currentTarget.style.color = '#fff';
-                                        e.currentTarget.style.boxShadow = '0 0 20px rgba(192, 132, 252, 0.5)';
+                                        e.currentTarget.style.boxShadow = '0 0 20px rgba(134, 190, 82, 0.5)';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(192, 132, 252, 0.3), rgba(0, 170, 255, 0.2))';
+                                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 170, 255, 0.2))';
                                         e.currentTarget.style.color = SOVA_PURPLE;
                                         e.currentTarget.style.boxShadow = 'none';
                                     }}
@@ -801,7 +801,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                         >
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                                                 <div style={{
-                                                    color: isCompleted ? '#4ade80' : '#e0e0e0',
+                                                    color: isCompleted ? '#c4e89c' : '#e0e0e0',
                                                     fontSize: isMobile ? '12px' : '14px',
                                                     fontWeight: 'bold',
                                                 }}>
@@ -840,7 +840,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                 <div style={{
                                                     width: `${Math.min(progressPercent, 100)}%`,
                                                     height: '100%',
-                                                    backgroundColor: isCompleted ? '#4ade80' : SOVA_CYAN,
+                                                    backgroundColor: isCompleted ? '#c4e89c' : SOVA_CYAN,
                                                     borderRadius: '5px',
                                                     transition: 'width 0.3s ease',
                                                     boxShadow: `0 0 10px ${isCompleted ? 'rgba(74, 222, 128, 0.5)' : 'rgba(0, 255, 255, 0.5)'}`,
@@ -848,7 +848,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                             </div>
                                             
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                                                <span style={{ color: isCompleted ? '#4ade80' : '#a0a8b8', fontSize: isMobile ? '11px' : '13px' }}>
+                                                <span style={{ color: isCompleted ? '#c4e89c' : '#a0a8b8', fontSize: isMobile ? '11px' : '13px' }}>
                                                     {quest.currentProgress} / {quest.targetAmount}
                                                 </span>
                                                 <div style={{ display: 'flex', gap: '16px', fontSize: isMobile ? '10px' : '12px' }}>

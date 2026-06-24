@@ -25,12 +25,12 @@ const scrollbarStyles = `
         border-radius: 4px;
     }
     .debug-panel-scroll::-webkit-scrollbar-thumb {
-        background: rgba(0, 212, 255, 0.4);
+        background: rgba(92, 142, 50, 0.4);
         border-radius: 4px;
-        border: 1px solid rgba(0, 212, 255, 0.2);
+        border: 1px solid rgba(92, 142, 50, 0.2);
     }
     .debug-panel-scroll::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 212, 255, 0.6);
+        background: rgba(92, 142, 50, 0.6);
     }
     /* Hide native number input spinners */
     .debug-qty-input::-webkit-outer-spin-button,
@@ -312,14 +312,14 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
             left: '15px',
             zIndex: 998,
             background: 'linear-gradient(145deg, rgba(15, 30, 50, 0.95), rgba(10, 20, 40, 0.98))',
-            border: '2px solid #00d4ff',
+            border: '2px solid #5c8e32',
             borderRadius: '8px',
             padding: '12px',
             fontSize: '11px',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
-            boxShadow: '0 0 20px rgba(0, 212, 255, 0.3), inset 0 0 15px rgba(0, 212, 255, 0.1)',
+            boxShadow: '0 0 20px rgba(92, 142, 50, 0.3), inset 0 0 15px rgba(92, 142, 50, 0.1)',
             fontFamily: '"Press Start 2P", monospace',
             minWidth: '240px',
             maxHeight: '475px',
@@ -342,7 +342,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: '4px',
-                borderBottom: '1px solid rgba(0, 212, 255, 0.3)',
+                borderBottom: '1px solid rgba(92, 142, 50, 0.3)',
                 paddingBottom: '6px',
                 background: 'linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99))',
                 marginLeft: '-12px',
@@ -352,8 +352,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
             }}>
                 <div style={{
                     fontSize: '11px',
-                    color: '#00d4ff',
-                    textShadow: '0 0 8px rgba(0, 212, 255, 0.8)',
+                    color: '#5c8e32',
+                    textShadow: '0 0 8px rgba(92, 142, 50, 0.8)',
                     letterSpacing: '1px',
                     flex: 1,
                     textAlign: 'center'
@@ -364,9 +364,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                     onClick={() => setIsMinimized(!isMinimized)}
                     onFocus={(e) => e.currentTarget.blur()}
                     style={{
-                        background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 170, 255, 0.3))',
-                        color: '#00d4ff',
-                        border: '1px solid rgba(0, 212, 255, 0.4)',
+                        background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.2), rgba(0, 170, 255, 0.3))',
+                        color: '#5c8e32',
+                        border: '1px solid rgba(92, 142, 50, 0.4)',
                         padding: '4px 8px',
                         borderRadius: '4px',
                         fontSize: '10px',
@@ -376,11 +376,11 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         minWidth: '28px'
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 170, 255, 0.4))';
-                        e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 212, 255, 0.4)';
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(0, 170, 255, 0.4))';
+                        e.currentTarget.style.boxShadow = '0 0 10px rgba(92, 142, 50, 0.4)';
                     }}
                     onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 170, 255, 0.3))';
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.2), rgba(0, 170, 255, 0.3))';
                         e.currentTarget.style.boxShadow = 'none';
                     }}
                 >
@@ -399,10 +399,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onFocus={(e) => e.currentTarget.blur()}
                         style={{
                             background: showAutotileDebug 
-                                ? 'linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 170, 255, 0.4))' 
+                                ? 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(0, 170, 255, 0.4))' 
                                 : 'linear-gradient(135deg, rgba(60, 30, 30, 0.6), rgba(40, 20, 20, 0.7))',
                             color: showAutotileDebug ? '#00ffff' : '#ff6b6b',
-                            border: showAutotileDebug ? '1px solid #00d4ff' : '1px solid #ff6b6b',
+                            border: showAutotileDebug ? '1px solid #5c8e32' : '1px solid #ff6b6b',
                             padding: '8px 12px',
                             borderRadius: '4px',
                             fontSize: '10px',
@@ -410,7 +410,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                             transition: 'all 0.2s ease',
                             textShadow: showAutotileDebug ? '0 0 5px #00ffff' : '0 0 5px #ff6b6b',
                             boxShadow: showAutotileDebug 
-                                ? '0 0 10px rgba(0, 212, 255, 0.3)' 
+                                ? '0 0 10px rgba(92, 142, 50, 0.3)' 
                                 : '0 0 10px rgba(255, 107, 107, 0.2)',
                             fontFamily: 'inherit',
                             letterSpacing: '0.5px'
@@ -418,13 +418,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-1px)';
                             e.currentTarget.style.boxShadow = showAutotileDebug 
-                                ? '0 0 15px rgba(0, 212, 255, 0.5)' 
+                                ? '0 0 15px rgba(92, 142, 50, 0.5)' 
                                 : '0 0 15px rgba(255, 107, 107, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
                             e.currentTarget.style.boxShadow = showAutotileDebug 
-                                ? '0 0 10px rgba(0, 212, 255, 0.3)' 
+                                ? '0 0 10px rgba(92, 142, 50, 0.3)' 
                                 : '0 0 10px rgba(255, 107, 107, 0.2)';
                         }}
                     >
@@ -440,7 +440,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onFocus={(e) => e.currentTarget.blur()}
                         style={{
                             background: showChunkBoundaries 
-                                ? 'linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 140, 0, 0.4))' 
+                                ? 'linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(92, 142, 50, 0.4))' 
                                 : 'linear-gradient(135deg, rgba(60, 30, 30, 0.6), rgba(40, 20, 20, 0.7))',
                             color: showChunkBoundaries ? '#ffaa00' : '#ff6b6b',
                             border: showChunkBoundaries ? '1px solid #ff8800' : '1px solid #ff6b6b',
@@ -481,18 +481,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onFocus={(e) => e.currentTarget.blur()}
                         style={{
                             background: showInteriorDebug 
-                                ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 200, 100, 0.4))' 
+                                ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4))' 
                                 : 'linear-gradient(135deg, rgba(60, 30, 30, 0.6), rgba(40, 20, 20, 0.7))',
-                            color: showInteriorDebug ? '#00ff88' : '#ff6b6b',
-                            border: showInteriorDebug ? '1px solid #00ff88' : '1px solid #ff6b6b',
+                            color: showInteriorDebug ? '#86be52' : '#ff6b6b',
+                            border: showInteriorDebug ? '1px solid #86be52' : '1px solid #ff6b6b',
                             padding: '8px 12px',
                             borderRadius: '4px',
                             fontSize: '10px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
-                            textShadow: showInteriorDebug ? '0 0 5px #00ff88' : '0 0 5px #ff6b6b',
+                            textShadow: showInteriorDebug ? '0 0 5px #86be52' : '0 0 5px #ff6b6b',
                             boxShadow: showInteriorDebug 
-                                ? '0 0 10px rgba(0, 255, 136, 0.3)' 
+                                ? '0 0 10px rgba(134, 190, 82, 0.3)' 
                                 : '0 0 10px rgba(255, 107, 107, 0.2)',
                             fontFamily: 'inherit',
                             letterSpacing: '0.5px'
@@ -500,13 +500,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-1px)';
                             e.currentTarget.style.boxShadow = showInteriorDebug 
-                                ? '0 0 15px rgba(0, 255, 136, 0.5)' 
+                                ? '0 0 15px rgba(134, 190, 82, 0.5)' 
                                 : '0 0 15px rgba(255, 107, 107, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
                             e.currentTarget.style.boxShadow = showInteriorDebug 
-                                ? '0 0 10px rgba(0, 255, 136, 0.3)' 
+                                ? '0 0 10px rgba(134, 190, 82, 0.3)' 
                                 : '0 0 10px rgba(255, 107, 107, 0.2)';
                         }}
                     >
@@ -605,7 +605,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onFocus={(e) => e.currentTarget.blur()}
                         style={{
                             background: showYSortDebug
-                                ? 'linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(200, 170, 0, 0.4))'
+                                ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(200, 170, 0, 0.4))'
                                 : 'linear-gradient(135deg, rgba(60, 30, 30, 0.6), rgba(40, 20, 20, 0.7))',
                             color: showYSortDebug ? '#ffd700' : '#ff6b6b',
                             border: showYSortDebug ? '1px solid #ffd700' : '1px solid #ff6b6b',
@@ -616,7 +616,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                             transition: 'all 0.2s ease',
                             textShadow: showYSortDebug ? '0 0 5px #ffd700' : '0 0 5px #ff6b6b',
                             boxShadow: showYSortDebug
-                                ? '0 0 10px rgba(255, 215, 0, 0.3)'
+                                ? '0 0 10px rgba(134, 190, 82, 0.3)'
                                 : '0 0 10px rgba(255, 107, 107, 0.2)',
                             fontFamily: 'inherit',
                             letterSpacing: '0.5px'
@@ -624,13 +624,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-1px)';
                             e.currentTarget.style.boxShadow = showYSortDebug
-                                ? '0 0 15px rgba(255, 215, 0, 0.5)'
+                                ? '0 0 15px rgba(134, 190, 82, 0.5)'
                                 : '0 0 15px rgba(255, 107, 107, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
                             e.currentTarget.style.boxShadow = showYSortDebug
-                                ? '0 0 10px rgba(255, 215, 0, 0.3)'
+                                ? '0 0 10px rgba(134, 190, 82, 0.3)'
                                 : '0 0 10px rgba(255, 107, 107, 0.2)';
                         }}
                     >
@@ -723,10 +723,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                     {localPlayer && (
                         <div style={{
                             fontSize: '10px',
-                            color: '#00ff88',
-                            textShadow: '0 0 6px rgba(0, 255, 136, 0.6)',
-                            background: 'rgba(0, 255, 136, 0.1)',
-                            border: '1px solid rgba(0, 255, 136, 0.3)',
+                            color: '#86be52',
+                            textShadow: '0 0 6px rgba(134, 190, 82, 0.6)',
+                            background: 'rgba(134, 190, 82, 0.1)',
+                            border: '1px solid rgba(134, 190, 82, 0.3)',
                             borderRadius: '4px',
                             padding: '8px 10px',
                             letterSpacing: '0.5px',
@@ -1016,7 +1016,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                     <div style={{
                         marginTop: '8px',
                         paddingTop: '8px',
-                        borderTop: '1px solid rgba(0, 212, 255, 0.3)'
+                        borderTop: '1px solid rgba(92, 142, 50, 0.3)'
                     }}>
                         <style>{`
                             /* Style dropdown options to match dark theme */
@@ -1026,13 +1026,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                             }
                             select optgroup {
                                 background: rgba(15, 30, 50, 0.95) !important;
-                                color: #00d4ff !important;
+                                color: #5c8e32 !important;
                                 font-weight: bold;
                             }
                         `}</style>
                         <div style={{
                             fontSize: '10px',
-                            color: '#00d4ff',
+                            color: '#5c8e32',
                             marginBottom: '6px',
                             textAlign: 'center',
                             opacity: 0.8
@@ -1048,7 +1048,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                     flex: 1,
                                     background: 'linear-gradient(135deg, rgba(30, 40, 60, 0.9), rgba(20, 30, 50, 0.95))',
                                     color: '#ffffff',
-                                    border: '1px solid rgba(0, 212, 255, 0.4)',
+                                    border: '1px solid rgba(92, 142, 50, 0.4)',
                                     padding: '6px 8px',
                                     borderRadius: '4px',
                                     fontSize: '10px',
@@ -1149,11 +1149,11 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                     <div style={{
                         marginTop: '8px',
                         paddingTop: '8px',
-                        borderTop: '1px solid rgba(0, 212, 255, 0.3)'
+                        borderTop: '1px solid rgba(92, 142, 50, 0.3)'
                     }}>
                         <div style={{
                             fontSize: '10px',
-                            color: '#00d4ff',
+                            color: '#5c8e32',
                             marginBottom: '6px',
                             textAlign: 'center',
                             opacity: 0.8
@@ -1176,7 +1176,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(30, 40, 60, 0.9), rgba(20, 30, 50, 0.95))',
                                         color: '#ffffff',
-                                        border: '1px solid rgba(0, 212, 255, 0.4)',
+                                        border: '1px solid rgba(92, 142, 50, 0.4)',
                                         padding: '6px 8px',
                                         borderRadius: '4px',
                                         fontSize: '9px',
@@ -1249,7 +1249,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                             maxHeight: '140px',
                                             overflowY: 'auto',
                                             background: 'rgba(15, 30, 50, 0.98)',
-                                            border: '1px solid rgba(0, 212, 255, 0.4)',
+                                            border: '1px solid rgba(92, 142, 50, 0.4)',
                                             borderRadius: '4px',
                                             zIndex: 1000,
                                             boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
@@ -1276,8 +1276,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                                             padding: '4px 8px',
                                                             fontSize: '9px',
                                                             cursor: 'pointer',
-                                                            color: isHighlighted || selectedItemDef?.id === item.id ? '#00d4ff' : '#ffffff',
-                                                            background: isHighlighted ? 'rgba(0, 212, 255, 0.2)' : selectedItemDef?.id === item.id ? 'rgba(0, 212, 255, 0.15)' : 'transparent',
+                                                            color: isHighlighted || selectedItemDef?.id === item.id ? '#5c8e32' : '#ffffff',
+                                                            background: isHighlighted ? 'rgba(92, 142, 50, 0.2)' : selectedItemDef?.id === item.id ? 'rgba(92, 142, 50, 0.15)' : 'transparent',
                                                             borderBottom: '1px solid rgba(255,255,255,0.05)'
                                                         }}
                                                     >
@@ -1298,7 +1298,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                     display: 'flex',
                                     alignItems: 'center',
                                     background: 'linear-gradient(135deg, rgba(30, 40, 60, 0.9), rgba(20, 30, 50, 0.95))',
-                                    border: '1px solid rgba(0, 212, 255, 0.4)',
+                                    border: '1px solid rgba(92, 142, 50, 0.4)',
                                     borderRadius: '4px',
                                     overflow: 'hidden'
                                 }}>
@@ -1309,18 +1309,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                             setSpawnItemQuantity(Math.max(1, current - 1).toString());
                                         }}
                                         style={{
-                                            background: 'rgba(0, 212, 255, 0.15)',
-                                            color: '#00d4ff',
+                                            background: 'rgba(92, 142, 50, 0.15)',
+                                            color: '#5c8e32',
                                             border: 'none',
-                                            borderRight: '1px solid rgba(0, 212, 255, 0.3)',
+                                            borderRight: '1px solid rgba(92, 142, 50, 0.3)',
                                             padding: '4px 8px',
                                             fontSize: '12px',
                                             cursor: 'pointer',
                                             fontFamily: 'inherit',
                                             lineHeight: 1
                                         }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 212, 255, 0.3)'; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 212, 255, 0.15)'; }}
+                                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(92, 142, 50, 0.3)'; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(92, 142, 50, 0.15)'; }}
                                     >
                                         −
                                     </button>
@@ -1364,18 +1364,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                             setSpawnItemQuantity((current + 1).toString());
                                         }}
                                         style={{
-                                            background: 'rgba(0, 212, 255, 0.15)',
-                                            color: '#00d4ff',
+                                            background: 'rgba(92, 142, 50, 0.15)',
+                                            color: '#5c8e32',
                                             border: 'none',
-                                            borderLeft: '1px solid rgba(0, 212, 255, 0.3)',
+                                            borderLeft: '1px solid rgba(92, 142, 50, 0.3)',
                                             padding: '4px 8px',
                                             fontSize: '12px',
                                             cursor: 'pointer',
                                             fontFamily: 'inherit',
                                             lineHeight: 1
                                         }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 212, 255, 0.3)'; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 212, 255, 0.15)'; }}
+                                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(92, 142, 50, 0.3)'; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(92, 142, 50, 0.15)'; }}
                                     >
                                         +
                                     </button>
@@ -1417,14 +1417,14 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                             {spawnStatus && (
                                 <div style={{
                                     fontSize: '8px',
-                                    color: spawnStatus.type === 'success' ? '#00ff88' : '#ff6b6b',
+                                    color: spawnStatus.type === 'success' ? '#86be52' : '#ff6b6b',
                                     textAlign: 'center',
                                     padding: '4px',
                                     background: spawnStatus.type === 'success' 
-                                        ? 'rgba(0, 255, 136, 0.1)' 
+                                        ? 'rgba(134, 190, 82, 0.1)' 
                                         : 'rgba(255, 107, 107, 0.1)',
                                     borderRadius: '4px',
-                                    border: `1px solid ${spawnStatus.type === 'success' ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 107, 107, 0.3)'}`
+                                    border: `1px solid ${spawnStatus.type === 'success' ? 'rgba(134, 190, 82, 0.3)' : 'rgba(255, 107, 107, 0.3)'}`
                                 }}>
                                     {spawnStatus.message}
                                 </div>

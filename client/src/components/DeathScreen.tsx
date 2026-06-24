@@ -512,15 +512,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     zIndex: 1000, // Ensure it's above the canvas
     fontFamily: '"Courier New", monospace', // Cyberpunk monospace font
     color: '#ffffff',
-    backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 50%)', // Subtle cyberpunk glow
+    backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(92, 142, 50, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(45, 71, 21, 0.1) 0%, transparent 50%)', // Subtle cyberpunk glow
   },
   container: {
     textAlign: 'center',
     padding: '20px', // Reduced from 40px
     backgroundColor: 'rgba(30, 41, 59, 0.9)', // Dark slate with high opacity
     borderRadius: '8px',
-    border: '2px solid #00d4ff', // Bright cyan border
-    boxShadow: '0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(124, 58, 237, 0.2)', // Cyan and purple glow
+    border: '2px solid #5c8e32', // Bright cyan border
+    boxShadow: '0 0 20px rgba(92, 142, 50, 0.3), 0 0 40px rgba(45, 71, 21, 0.2)', // Cyan and purple glow
     backdropFilter: 'blur(10px)', // Glass morphism effect
   },
   title: {
@@ -541,16 +541,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '10px 20px', // Reduced from 15px 30px
     fontSize: '1em', // Reduced from 1.1em
     fontFamily: '"Courier New", monospace',
-    background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', // Cyan to purple gradient
+    background: 'linear-gradient(135deg, #5c8e32 0%, #2d4715 100%)', // Cyan to purple gradient
     color: '#ffffff',
-    border: '2px solid #00d4ff',
+    border: '2px solid #5c8e32',
     borderRadius: '6px',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     textTransform: 'uppercase',
     letterSpacing: '1px',
     fontWeight: 'bold',
-    boxShadow: '0 0 15px rgba(0, 212, 255, 0.4)',
+    boxShadow: '0 0 15px rgba(92, 142, 50, 0.4)',
   },
    buttonDisabled: {
     padding: '10px 20px', // Reduced from 15px 30px
@@ -605,11 +605,11 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   // Enhanced minimap canvas styling
   minimapCanvas: {
-      border: '2px solid #00d4ff', // Cyan border to match theme
+      border: '2px solid #5c8e32', // Cyan border to match theme
       borderRadius: '4px',
       marginBottom: '15px', // Reduced from 25px
       cursor: 'pointer', // Indicate it's clickable
-      boxShadow: '0 0 15px rgba(0, 212, 255, 0.3)', // Subtle cyan glow
+      boxShadow: '0 0 15px rgba(92, 142, 50, 0.3)', // Subtle cyan glow
       backdropFilter: 'blur(5px)',
       display: 'block', // Ensure block display for margin centering
       marginLeft: 'auto', // Center horizontally
@@ -627,9 +627,9 @@ const styles: { [key: string]: React.CSSProperties } = {
   deathInfo: {
     marginBottom: '15px',
     padding: '12px 15px',
-    backgroundColor: 'rgba(239, 68, 68, 0.1)', // Subtle red background
+    backgroundColor: 'rgba(92, 142, 50, 0.1)', // Subtle red background
     borderRadius: '6px',
-    border: '1px solid #ef4444',
+    border: '1px solid #5c8e32',
   },
   deathMessage: {
     fontSize: '1.2em',
@@ -639,8 +639,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     lineHeight: '1.4',
   },
   usernameInline: {
-    color: '#00d4ff', // Cyan color to match theme
-    textShadow: '0 0 10px #00d4ff, 2px 2px 4px #000000',
+    color: '#5c8e32', // Cyan color to match theme
+    textShadow: '0 0 10px #5c8e32, 2px 2px 4px #000000',
     fontWeight: 'bold',
     letterSpacing: '1px',
   },

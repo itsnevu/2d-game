@@ -35,7 +35,9 @@
     "react-router-dom": "^7.6.3",
     "spacetimedb": "^2.0.1",
     "statuses": "^2.0.2",
-    "use-debounce": "^10.0.4"
+    "use-debounce": "^10.0.4",
+    "@solana/web3.js": "^1.95.0",
+    "@coral-xyz/anchor": "^0.30.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

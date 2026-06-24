@@ -125,10 +125,10 @@ export default function GameScreenOverlayUI({
           onClick={onRefreshCancel}
         >
           <div
-            style={{ backgroundColor: 'rgba(20, 20, 40, 0.95)', border: '2px solid #00aaff', borderRadius: '8px', padding: '24px', maxWidth: '400px', textAlign: 'center', boxShadow: '0 0 30px rgba(0, 170, 255, 0.3)' }}
+            style={{ backgroundColor: 'rgba(20, 20, 40, 0.95)', border: '2px solid #5c8e32', borderRadius: '8px', padding: '24px', maxWidth: '400px', textAlign: 'center', boxShadow: '0 0 30px rgba(0, 170, 255, 0.3)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ color: '#00ddff', fontSize: '16px', marginBottom: '12px', textShadow: '0 0 10px rgba(0, 221, 255, 0.5)', fontWeight: 'bold' }}>
+            <div style={{ color: '#86be52', fontSize: '16px', marginBottom: '12px', textShadow: '0 0 10px rgba(0, 221, 255, 0.5)', fontWeight: 'bold' }}>
               NEUROVEIL™ REFRESH REQUEST
             </div>
             <div style={{ color: '#e0e0e0', fontSize: '14px', lineHeight: '1.6', marginBottom: '24px', padding: '16px', backgroundColor: 'rgba(0, 0, 0, 0.3)', borderRadius: '4px' }}>
@@ -140,23 +140,23 @@ export default function GameScreenOverlayUI({
             <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
               <button
                 onClick={onRefreshConfirm}
-                style={{ background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.8), rgba(200, 100, 0, 0.9))', color: '#ffffff', border: '2px solid #ff8c00', borderRadius: '8px', padding: '15px 25px', fontFamily: '"Press Start 2P", cursive', fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 0 15px rgba(255, 140, 0, 0.3), inset 0 0 10px rgba(255, 140, 0, 0.1)', textShadow: '0 0 5px currentColor', position: 'relative', overflow: 'hidden' }}
+                style={{ background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.8), rgba(200, 100, 0, 0.9))', color: '#ffffff', border: '2px solid #5c8e32', borderRadius: '8px', padding: '15px 25px', fontFamily: '"Press Start 2P", cursive', fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 0 15px rgba(92, 142, 50, 0.3), inset 0 0 10px rgba(92, 142, 50, 0.1)', textShadow: '0 0 5px currentColor', position: 'relative', overflow: 'hidden' }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 160, 20, 0.9), rgba(220, 120, 10, 1))';
                   e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(255, 140, 0, 0.6), inset 0 0 15px rgba(255, 140, 0, 0.2)';
+                  e.currentTarget.style.boxShadow = '0 0 25px rgba(92, 142, 50, 0.6), inset 0 0 15px rgba(92, 142, 50, 0.2)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 140, 0, 0.8), rgba(200, 100, 0, 0.9))';
+                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.8), rgba(200, 100, 0, 0.9))';
                   e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                  e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 140, 0, 0.3), inset 0 0 10px rgba(255, 140, 0, 0.1)';
+                  e.currentTarget.style.boxShadow = '0 0 15px rgba(92, 142, 50, 0.3), inset 0 0 10px rgba(92, 142, 50, 0.1)';
                 }}
               >
                 REFRESH NEUROVEIL™
               </button>
               <button
                 onClick={onRefreshCancel}
-                style={{ background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))', color: '#ffffff', border: '2px solid #00aaff', borderRadius: '8px', padding: '15px 25px', fontFamily: '"Press Start 2P", cursive', fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)', textShadow: '0 0 5px currentColor', position: 'relative', overflow: 'hidden' }}
+                style={{ background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))', color: '#ffffff', border: '2px solid #5c8e32', borderRadius: '8px', padding: '15px 25px', fontFamily: '"Press Start 2P", cursive', fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)', textShadow: '0 0 5px currentColor', position: 'relative', overflow: 'hidden' }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 50, 100, 0.9), rgba(15, 40, 90, 1))';
                   e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';

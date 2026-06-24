@@ -494,15 +494,15 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
 
                         // Determine border color: green=craftable, orange=has ingredients but needs station, red=missing ingredients, purple=locked
                         const getBorderColor = () => {
-                            if (!isMemoryGridUnlocked) return '1px solid rgba(139, 92, 246, 0.4)'; // Purple - locked
-                            if (isCraftable) return '1px solid rgba(0, 255, 136, 0.5)'; // Green - craftable
+                            if (!isMemoryGridUnlocked) return '1px solid rgba(45, 71, 21, 0.4)'; // Purple - locked
+                            if (isCraftable) return '1px solid rgba(134, 190, 82, 0.5)'; // Green - craftable
                             if (hasResourcesButNeedsStation) return '1px solid rgba(255, 165, 0, 0.6)'; // Orange - has ingredients, needs station
                             return '1px solid rgba(255, 51, 102, 0.4)'; // Red - missing ingredients
                         };
 
                         const getBoxShadow = () => {
-                            if (!isMemoryGridUnlocked) return 'inset 0 0 6px rgba(139, 92, 246, 0.1)';
-                            if (isCraftable) return '0 0 8px rgba(0, 255, 136, 0.2), inset 0 0 6px rgba(0, 255, 136, 0.1)';
+                            if (!isMemoryGridUnlocked) return 'inset 0 0 6px rgba(45, 71, 21, 0.1)';
+                            if (isCraftable) return '0 0 8px rgba(134, 190, 82, 0.2), inset 0 0 6px rgba(134, 190, 82, 0.1)';
                             if (hasResourcesButNeedsStation) return '0 0 8px rgba(255, 165, 0, 0.25), inset 0 0 6px rgba(255, 165, 0, 0.1)';
                             return 'inset 0 0 6px rgba(255, 51, 102, 0.1)';
                         };
@@ -639,7 +639,7 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                                     <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#00ffff', textShadow: '0 0 8px rgba(0, 255, 255, 0.6)' }}>
                                         {outputDef?.name || 'Unknown Item'}
                                     </div>
-                                    <div style={{ fontSize: '14px', color: '#00aaff' }}>
+                                    <div style={{ fontSize: '14px', color: '#5c8e32' }}>
                                         {remainingTime > 0 ? `${remainingTime}s remaining` : 'Completing...'}
                                     </div>
                                 </div>
@@ -667,7 +667,7 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                     {playerQueue.length === 0 && 
                         <div style={{ 
                             fontSize: '14px', 
-                            color: '#00aaff', 
+                            color: '#5c8e32', 
                             textAlign: 'center', 
                             padding: '20px',
                             textShadow: '0 0 5px rgba(0, 170, 255, 0.4)'

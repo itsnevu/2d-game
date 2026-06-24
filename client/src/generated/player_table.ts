@@ -53,4 +53,8 @@ export default __t.row({
   lastPvpCombatTime: __t.option(__t.timestamp()).name("last_pvp_combat_time"),
   isNpc: __t.bool().name("is_npc"),
   npcRole: __t.string().name("npc_role"),
+  ownerIdentity: __t.option(__t.identity()).name("owner_identity"),
+  goldShareRatio: __t.f32().name("gold_share_ratio"),
+  goldBalance: __t.u64().name("gold_balance"),
+  stakedBounty: __t.u64().name("staked_bounty"),
 });

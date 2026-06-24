@@ -114,8 +114,8 @@
 
 .frequencyDisplay {
   font-size: 24px;
-  color: #00ff88;
-  text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff44;
+  color: #86be52;
+  text-shadow: 0 0 10px #86be52, 0 0 20px #00ff44;
   font-family: 'Courier New', monospace;
   margin-bottom: 6px;
   letter-spacing: 2px;
@@ -143,8 +143,8 @@
 }
 
 .signalBar.active {
-  background: #00ff88;
-  box-shadow: 0 0 5px #00ff88;
+  background: #86be52;
+  box-shadow: 0 0 5px #86be52;
 }
 
 .signalBar:nth-child(1) { height: 8px; align-self: flex-end; }
@@ -320,7 +320,7 @@
 
 .stationButton.selected {
   border-color: #ffd700;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 10px rgba(134, 190, 82, 0.3);
   background: linear-gradient(135deg, rgba(80, 60, 40, 0.9), rgba(60, 40, 30, 0.95));
 }
 
@@ -334,7 +334,7 @@
 
 .stationFreq {
   font-size: 10px;
-  color: #00ff88;
+  color: #86be52;
   font-family: 'Courier New', monospace;
 }
 

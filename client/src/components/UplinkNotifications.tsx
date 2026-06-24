@@ -15,10 +15,10 @@ import { useNotificationLists, useWorldTable } from '../engine/react/selectors';
 
 // Style constants - matching DayNightCycleTracker exactly
 const UI_BG_COLOR = 'linear-gradient(180deg, rgba(15, 25, 20, 0.98) 0%, rgba(20, 35, 30, 0.95) 100%)';
-const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #00d4ff, #4ade80, #c084fc, #00d4ff)';
-const ACCENT_CYAN = '#00d4ff';
-const ACCENT_GREEN = '#4ade80';
-const ACCENT_PURPLE = '#c084fc';
+const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #5c8e32, #c4e89c, #86be52, #5c8e32)';
+const ACCENT_CYAN = '#5c8e32';
+const ACCENT_GREEN = '#c4e89c';
+const ACCENT_PURPLE = '#86be52';
 const ACCENT_PINK = '#f472b6';
 const ACCENT_GOLD = '#ffd700';
 
@@ -269,11 +269,11 @@ const UplinkNotifications: React.FC<UplinkNotificationsProps> = ({
   const getTypeColors = () => {
     switch (activeNotification.type) {
       case 'level_up':
-        return { primary: ACCENT_CYAN, secondary: ACCENT_PURPLE, gradient: 'linear-gradient(135deg, #00d4ff, #7c3aed, #00d4ff)' };
+        return { primary: ACCENT_CYAN, secondary: ACCENT_PURPLE, gradient: 'linear-gradient(135deg, #5c8e32, #2d4715, #5c8e32)' };
       case 'achievement':
         return { primary: ACCENT_GOLD, secondary: ACCENT_PINK, gradient: 'linear-gradient(135deg, #ffd700, #ff006e, #ffd700)' };
       case 'mission_complete':
-        return { primary: ACCENT_GREEN, secondary: ACCENT_CYAN, gradient: 'linear-gradient(135deg, #4ade80, #00d4ff, #4ade80)' };
+        return { primary: ACCENT_GREEN, secondary: ACCENT_CYAN, gradient: 'linear-gradient(135deg, #c4e89c, #5c8e32, #c4e89c)' };
       default:
         return { primary: ACCENT_CYAN, secondary: ACCENT_GREEN, gradient: UI_BORDER_GRADIENT };
     }
@@ -526,8 +526,8 @@ const UplinkNotifications: React.FC<UplinkNotificationsProps> = ({
             0deg,
             transparent,
             transparent 2px,
-            rgba(0, 212, 255, 0.02) 2px,
-            rgba(0, 212, 255, 0.02) 4px
+            rgba(92, 142, 50, 0.02) 2px,
+            rgba(92, 142, 50, 0.02) 4px
           );
           pointer-events: none;
           z-index: 10;
@@ -543,7 +543,7 @@ const UplinkNotifications: React.FC<UplinkNotificationsProps> = ({
           background: linear-gradient(
             180deg,
             transparent 0%,
-            rgba(0, 212, 255, 0.06) 50%,
+            rgba(92, 142, 50, 0.06) 50%,
             transparent 100%
           );
           animation: uplinkNotifScanline 4s linear infinite;
@@ -554,7 +554,7 @@ const UplinkNotifications: React.FC<UplinkNotificationsProps> = ({
           position: absolute;
           width: 10px;
           height: 10px;
-          border: 2px solid #00d4ff;
+          border: 2px solid #5c8e32;
           z-index: 5;
         }
         

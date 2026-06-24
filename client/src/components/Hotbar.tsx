@@ -21,7 +21,7 @@ import { PlacementItemInfo } from '../hooks/usePlacementManager';
 
 // Style constants - Cyberpunk SOVA theme
 const UI_BG_COLOR = 'linear-gradient(135deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98))';
-const UI_BORDER_COLOR = '#00aaff';
+const UI_BORDER_COLOR = '#5c8e32';
 const UI_SHADOW = '0 0 30px rgba(0, 170, 255, 0.3), inset 0 0 20px rgba(0, 170, 255, 0.1)';
 const UI_FONT_FAMILY = '"Press Start 2P", cursive';
 const SLOT_SIZE = 60; // Size of each hotbar slot in pixels (desktop)
@@ -1672,7 +1672,7 @@ connection.reducers.quickMoveToBrothPot({
               top: 0,
               width: `${xpProgress.percent}%`,
               height: '100%',
-              background: 'linear-gradient(90deg, #7c3aed, #a855f7)',
+              background: 'linear-gradient(90deg, #2d4715, #a855f7)',
               boxShadow: '0 0 8px rgba(168, 85, 247, 0.6)',
               transition: 'width 0.5s ease-out',
               zIndex: 0,
@@ -1686,7 +1686,7 @@ connection.reducers.quickMoveToBrothPot({
               fontSize: '10px',
               fontFamily: UI_FONT_FAMILY,
               color: '#ffffff',
-              textShadow: '0 0 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(124, 58, 237, 0.5)',
+              textShadow: '0 0 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(45, 71, 21, 0.5)',
               pointerEvents: 'none',
               zIndex: 1,
               fontWeight: 'bold',
@@ -1702,7 +1702,7 @@ connection.reducers.quickMoveToBrothPot({
               fontSize: '9px',
               fontFamily: UI_FONT_FAMILY,
               color: 'rgba(255, 255, 255, 0.9)',
-              textShadow: '0 0 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(124, 58, 237, 0.5)',
+              textShadow: '0 0 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(45, 71, 21, 0.5)',
               pointerEvents: 'none',
               zIndex: 1,
             }}

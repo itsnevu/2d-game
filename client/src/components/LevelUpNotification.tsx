@@ -313,17 +313,17 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         @keyframes glowPulse {
           0%, 100% { 
             box-shadow: 
-              0 0 20px rgba(0, 212, 255, 0.4),
-              0 0 40px rgba(0, 212, 255, 0.2),
-              0 0 60px rgba(124, 58, 237, 0.1),
-              inset 0 0 30px rgba(0, 212, 255, 0.1);
+              0 0 20px rgba(92, 142, 50, 0.4),
+              0 0 40px rgba(92, 142, 50, 0.2),
+              0 0 60px rgba(45, 71, 21, 0.1),
+              inset 0 0 30px rgba(92, 142, 50, 0.1);
           }
           50% { 
             box-shadow: 
-              0 0 30px rgba(0, 212, 255, 0.6),
-              0 0 60px rgba(0, 212, 255, 0.3),
-              0 0 90px rgba(124, 58, 237, 0.2),
-              inset 0 0 40px rgba(0, 212, 255, 0.15);
+              0 0 30px rgba(92, 142, 50, 0.6),
+              0 0 60px rgba(92, 142, 50, 0.3),
+              0 0 90px rgba(45, 71, 21, 0.2),
+              inset 0 0 40px rgba(92, 142, 50, 0.15);
           }
         }
         
@@ -390,8 +390,8 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         @keyframes textGlow {
-          0%, 100% { text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff, 0 0 40px #7c3aed; }
-          50% { text-shadow: 0 0 20px #00d4ff, 0 0 40px #00d4ff, 0 0 60px #7c3aed, 0 0 80px #ff006e; }
+          0%, 100% { text-shadow: 0 0 10px #5c8e32, 0 0 20px #5c8e32, 0 0 40px #2d4715; }
+          50% { text-shadow: 0 0 20px #5c8e32, 0 0 40px #5c8e32, 0 0 60px #2d4715, 0 0 80px #ff006e; }
         }
         
         @keyframes dotPulse {
@@ -412,7 +412,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         .glow-container {
           position: relative;
           padding: 3px;
-          background: linear-gradient(135deg, #00d4ff, #7c3aed, #ff006e, #00d4ff);
+          background: linear-gradient(135deg, #5c8e32, #2d4715, #ff006e, #5c8e32);
           background-size: 300% 300%;
           animation: gradientShift 3s ease infinite;
           border-radius: 12px;
@@ -445,8 +445,8 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
             0deg,
             transparent,
             transparent 2px,
-            rgba(0, 212, 255, 0.03) 2px,
-            rgba(0, 212, 255, 0.03) 4px
+            rgba(92, 142, 50, 0.03) 2px,
+            rgba(92, 142, 50, 0.03) 4px
           );
           pointer-events: none;
           z-index: 10;
@@ -462,7 +462,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           background: linear-gradient(
             180deg,
             transparent 0%,
-            rgba(0, 212, 255, 0.1) 50%,
+            rgba(92, 142, 50, 0.1) 50%,
             transparent 100%
           );
           animation: scanline 3s linear infinite;
@@ -474,7 +474,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           position: absolute;
           width: 20px;
           height: 20px;
-          border: 2px solid #00d4ff;
+          border: 2px solid #5c8e32;
           z-index: 5;
         }
         
@@ -512,14 +512,14 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           justify-content: space-between;
           align-items: center;
           padding: 12px 20px;
-          background: rgba(0, 212, 255, 0.1);
-          border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+          background: rgba(92, 142, 50, 0.1);
+          border-bottom: 1px solid rgba(92, 142, 50, 0.3);
         }
         
         .header-text {
           font-family: 'Courier New', 'Consolas', monospace;
           font-size: 11px;
-          color: #00d4ff;
+          color: #5c8e32;
           letter-spacing: 2px;
           text-transform: uppercase;
         }
@@ -536,12 +536,12 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .dot.cyan {
-          background: #00d4ff;
+          background: #5c8e32;
           animation: dotPulse 1s ease-in-out infinite;
         }
         
         .dot.purple {
-          background: #7c3aed;
+          background: #2d4715;
           animation: dotPulse 1s ease-in-out infinite 0.2s;
         }
         
@@ -569,7 +569,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         .level-up-text .main-text {
           position: relative;
           color: #ffffff;
-          text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff;
+          text-shadow: 0 0 10px #5c8e32, 0 0 20px #5c8e32;
           animation: textGlow 2s ease-in-out infinite;
           z-index: 2;
         }
@@ -583,7 +583,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .level-up-text .layer-1 {
-          color: #00d4ff;
+          color: #5c8e32;
           animation: glitchText 0.3s infinite;
           clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
         }
@@ -605,16 +605,16 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         
         .circuit-line {
           height: 2px;
-          background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+          background: linear-gradient(90deg, transparent, #5c8e32, transparent);
           animation: circuitGlow 1.5s ease-in-out infinite;
         }
         
         .circuit-line.left {
-          background: linear-gradient(90deg, transparent, #00d4ff);
+          background: linear-gradient(90deg, transparent, #5c8e32);
         }
         
         .circuit-line.right {
-          background: linear-gradient(90deg, #00d4ff, transparent);
+          background: linear-gradient(90deg, #5c8e32, transparent);
         }
         
         .level-number {
@@ -650,14 +650,14 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           justify-content: center;
           gap: 8px;
           padding: 10px 20px;
-          background: rgba(0, 212, 255, 0.1);
-          border: 1px solid rgba(0, 212, 255, 0.3);
+          background: rgba(92, 142, 50, 0.1);
+          border: 1px solid rgba(92, 142, 50, 0.3);
           border-radius: 4px;
           margin-top: 8px;
         }
         
         .xp-icon {
-          color: #7c3aed;
+          color: #2d4715;
           font-size: 12px;
         }
         
@@ -665,8 +665,8 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           font-family: 'Courier New', 'Consolas', monospace;
           font-size: 18px;
           font-weight: bold;
-          color: #00d4ff;
-          text-shadow: 0 0 10px #00d4ff;
+          color: #5c8e32;
+          text-shadow: 0 0 10px #5c8e32;
         }
         
         .xp-label {
@@ -684,15 +684,15 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           justify-content: center;
           gap: 8px;
           padding: 10px 20px;
-          background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(255, 0, 110, 0.1));
-          border: 1px solid rgba(124, 58, 237, 0.4);
+          background: linear-gradient(135deg, rgba(45, 71, 21, 0.15), rgba(255, 0, 110, 0.1));
+          border: 1px solid rgba(45, 71, 21, 0.4);
           border-radius: 4px;
           margin-top: 8px;
         }
         
         .shards-icon {
           font-size: 16px;
-          filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.8));
+          filter: drop-shadow(0 0 4px rgba(45, 71, 21, 0.8));
         }
         
         .shards-value {
@@ -715,7 +715,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         .footer-bar {
           padding: 10px 20px;
           background: rgba(0, 0, 0, 0.3);
-          border-top: 1px solid rgba(0, 212, 255, 0.2);
+          border-top: 1px solid rgba(92, 142, 50, 0.2);
           display: flex;
           flex-direction: column;
           gap: 6px;
@@ -723,14 +723,14 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         
         .progress-bar {
           height: 3px;
-          background: rgba(0, 212, 255, 0.2);
+          background: rgba(92, 142, 50, 0.2);
           border-radius: 2px;
           overflow: hidden;
         }
         
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #00d4ff, #7c3aed);
+          background: linear-gradient(90deg, #5c8e32, #2d4715);
           animation: progressFill ${NOTIFICATION_TIMEOUT_MS}ms linear forwards;
         }
         
@@ -758,18 +758,18 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           position: absolute;
           width: 6px;
           height: 6px;
-          background: #00d4ff;
+          background: #5c8e32;
           border-radius: 50%;
-          box-shadow: 0 0 10px #00d4ff;
+          box-shadow: 0 0 10px #5c8e32;
         }
         
         .particle-0 { top: -20px; left: 20%; animation: float 2s ease-in-out infinite 0s; }
-        .particle-1 { top: -30px; left: 80%; animation: float 2.5s ease-in-out infinite 0.3s; background: #7c3aed; box-shadow: 0 0 10px #7c3aed; }
+        .particle-1 { top: -30px; left: 80%; animation: float 2.5s ease-in-out infinite 0.3s; background: #2d4715; box-shadow: 0 0 10px #2d4715; }
         .particle-2 { top: 50%; left: -20px; animation: float 2s ease-in-out infinite 0.5s; }
         .particle-3 { top: 50%; right: -20px; animation: float 2.2s ease-in-out infinite 0.7s; background: #ff006e; box-shadow: 0 0 10px #ff006e; }
         .particle-4 { bottom: -20px; left: 30%; animation: float 2.4s ease-in-out infinite 0.2s; background: #ffd700; box-shadow: 0 0 10px #ffd700; }
         .particle-5 { bottom: -30px; left: 70%; animation: float 2.1s ease-in-out infinite 0.4s; }
-        .particle-6 { top: 30%; left: -15px; animation: float 2.3s ease-in-out infinite 0.6s; background: #7c3aed; box-shadow: 0 0 10px #7c3aed; }
+        .particle-6 { top: 30%; left: -15px; animation: float 2.3s ease-in-out infinite 0.6s; background: #2d4715; box-shadow: 0 0 10px #2d4715; }
         .particle-7 { top: 70%; right: -15px; animation: float 2.6s ease-in-out infinite 0.8s; background: #ff006e; box-shadow: 0 0 10px #ff006e; }
       `}</style>
     </div>

@@ -1,0 +1,8 @@
+cd /Users/navy/Documents/Game/2d-multiplayer-survival-mmorpg/auth-server-openauth
+npm run dev
+
+cd /Users/navy/Documents/Game/2d-multiplayer-survival-mmorpg/server
+~/.local/bin/spacetime start
+
+cd /Users/navy/Documents/Game/2d-multiplayer-survival-mmorpg
+npm run dev

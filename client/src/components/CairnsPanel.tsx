@@ -321,13 +321,13 @@ const CairnsPanel: React.FC<CairnsPanelProps> = ({
           background: 'rgba(0, 0, 0, 0.6)',
           borderRadius: '0',
           overflow: 'hidden',
-          border: '1px solid rgba(192, 132, 252, 0.4)',
+          border: '1px solid rgba(134, 190, 82, 0.4)',
           position: 'relative',
         }}>
           <div style={{
             width: `${Math.round((discoveredCount / totalCairns) * 100)}%`,
             height: '100%',
-            background: 'linear-gradient(90deg, #c084fc, #a78bfa)',
+            background: 'linear-gradient(90deg, #86be52, #a78bfa)',
             transition: 'width 0.3s ease',
           }} />
           <span style={{

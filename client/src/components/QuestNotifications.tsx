@@ -14,11 +14,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 // Style constants (matching other UI components)
 const UI_BG_COLOR = 'linear-gradient(135deg, rgba(20, 10, 35, 0.98), rgba(15, 8, 30, 0.99))';
-const UI_BORDER_COLOR = '#00aaff';
+const UI_BORDER_COLOR = '#5c8e32';
 const UI_FONT_FAMILY = '"Press Start 2P", cursive';
-const SOVA_PURPLE = '#c084fc';
-const SOVA_CYAN = '#00aaff';
-const SUCCESS_GREEN = '#4ade80';
+const SOVA_PURPLE = '#86be52';
+const SOVA_CYAN = '#5c8e32';
+const SUCCESS_GREEN = '#c4e89c';
 
 // ============================================================================
 // QUEST COMPLETION NOTIFICATION (Celebration popup - Cyberpunk style)
@@ -253,15 +253,15 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 @keyframes questGlowDaily {
                     0%, 100% { 
                         box-shadow: 
-                            0 0 15px rgba(192, 132, 252, 0.4),
-                            0 0 30px rgba(192, 132, 252, 0.2),
-                            inset 0 0 20px rgba(192, 132, 252, 0.1);
+                            0 0 15px rgba(134, 190, 82, 0.4),
+                            0 0 30px rgba(134, 190, 82, 0.2),
+                            inset 0 0 20px rgba(134, 190, 82, 0.1);
                     }
                     50% { 
                         box-shadow: 
-                            0 0 25px rgba(192, 132, 252, 0.6),
-                            0 0 50px rgba(192, 132, 252, 0.3),
-                            inset 0 0 30px rgba(192, 132, 252, 0.15);
+                            0 0 25px rgba(134, 190, 82, 0.6),
+                            0 0 50px rgba(134, 190, 82, 0.3),
+                            inset 0 0 30px rgba(134, 190, 82, 0.15);
                     }
                 }
                 
@@ -287,8 +287,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 @keyframes questCheckPulse {
-                    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #4ade80); }
-                    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #4ade80); }
+                    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #c4e89c); }
+                    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #c4e89c); }
                 }
                 
                 @keyframes questGlitch {
@@ -324,14 +324,14 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 .quest-glow-container {
                     position: relative;
                     padding: 2px;
-                    background: linear-gradient(135deg, #4ade80, #00d4ff, #7c3aed, #4ade80);
+                    background: linear-gradient(135deg, #c4e89c, #5c8e32, #2d4715, #c4e89c);
                     background-size: 300% 300%;
                     animation: questGradientShift 4s ease infinite;
                     border-radius: 10px;
                 }
                 
                 .quest-glow-container.daily {
-                    background: linear-gradient(135deg, #c084fc, #00d4ff, #a855f7, #c084fc);
+                    background: linear-gradient(135deg, #86be52, #5c8e32, #a855f7, #86be52);
                 }
                 
                 /* Main notification box */
@@ -373,8 +373,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                         0deg,
                         transparent,
                         transparent 2px,
-                        rgba(192, 132, 252, 0.02) 2px,
-                        rgba(192, 132, 252, 0.02) 4px
+                        rgba(134, 190, 82, 0.02) 2px,
+                        rgba(134, 190, 82, 0.02) 4px
                     );
                 }
                 
@@ -399,7 +399,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     background: linear-gradient(
                         180deg,
                         transparent 0%,
-                        rgba(192, 132, 252, 0.08) 50%,
+                        rgba(134, 190, 82, 0.08) 50%,
                         transparent 100%
                     );
                 }
@@ -409,12 +409,12 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     position: absolute;
                     width: 14px;
                     height: 14px;
-                    border: 2px solid #4ade80;
+                    border: 2px solid #c4e89c;
                     z-index: 5;
                 }
                 
                 .quest-corner.daily {
-                    border-color: #c084fc;
+                    border-color: #86be52;
                 }
                 
                 .quest-corner.top-left {
@@ -465,19 +465,19 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-close.daily {
-                    color: rgba(192, 132, 252, 0.5);
+                    color: rgba(134, 190, 82, 0.5);
                 }
                 
                 .quest-close:hover {
-                    color: #4ade80;
+                    color: #c4e89c;
                     background: rgba(74, 222, 128, 0.2);
-                    text-shadow: 0 0 10px #4ade80;
+                    text-shadow: 0 0 10px #c4e89c;
                 }
                 
                 .quest-close.daily:hover {
-                    color: #c084fc;
-                    background: rgba(192, 132, 252, 0.2);
-                    text-shadow: 0 0 10px #c084fc;
+                    color: #86be52;
+                    background: rgba(134, 190, 82, 0.2);
+                    text-shadow: 0 0 10px #86be52;
                 }
                 
                 /* Header bar */
@@ -491,20 +491,20 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-header-bar.daily {
-                    background: rgba(192, 132, 252, 0.1);
-                    border-bottom: 1px solid rgba(192, 132, 252, 0.3);
+                    background: rgba(134, 190, 82, 0.1);
+                    border-bottom: 1px solid rgba(134, 190, 82, 0.3);
                 }
                 
                 .quest-header-text {
                     font-family: 'Courier New', 'Consolas', monospace;
                     font-size: 9px;
-                    color: #4ade80;
+                    color: #c4e89c;
                     letter-spacing: 1.5px;
                     text-transform: uppercase;
                 }
                 
                 .quest-header-text.daily {
-                    color: #c084fc;
+                    color: #86be52;
                 }
                 
                 .quest-header-dots {
@@ -519,17 +519,17 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-dot.green {
-                    background: #4ade80;
+                    background: #c4e89c;
                     animation: questDotPulse 1s ease-in-out infinite;
                 }
                 
                 .quest-dot.cyan {
-                    background: #00d4ff;
+                    background: #5c8e32;
                     animation: questDotPulse 1s ease-in-out infinite 0.2s;
                 }
                 
                 .quest-dot.purple {
-                    background: #c084fc;
+                    background: #86be52;
                     animation: questDotPulse 1s ease-in-out infinite 0.4s;
                 }
                 
@@ -556,26 +556,26 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-icon.daily {
-                    background: rgba(192, 132, 252, 0.15);
-                    border: 2px solid rgba(192, 132, 252, 0.5);
+                    background: rgba(134, 190, 82, 0.15);
+                    border: 2px solid rgba(134, 190, 82, 0.5);
                 }
                 
                 .quest-check-emoji {
                     font-size: 24px;
-                    color: #4ade80;
+                    color: #c4e89c;
                     animation: questCheckPulse 2s ease-in-out infinite;
-                    text-shadow: 0 0 10px #4ade80;
+                    text-shadow: 0 0 10px #c4e89c;
                 }
                 
                 .quest-check-emoji.daily {
-                    color: #c084fc;
+                    color: #86be52;
                     animation: questCheckPulseDaily 2s ease-in-out infinite;
-                    text-shadow: 0 0 10px #c084fc;
+                    text-shadow: 0 0 10px #86be52;
                 }
                 
                 @keyframes questCheckPulseDaily {
-                    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #c084fc); }
-                    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #c084fc); }
+                    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #86be52); }
+                    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #86be52); }
                 }
                 
                 .quest-icon-glow {
@@ -590,7 +590,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-icon-glow.daily {
-                    background: radial-gradient(circle, rgba(192, 132, 252, 0.3) 0%, transparent 70%);
+                    background: radial-gradient(circle, rgba(134, 190, 82, 0.3) 0%, transparent 70%);
                 }
                 
                 /* Text content */
@@ -611,14 +611,14 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 
                 .quest-complete-label .quest-main-label {
                     position: relative;
-                    color: #4ade80;
+                    color: #c4e89c;
                     text-shadow: 0 0 10px rgba(74, 222, 128, 0.7);
                     z-index: 2;
                 }
                 
                 .quest-complete-label .quest-main-label.daily {
-                    color: #c084fc;
-                    text-shadow: 0 0 10px rgba(192, 132, 252, 0.7);
+                    color: #86be52;
+                    text-shadow: 0 0 10px rgba(134, 190, 82, 0.7);
                 }
                 
                 .quest-complete-label .quest-glitch-layer-1,
@@ -630,21 +630,21 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-complete-label .quest-glitch-layer-1 {
-                    color: #00d4ff;
+                    color: #5c8e32;
                     animation: questGlitch 0.5s infinite;
                 }
                 
                 .quest-complete-label .quest-glitch-layer-1.daily {
-                    color: #00d4ff;
+                    color: #5c8e32;
                 }
                 
                 .quest-complete-label .quest-glitch-layer-2 {
-                    color: #c084fc;
+                    color: #86be52;
                     animation: questGlitch2 0.5s infinite;
                 }
                 
                 .quest-complete-label .quest-glitch-layer-2.daily {
-                    color: #4ade80;
+                    color: #c4e89c;
                 }
                 
                 /* Quest name */
@@ -675,12 +675,12 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-reward-item.daily {
-                    background: rgba(192, 132, 252, 0.1);
-                    border: 1px solid rgba(192, 132, 252, 0.3);
+                    background: rgba(134, 190, 82, 0.1);
+                    border: 1px solid rgba(134, 190, 82, 0.3);
                 }
                 
                 .quest-reward-item.xp .quest-reward-icon {
-                    color: #00d4ff;
+                    color: #5c8e32;
                     font-size: 10px;
                 }
                 
@@ -688,8 +688,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     font-family: 'Courier New', 'Consolas', monospace;
                     font-size: 12px;
                     font-weight: bold;
-                    color: #00d4ff;
-                    text-shadow: 0 0 8px #00d4ff;
+                    color: #5c8e32;
+                    text-shadow: 0 0 8px #5c8e32;
                 }
                 
                 .quest-reward-item.xp .quest-reward-label {
@@ -707,8 +707,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     font-family: 'Courier New', 'Consolas', monospace;
                     font-size: 12px;
                     font-weight: bold;
-                    color: #c084fc;
-                    text-shadow: 0 0 8px #c084fc;
+                    color: #86be52;
+                    text-shadow: 0 0 8px #86be52;
                 }
                 
                 .quest-reward-item.shards .quest-reward-label {
@@ -724,8 +724,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     align-items: center;
                     gap: 6px;
                     padding: 6px 10px;
-                    background: rgba(192, 132, 252, 0.1);
-                    border: 1px solid rgba(192, 132, 252, 0.4);
+                    background: rgba(134, 190, 82, 0.1);
+                    border: 1px solid rgba(134, 190, 82, 0.4);
                     border-radius: 4px;
                 }
                 
@@ -736,8 +736,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 .quest-unlock-text {
                     font-family: 'Courier New', 'Consolas', monospace;
                     font-size: 9px;
-                    color: #c084fc;
-                    text-shadow: 0 0 8px #c084fc;
+                    color: #86be52;
+                    text-shadow: 0 0 8px #86be52;
                 }
                 
                 /* Progress bar */
@@ -747,17 +747,17 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-progress-bar.daily {
-                    background: rgba(192, 132, 252, 0.15);
+                    background: rgba(134, 190, 82, 0.15);
                 }
                 
                 .quest-progress-fill {
                     height: 100%;
-                    background: linear-gradient(90deg, #4ade80, #00d4ff);
+                    background: linear-gradient(90deg, #c4e89c, #5c8e32);
                     animation: questProgressFill linear forwards;
                 }
                 
                 .quest-progress-fill.daily {
-                    background: linear-gradient(90deg, #c084fc, #00d4ff);
+                    background: linear-gradient(90deg, #86be52, #5c8e32);
                 }
                 
                 /* Click hint */
@@ -772,7 +772,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-click-hint.daily {
-                    color: rgba(192, 132, 252, 0.5);
+                    color: rgba(134, 190, 82, 0.5);
                 }
                 
                 .quest-complete-container:hover .quest-click-hint {
@@ -781,8 +781,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-complete-container.daily-quest:hover .quest-click-hint {
-                    color: rgba(192, 132, 252, 0.9);
-                    text-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
+                    color: rgba(134, 190, 82, 0.9);
+                    text-shadow: 0 0 8px rgba(134, 190, 82, 0.5);
                 }
                 
                 /* Floating particles */
@@ -800,14 +800,14 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     position: absolute;
                     width: 4px;
                     height: 4px;
-                    background: #4ade80;
+                    background: #c4e89c;
                     border-radius: 50%;
-                    box-shadow: 0 0 8px #4ade80;
+                    box-shadow: 0 0 8px #c4e89c;
                 }
                 
                 .quest-particle.daily {
-                    background: #c084fc;
-                    box-shadow: 0 0 8px #c084fc;
+                    background: #86be52;
+                    box-shadow: 0 0 8px #86be52;
                 }
                 
                 .quest-particle.particle-0 { 
@@ -819,8 +819,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     top: -15px; 
                     right: 30%; 
                     animation: questFloat 2.3s ease-in-out infinite 0.3s; 
-                    background: #00d4ff; 
-                    box-shadow: 0 0 8px #00d4ff; 
+                    background: #5c8e32; 
+                    box-shadow: 0 0 8px #5c8e32; 
                 }
                 .quest-particle.particle-2 { 
                     bottom: -10px; 
@@ -831,21 +831,21 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     bottom: -15px; 
                     right: 20%; 
                     animation: questFloat 2.4s ease-in-out infinite 0.7s; 
-                    background: #c084fc; 
-                    box-shadow: 0 0 8px #c084fc; 
+                    background: #86be52; 
+                    box-shadow: 0 0 8px #86be52; 
                 }
                 
                 .quest-particle.daily.particle-0 {
-                    background: #c084fc;
-                    box-shadow: 0 0 8px #c084fc;
+                    background: #86be52;
+                    box-shadow: 0 0 8px #86be52;
                 }
                 .quest-particle.daily.particle-2 {
                     background: #a855f7;
                     box-shadow: 0 0 8px #a855f7;
                 }
                 .quest-particle.daily.particle-3 {
-                    background: #4ade80;
-                    box-shadow: 0 0 8px #4ade80;
+                    background: #c4e89c;
+                    box-shadow: 0 0 8px #c4e89c;
                 }
             `}</style>
         </div>

@@ -50,6 +50,7 @@ use crate::building::FOUNDATION_TILE_SIZE_PX;
 
 // --- Constants ---
 use crate::player as PlayerTableTrait;
+use crate::shelter::shelter as ShelterTableTrait;
 
 // PERFORMANCE: Decay processing interval (check every 15 minutes)
 // Building decay happens over days - no need for frequent checks
@@ -361,6 +362,50 @@ pub fn process_building_decay(ctx: &ReducerContext, _schedule: BuildingDecaySche
     // Update walls
     for wall in walls_to_update {
         ctx.db.wall_cell().id().update(wall);
+    }
+    
+    // Process shelter tax decay
+    let mut shelters_to_update = Vec::new();
+    let mut shelters_to_delete = Vec::new();
+    for shelter in ctx.db.shelter().iter() {
+        if shelter.is_destroyed {
+            continue;
+        }
+        
+        if current_time >= shelter.tax_expiry_time {
+            let mut shelter_mut = shelter.clone();
+            // Apply decay damage (e.g. 50 HP per interval, total max health is 1000)
+            let decay_damage = 50.0;
+            shelter_mut.health = (shelter_mut.health - decay_damage).max(0.0);
+            
+            log::info!(
+                "[Decay] Shelter {} has expired tax. Applied {:.1} decay damage. Health: {:.1}/{:.1}",
+                shelter_mut.id,
+                decay_damage,
+                shelter_mut.health,
+                shelter_mut.max_health
+            );
+            
+            if shelter_mut.health <= 0.0 {
+                shelter_mut.is_destroyed = true;
+                shelter_mut.destroyed_at = Some(current_time);
+                shelters_to_delete.push(shelter_mut);
+            } else {
+                shelters_to_update.push(shelter_mut);
+            }
+        }
+    }
+    
+    // Update/Delete shelters
+    for shelter in shelters_to_update {
+        ctx.db.shelter().id().update(shelter);
+    }
+    for shelter in shelters_to_delete {
+        let shelter_id = shelter.id;
+        ctx.db.shelter().id().update(shelter);
+        ctx.db.shelter().id().delete(shelter_id);
+        crate::spatial_grid::invalidate_static_grid();
+        log::info!("[Decay] Shelter {} destroyed due to unpaid tax", shelter_id);
     }
     
     Ok(())

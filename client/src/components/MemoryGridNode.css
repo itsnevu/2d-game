@@ -83,8 +83,8 @@
 }
 
 .node-cost.expensive {
-  color: #ef4444 !important; /* Red for unaffordable */
-  text-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+  color: #5c8e32 !important; /* Red for unaffordable */
+  text-shadow: 0 0 4px rgba(92, 142, 50, 0.5);
 }
 
 .node-cost.affordable {
@@ -103,7 +103,7 @@
 /* Locked node indicator */
 .locked-indicator {
   fill: none;
-  stroke: #ef4444;
+  stroke: #5c8e32;
   stroke-width: 2;
   stroke-dasharray: 6,3;
   opacity: 0.7;

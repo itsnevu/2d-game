@@ -133,9 +133,9 @@ const ItemAcquisitionNotificationUI: React.FC<ItemAcquisitionNotificationUIProps
             {/* Text content */}
             <span style={{ position: 'relative', zIndex: 2 }}>
                 <span style={{ 
-                  color: isPositive ? '#00ff88' : '#ff3366',
+                  color: isPositive ? '#86be52' : '#ff3366',
                   textShadow: isMostRecent 
-                    ? `0 0 8px ${isPositive ? 'rgba(0, 255, 136, 0.8)' : 'rgba(255, 51, 102, 0.8)'}` 
+                    ? `0 0 8px ${isPositive ? 'rgba(134, 190, 82, 0.8)' : 'rgba(255, 51, 102, 0.8)'}` 
                     : 'none',
                 }}>
                   {`${notif.quantityChange > 0 ? '+' : ''}${notif.quantityChange}`}

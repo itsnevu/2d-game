@@ -53,6 +53,7 @@ import CheckFlareExpiryReducer from "./check_flare_expiry_reducer";
 import CheckGrenadeFusesReducer from "./check_grenade_fuses_reducer";
 import CheckPlantGrowthReducer from "./check_plant_growth_reducer";
 import CheckResourceRespawnsReducer from "./check_resource_respawns_reducer";
+import ClaimAuctionRewardsReducer from "./claim_auction_rewards_reducer";
 import CleanupExpiredAnimalCorpsesReducer from "./cleanup_expired_animal_corpses_reducer";
 import CleanupExpiredDodgeRollsReducer from "./cleanup_expired_dodge_rolls_reducer";
 import CleanupExpiredFertilizerPatchesReducer from "./cleanup_expired_fertilizer_patches_reducer";
@@ -77,6 +78,7 @@ import DebugRefreshAlkContractsReducer from "./debug_refresh_alk_contracts_reduc
 import DebugSetSeasonReducer from "./debug_set_season_reducer";
 import DebugSetTimeReducer from "./debug_set_time_reducer";
 import DebugSetWeatherReducer from "./debug_set_weather_reducer";
+import DebugSetupTestStateReducer from "./debug_setup_test_state_reducer";
 import DebugSimulateDroneReducer from "./debug_simulate_drone_reducer";
 import DebugSpawnAnimalReducer from "./debug_spawn_animal_reducer";
 import DebugSpawnItemReducer from "./debug_spawn_item_reducer";
@@ -103,9 +105,12 @@ import DropItemFromLanternSlotToWorldReducer from "./drop_item_from_lantern_slot
 import DropItemFromStashSlotToWorldReducer from "./drop_item_from_stash_slot_to_world_reducer";
 import EmitDelayedThunderSoundReducer from "./emit_delayed_thunder_sound_reducer";
 import EmptyRainCollectorReservoirReducer from "./empty_rain_collector_reservoir_reducer";
+import EndScholarRentalReducer from "./end_scholar_rental_reducer";
+import EnterWildernessReducer from "./enter_wilderness_reducer";
 import EquipArmorReducer from "./equip_armor_reducer";
 import EquipArmorFromDragReducer from "./equip_armor_from_drag_reducer";
 import EquipArmorFromInventoryReducer from "./equip_armor_from_inventory_reducer";
+import ExitWildernessReducer from "./exit_wilderness_reducer";
 import ExtinguishLanternReducer from "./extinguish_lantern_reducer";
 import ExtractFromHoneycombReducer from "./extract_from_honeycomb_reducer";
 import FillEquippedWaterContainersReducer from "./fill_equipped_water_containers_reducer";
@@ -141,6 +146,7 @@ import InviteToMatronageReducer from "./invite_to_matronage_reducer";
 import JumpReducer from "./jump_reducer";
 import LeaveMatronageReducer from "./leave_matronage_reducer";
 import LightLanternReducer from "./light_lantern_reducer";
+import ListItemForAuctionReducer from "./list_item_for_auction_reducer";
 import LoadRangedWeaponReducer from "./load_ranged_weapon_reducer";
 import ManageSeasonalPlantsReducer from "./manage_seasonal_plants_reducer";
 import ManualCleanupThunderEventsReducer from "./manual_cleanup_thunder_events_reducer";
@@ -204,6 +210,7 @@ import OpenCampfireContainerReducer from "./open_campfire_container_reducer";
 import OpenFurnaceContainerReducer from "./open_furnace_container_reducer";
 import OpenRainCollectorContainerReducer from "./open_rain_collector_container_reducer";
 import OpenStorageBoxContainerReducer from "./open_storage_box_container_reducer";
+import PayShelterTaxReducer from "./pay_shelter_tax_reducer";
 import PickupBarbecueReducer from "./pickup_barbecue_reducer";
 import PickupBrothPotReducer from "./pickup_broth_pot_reducer";
 import PickupCookingStationReducer from "./pickup_cooking_station_reducer";
@@ -214,6 +221,7 @@ import PickupRepairBenchReducer from "./pickup_repair_bench_reducer";
 import PickupStorageBoxReducer from "./pickup_storage_box_reducer";
 import PickupTurretReducer from "./pickup_turret_reducer";
 import PlaceBarbecueReducer from "./place_barbecue_reducer";
+import PlaceBidReducer from "./place_bid_reducer";
 import PlaceBrothPotOnCampfireReducer from "./place_broth_pot_on_campfire_reducer";
 import PlaceBrothPotOnFumaroleReducer from "./place_broth_pot_on_fumarole_reducer";
 import PlaceCampfireReducer from "./place_campfire_reducer";
@@ -308,6 +316,7 @@ import RefreshMyDailyQuestsReducer from "./refresh_my_daily_quests_reducer";
 import RegenerateCompressedChunksReducer from "./regenerate_compressed_chunks_reducer";
 import RegisterNpcReducer from "./register_npc_reducer";
 import RegisterPlayerReducer from "./register_player_reducer";
+import RegisterScholarReducer from "./register_scholar_reducer";
 import RelightDudExplosiveReducer from "./relight_dud_explosive_reducer";
 import RemoveFromMatronageReducer from "./remove_from_matronage_reducer";
 import RenameMatronageReducer from "./rename_matronage_reducer";
@@ -334,6 +343,7 @@ import SeedItemsReducer from "./seed_items_reducer";
 import SeedRangedWeaponStatsReducer from "./seed_ranged_weapon_stats_reducer";
 import SeedRecipesReducer from "./seed_recipes_reducer";
 import SeedWorldStateReducer from "./seed_world_state_reducer";
+import SellItemForGoldReducer from "./sell_item_for_gold_reducer";
 import SendMessageReducer from "./send_message_reducer";
 import SetActiveItemReducerReducer from "./set_active_item_reducer_reducer";
 import SetActiveTitleReducer from "./set_active_title_reducer";
@@ -454,6 +464,7 @@ import AlkStateRow from "./alk_state_table";
 import AlkStationRow from "./alk_station_table";
 import AnimalCorpseRow from "./animal_corpse_table";
 import ArrowBreakEventRow from "./arrow_break_event_table";
+import AuctionItemRow from "./auction_item_table";
 import BackpackConsolidationScheduleRow from "./backpack_consolidation_schedule_table";
 import BarbecueRow from "./barbecue_table";
 import BarbecueProcessingScheduleRow from "./barbecue_processing_schedule_table";
@@ -798,6 +809,17 @@ const tablesSchema = __schema({
       { name: 'arrow_break_event_id_key', constraint: 'unique', columns: ['id'] },
     ],
   }, ArrowBreakEventRow),
+  auction_item: __table({
+    name: 'auction_item',
+    indexes: [
+      { accessor: 'id', name: 'auction_item_id_idx_btree', algorithm: 'btree', columns: [
+        'id',
+      ] },
+    ],
+    constraints: [
+      { name: 'auction_item_id_key', constraint: 'unique', columns: ['id'] },
+    ],
+  }, AuctionItemRow),
   backpack_consolidation_schedule: __table({
     name: 'backpack_consolidation_schedule',
     indexes: [
@@ -2992,6 +3014,7 @@ const reducersSchema = __reducers(
   __reducerSchema("check_grenade_fuses", CheckGrenadeFusesReducer),
   __reducerSchema("check_plant_growth", CheckPlantGrowthReducer),
   __reducerSchema("check_resource_respawns", CheckResourceRespawnsReducer),
+  __reducerSchema("claim_auction_rewards", ClaimAuctionRewardsReducer),
   __reducerSchema("cleanup_expired_animal_corpses", CleanupExpiredAnimalCorpsesReducer),
   __reducerSchema("cleanup_expired_dodge_rolls", CleanupExpiredDodgeRollsReducer),
   __reducerSchema("cleanup_expired_fertilizer_patches", CleanupExpiredFertilizerPatchesReducer),
@@ -3016,6 +3039,7 @@ const reducersSchema = __reducers(
   __reducerSchema("debug_set_season", DebugSetSeasonReducer),
   __reducerSchema("debug_set_time", DebugSetTimeReducer),
   __reducerSchema("debug_set_weather", DebugSetWeatherReducer),
+  __reducerSchema("debug_setup_test_state", DebugSetupTestStateReducer),
   __reducerSchema("debug_simulate_drone", DebugSimulateDroneReducer),
   __reducerSchema("debug_spawn_animal", DebugSpawnAnimalReducer),
   __reducerSchema("debug_spawn_item", DebugSpawnItemReducer),
@@ -3042,9 +3066,12 @@ const reducersSchema = __reducers(
   __reducerSchema("drop_item_from_stash_slot_to_world", DropItemFromStashSlotToWorldReducer),
   __reducerSchema("emit_delayed_thunder_sound", EmitDelayedThunderSoundReducer),
   __reducerSchema("empty_rain_collector_reservoir", EmptyRainCollectorReservoirReducer),
+  __reducerSchema("end_scholar_rental", EndScholarRentalReducer),
+  __reducerSchema("enter_wilderness", EnterWildernessReducer),
   __reducerSchema("equip_armor", EquipArmorReducer),
   __reducerSchema("equip_armor_from_drag", EquipArmorFromDragReducer),
   __reducerSchema("equip_armor_from_inventory", EquipArmorFromInventoryReducer),
+  __reducerSchema("exit_wilderness", ExitWildernessReducer),
   __reducerSchema("extinguish_lantern", ExtinguishLanternReducer),
   __reducerSchema("extract_from_honeycomb", ExtractFromHoneycombReducer),
   __reducerSchema("fill_equipped_water_containers", FillEquippedWaterContainersReducer),
@@ -3080,6 +3107,7 @@ const reducersSchema = __reducers(
   __reducerSchema("jump", JumpReducer),
   __reducerSchema("leave_matronage", LeaveMatronageReducer),
   __reducerSchema("light_lantern", LightLanternReducer),
+  __reducerSchema("list_item_for_auction", ListItemForAuctionReducer),
   __reducerSchema("load_ranged_weapon", LoadRangedWeaponReducer),
   __reducerSchema("manage_seasonal_plants", ManageSeasonalPlantsReducer),
   __reducerSchema("manual_cleanup_thunder_events", ManualCleanupThunderEventsReducer),
@@ -3143,6 +3171,7 @@ const reducersSchema = __reducers(
   __reducerSchema("open_furnace_container", OpenFurnaceContainerReducer),
   __reducerSchema("open_rain_collector_container", OpenRainCollectorContainerReducer),
   __reducerSchema("open_storage_box_container", OpenStorageBoxContainerReducer),
+  __reducerSchema("pay_shelter_tax", PayShelterTaxReducer),
   __reducerSchema("pickup_barbecue", PickupBarbecueReducer),
   __reducerSchema("pickup_broth_pot", PickupBrothPotReducer),
   __reducerSchema("pickup_cooking_station", PickupCookingStationReducer),
@@ -3153,6 +3182,7 @@ const reducersSchema = __reducers(
   __reducerSchema("pickup_storage_box", PickupStorageBoxReducer),
   __reducerSchema("pickup_turret", PickupTurretReducer),
   __reducerSchema("place_barbecue", PlaceBarbecueReducer),
+  __reducerSchema("place_bid", PlaceBidReducer),
   __reducerSchema("place_broth_pot_on_campfire", PlaceBrothPotOnCampfireReducer),
   __reducerSchema("place_broth_pot_on_fumarole", PlaceBrothPotOnFumaroleReducer),
   __reducerSchema("place_campfire", PlaceCampfireReducer),
@@ -3247,6 +3277,7 @@ const reducersSchema = __reducers(
   __reducerSchema("regenerate_compressed_chunks", RegenerateCompressedChunksReducer),
   __reducerSchema("register_npc", RegisterNpcReducer),
   __reducerSchema("register_player", RegisterPlayerReducer),
+  __reducerSchema("register_scholar", RegisterScholarReducer),
   __reducerSchema("relight_dud_explosive", RelightDudExplosiveReducer),
   __reducerSchema("remove_from_matronage", RemoveFromMatronageReducer),
   __reducerSchema("rename_matronage", RenameMatronageReducer),
@@ -3273,6 +3304,7 @@ const reducersSchema = __reducers(
   __reducerSchema("seed_ranged_weapon_stats", SeedRangedWeaponStatsReducer),
   __reducerSchema("seed_recipes", SeedRecipesReducer),
   __reducerSchema("seed_world_state", SeedWorldStateReducer),
+  __reducerSchema("sell_item_for_gold", SellItemForGoldReducer),
   __reducerSchema("send_message", SendMessageReducer),
   __reducerSchema("set_active_item_reducer", SetActiveItemReducerReducer),
   __reducerSchema("set_active_title", SetActiveTitleReducer),

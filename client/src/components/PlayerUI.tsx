@@ -1566,7 +1566,7 @@ const PlayerUI: React.FC<PlayerUIProps> = ({
                             <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                                 <span style={{ 
                                     fontSize: '10px', 
-                                    color: '#00ff88', 
+                                    color: '#86be52', 
                                     fontWeight: 'bold',
                                     minWidth: '20px',
                                     textAlign: 'center',
@@ -1581,7 +1581,7 @@ const PlayerUI: React.FC<PlayerUIProps> = ({
                                     <div style={{
                                         width: `${xpProgress.percent}%`,
                                         height: '100%',
-                                        background: 'linear-gradient(90deg, #00cc66, #00ff88)',
+                                        background: 'linear-gradient(90deg, #00cc66, #86be52)',
                                         transition: 'width 0.3s ease',
                                     }} />
                                 </div>
@@ -1607,7 +1607,7 @@ const PlayerUI: React.FC<PlayerUIProps> = ({
                                     key={effect.id}
                                     style={{
                                         fontSize: '12px',
-                                        filter: `drop-shadow(0 0 2px ${effect.type === 'positive' ? '#00ff88' : effect.type === 'negative' ? '#ff4444' : '#ffaa00'})`,
+                                        filter: `drop-shadow(0 0 2px ${effect.type === 'positive' ? '#86be52' : effect.type === 'negative' ? '#ff4444' : '#ffaa00'})`,
                                     }}
                                     title={`${effect.name}${effect.duration ? ` - ${Math.ceil(effect.duration)}s` : ''}`}
                                 >
@@ -1627,7 +1627,7 @@ const PlayerUI: React.FC<PlayerUIProps> = ({
                     color: '#00ffff',
                     padding: '15px 18px',
                     borderRadius: '10px',
-                    border: '2px solid #00aaff',
+                    border: '2px solid #5c8e32',
                     fontFamily: '"Press Start 2P", cursive',
                     minWidth: '220px',
                     boxShadow: '0 0 25px rgba(0, 170, 255, 0.4), inset 0 0 15px rgba(0, 170, 255, 0.1)',

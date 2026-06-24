@@ -194,7 +194,7 @@ const AchievementsPanel: React.FC = () => {
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '12px 16px',
-        background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%)',
+        background: 'linear-gradient(90deg, rgba(134, 190, 82, 0.15) 0%, transparent 100%)',
         borderBottom: 'none',
         marginBottom: '0',
         flexShrink: 0,
@@ -204,7 +204,7 @@ const AchievementsPanel: React.FC = () => {
           margin: 0,
           fontSize: '1.2rem',
           fontWeight: 'bold',
-          textShadow: '0 0 10px rgba(255, 215, 0, 0.5)',
+          textShadow: '0 0 10px rgba(134, 190, 82, 0.5)',
           letterSpacing: '2px',
           display: 'flex',
           alignItems: 'center',
@@ -229,7 +229,7 @@ const AchievementsPanel: React.FC = () => {
           background: 'rgba(0, 0, 0, 0.6)',
           borderRadius: '0',
           overflow: 'hidden',
-          border: '1px solid rgba(255, 215, 0, 0.4)',
+          border: '1px solid rgba(134, 190, 82, 0.4)',
           position: 'relative',
         }}>
           <div style={{
@@ -259,7 +259,7 @@ const AchievementsPanel: React.FC = () => {
       <div style={{
         padding: '8px 12px',
         background: 'rgba(0, 0, 0, 0.3)',
-        borderBottom: '1px solid rgba(255, 215, 0, 0.3)',
+        borderBottom: '1px solid rgba(134, 190, 82, 0.3)',
       }}>
         <div style={{
           position: 'relative',
@@ -269,7 +269,7 @@ const AchievementsPanel: React.FC = () => {
           <span style={{
             position: 'absolute',
             left: '12px',
-            color: 'rgba(255, 215, 0, 0.6)',
+            color: 'rgba(134, 190, 82, 0.6)',
             fontSize: '14px',
             pointerEvents: 'none',
           }}>
@@ -284,7 +284,7 @@ const AchievementsPanel: React.FC = () => {
               width: '100%',
               padding: '10px 12px 10px 38px',
               background: 'rgba(0, 0, 0, 0.4)',
-              border: '1px solid rgba(255, 215, 0, 0.3)',
+              border: '1px solid rgba(134, 190, 82, 0.3)',
               borderRadius: '6px',
               color: '#ffffff',
               fontSize: '13px',
@@ -293,11 +293,11 @@ const AchievementsPanel: React.FC = () => {
             }}
             onFocus={(e) => {
               e.target.style.borderColor = '#ffd700';
-              e.target.style.boxShadow = '0 0 8px rgba(255, 215, 0, 0.3)';
+              e.target.style.boxShadow = '0 0 8px rgba(134, 190, 82, 0.3)';
               setIsCraftingSearchFocused(true);
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(255, 215, 0, 0.3)';
+              e.target.style.borderColor = 'rgba(134, 190, 82, 0.3)';
               e.target.style.boxShadow = 'none';
               setIsCraftingSearchFocused(false);
             }}
@@ -344,7 +344,7 @@ const AchievementsPanel: React.FC = () => {
         gap: '12px',
         padding: '8px 12px',
         background: 'rgba(0, 0, 0, 0.2)',
-        borderBottom: '1px solid rgba(255, 215, 0, 0.2)',
+        borderBottom: '1px solid rgba(134, 190, 82, 0.2)',
         alignItems: 'center',
       }}>
         {/* Sort options */}
@@ -422,7 +422,7 @@ const AchievementsPanel: React.FC = () => {
         gap: '8px',
         padding: '8px 12px',
         background: 'rgba(0, 0, 0, 0.2)',
-        borderBottom: '1px solid rgba(255, 215, 0, 0.3)',
+        borderBottom: '1px solid rgba(134, 190, 82, 0.3)',
         alignItems: 'center',
       }}>
         {/* All category button */}
@@ -431,8 +431,8 @@ const AchievementsPanel: React.FC = () => {
           style={{
             background: selectedCategory === null
               ? 'linear-gradient(135deg, #ffd700 0%, #ffaa00 100%)'
-              : 'rgba(255, 215, 0, 0.1)',
-            border: `1px solid ${selectedCategory === null ? '#ffd700' : 'rgba(255, 215, 0, 0.3)'}`,
+              : 'rgba(134, 190, 82, 0.1)',
+            border: `1px solid ${selectedCategory === null ? '#ffd700' : 'rgba(134, 190, 82, 0.3)'}`,
             borderRadius: '4px',
             color: selectedCategory === null ? '#000' : '#ffffff',
             padding: '6px 12px',
@@ -453,8 +453,8 @@ const AchievementsPanel: React.FC = () => {
             style={{
               background: selectedCategory === category
                 ? 'linear-gradient(135deg, #ffd700 0%, #ffaa00 100%)'
-                : 'rgba(255, 215, 0, 0.1)',
-              border: `1px solid ${selectedCategory === category ? '#ffd700' : 'rgba(255, 215, 0, 0.3)'}`,
+                : 'rgba(134, 190, 82, 0.1)',
+              border: `1px solid ${selectedCategory === category ? '#ffd700' : 'rgba(134, 190, 82, 0.3)'}`,
               borderRadius: '4px',
               color: selectedCategory === category ? '#000' : '#ffffff',
               padding: '6px 12px',
@@ -511,9 +511,9 @@ const AchievementsPanel: React.FC = () => {
                   key={achievement.id}
                   style={{
                     background: isUnlocked
-                      ? 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 170, 0, 0.1) 100%)'
+                      ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.15) 0%, rgba(45, 71, 21, 0.1) 100%)'
                       : 'rgba(0, 0, 0, 0.3)',
-                    border: `1px solid ${isUnlocked ? 'rgba(255, 215, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                    border: `1px solid ${isUnlocked ? 'rgba(134, 190, 82, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
                     borderRadius: '8px',
                     padding: '12px',
                     display: 'flex',
@@ -531,7 +531,7 @@ const AchievementsPanel: React.FC = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     background: isUnlocked 
-                      ? 'rgba(255, 215, 0, 0.2)' 
+                      ? 'rgba(134, 190, 82, 0.2)' 
                       : 'rgba(0, 0, 0, 0.3)',
                     borderRadius: '8px',
                     filter: isUnlocked ? 'none' : 'grayscale(100%)',

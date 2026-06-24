@@ -1455,7 +1455,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     isDraggingOver={false}
                                     style={{
                                         border: '2px solid rgba(0, 150, 255, 0.6)',
-                                        background: 'linear-gradient(135deg, rgba(0, 100, 200, 0.2), rgba(0, 150, 255, 0.15))',
+                                        background: 'linear-gradient(135deg, rgba(45, 71, 21, 0.2), rgba(0, 150, 255, 0.15))',
                                         boxShadow: 'inset 0 0 8px rgba(0, 150, 255, 0.2)'
                                     }}
                                 >
@@ -1597,9 +1597,9 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 return (
                                     <div style={{
                                         fontSize: '20px',
-                                        color: isReady ? '#00ff88' : '#ffcc44', // Green when ready, yellow when not
+                                        color: isReady ? '#86be52' : '#ffcc44', // Green when ready, yellow when not
                                         textShadow: isReady 
-                                            ? '0 0 8px rgba(0, 255, 136, 0.8)' 
+                                            ? '0 0 8px rgba(134, 190, 82, 0.8)' 
                                             : '0 0 8px rgba(255, 200, 0, 0.6)',
                                         userSelect: 'none',
                                         pointerEvents: 'none',
@@ -1706,10 +1706,10 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     marginBottom: '4px',
                                     padding: '4px 8px',
                                     background: isReady 
-                                        ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.08), rgba(0, 200, 100, 0.05))'
+                                        ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.08), rgba(0, 200, 100, 0.05))'
                                         : 'linear-gradient(135deg, rgba(255, 200, 0, 0.08), rgba(255, 150, 0, 0.05))',
                                     border: isReady
-                                        ? '1px solid rgba(0, 255, 136, 0.2)'
+                                        ? '1px solid rgba(134, 190, 82, 0.2)'
                                         : '1px solid rgba(255, 200, 0, 0.2)',
                                     borderRadius: '4px',
                                     display: 'flex',
@@ -1717,7 +1717,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     alignItems: 'center',
                                     gap: '10px',
                                     fontSize: '10px',
-                                    color: isReady ? 'rgba(0, 255, 136, 0.7)' : 'rgba(255, 200, 0, 0.7)',
+                                    color: isReady ? 'rgba(134, 190, 82, 0.7)' : 'rgba(255, 200, 0, 0.7)',
                                     fontWeight: 'normal',
                                     opacity: 0.7,
                                 }}>
@@ -1769,13 +1769,13 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                         bottom: '-3px',
                                         width: '4px', // Increased from 3px to 4px
                                         backgroundColor: attachedBrothPot.waterLevelMl >= BREWING_WATER_REQUIREMENT_ML
-                                            ? 'rgba(0, 255, 136, 1)' // Green when threshold met - fully opaque
+                                            ? 'rgba(134, 190, 82, 1)' // Green when threshold met - fully opaque
                                             : 'rgba(255, 100, 50, 1)', // Red when threshold not met - fully opaque
                                         borderRadius: '2px',
                                         zIndex: 10,
                                         pointerEvents: 'none',
                                         boxShadow: attachedBrothPot.waterLevelMl >= BREWING_WATER_REQUIREMENT_ML
-                                            ? '0 0 8px rgba(0, 255, 136, 1)' // Green glow when met - brighter
+                                            ? '0 0 8px rgba(134, 190, 82, 1)' // Green glow when met - brighter
                                             : '0 0 8px rgba(255, 100, 50, 1)', // Red glow when not met - brighter
                                         animation: attachedBrothPot.waterLevelMl < BREWING_WATER_REQUIREMENT_ML
                                             ? 'thresholdPulse 1.5s ease-in-out infinite' 
@@ -1815,8 +1815,8 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                     backgroundColor: isFirstTick
                                                         ? 'rgba(255, 200, 0, 1)' // Bright gold for first tick (minimum threshold)
                                                         : isMajorTick 
-                                                            ? 'rgba(255, 215, 0, 0.9)' // Bright gold for major ticks (1000ml)
-                                                            : 'rgba(255, 215, 0, 0.5)', // Dimmer gold for minor ticks
+                                                            ? 'rgba(134, 190, 82, 0.9)' // Bright gold for major ticks (1000ml)
+                                                            : 'rgba(134, 190, 82, 0.5)', // Dimmer gold for minor ticks
                                                     pointerEvents: 'none',
                                                     zIndex: isFirstTick ? 5 : 1, // First tick above water fill
                                                 }}
@@ -2092,10 +2092,10 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             alignItems: 'center', 
                             justifyContent: 'center', 
                             gap: '8px',
-                            background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.3), rgba(255, 100, 0, 0.2))',
-                            border: '2px solid rgba(255, 140, 0, 0.6)',
+                            background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(255, 100, 0, 0.2))',
+                            border: '2px solid rgba(92, 142, 50, 0.6)',
                             color: '#ffaa44',
-                            boxShadow: '0 0 8px rgba(255, 140, 0, 0.3)',
+                            boxShadow: '0 0 8px rgba(92, 142, 50, 0.3)',
                         }}
                     >
                         <FontAwesomeIcon icon={faArrowDown} /> Take
@@ -2122,7 +2122,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             alignItems: 'center', 
                             justifyContent: 'center', 
                             gap: '8px',
-                            background: 'linear-gradient(135deg, rgba(0, 150, 255, 0.3), rgba(0, 100, 200, 0.2))',
+                            background: 'linear-gradient(135deg, rgba(0, 150, 255, 0.3), rgba(45, 71, 21, 0.2))',
                             border: '2px solid rgba(0, 150, 255, 0.6)',
                             color: '#66ccff',
                             boxShadow: '0 0 8px rgba(0, 150, 255, 0.3)',
@@ -2254,10 +2254,10 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 alignItems: 'center', 
                                 justifyContent: 'center', 
                                 gap: '8px',
-                                background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.3), rgba(255, 100, 0, 0.2))',
-                                border: '2px solid rgba(255, 140, 0, 0.6)',
+                                background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(255, 100, 0, 0.2))',
+                                border: '2px solid rgba(92, 142, 50, 0.6)',
                                 color: '#ffaa44',
-                                boxShadow: '0 0 8px rgba(255, 140, 0, 0.3)',
+                                boxShadow: '0 0 8px rgba(92, 142, 50, 0.3)',
                             }}
                         >
                             <FontAwesomeIcon icon={faArrowDown} /> Take
@@ -2286,7 +2286,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 alignItems: 'center', 
                                 justifyContent: 'center', 
                                 gap: '8px',
-                                background: 'linear-gradient(135deg, rgba(0, 150, 255, 0.3), rgba(0, 100, 200, 0.2))',
+                                background: 'linear-gradient(135deg, rgba(0, 150, 255, 0.3), rgba(45, 71, 21, 0.2))',
                                 border: '2px solid rgba(0, 150, 255, 0.6)',
                                 color: '#66ccff',
                                 boxShadow: '0 0 8px rgba(0, 150, 255, 0.3)',
@@ -2522,7 +2522,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     justifyContent: 'center', 
                                     gap: '8px',
                                     background: container.items[0] && canItemBeRepaired(container.items[0].instance, container.items[0].definition)
-                                        ? 'linear-gradient(135deg, rgba(255, 166, 77, 0.3), rgba(255, 140, 0, 0.2))'
+                                        ? 'linear-gradient(135deg, rgba(255, 166, 77, 0.3), rgba(92, 142, 50, 0.2))'
                                         : 'rgba(100, 100, 100, 0.2)',
                                     border: container.items[0] && canItemBeRepaired(container.items[0].instance, container.items[0].definition)
                                         ? '2px solid rgba(255, 166, 77, 0.6)'
@@ -2910,7 +2910,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                     gap: '8px'
                                                 }}>
                                                     <span style={{
-                                                        color: p.id === playerId ? '#00ff88' : '#cccccc',
+                                                        color: p.id === playerId ? '#86be52' : '#cccccc',
                                                         fontSize: '13px',
                                                         flex: 1,
                                                         overflow: 'hidden',
@@ -2997,7 +2997,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     {/* Left column: Status and time estimates */}
                                     <div style={{ flex: '1', minWidth: '0' }}>
                                         {upkeepCosts.requiredWood === 0 && upkeepCosts.requiredStone === 0 && upkeepCosts.requiredMetal === 0 ? (
-                                            <div style={{ fontSize: '12px', color: '#00ff88', fontStyle: 'italic' }}>
+                                            <div style={{ fontSize: '12px', color: '#86be52', fontStyle: 'italic' }}>
                                                 ✓ No upkeep required (only twig buildings)
                                             </div>
                                         ) : (
@@ -3007,7 +3007,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                     color: (upkeepCosts.availableWood >= upkeepCosts.requiredWood && 
                                                            upkeepCosts.availableStone >= upkeepCosts.requiredStone && 
                                                            upkeepCosts.availableMetal >= upkeepCosts.requiredMetal) 
-                                                        ? '#00ff88' : '#ff4444',
+                                                        ? '#86be52' : '#ff4444',
                                                     fontWeight: 'bold',
                                                     marginBottom: '6px'
                                                 }}>
@@ -3220,7 +3220,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
                                     color: '#ffffff',
-                                    border: '2px solid #00aaff',
+                                    border: '2px solid #5c8e32',
                                     borderRadius: '8px',
                                     padding: '15px 25px',
                                     fontFamily: '"Press Start 2P", cursive',

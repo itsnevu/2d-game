@@ -340,15 +340,15 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         @keyframes achievementGlow {
           0%, 100% { 
             box-shadow: 
-              0 0 15px rgba(255, 215, 0, 0.4),
-              0 0 30px rgba(255, 215, 0, 0.2),
-              inset 0 0 20px rgba(255, 215, 0, 0.1);
+              0 0 15px rgba(134, 190, 82, 0.4),
+              0 0 30px rgba(134, 190, 82, 0.2),
+              inset 0 0 20px rgba(134, 190, 82, 0.1);
           }
           50% { 
             box-shadow: 
-              0 0 25px rgba(255, 215, 0, 0.6),
-              0 0 50px rgba(255, 215, 0, 0.3),
-              inset 0 0 30px rgba(255, 215, 0, 0.15);
+              0 0 25px rgba(134, 190, 82, 0.6),
+              0 0 50px rgba(134, 190, 82, 0.3),
+              inset 0 0 30px rgba(134, 190, 82, 0.15);
           }
         }
         
@@ -434,8 +434,8 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
             0deg,
             transparent,
             transparent 2px,
-            rgba(255, 215, 0, 0.02) 2px,
-            rgba(255, 215, 0, 0.02) 4px
+            rgba(134, 190, 82, 0.02) 2px,
+            rgba(134, 190, 82, 0.02) 4px
           );
           pointer-events: none;
           z-index: 10;
@@ -451,7 +451,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
           background: linear-gradient(
             180deg,
             transparent 0%,
-            rgba(255, 215, 0, 0.08) 50%,
+            rgba(134, 190, 82, 0.08) 50%,
             transparent 100%
           );
           animation: achievementScanline 4s linear infinite;
@@ -507,7 +507,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
           justify-content: center;
           font-size: 16px;
           font-weight: bold;
-          color: rgba(255, 215, 0, 0.5);
+          color: rgba(134, 190, 82, 0.5);
           cursor: pointer;
           border-radius: 50%;
           transition: all 0.2s ease;
@@ -516,7 +516,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         
         .achievement-close:hover {
           color: #ffd700;
-          background: rgba(255, 215, 0, 0.2);
+          background: rgba(134, 190, 82, 0.2);
           text-shadow: 0 0 10px #ffd700;
         }
         
@@ -547,7 +547,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
           transform: translate(-50%, -50%);
           width: 50px;
           height: 50px;
-          background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(134, 190, 82, 0.3) 0%, transparent 70%);
           pointer-events: none;
         }
         
@@ -584,7 +584,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         .achievement-name .main-name {
           position: relative;
           color: #ffffff;
-          text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+          text-shadow: 0 0 8px rgba(134, 190, 82, 0.5);
           z-index: 2;
         }
         
@@ -628,13 +628,13 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
           align-items: center;
           gap: 4px;
           padding: 4px 8px;
-          background: rgba(255, 215, 0, 0.1);
-          border: 1px solid rgba(255, 215, 0, 0.3);
+          background: rgba(134, 190, 82, 0.1);
+          border: 1px solid rgba(134, 190, 82, 0.3);
           border-radius: 3px;
         }
         
         .reward-item.xp .reward-icon {
-          color: #00d4ff;
+          color: #5c8e32;
           font-size: 10px;
         }
         
@@ -642,8 +642,8 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
           font-family: 'Courier New', 'Consolas', monospace;
           font-size: 13px;
           font-weight: bold;
-          color: #00d4ff;
-          text-shadow: 0 0 8px #00d4ff;
+          color: #5c8e32;
+          text-shadow: 0 0 8px #5c8e32;
         }
         
         .reward-item.xp .reward-label {
@@ -669,7 +669,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         /* Progress bar */
         .achievement-progress-bar {
           height: 3px;
-          background: rgba(255, 215, 0, 0.15);
+          background: rgba(134, 190, 82, 0.15);
         }
         
         .achievement-progress-fill {

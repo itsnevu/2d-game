@@ -54,15 +54,15 @@
 .tab::before {
   top: 2px;
   left: 2px;
-  border-top: 2px solid #00d4ff;
-  border-left: 2px solid #00d4ff;
+  border-top: 2px solid #5c8e32;
+  border-left: 2px solid #5c8e32;
 }
 
 .tab::after {
   top: 2px;
   right: 2px;
-  border-top: 2px solid #00d4ff;
-  border-right: 2px solid #00d4ff;
+  border-top: 2px solid #5c8e32;
+  border-right: 2px solid #5c8e32;
 }
 
 .tab.active::before,
@@ -115,7 +115,7 @@
   color: #64748b;
   border: none;
   box-shadow: 
-    inset 0 1px 0 rgba(0, 212, 255, 0.1),
+    inset 0 1px 0 rgba(92, 142, 50, 0.1),
     inset 0 -1px 0 rgba(0, 0, 0, 0.3),
     0 -2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -123,51 +123,51 @@
 /* Hover state - glowing edges */
 .tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(0, 212, 255, 0.15) 0%, 
+    rgba(92, 142, 50, 0.15) 0%, 
     rgba(20, 30, 45, 0.95) 100%
   );
   color: #e2e8f0;
   box-shadow: 
-    inset 0 1px 0 rgba(0, 212, 255, 0.4),
-    inset 0 -1px 0 rgba(0, 212, 255, 0.2),
-    0 0 12px rgba(0, 212, 255, 0.3),
-    0 -2px 8px rgba(0, 212, 255, 0.2);
-  text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+    inset 0 1px 0 rgba(92, 142, 50, 0.4),
+    inset 0 -1px 0 rgba(92, 142, 50, 0.2),
+    0 0 12px rgba(92, 142, 50, 0.3),
+    0 -2px 8px rgba(92, 142, 50, 0.2);
+  text-shadow: 0 0 8px rgba(92, 142, 50, 0.5);
 }
 
 /* Active state - full cyberpunk glow */
 .tab.active {
   background: linear-gradient(180deg, 
-    rgba(0, 212, 255, 0.25) 0%, 
-    rgba(124, 58, 237, 0.2) 50%,
+    rgba(92, 142, 50, 0.25) 0%, 
+    rgba(45, 71, 21, 0.2) 50%,
     rgba(15, 25, 35, 0.95) 100%
   );
   color: #ffffff;
   box-shadow: 
-    inset 0 1px 0 rgba(0, 212, 255, 0.6),
-    inset 0 -1px 0 rgba(124, 58, 237, 0.3),
-    0 0 15px rgba(0, 212, 255, 0.4),
-    0 -3px 10px rgba(0, 212, 255, 0.3);
+    inset 0 1px 0 rgba(92, 142, 50, 0.6),
+    inset 0 -1px 0 rgba(45, 71, 21, 0.3),
+    0 0 15px rgba(92, 142, 50, 0.4),
+    0 -3px 10px rgba(92, 142, 50, 0.3);
   text-shadow: 
-    0 0 10px rgba(0, 212, 255, 0.8),
-    0 0 20px rgba(0, 212, 255, 0.4);
+    0 0 10px rgba(92, 142, 50, 0.8),
+    0 0 20px rgba(92, 142, 50, 0.4);
   animation: tabGlow 2s ease-in-out infinite alternate;
 }
 
 @keyframes tabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(0, 212, 255, 0.6),
-      inset 0 -1px 0 rgba(124, 58, 237, 0.3),
-      0 0 15px rgba(0, 212, 255, 0.4),
-      0 -3px 10px rgba(0, 212, 255, 0.3);
+      inset 0 1px 0 rgba(92, 142, 50, 0.6),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.3),
+      0 0 15px rgba(92, 142, 50, 0.4),
+      0 -3px 10px rgba(92, 142, 50, 0.3);
   }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(0, 212, 255, 0.8),
-      inset 0 -1px 0 rgba(124, 58, 237, 0.5),
-      0 0 20px rgba(0, 212, 255, 0.5),
-      0 -4px 15px rgba(124, 58, 237, 0.3);
+      inset 0 1px 0 rgba(92, 142, 50, 0.8),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.5),
+      0 0 20px rgba(92, 142, 50, 0.5),
+      0 -4px 15px rgba(45, 71, 21, 0.3);
   }
 }
 
@@ -176,77 +176,77 @@
 /* ALK tab - green accent for supply/commerce */
 .alk-tab.active {
   background: linear-gradient(180deg, 
-    rgba(0, 255, 136, 0.25) 0%, 
+    rgba(134, 190, 82, 0.25) 0%, 
     rgba(0, 180, 100, 0.15) 50%,
     rgba(15, 25, 20, 0.95) 100%
   );
-  color: #4ade80;
+  color: #c4e89c;
   box-shadow: 
-    inset 0 1px 0 rgba(0, 255, 136, 0.6),
-    inset 0 -1px 0 rgba(0, 255, 136, 0.2),
-    0 0 15px rgba(0, 255, 136, 0.4),
-    0 -3px 10px rgba(0, 255, 136, 0.3);
+    inset 0 1px 0 rgba(134, 190, 82, 0.6),
+    inset 0 -1px 0 rgba(134, 190, 82, 0.2),
+    0 0 15px rgba(134, 190, 82, 0.4),
+    0 -3px 10px rgba(134, 190, 82, 0.3);
   text-shadow: 
-    0 0 10px rgba(0, 255, 136, 0.8),
-    0 0 20px rgba(0, 255, 136, 0.4);
+    0 0 10px rgba(134, 190, 82, 0.8),
+    0 0 20px rgba(134, 190, 82, 0.4);
   animation: alkTabGlow 2s ease-in-out infinite alternate;
 }
 
 .alk-tab.active::before,
 .alk-tab.active::after {
-  border-color: #00ff88;
+  border-color: #86be52;
 }
 
 .alk-tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(0, 255, 136, 0.15) 0%, 
+    rgba(134, 190, 82, 0.15) 0%, 
     rgba(20, 35, 30, 0.95) 100%
   );
-  color: #a7f3d0;
+  color: #c4e89c;
   box-shadow: 
-    inset 0 1px 0 rgba(0, 255, 136, 0.4),
-    0 0 10px rgba(0, 255, 136, 0.3);
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+    inset 0 1px 0 rgba(134, 190, 82, 0.4),
+    0 0 10px rgba(134, 190, 82, 0.3);
+  text-shadow: 0 0 8px rgba(134, 190, 82, 0.5);
 }
 
 .alk-tab.inactive.hovered::before,
 .alk-tab.inactive.hovered::after {
-  border-color: #00ff88;
+  border-color: #86be52;
 }
 
 @keyframes alkTabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(0, 255, 136, 0.6),
-      inset 0 -1px 0 rgba(0, 255, 136, 0.2),
-      0 0 15px rgba(0, 255, 136, 0.4),
-      0 -3px 10px rgba(0, 255, 136, 0.3);
+      inset 0 1px 0 rgba(134, 190, 82, 0.6),
+      inset 0 -1px 0 rgba(134, 190, 82, 0.2),
+      0 0 15px rgba(134, 190, 82, 0.4),
+      0 -3px 10px rgba(134, 190, 82, 0.3);
   }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(0, 255, 136, 0.8),
-      inset 0 -1px 0 rgba(0, 255, 136, 0.4),
-      0 0 20px rgba(0, 255, 136, 0.5),
-      0 -4px 15px rgba(0, 255, 136, 0.4);
+      inset 0 1px 0 rgba(134, 190, 82, 0.8),
+      inset 0 -1px 0 rgba(134, 190, 82, 0.4),
+      0 0 20px rgba(134, 190, 82, 0.5),
+      0 -4px 15px rgba(134, 190, 82, 0.4);
   }
 }
 
 /* Achievements tab - gold accent */
 .achievements-tab.active {
   background: linear-gradient(180deg, 
-    rgba(255, 215, 0, 0.25) 0%, 
-    rgba(255, 170, 0, 0.15) 50%,
+    rgba(134, 190, 82, 0.25) 0%, 
+    rgba(45, 71, 21, 0.15) 50%,
     rgba(25, 20, 15, 0.95) 100%
   );
   color: #fcd34d;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 215, 0, 0.6),
-    inset 0 -1px 0 rgba(255, 170, 0, 0.2),
-    0 0 15px rgba(255, 215, 0, 0.4),
-    0 -3px 10px rgba(255, 215, 0, 0.3);
+    inset 0 1px 0 rgba(134, 190, 82, 0.6),
+    inset 0 -1px 0 rgba(45, 71, 21, 0.2),
+    0 0 15px rgba(134, 190, 82, 0.4),
+    0 -3px 10px rgba(134, 190, 82, 0.3);
   text-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.8),
-    0 0 20px rgba(255, 215, 0, 0.4);
+    0 0 10px rgba(134, 190, 82, 0.8),
+    0 0 20px rgba(134, 190, 82, 0.4);
   animation: goldTabGlow 2s ease-in-out infinite alternate;
 }
 
@@ -257,14 +257,14 @@
 
 .achievements-tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(255, 215, 0, 0.15) 0%, 
+    rgba(134, 190, 82, 0.15) 0%, 
     rgba(35, 30, 20, 0.95) 100%
   );
   color: #fde68a;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 215, 0, 0.4),
-    0 0 10px rgba(255, 215, 0, 0.3);
-  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    inset 0 1px 0 rgba(134, 190, 82, 0.4),
+    0 0 10px rgba(134, 190, 82, 0.3);
+  text-shadow: 0 0 8px rgba(134, 190, 82, 0.5);
 }
 
 .achievements-tab.inactive.hovered::before,
@@ -275,307 +275,307 @@
 @keyframes goldTabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(255, 215, 0, 0.6),
-      inset 0 -1px 0 rgba(255, 170, 0, 0.2),
-      0 0 15px rgba(255, 215, 0, 0.4),
-      0 -3px 10px rgba(255, 215, 0, 0.3);
+      inset 0 1px 0 rgba(134, 190, 82, 0.6),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.2),
+      0 0 15px rgba(134, 190, 82, 0.4),
+      0 -3px 10px rgba(134, 190, 82, 0.3);
   }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(255, 215, 0, 0.8),
-      inset 0 -1px 0 rgba(255, 170, 0, 0.4),
-      0 0 20px rgba(255, 215, 0, 0.5),
-      0 -4px 15px rgba(255, 170, 0, 0.4);
+      inset 0 1px 0 rgba(134, 190, 82, 0.8),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.4),
+      0 0 20px rgba(134, 190, 82, 0.5),
+      0 -4px 15px rgba(45, 71, 21, 0.4);
   }
 }
 
 /* Leaderboard tab - bright cyan for competition */
 .leaderboard-tab.active {
   background: linear-gradient(180deg, 
-    rgba(0, 212, 255, 0.3) 0%, 
-    rgba(0, 100, 200, 0.15) 50%,
+    rgba(92, 142, 50, 0.3) 0%, 
+    rgba(45, 71, 21, 0.15) 50%,
     rgba(15, 20, 30, 0.95) 100%
   );
   color: #67e8f9;
   box-shadow: 
-    inset 0 1px 0 rgba(0, 212, 255, 0.7),
-    inset 0 -1px 0 rgba(0, 100, 200, 0.3),
-    0 0 15px rgba(0, 212, 255, 0.5),
-    0 -3px 10px rgba(0, 212, 255, 0.4);
+    inset 0 1px 0 rgba(92, 142, 50, 0.7),
+    inset 0 -1px 0 rgba(45, 71, 21, 0.3),
+    0 0 15px rgba(92, 142, 50, 0.5),
+    0 -3px 10px rgba(92, 142, 50, 0.4);
   text-shadow: 
-    0 0 10px rgba(0, 212, 255, 0.9),
-    0 0 20px rgba(0, 212, 255, 0.5);
+    0 0 10px rgba(92, 142, 50, 0.9),
+    0 0 20px rgba(92, 142, 50, 0.5);
   animation: cyanTabGlow 2s ease-in-out infinite alternate;
 }
 
 .leaderboard-tab.active::before,
 .leaderboard-tab.active::after {
-  border-color: #00d4ff;
+  border-color: #5c8e32;
 }
 
 .leaderboard-tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(0, 212, 255, 0.2) 0%, 
+    rgba(92, 142, 50, 0.2) 0%, 
     rgba(20, 30, 45, 0.95) 100%
   );
   color: #a5f3fc;
   box-shadow: 
-    inset 0 1px 0 rgba(0, 212, 255, 0.5),
-    0 0 12px rgba(0, 212, 255, 0.4);
-  text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+    inset 0 1px 0 rgba(92, 142, 50, 0.5),
+    0 0 12px rgba(92, 142, 50, 0.4);
+  text-shadow: 0 0 8px rgba(92, 142, 50, 0.6);
 }
 
 .leaderboard-tab.inactive.hovered::before,
 .leaderboard-tab.inactive.hovered::after {
-  border-color: #00d4ff;
+  border-color: #5c8e32;
 }
 
 @keyframes cyanTabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(0, 212, 255, 0.7),
-      inset 0 -1px 0 rgba(0, 100, 200, 0.3),
-      0 0 15px rgba(0, 212, 255, 0.5),
-      0 -3px 10px rgba(0, 212, 255, 0.4);
+      inset 0 1px 0 rgba(92, 142, 50, 0.7),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.3),
+      0 0 15px rgba(92, 142, 50, 0.5),
+      0 -3px 10px rgba(92, 142, 50, 0.4);
   }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(0, 212, 255, 0.9),
-      inset 0 -1px 0 rgba(0, 100, 200, 0.5),
-      0 0 22px rgba(0, 212, 255, 0.6),
-      0 -4px 15px rgba(0, 212, 255, 0.5);
+      inset 0 1px 0 rgba(92, 142, 50, 0.9),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.5),
+      0 0 22px rgba(92, 142, 50, 0.6),
+      0 -4px 15px rgba(92, 142, 50, 0.5);
   }
 }
 
 /* Cairns tab - mystical purple accent */
 .cairns-tab.active {
   background: linear-gradient(180deg, 
-    rgba(192, 132, 252, 0.25) 0%, 
-    rgba(139, 92, 246, 0.15) 50%,
+    rgba(134, 190, 82, 0.25) 0%, 
+    rgba(45, 71, 21, 0.15) 50%,
     rgba(20, 15, 30, 0.95) 100%
   );
-  color: #d8b4fe;
+  color: #c4e89c;
   box-shadow: 
-    inset 0 1px 0 rgba(192, 132, 252, 0.6),
-    inset 0 -1px 0 rgba(139, 92, 246, 0.2),
-    0 0 15px rgba(192, 132, 252, 0.4),
-    0 -3px 10px rgba(192, 132, 252, 0.3);
+    inset 0 1px 0 rgba(134, 190, 82, 0.6),
+    inset 0 -1px 0 rgba(45, 71, 21, 0.2),
+    0 0 15px rgba(134, 190, 82, 0.4),
+    0 -3px 10px rgba(134, 190, 82, 0.3);
   text-shadow: 
-    0 0 10px rgba(192, 132, 252, 0.8),
-    0 0 20px rgba(192, 132, 252, 0.4);
+    0 0 10px rgba(134, 190, 82, 0.8),
+    0 0 20px rgba(134, 190, 82, 0.4);
   animation: purpleTabGlow 2s ease-in-out infinite alternate;
 }
 
 .cairns-tab.active::before,
 .cairns-tab.active::after {
-  border-color: #c084fc;
+  border-color: #86be52;
 }
 
 .cairns-tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(192, 132, 252, 0.15) 0%, 
+    rgba(134, 190, 82, 0.15) 0%, 
     rgba(30, 25, 40, 0.95) 100%
   );
   color: #e9d5ff;
   box-shadow: 
-    inset 0 1px 0 rgba(192, 132, 252, 0.4),
-    0 0 10px rgba(192, 132, 252, 0.3);
-  text-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
+    inset 0 1px 0 rgba(134, 190, 82, 0.4),
+    0 0 10px rgba(134, 190, 82, 0.3);
+  text-shadow: 0 0 8px rgba(134, 190, 82, 0.5);
 }
 
 .cairns-tab.inactive.hovered::before,
 .cairns-tab.inactive.hovered::after {
-  border-color: #c084fc;
+  border-color: #86be52;
 }
 
 @keyframes purpleTabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(192, 132, 252, 0.6),
-      inset 0 -1px 0 rgba(139, 92, 246, 0.2),
-      0 0 15px rgba(192, 132, 252, 0.4),
-      0 -3px 10px rgba(192, 132, 252, 0.3);
+      inset 0 1px 0 rgba(134, 190, 82, 0.6),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.2),
+      0 0 15px rgba(134, 190, 82, 0.4),
+      0 -3px 10px rgba(134, 190, 82, 0.3);
   }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(192, 132, 252, 0.8),
-      inset 0 -1px 0 rgba(139, 92, 246, 0.4),
-      0 0 20px rgba(192, 132, 252, 0.5),
-      0 -4px 15px rgba(139, 92, 246, 0.4);
+      inset 0 1px 0 rgba(134, 190, 82, 0.8),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.4),
+      0 0 20px rgba(134, 190, 82, 0.5),
+      0 -4px 15px rgba(45, 71, 21, 0.4);
   }
 }
 
 /* Memory Grid tab - neural purple/cyan mix */
 .memory-grid-tab.active {
   background: linear-gradient(180deg, 
-    rgba(124, 58, 237, 0.25) 0%, 
-    rgba(0, 212, 255, 0.15) 50%,
+    rgba(45, 71, 21, 0.25) 0%, 
+    rgba(92, 142, 50, 0.15) 50%,
     rgba(20, 15, 35, 0.95) 100%
   );
   color: #a78bfa;
   box-shadow: 
-    inset 0 1px 0 rgba(124, 58, 237, 0.6),
-    inset 0 -1px 0 rgba(0, 212, 255, 0.2),
-    0 0 15px rgba(124, 58, 237, 0.4),
-    0 -3px 10px rgba(0, 212, 255, 0.3);
+    inset 0 1px 0 rgba(45, 71, 21, 0.6),
+    inset 0 -1px 0 rgba(92, 142, 50, 0.2),
+    0 0 15px rgba(45, 71, 21, 0.4),
+    0 -3px 10px rgba(92, 142, 50, 0.3);
   text-shadow: 
-    0 0 10px rgba(124, 58, 237, 0.8),
-    0 0 20px rgba(0, 212, 255, 0.4);
+    0 0 10px rgba(45, 71, 21, 0.8),
+    0 0 20px rgba(92, 142, 50, 0.4);
   animation: neuralTabGlow 2s ease-in-out infinite alternate;
 }
 
 .memory-grid-tab.active::before,
 .memory-grid-tab.active::after {
-  border-color: #7c3aed;
+  border-color: #2d4715;
 }
 
 .memory-grid-tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(124, 58, 237, 0.15) 0%, 
+    rgba(45, 71, 21, 0.15) 0%, 
     rgba(25, 20, 40, 0.95) 100%
   );
   color: #c4b5fd;
   box-shadow: 
-    inset 0 1px 0 rgba(124, 58, 237, 0.4),
-    0 0 10px rgba(124, 58, 237, 0.3);
-  text-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
+    inset 0 1px 0 rgba(45, 71, 21, 0.4),
+    0 0 10px rgba(45, 71, 21, 0.3);
+  text-shadow: 0 0 8px rgba(45, 71, 21, 0.5);
 }
 
 .memory-grid-tab.inactive.hovered::before,
 .memory-grid-tab.inactive.hovered::after {
-  border-color: #7c3aed;
+  border-color: #2d4715;
 }
 
 @keyframes neuralTabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(124, 58, 237, 0.6),
-      inset 0 -1px 0 rgba(0, 212, 255, 0.2),
-      0 0 15px rgba(124, 58, 237, 0.4),
-      0 -3px 10px rgba(0, 212, 255, 0.3);
+      inset 0 1px 0 rgba(45, 71, 21, 0.6),
+      inset 0 -1px 0 rgba(92, 142, 50, 0.2),
+      0 0 15px rgba(45, 71, 21, 0.4),
+      0 -3px 10px rgba(92, 142, 50, 0.3);
 }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(124, 58, 237, 0.8),
-      inset 0 -1px 0 rgba(0, 212, 255, 0.4),
-      0 0 20px rgba(124, 58, 237, 0.5),
-      0 -4px 15px rgba(0, 212, 255, 0.4);
+      inset 0 1px 0 rgba(45, 71, 21, 0.8),
+      inset 0 -1px 0 rgba(92, 142, 50, 0.4),
+      0 0 20px rgba(45, 71, 21, 0.5),
+      0 -4px 15px rgba(92, 142, 50, 0.4);
   }
 }
 
 /* Matronage tab - warm orange/red accent */
 .matronage-tab.active {
   background: linear-gradient(180deg, 
-    rgba(251, 146, 60, 0.25) 0%, 
-    rgba(239, 68, 68, 0.15) 50%,
+    rgba(92, 142, 50, 0.25) 0%, 
+    rgba(92, 142, 50, 0.15) 50%,
     rgba(25, 18, 15, 0.95) 100%
   );
-  color: #fdba74;
+  color: #c4e89c;
   box-shadow: 
-    inset 0 1px 0 rgba(251, 146, 60, 0.6),
-    inset 0 -1px 0 rgba(239, 68, 68, 0.2),
-    0 0 15px rgba(251, 146, 60, 0.4),
-    0 -3px 10px rgba(251, 146, 60, 0.3);
+    inset 0 1px 0 rgba(92, 142, 50, 0.6),
+    inset 0 -1px 0 rgba(92, 142, 50, 0.2),
+    0 0 15px rgba(92, 142, 50, 0.4),
+    0 -3px 10px rgba(92, 142, 50, 0.3);
   text-shadow: 
-    0 0 10px rgba(251, 146, 60, 0.8),
-    0 0 20px rgba(251, 146, 60, 0.4);
+    0 0 10px rgba(92, 142, 50, 0.8),
+    0 0 20px rgba(92, 142, 50, 0.4);
   animation: warmTabGlow 2s ease-in-out infinite alternate;
 }
 
 .matronage-tab.active::before,
 .matronage-tab.active::after {
-  border-color: #fb923c;
+  border-color: #5c8e32;
 }
 
 .matronage-tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(251, 146, 60, 0.15) 0%, 
+    rgba(92, 142, 50, 0.15) 0%, 
     rgba(35, 25, 20, 0.95) 100%
   );
   color: #fed7aa;
   box-shadow: 
-    inset 0 1px 0 rgba(251, 146, 60, 0.4),
-    0 0 10px rgba(251, 146, 60, 0.3);
-  text-shadow: 0 0 8px rgba(251, 146, 60, 0.5);
+    inset 0 1px 0 rgba(92, 142, 50, 0.4),
+    0 0 10px rgba(92, 142, 50, 0.3);
+  text-shadow: 0 0 8px rgba(92, 142, 50, 0.5);
 }
 
 .matronage-tab.inactive.hovered::before,
 .matronage-tab.inactive.hovered::after {
-  border-color: #fb923c;
+  border-color: #5c8e32;
 }
 
 @keyframes warmTabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(251, 146, 60, 0.6),
-      inset 0 -1px 0 rgba(239, 68, 68, 0.2),
-      0 0 15px rgba(251, 146, 60, 0.4),
-      0 -3px 10px rgba(251, 146, 60, 0.3);
+      inset 0 1px 0 rgba(92, 142, 50, 0.6),
+      inset 0 -1px 0 rgba(92, 142, 50, 0.2),
+      0 0 15px rgba(92, 142, 50, 0.4),
+      0 -3px 10px rgba(92, 142, 50, 0.3);
   }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(251, 146, 60, 0.8),
-      inset 0 -1px 0 rgba(239, 68, 68, 0.4),
-      0 0 20px rgba(251, 146, 60, 0.5),
-      0 -4px 15px rgba(239, 68, 68, 0.3);
+      inset 0 1px 0 rgba(92, 142, 50, 0.8),
+      inset 0 -1px 0 rgba(92, 142, 50, 0.4),
+      0 0 20px rgba(92, 142, 50, 0.5),
+      0 -4px 15px rgba(92, 142, 50, 0.3);
   }
 }
 
 /* Encyclopedia tab - knowledge blue/teal */
 .encyclopedia-tab.active {
   background: linear-gradient(180deg, 
-    rgba(20, 184, 166, 0.25) 0%, 
-    rgba(6, 182, 212, 0.15) 50%,
+    rgba(92, 142, 50, 0.25) 0%, 
+    rgba(45, 71, 21, 0.15) 50%,
     rgba(15, 25, 25, 0.95) 100%
   );
-  color: #5eead4;
+  color: #c4e89c;
   box-shadow: 
-    inset 0 1px 0 rgba(20, 184, 166, 0.6),
-    inset 0 -1px 0 rgba(6, 182, 212, 0.2),
-    0 0 15px rgba(20, 184, 166, 0.4),
-    0 -3px 10px rgba(20, 184, 166, 0.3);
+    inset 0 1px 0 rgba(92, 142, 50, 0.6),
+    inset 0 -1px 0 rgba(45, 71, 21, 0.2),
+    0 0 15px rgba(92, 142, 50, 0.4),
+    0 -3px 10px rgba(92, 142, 50, 0.3);
   text-shadow: 
-    0 0 10px rgba(20, 184, 166, 0.8),
-    0 0 20px rgba(20, 184, 166, 0.4);
+    0 0 10px rgba(92, 142, 50, 0.8),
+    0 0 20px rgba(92, 142, 50, 0.4);
   animation: tealTabGlow 2s ease-in-out infinite alternate;
 }
 
 .encyclopedia-tab.active::before,
 .encyclopedia-tab.active::after {
-  border-color: #14b8a6;
+  border-color: #5c8e32;
 }
 
 .encyclopedia-tab.inactive.hovered {
   background: linear-gradient(180deg, 
-    rgba(20, 184, 166, 0.15) 0%, 
+    rgba(92, 142, 50, 0.15) 0%, 
     rgba(20, 30, 30, 0.95) 100%
   );
-  color: #99f6e4;
+  color: #c4e89c;
   box-shadow: 
-    inset 0 1px 0 rgba(20, 184, 166, 0.4),
-    0 0 10px rgba(20, 184, 166, 0.3);
-  text-shadow: 0 0 8px rgba(20, 184, 166, 0.5);
+    inset 0 1px 0 rgba(92, 142, 50, 0.4),
+    0 0 10px rgba(92, 142, 50, 0.3);
+  text-shadow: 0 0 8px rgba(92, 142, 50, 0.5);
 }
 
 .encyclopedia-tab.inactive.hovered::before,
 .encyclopedia-tab.inactive.hovered::after {
-  border-color: #14b8a6;
+  border-color: #5c8e32;
 }
 
 @keyframes tealTabGlow {
   0% {
     box-shadow: 
-      inset 0 1px 0 rgba(20, 184, 166, 0.6),
-      inset 0 -1px 0 rgba(6, 182, 212, 0.2),
-      0 0 15px rgba(20, 184, 166, 0.4),
-      0 -3px 10px rgba(20, 184, 166, 0.3);
+      inset 0 1px 0 rgba(92, 142, 50, 0.6),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.2),
+      0 0 15px rgba(92, 142, 50, 0.4),
+      0 -3px 10px rgba(92, 142, 50, 0.3);
   }
   100% {
     box-shadow: 
-      inset 0 1px 0 rgba(20, 184, 166, 0.8),
-      inset 0 -1px 0 rgba(6, 182, 212, 0.4),
-      0 0 20px rgba(20, 184, 166, 0.5),
-      0 -4px 15px rgba(6, 182, 212, 0.4);
+      inset 0 1px 0 rgba(92, 142, 50, 0.8),
+      inset 0 -1px 0 rgba(45, 71, 21, 0.4),
+      0 0 20px rgba(92, 142, 50, 0.5),
+      0 -4px 15px rgba(45, 71, 21, 0.4);
   }
 }
 
@@ -602,9 +602,9 @@
 
 /* === INDICATOR STYLES === */
 .offline-indicator {
-  color: #ef4444;
+  color: #5c8e32;
   font-size: 10px;
-  text-shadow: 0 0 6px #ef4444;
+  text-shadow: 0 0 6px #5c8e32;
 }
 
 .tab.active .offline-indicator {
@@ -636,7 +636,7 @@
       rgba(15, 23, 35, 0.98) 0%, 
       rgba(20, 30, 45, 0.95) 100%
     );
-    border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+    border-bottom: 1px solid rgba(92, 142, 50, 0.3);
     justify-content: center;
   }
   

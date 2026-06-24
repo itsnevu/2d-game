@@ -427,7 +427,7 @@ const CraftingSearchBar: React.FC<CraftingSearchBarProps> = (props) => {
               tabIndex={-1}
               style={{
                 background: 'linear-gradient(135deg, rgba(30, 15, 50, 0.98), rgba(20, 10, 40, 0.99))',
-                border: '2px solid #00aaff',
+                border: '2px solid #5c8e32',
                 borderRadius: '8px',
                 boxShadow: '0 0 30px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1)',
                 backdropFilter: 'blur(10px)',
@@ -446,20 +446,20 @@ const CraftingSearchBar: React.FC<CraftingSearchBarProps> = (props) => {
                     padding: '12px 16px',
                     fontSize: '14px',
                     fontWeight: '500',
-                    color: selectedCategory === categoryKey ? '#00ff88' : '#00ffff',
-                    background: selectedCategory === categoryKey ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 200, 100, 0.3))' : 'transparent',
+                    color: selectedCategory === categoryKey ? '#86be52' : '#00ffff',
+                    background: selectedCategory === categoryKey ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.2), rgba(0, 200, 100, 0.3))' : 'transparent',
                     cursor: 'pointer',
                     borderBottom: '2px solid rgba(0, 170, 255, 0.2)',
                     transition: 'all 0.2s ease',
                     userSelect: 'none',
                     lineHeight: '1.4',
-                    textShadow: selectedCategory === categoryKey ? '0 0 8px rgba(0, 255, 136, 0.6)' : '0 0 5px rgba(0, 255, 255, 0.4)',
-                    boxShadow: selectedCategory === categoryKey ? 'inset 0 0 10px rgba(0, 255, 136, 0.1)' : 'none'
+                    textShadow: selectedCategory === categoryKey ? '0 0 8px rgba(134, 190, 82, 0.6)' : '0 0 5px rgba(0, 255, 255, 0.4)',
+                    boxShadow: selectedCategory === categoryKey ? 'inset 0 0 10px rgba(134, 190, 82, 0.1)' : 'none'
                   }}
                   onMouseEnter={(e) => {
                     if (selectedCategory !== categoryKey) {
                       e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 150, 220, 0.3))';
-                      e.currentTarget.style.color = '#00aaff';
+                      e.currentTarget.style.color = '#5c8e32';
                       e.currentTarget.style.boxShadow = 'inset 0 0 10px rgba(0, 170, 255, 0.1)';
                     }
                   }}

@@ -198,7 +198,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
     ];
     
     branchInfo.forEach(branch => {
-      const factionColor = FACTIONS[branch.faction]?.color || '#7c3aed';
+      const factionColor = FACTIONS[branch.faction]?.color || '#2d4715';
       const labelRadius = 800; // Positioned near first branch nodes (at radius 900) for clear labeling
       
       // Upper path label
@@ -524,7 +524,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
             borderRadius: '4px',
             fontSize: '12px',
             fontFamily: 'monospace',
-            border: '1px solid #7c3aed'
+            border: '1px solid #2d4715'
           }}
         >
           Memory Shards: {playerShards.toLocaleString()}
@@ -553,9 +553,9 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
               <button
                 onClick={() => setShowResetConfirm(true)}
                 style={{
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  color: '#ef4444',
-                  border: '1px solid #ef4444',
+                  background: 'rgba(92, 142, 50, 0.2)',
+                  color: '#5c8e32',
+                  border: '1px solid #5c8e32',
                   borderRadius: '3px',
                   padding: '3px 6px',
                   fontSize: '9px',
@@ -610,7 +610,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
           <div
             style={{
               background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
-              border: '2px solid #ef4444',
+              border: '2px solid #5c8e32',
               borderRadius: '8px',
               padding: '24px',
               maxWidth: '400px',
@@ -619,7 +619,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ 
-              color: '#ef4444', 
+              color: '#5c8e32', 
               fontSize: '18px', 
               fontWeight: 'bold', 
               marginBottom: '16px' 
@@ -645,7 +645,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
             }}>
               This will remove your faction unlock and ALL faction branch nodes.
               <br />
-              <span style={{ color: '#ef4444', fontWeight: 'bold' }}>
+              <span style={{ color: '#5c8e32', fontWeight: 'bold' }}>
                 Cost: {FACTION_RESET_COST} Memory Shards
               </span>
             </div>
@@ -670,7 +670,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                 onClick={handleFactionReset}
                 disabled={!canAffordReset}
                 style={{
-                  background: canAffordReset ? '#ef4444' : '#374151',
+                  background: canAffordReset ? '#5c8e32' : '#374151',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '4px',
@@ -702,7 +702,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
             borderRadius: '4px',
             maxWidth: '350px',
             fontSize: '12px',
-            border: '1px solid #7c3aed',
+            border: '1px solid #2d4715',
             zIndex: 10,
             pointerEvents: 'auto' // Allow panel to receive mouse events
           }}
@@ -762,7 +762,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                 {/* Content - Right Side */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ 
-                    color: faction ? faction.color : '#7c3aed', 
+                    color: faction ? faction.color : '#2d4715', 
                     fontWeight: 'bold', 
                     marginBottom: '8px',
                     fontSize: '14px'
@@ -786,7 +786,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                   
                   {displayNode.cost > 0 && displayNode.status !== 'purchased' && (
                     <span style={{ 
-                      color: canAfford ? '#22c55e' : '#ef4444',
+                      color: canAfford ? '#22c55e' : '#5c8e32',
                       fontWeight: 'bold',
                       fontFamily: 'monospace'
                     }}>
@@ -800,12 +800,12 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                   <div style={{ 
                     marginTop: '8px', 
                     padding: '8px', 
-                    background: 'rgba(124, 58, 237, 0.1)', 
-                    border: '1px solid #7c3aed',
+                    background: 'rgba(45, 71, 21, 0.1)', 
+                    border: '1px solid #2d4715',
                     borderRadius: '4px',
                     fontSize: '11px'
                   }}>
-                    <div style={{ color: '#7c3aed', fontWeight: 'bold', marginBottom: '6px', fontSize: '16px' }}>
+                    <div style={{ color: '#2d4715', fontWeight: 'bold', marginBottom: '6px', fontSize: '16px' }}>
                       🚧 Coming Soon
                     </div>
                     <div style={{ color: '#9ca3af', fontSize: '12px', lineHeight: '1.5' }}>
@@ -829,12 +829,12 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                       <div style={{ 
                         marginTop: '8px', 
                         padding: '6px 8px', 
-                        background: 'rgba(239, 68, 68, 0.1)', 
-                        border: '1px solid #ef4444',
+                        background: 'rgba(92, 142, 50, 0.1)', 
+                        border: '1px solid #5c8e32',
                         borderRadius: '4px',
                         fontSize: '11px'
                       }}>
-                        <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '4px' }}>
+                        <div style={{ color: '#5c8e32', fontWeight: 'bold', marginBottom: '4px' }}>
                           ⚔ Faction Locked
                         </div>
                         <div style={{ color: '#9ca3af', marginBottom: '4px' }}>
@@ -862,7 +862,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                           🔒 Faction Unlock Requirement
                         </div>
                         <div style={{ color: '#9ca3af', fontSize: '10px', lineHeight: '1.5', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ color: '#ef4444' }}>✗</span>
+                          <span style={{ color: '#5c8e32' }}>✗</span>
                           <span>Spend at least 2,000 total shards on core grid</span>
                           <span style={{ color: '#6b7280', marginLeft: 'auto' }}>
                             ({totalShardsSpent.toLocaleString()} / 2,000)
@@ -901,12 +901,12 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                   <div style={{ 
                     marginTop: '8px', 
                     padding: '6px', 
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid #ef4444',
+                    background: 'rgba(92, 142, 50, 0.1)',
+                    border: '1px solid #5c8e32',
                     borderRadius: '4px',
                     textAlign: 'center' as const,
                     fontSize: '11px',
-                    color: '#ef4444'
+                    color: '#5c8e32'
                   }}>
                     Insufficient Memory Shards
                   </div>
@@ -939,7 +939,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
             <path
               d="M 40 0 L 0 0 0 40"
               fill="none"
-              stroke="rgba(124, 58, 237, 0.1)"
+              stroke="rgba(45, 71, 21, 0.1)"
               strokeWidth="1"
             />
           </pattern>
@@ -974,8 +974,8 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
         
         {/* Center crosshair */}
         <g transform={`translate(${centerX + panOffset.x}, ${centerY + panOffset.y})`} opacity={0.3}>
-          <line x1="-10" y1="0" x2="10" y2="0" stroke="#7c3aed" strokeWidth={1} />
-          <line x1="0" y1="-10" x2="0" y2="10" stroke="#7c3aed" strokeWidth={1} />
+          <line x1="-10" y1="0" x2="10" y2="0" stroke="#2d4715" strokeWidth={1} />
+          <line x1="0" y1="-10" x2="0" y2="10" stroke="#2d4715" strokeWidth={1} />
         </g>
       </svg>
       

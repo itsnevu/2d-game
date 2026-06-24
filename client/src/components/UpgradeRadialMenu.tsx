@@ -542,7 +542,7 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
           </radialGradient>
           <linearGradient id="upgradeSectorHoverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="rgba(0, 170, 255, 0.85)" />
-            <stop offset="100%" stopColor="rgba(0, 100, 200, 0.9)" />
+            <stop offset="100%" stopColor="rgba(45, 71, 21, 0.9)" />
           </linearGradient>
           <linearGradient id="upgradeSectorNormalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="rgba(20, 40, 80, 0.8)" />
@@ -765,7 +765,7 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
                     color: isAvailable 
                       ? isHovered 
                         ? '#00ffff' 
-                        : '#00aaff'
+                        : '#5c8e32'
                       : '#cc6666',
                   }}
                 />

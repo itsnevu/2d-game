@@ -328,6 +328,20 @@ export const ArrowBreakEvent = __t.object("ArrowBreakEvent", {
 });
 export type ArrowBreakEvent = __Infer<typeof ArrowBreakEvent>;
 
+export const AuctionItem = __t.object("AuctionItem", {
+  id: __t.u64(),
+  seller: __t.identity(),
+  itemName: __t.string(),
+  itemData: __t.string(),
+  quantity: __t.u32(),
+  startingPrice: __t.u64(),
+  highestBid: __t.u64(),
+  highestBidder: __t.option(__t.identity()),
+  endTime: __t.timestamp(),
+  isClaimed: __t.bool(),
+});
+export type AuctionItem = __Infer<typeof AuctionItem>;
+
 export const BackpackConsolidationSchedule = __t.object("BackpackConsolidationSchedule", {
   id: __t.u64(),
   scheduledAt: __t.scheduleAt(),
@@ -2202,6 +2216,10 @@ export const Player = __t.object("Player", {
   lastPvpCombatTime: __t.option(__t.timestamp()),
   isNpc: __t.bool(),
   npcRole: __t.string(),
+  ownerIdentity: __t.option(__t.identity()),
+  goldShareRatio: __t.f32(),
+  goldBalance: __t.u64(),
+  stakedBounty: __t.u64(),
 });
 export type Player = __Infer<typeof Player>;
 
@@ -2848,6 +2866,7 @@ export const Shelter = __t.object("Shelter", {
   lastHitTime: __t.option(__t.timestamp()),
   lastDamagedBy: __t.option(__t.identity()),
   terrainVariant: __t.u8(),
+  taxExpiryTime: __t.timestamp(),
 });
 export type Shelter = __Infer<typeof Shelter>;
 

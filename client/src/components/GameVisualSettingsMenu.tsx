@@ -248,9 +248,9 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     maxWidth: '600px',
                     maxHeight: '80vh',
                     background: panelBg,
-                    border: '2px solid #00ff88',
+                    border: '2px solid #86be52',
                     borderRadius: '12px',
-                    boxShadow: '0 0 30px rgba(0, 255, 136, 0.3), inset 0 0 20px rgba(0, 255, 136, 0.1)',
+                    boxShadow: '0 0 30px rgba(134, 190, 82, 0.3), inset 0 0 20px rgba(134, 190, 82, 0.1)',
                     position: 'relative',
                     overflow: 'hidden',
                 }}
@@ -263,7 +263,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     left: 0,
                     right: 0,
                     height: '2px',
-                    background: 'linear-gradient(90deg, transparent, #00ff88, transparent)',
+                    background: 'linear-gradient(90deg, transparent, #86be52, transparent)',
                     animation: 'scanLine 3s linear infinite',
                 }} />
                 
@@ -272,10 +272,10 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                         style={{
                             fontFamily: '"Press Start 2P", cursive',
                             fontSize: '22px',
-                            color: '#00ff88',
+                            color: '#86be52',
                             textAlign: 'left',
                             marginBottom: '8px',
-                            textShadow: '0 0 10px rgba(0, 255, 136, 0.8), 0 0 20px rgba(0, 255, 136, 0.4)',
+                            textShadow: '0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.4)',
                             animation: 'glow 2s ease-in-out infinite alternate',
                             letterSpacing: '2px',
                         }}
@@ -286,11 +286,11 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                         style={{
                             fontFamily: '"Press Start 2P", cursive',
                             fontSize: '12px',
-                            color: '#00ff88',
+                            color: '#86be52',
                             textAlign: 'left',
                             letterSpacing: '1px',
                             opacity: 0.9,
-                            textShadow: '0 0 8px rgba(0, 255, 136, 0.6)',
+                            textShadow: '0 0 8px rgba(134, 190, 82, 0.6)',
                         }}
                     >
                         Neural Imaging Processing Interface v0.82
@@ -312,7 +312,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                         marginBottom: '18px',
                         padding: '14px',
                         borderRadius: '10px',
-                        border: '1px solid rgba(0, 255, 136, 0.35)',
+                        border: '1px solid rgba(134, 190, 82, 0.35)',
                         background: 'linear-gradient(135deg, rgba(10, 35, 45, 0.72), rgba(8, 24, 32, 0.84))',
                     }}>
                         <div style={{
@@ -344,7 +344,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                         ? '0 0 12px rgba(255, 210, 122, 0.35)'
                                         : activeVisualPreset === 'performance'
                                           ? '0 0 12px rgba(100, 210, 255, 0.35)'
-                                          : '0 0 12px rgba(0, 255, 136, 0.25)',
+                                          : '0 0 12px rgba(134, 190, 82, 0.25)',
                             }}
                         >
                             {activeVisualPreset === 'advanced' && '● Active: Advanced Graphics'}
@@ -378,11 +378,11 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     fontFamily: '"Press Start 2P", cursive',
                                     border:
                                         activeVisualPreset === 'advanced'
-                                            ? '2px solid #00ff88'
-                                            : '2px solid rgba(0, 255, 136, 0.28)',
+                                            ? '2px solid #86be52'
+                                            : '2px solid rgba(134, 190, 82, 0.28)',
                                     boxShadow:
                                         activeVisualPreset === 'advanced'
-                                            ? '0 0 18px rgba(0, 255, 136, 0.45), inset 0 0 12px rgba(0, 255, 136, 0.12)'
+                                            ? '0 0 18px rgba(134, 190, 82, 0.45), inset 0 0 12px rgba(134, 190, 82, 0.12)'
                                             : 'none',
                                     background:
                                         activeVisualPreset === 'advanced'
@@ -498,7 +498,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     style={{
                                         marginRight: '10px',
                                         transform: 'scale(1.5)',
-                                        accentColor: '#00ff88',
+                                        accentColor: '#86be52',
                                     }}
                                 />
                                 ENABLE ALL SHADOWS
@@ -1282,7 +1282,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                         style={{
                             background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
                             color: '#ffffff',
-                            border: '2px solid #00aaff',
+                            border: '2px solid #5c8e32',
                             borderRadius: '8px',
                             padding: '15px 30px',
                             fontFamily: '"Press Start 2P", cursive',
@@ -1316,10 +1316,10 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     
                     @keyframes glow {
                         0% { 
-                            text-shadow: 0 0 10px rgba(0, 255, 136, 0.8), 0 0 20px rgba(0, 255, 136, 0.4);
+                            text-shadow: 0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.4);
                         }
                         100% { 
-                            text-shadow: 0 0 15px rgba(0, 255, 136, 1), 0 0 30px rgba(0, 255, 136, 0.6);
+                            text-shadow: 0 0 15px rgba(134, 190, 82, 1), 0 0 30px rgba(134, 190, 82, 0.6);
                         }
                     }
                     
@@ -1331,24 +1331,24 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     .visual-cortex-scroll::-webkit-scrollbar-track {
                         background: rgba(0, 20, 40, 0.8);
                         border-radius: 4px;
-                        border: 1px solid rgba(0, 255, 136, 0.2);
+                        border: 1px solid rgba(134, 190, 82, 0.2);
                     }
                     
                     .visual-cortex-scroll::-webkit-scrollbar-thumb {
-                        background: linear-gradient(180deg, #00ff88 0%, #00aa66 100%);
+                        background: linear-gradient(180deg, #86be52 0%, #00aa66 100%);
                         border-radius: 4px;
-                        box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+                        box-shadow: 0 0 8px rgba(134, 190, 82, 0.5);
                     }
                     
                     .visual-cortex-scroll::-webkit-scrollbar-thumb:hover {
                         background: linear-gradient(180deg, #00ffaa 0%, #00cc88 100%);
-                        box-shadow: 0 0 12px rgba(0, 255, 136, 0.8);
+                        box-shadow: 0 0 12px rgba(134, 190, 82, 0.8);
                     }
                     
                     /* Firefox scrollbar */
                     .visual-cortex-scroll {
                         scrollbar-width: thin;
-                        scrollbar-color: #00ff88 rgba(0, 20, 40, 0.8);
+                        scrollbar-color: #86be52 rgba(0, 20, 40, 0.8);
                     }
                 `}</style>
             </div>

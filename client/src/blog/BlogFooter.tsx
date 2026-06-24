@@ -62,7 +62,7 @@ const BlogFooter: React.FC = () => {
                 transform: 'translateX(-50%)',
                 width: '16px',
                 height: '16px',
-                background: 'linear-gradient(135deg, #00aaff 0%, #0066cc 100%)',
+                background: 'linear-gradient(135deg, #5c8e32 0%, #0066cc 100%)',
                 borderRadius: '50%',
                 border: '2px solid rgba(0, 0, 0, 0.95)',
                 boxShadow: '0 0 15px rgba(0, 170, 255, 0.5)',
@@ -111,15 +111,15 @@ const BlogFooter: React.FC = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
-                                color: '#00aaff',
+                                color: '#5c8e32',
                                 textDecoration: 'none',
                                 transition: 'color 0.2s ease',
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#00ddff';
+                                e.currentTarget.style.color = '#86be52';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '#00aaff';
+                                e.currentTarget.style.color = '#5c8e32';
                             }}
                         >
                             Martin Erlic
@@ -142,7 +142,7 @@ const BlogFooter: React.FC = () => {
                 }}>
                     <h4 style={{
                         fontSize: '14px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         fontWeight: '600',
                         textTransform: 'uppercase',
                         letterSpacing: '2px',
@@ -183,7 +183,7 @@ const BlogFooter: React.FC = () => {
                                             cursor: 'pointer',
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.color = '#00aaff';
+                                            e.currentTarget.style.color = '#5c8e32';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
@@ -207,7 +207,7 @@ const BlogFooter: React.FC = () => {
                                             cursor: 'pointer',
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.color = '#00aaff';
+                                            e.currentTarget.style.color = '#5c8e32';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
@@ -233,7 +233,7 @@ const BlogFooter: React.FC = () => {
                                             textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.color = '#00aaff';
+                                            e.currentTarget.style.color = '#5c8e32';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
@@ -253,7 +253,7 @@ const BlogFooter: React.FC = () => {
                 }}>
                     <h4 style={{
                         fontSize: '14px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         fontWeight: '600',
                         textTransform: 'uppercase',
                         letterSpacing: '2px',
@@ -289,7 +289,7 @@ const BlogFooter: React.FC = () => {
                                         cursor: 'pointer',
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.color = '#00aaff';
+                                        e.currentTarget.style.color = '#5c8e32';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
@@ -310,7 +310,7 @@ const BlogFooter: React.FC = () => {
                 }}>
                     <h4 style={{
                         fontSize: '14px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         fontWeight: '600',
                         textTransform: 'uppercase',
                         letterSpacing: '2px',
@@ -354,10 +354,10 @@ const BlogFooter: React.FC = () => {
                                     boxShadow: '0 0 10px rgba(0, 170, 255, 0.2)',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.borderColor = '#00aaff';
+                                    e.currentTarget.style.borderColor = '#5c8e32';
                                     e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.2)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.color = '#00aaff';
+                                    e.currentTarget.style.color = '#5c8e32';
                                     e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 170, 255, 0.5)';
                                 }}
                                 onMouseLeave={(e) => {
@@ -386,8 +386,8 @@ const BlogFooter: React.FC = () => {
                             height: '50px',
                             borderRadius: '50%',
                             border: '2px solid rgba(0, 170, 255, 0.6)',
-                            background: 'linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 100, 200, 0.4) 100%)',
-                            color: '#00aaff',
+                            background: 'linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(45, 71, 21, 0.4) 100%)',
+                            color: '#5c8e32',
                             fontSize: '18px',
                             fontWeight: 'bold',
                             cursor: 'pointer',
@@ -403,7 +403,7 @@ const BlogFooter: React.FC = () => {
                             e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), 0 0 15px rgba(0,170,255,0.6)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 100, 200, 0.4) 100%)';
+                            e.currentTarget.style.backgroundColor = 'linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(45, 71, 21, 0.4) 100%)';
                             e.currentTarget.style.borderColor = 'rgba(0, 170, 255, 0.6)';
                             e.currentTarget.style.transform = 'translateY(0)';
                             e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(0,170,255,0.4)';

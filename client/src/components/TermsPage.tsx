@@ -22,7 +22,7 @@ const TermsPage: React.FC = () => {
             }}>
                 <h1 style={{
                     fontSize: '48px',
-                    color: '#00aaff',
+                    color: '#5c8e32',
                     marginBottom: '20px',
                     textAlign: 'center',
                     fontWeight: 'bold',
@@ -59,7 +59,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -76,7 +76,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -104,7 +104,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -134,7 +134,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -151,7 +151,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -168,7 +168,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -185,7 +185,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -202,7 +202,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -219,7 +219,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -236,7 +236,7 @@ const TermsPage: React.FC = () => {
                 <section style={{ marginBottom: '40px' }}>
                     <h2 style={{
                         fontSize: '24px',
-                        color: '#00aaff',
+                        color: '#5c8e32',
                         marginBottom: '20px',
                         fontWeight: 'bold',
                     }}>
@@ -248,7 +248,7 @@ const TermsPage: React.FC = () => {
                     }}>
                         If you have any questions about these Terms of Service, please contact us at:{' '}
                         <a href="mailto:martin.erlic@gmail.com" style={{
-                            color: '#00aaff',
+                            color: '#5c8e32',
                             textDecoration: 'none',
                         }}>
                             martin.erlic@gmail.com

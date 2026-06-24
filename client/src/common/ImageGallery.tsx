@@ -96,11 +96,11 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           top: '20px',
           right: '20px',
           background: 'rgba(0, 170, 255, 0.2)',
-          border: '2px solid #00aaff',
+          border: '2px solid #5c8e32',
           borderRadius: '50%',
           width: '50px',
           height: '50px',
-          color: '#00aaff',
+          color: '#5c8e32',
           fontSize: '24px',
           fontWeight: 'bold',
           cursor: 'pointer',
@@ -113,14 +113,14 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.4)';
-          e.currentTarget.style.borderColor = '#00ddff';
-          e.currentTarget.style.color = '#00ddff';
+          e.currentTarget.style.borderColor = '#86be52';
+          e.currentTarget.style.color = '#86be52';
           e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 170, 255, 0.5)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.2)';
-          e.currentTarget.style.borderColor = '#00aaff';
-          e.currentTarget.style.color = '#00aaff';
+          e.currentTarget.style.borderColor = '#5c8e32';
+          e.currentTarget.style.color = '#5c8e32';
           e.currentTarget.style.boxShadow = 'none';
         }}
       >
@@ -144,7 +144,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
             position: 'relative',
             borderRadius: '8px',
             overflow: 'hidden',
-            border: '2px solid #00aaff',
+            border: '2px solid #5c8e32',
             boxShadow: '0 0 30px rgba(0, 170, 255, 0.4)',
             lineHeight: 0,
           }}
@@ -207,11 +207,11 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               top: '50%',
               transform: 'translateY(-50%)',
               background: 'rgba(0, 170, 255, 0.2)',
-              border: '2px solid #00aaff',
+              border: '2px solid #5c8e32',
               borderRadius: '50%',
               width: '60px',
               height: '60px',
-              color: '#00aaff',
+              color: '#5c8e32',
               fontSize: '28px',
               fontWeight: 'bold',
               cursor: 'pointer',
@@ -224,14 +224,14 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.4)';
-              e.currentTarget.style.borderColor = '#00ddff';
-              e.currentTarget.style.color = '#00ddff';
+              e.currentTarget.style.borderColor = '#86be52';
+              e.currentTarget.style.color = '#86be52';
               e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 170, 255, 0.5)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.2)';
-              e.currentTarget.style.borderColor = '#00aaff';
-              e.currentTarget.style.color = '#00aaff';
+              e.currentTarget.style.borderColor = '#5c8e32';
+              e.currentTarget.style.color = '#5c8e32';
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
@@ -247,11 +247,11 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               top: '50%',
               transform: 'translateY(-50%)',
               background: 'rgba(0, 170, 255, 0.2)',
-              border: '2px solid #00aaff',
+              border: '2px solid #5c8e32',
               borderRadius: '50%',
               width: '60px',
               height: '60px',
-              color: '#00aaff',
+              color: '#5c8e32',
               fontSize: '28px',
               fontWeight: 'bold',
               cursor: 'pointer',
@@ -264,14 +264,14 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.4)';
-              e.currentTarget.style.borderColor = '#00ddff';
-              e.currentTarget.style.color = '#00ddff';
+              e.currentTarget.style.borderColor = '#86be52';
+              e.currentTarget.style.color = '#86be52';
               e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 170, 255, 0.5)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 170, 255, 0.2)';
-              e.currentTarget.style.borderColor = '#00aaff';
-              e.currentTarget.style.color = '#00aaff';
+              e.currentTarget.style.borderColor = '#5c8e32';
+              e.currentTarget.style.color = '#5c8e32';
               e.currentTarget.style.boxShadow = 'none';
             }}
           >

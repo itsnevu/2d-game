@@ -4,10 +4,10 @@ import { useSettings } from '../contexts/SettingsContext';
 
 // Style constants - match DayNightCycleTracker uplink theme exactly
 const UI_BG_COLOR = 'linear-gradient(180deg, rgba(15, 25, 20, 0.98) 0%, rgba(20, 35, 30, 0.95) 100%)';
-const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #00d4ff, #4ade80, #c084fc, #00d4ff)';
-const ACCENT_CYAN = '#00d4ff';
-const ACCENT_GREEN = '#4ade80';
-const ACCENT_PURPLE = '#c084fc';
+const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #5c8e32, #c4e89c, #86be52, #5c8e32)';
+const ACCENT_CYAN = '#5c8e32';
+const ACCENT_GREEN = '#c4e89c';
+const ACCENT_PURPLE = '#86be52';
 const UI_FONT_FAMILY = "'Courier New', 'Consolas', monospace";
 
 // Zone-specific colors for visual feedback
@@ -75,7 +75,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ text, children }) => {
                         fontSize: '9px',
                         fontFamily: UI_FONT_FAMILY,
                         border: `2px solid ${ACCENT_CYAN}`,
-                        boxShadow: '0 0 15px rgba(0, 212, 255, 0.5)',
+                        boxShadow: '0 0 15px rgba(92, 142, 50, 0.5)',
                         zIndex: 10000,
                         whiteSpace: 'nowrap',
                         pointerEvents: 'none'
@@ -307,7 +307,7 @@ const MusicControlPanel: React.FC<MusicControlPanelProps> = ({
                 backgroundSize: '300% 300%',
                 animation: 'uplinkGradientShift 4s ease infinite',
                 borderRadius: '10px',
-                boxShadow: '0 0 20px rgba(0, 212, 255, 0.3), inset 0 0 15px rgba(0, 212, 255, 0.1)',
+                boxShadow: '0 0 20px rgba(92, 142, 50, 0.3), inset 0 0 15px rgba(92, 142, 50, 0.1)',
             }}>
                 <div style={{
                     background: UI_BG_COLOR,
@@ -322,8 +322,8 @@ const MusicControlPanel: React.FC<MusicControlPanelProps> = ({
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         padding: '8px 12px',
-                        background: 'rgba(0, 212, 255, 0.08)',
-                        borderBottom: '1px solid rgba(0, 212, 255, 0.25)',
+                        background: 'rgba(92, 142, 50, 0.08)',
+                        borderBottom: '1px solid rgba(92, 142, 50, 0.25)',
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <span style={{ fontSize: '12px' }}>🎵</span>
@@ -433,7 +433,7 @@ const MusicControlPanel: React.FC<MusicControlPanelProps> = ({
                                             flex: 1,
                                             minWidth: 0,
                                             height: '4px',
-                                            background: 'rgba(0, 212, 255, 0.3)',
+                                            background: 'rgba(92, 142, 50, 0.3)',
                                             outline: 'none',
                                             borderRadius: '2px',
                                             cursor: 'pointer',
@@ -448,7 +448,7 @@ const MusicControlPanel: React.FC<MusicControlPanelProps> = ({
                             style={{
                                 maxHeight: '90px',
                                 overflowY: 'auto',
-                                border: '1px solid rgba(0, 212, 255, 0.25)',
+                                border: '1px solid rgba(92, 142, 50, 0.25)',
                                 borderRadius: '4px',
                                 padding: '6px',
                                 background: 'rgba(0, 0, 0, 0.3)',
@@ -479,7 +479,7 @@ const MusicControlPanel: React.FC<MusicControlPanelProps> = ({
                                         }}
                                         onMouseEnter={(e) => {
                                             if (!isCurrentTrack) {
-                                                e.currentTarget.style.background = 'rgba(0, 212, 255, 0.15)';
+                                                e.currentTarget.style.background = 'rgba(92, 142, 50, 0.15)';
                                             }
                                         }}
                                         onMouseLeave={(e) => {
@@ -515,8 +515,8 @@ const MusicControlPanel: React.FC<MusicControlPanelProps> = ({
                 }
                 .music-panel-scrollable::-webkit-scrollbar { width: 6px; }
                 .music-panel-scrollable::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 3px; }
-                .music-panel-scrollable::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00d4ff, #4ade80); border-radius: 3px; }
-                .music-panel-scrollable { scrollbar-width: thin; scrollbar-color: #00d4ff rgba(0,0,0,0.3); }
+                .music-panel-scrollable::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #5c8e32, #c4e89c); border-radius: 3px; }
+                .music-panel-scrollable { scrollbar-width: thin; scrollbar-color: #5c8e32 rgba(0,0,0,0.3); }
             `}</style>
         </div>
     );

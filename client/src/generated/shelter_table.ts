@@ -24,4 +24,5 @@ export default __t.row({
   lastHitTime: __t.option(__t.timestamp()).name("last_hit_time"),
   lastDamagedBy: __t.option(__t.identity()).name("last_damaged_by"),
   terrainVariant: __t.u8().name("terrain_variant"),
+  taxExpiryTime: __t.timestamp().name("tax_expiry_time"),
 });

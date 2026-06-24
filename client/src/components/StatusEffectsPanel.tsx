@@ -104,7 +104,7 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
   const getEffectColor = (type: string, effectId?: string) => {
     // Special cases for runestones
     if (effectId === 'blue_runestone') {
-      return '#00d4ff'; // Bright cyan/blue
+      return '#5c8e32'; // Bright cyan/blue
     }
     if (effectId === 'production_rune') {
       return '#DC143C'; // Deep crimson red (distinct from negative)
@@ -118,10 +118,10 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
     }
     // Hot combat ladle - fiery orange
     if (effectId === 'hot_combat_ladle') {
-      return '#ff8c00'; // Deep orange (fire/heat themed)
+      return '#5c8e32'; // Deep orange (fire/heat themed)
     }
     switch (type) {
-      case 'positive': return '#00ff88';
+      case 'positive': return '#86be52';
       case 'negative': return '#ff4444';
       default: return '#ffaa00';
     }
@@ -130,7 +130,7 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
   const getEffectGlow = (type: string, effectId?: string) => {
     // Special cases for runestones
     if (effectId === 'blue_runestone') {
-      return '0 0 8px rgba(0, 212, 255, 0.6)';
+      return '0 0 8px rgba(92, 142, 50, 0.6)';
     }
     if (effectId === 'production_rune') {
       return '0 0 8px rgba(220, 20, 60, 0.6)'; // Deep crimson glow
@@ -144,12 +144,12 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
     }
     // Hot combat ladle - fiery orange glow
     if (effectId === 'hot_combat_ladle') {
-      return '0 0 8px rgba(255, 140, 0, 0.6)'; // Fiery orange glow
+      return '0 0 8px rgba(92, 142, 50, 0.6)'; // Fiery orange glow
     }
     switch (type) {
-      case 'positive': return '0 0 8px rgba(0, 255, 136, 0.6)';
+      case 'positive': return '0 0 8px rgba(134, 190, 82, 0.6)';
       case 'negative': return '0 0 8px rgba(255, 68, 68, 0.6)';
-      default: return '0 0 8px rgba(255, 170, 0, 0.6)';
+      default: return '0 0 8px rgba(45, 71, 21, 0.6)';
     }
   };
 
@@ -165,9 +165,9 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
       background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 40, 0.85) 100%)',
       padding: '10px 14px',
       borderRadius: '6px',
-      border: '2px solid #00d4ff',
+      border: '2px solid #5c8e32',
       backdropFilter: 'blur(5px)',
-      boxShadow: '0 0 20px rgba(0, 212, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+      boxShadow: '0 0 20px rgba(92, 142, 50, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
       zIndex: 55, // Above status bars (50) but below other UI
     }}>
       <div style={{ 
@@ -259,8 +259,8 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
                     alignItems: 'center',
                     gap: '6px',
                     fontSize: '11px',
-                    color: '#00d4ff',
-                    textShadow: '0 0 8px rgba(0, 212, 255, 0.6), 1px 1px 2px #000000',
+                    color: '#5c8e32',
+                    textShadow: '0 0 8px rgba(92, 142, 50, 0.6), 1px 1px 2px #000000',
                     letterSpacing: '0.5px'
                   }}>
                     <span>⏱</span>
@@ -318,9 +318,9 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
             {effect.duration !== undefined && effect.duration > 0 && (
               <span style={{ 
                 fontSize: '11px',
-                color: '#00d4ff',
+                color: '#5c8e32',
                 fontWeight: 'bold',
-                textShadow: '0 0 8px rgba(0, 212, 255, 0.6), 1px 1px 2px #000000',
+                textShadow: '0 0 8px rgba(92, 142, 50, 0.6), 1px 1px 2px #000000',
                 minWidth: '30px',
                 letterSpacing: '0.5px'
               }}>

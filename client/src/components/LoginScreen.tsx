@@ -78,7 +78,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                     zIndex: 1001,
                 }}
                 onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#ff8c00';
+                    e.currentTarget.style.color = '#5c8e32';
                 }}
                 onMouseLeave={(e) => {
                     e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)';
@@ -116,7 +116,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                             height: 'calc(100vh - 70px)',
                             backgroundColor: 'rgba(0, 0, 0, 0.98)',
                             backdropFilter: 'blur(20px)',
-                            borderLeft: '2px solid rgba(255, 140, 0, 0.3)',
+                            borderLeft: '2px solid rgba(92, 142, 50, 0.3)',
                             boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.5)',
                             zIndex: 1001,
                             display: 'flex',
@@ -131,7 +131,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                             <div style={{
                                 padding: '0 24px 16px',
                                 marginBottom: '12px',
-                                borderBottom: '1px solid rgba(255, 140, 0, 0.2)',
+                                borderBottom: '1px solid rgba(92, 142, 50, 0.2)',
                             }}>
                                 <p style={{
                                     fontSize: '11px',
@@ -144,7 +144,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                                 </p>
                                 <p style={{
                                     fontSize: '13px',
-                                    color: 'rgba(0, 212, 255, 0.95)',
+                                    color: 'rgba(92, 142, 50, 0.95)',
                                     margin: '0 0 12px 0',
                                     wordBreak: 'break-all',
                                     fontFamily: 'monospace',
@@ -157,8 +157,8 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                                     style={{
                                         width: '100%',
                                         padding: '10px 16px',
-                                        background: 'rgba(255, 0, 100, 0.15)',
-                                        border: '1px solid rgba(255, 0, 100, 0.4)',
+                                        background: 'rgba(45, 71, 21, 0.15)',
+                                        border: '1px solid rgba(45, 71, 21, 0.4)',
                                         borderRadius: '6px',
                                         color: 'rgba(255, 150, 180, 0.95)',
                                         fontSize: '12px',
@@ -169,12 +169,12 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                                         transition: 'all 0.2s ease',
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = 'rgba(255, 0, 100, 0.25)';
-                                        e.currentTarget.style.borderColor = 'rgba(255, 0, 100, 0.6)';
+                                        e.currentTarget.style.background = 'rgba(45, 71, 21, 0.25)';
+                                        e.currentTarget.style.borderColor = 'rgba(45, 71, 21, 0.6)';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = 'rgba(255, 0, 100, 0.15)';
-                                        e.currentTarget.style.borderColor = 'rgba(255, 0, 100, 0.4)';
+                                        e.currentTarget.style.background = 'rgba(45, 71, 21, 0.15)';
+                                        e.currentTarget.style.borderColor = 'rgba(45, 71, 21, 0.4)';
                                     }}
                                 >
                                     Log out
@@ -201,9 +201,9 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                                     borderLeft: '3px solid transparent',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.color = '#ff8c00';
-                                    e.currentTarget.style.backgroundColor = 'rgba(255, 140, 0, 0.1)';
-                                    e.currentTarget.style.borderLeftColor = '#ff8c00';
+                                    e.currentTarget.style.color = '#5c8e32';
+                                    e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.1)';
+                                    e.currentTarget.style.borderLeftColor = '#5c8e32';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
@@ -219,7 +219,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                         <button
                             onClick={handlePlayClick}
                             style={{
-                                backgroundColor: '#ff8c00',
+                                backgroundColor: '#5c8e32',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '6px',
@@ -229,19 +229,19 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                                 cursor: 'pointer',
                                 textTransform: 'uppercase',
                                 letterSpacing: '1px',
-                                boxShadow: '0 4px 12px rgba(255, 140, 0, 0.3)',
+                                boxShadow: '0 4px 12px rgba(92, 142, 50, 0.3)',
                                 transition: 'all 0.2s ease',
                                 margin: '20px 24px 0',
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = '#ff9d1a';
+                                e.currentTarget.style.backgroundColor = '#86be52';
                                 e.currentTarget.style.transform = 'translateY(-2px)';
-                                e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 140, 0, 0.4)';
+                                e.currentTarget.style.boxShadow = '0 6px 16px rgba(92, 142, 50, 0.4)';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = '#ff8c00';
+                                e.currentTarget.style.backgroundColor = '#5c8e32';
                                 e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 140, 0, 0.3)';
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(92, 142, 50, 0.3)';
                             }}
                         >
                             PLAY
@@ -608,26 +608,26 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         onClick={logout}
                         style={{
                             padding: '6px 16px',
-                            background: 'linear-gradient(135deg, rgba(255, 0, 100, 0.2) 0%, rgba(200, 0, 80, 0.3) 100%)',
-                            border: '1px solid rgba(255, 0, 100, 0.5)',
+                            background: 'linear-gradient(135deg, rgba(45, 71, 21, 0.2) 0%, rgba(45, 71, 21, 0.3) 100%)',
+                            border: '1px solid rgba(45, 71, 21, 0.5)',
                             borderRadius: '4px',
                             color: 'rgba(255, 100, 150, 0.95)',
                             fontSize: '13px',
                             fontFamily: 'monospace',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
-                            textShadow: '0 0 8px rgba(255, 0, 100, 0.4)',
-                            boxShadow: '0 2px 10px rgba(255, 0, 100, 0.2)',
+                            textShadow: '0 0 8px rgba(45, 71, 21, 0.4)',
+                            boxShadow: '0 2px 10px rgba(45, 71, 21, 0.2)',
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 0, 100, 0.4) 0%, rgba(200, 0, 80, 0.5) 100%)';
-                            e.currentTarget.style.borderColor = 'rgba(255, 0, 100, 0.8)';
-                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 0, 100, 0.4)';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(45, 71, 21, 0.4) 0%, rgba(45, 71, 21, 0.5) 100%)';
+                            e.currentTarget.style.borderColor = 'rgba(45, 71, 21, 0.8)';
+                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(45, 71, 21, 0.4)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 0, 100, 0.2) 0%, rgba(200, 0, 80, 0.3) 100%)';
-                            e.currentTarget.style.borderColor = 'rgba(255, 0, 100, 0.5)';
-                            e.currentTarget.style.boxShadow = '0 2px 10px rgba(255, 0, 100, 0.2)';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(45, 71, 21, 0.2) 0%, rgba(45, 71, 21, 0.3) 100%)';
+                            e.currentTarget.style.borderColor = 'rgba(45, 71, 21, 0.5)';
+                            e.currentTarget.style.boxShadow = '0 2px 10px rgba(45, 71, 21, 0.2)';
                         }}
                     >
                         LOG OUT
@@ -675,7 +675,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                     height: '70px',
                     backgroundColor: 'rgba(0, 0, 0, 0.95)',
                     backdropFilter: 'blur(10px)',
-                    borderBottom: '2px solid rgba(255, 140, 0, 0.3)',
+                    borderBottom: '2px solid rgba(92, 142, 50, 0.3)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -710,7 +710,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 <button
                                     onClick={scrollToTop}
                                     style={{
-                                        backgroundColor: '#ff8c00',
+                                        backgroundColor: '#5c8e32',
                                         color: 'white',
                                         border: 'none',
                                         borderRadius: '6px',
@@ -720,18 +720,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         cursor: 'pointer',
                                         textTransform: 'uppercase',
                                         letterSpacing: '1px',
-                                        boxShadow: '0 4px 12px rgba(255, 140, 0, 0.3)',
+                                        boxShadow: '0 4px 12px rgba(92, 142, 50, 0.3)',
                                         transition: 'all 0.2s ease',
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = '#ff9d1a';
+                                        e.currentTarget.style.backgroundColor = '#86be52';
                                         e.currentTarget.style.transform = 'translateY(-2px)';
-                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 140, 0, 0.4)';
+                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(92, 142, 50, 0.4)';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = '#ff8c00';
+                                        e.currentTarget.style.backgroundColor = '#5c8e32';
                                         e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 140, 0, 0.3)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(92, 142, 50, 0.3)';
                                     }}
                                 >
                                     PLAY
@@ -781,7 +781,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         letterSpacing: '1px',
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.color = '#ff8c00';
+                                        e.currentTarget.style.color = '#5c8e32';
                                         e.currentTarget.style.transform = 'translateY(-2px)';
                                     }}
                                     onMouseLeave={(e) => {
@@ -797,7 +797,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             <button
                                 onClick={scrollToTop}
                                 style={{
-                                    backgroundColor: '#ff8c00',
+                                    backgroundColor: '#5c8e32',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '6px',
@@ -807,18 +807,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     cursor: 'pointer',
                                     textTransform: 'uppercase',
                                     letterSpacing: '1px',
-                                    boxShadow: '0 4px 12px rgba(255, 140, 0, 0.3)',
+                                    boxShadow: '0 4px 12px rgba(92, 142, 50, 0.3)',
                                     transition: 'all 0.2s ease',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#ff9d1a';
+                                    e.currentTarget.style.backgroundColor = '#86be52';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 140, 0, 0.4)';
+                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(92, 142, 50, 0.4)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#ff8c00';
+                                    e.currentTarget.style.backgroundColor = '#5c8e32';
                                     e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 140, 0, 0.3)';
+                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(92, 142, 50, 0.3)';
                                 }}
                             >
                                 PLAY
@@ -969,7 +969,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         style={{
                                             padding: '16px 32px',
                                             border: '2px solid rgba(255, 165, 0, 0.6)',
-                                            background: 'linear-gradient(135deg, #ff8c00, #cc6400)',
+                                            background: 'linear-gradient(135deg, #5c8e32, #2d4715)',
                                             color: 'white',
                                             fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
                                             fontSize: '16px',
@@ -1024,7 +1024,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         width: '32px',
                                         height: '32px',
                                         border: '3px solid rgba(255, 165, 0, 0.3)',
-                                        borderTop: '3px solid #ff8c00',
+                                        borderTop: '3px solid #5c8e32',
                                         borderRadius: '50%',
                                         animation: 'spin 1s linear infinite',
                                     }} />
@@ -1082,9 +1082,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 outline: 'none',
                                             }}
                                             onFocus={(e) => {
-                                                e.currentTarget.style.borderColor = '#ff8c00';
+                                                e.currentTarget.style.borderColor = '#5c8e32';
                                                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-                                                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 140, 0, 0.2)';
+                                                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(92, 142, 50, 0.2)';
                                             }}
                                             onBlur={(e) => {
                                                 e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
@@ -1126,11 +1126,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         border: '2px solid rgba(255, 165, 0, 0.6)',
                                         backgroundColor: (() => {
                                             const isDisabled = authError || (connectionError && !storedUsername) || localError;
-                                            return isDisabled ? 'rgba(100, 50, 50, 0.6)' : 'linear-gradient(135deg, rgba(255, 140, 0, 0.9), rgba(200, 100, 0, 0.9))';
+                                            return isDisabled ? 'rgba(100, 50, 50, 0.6)' : 'linear-gradient(135deg, rgba(92, 142, 50, 0.9), rgba(200, 100, 0, 0.9))';
                                         })(),
                                         background: (() => {
                                             const isDisabled = authError || (connectionError && !storedUsername) || localError;
-                                            return isDisabled ? 'rgba(100, 50, 50, 0.6)' : 'linear-gradient(135deg, #ff8c00, #cc6400)';
+                                            return isDisabled ? 'rgba(100, 50, 50, 0.6)' : 'linear-gradient(135deg, #5c8e32, #2d4715)';
                                         })(),
                                         color: (() => {
                                             const isDisabled = authError || (connectionError && !storedUsername) || localError;
@@ -1200,7 +1200,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 smoothScrollTo('[data-about-section]');
                                             }}
                                             style={{
-                                                background: 'linear-gradient(90deg, #ffe0b2, #ffd180 40%, #ff8c00 90%, #cc6400)',
+                                                background: 'linear-gradient(90deg, #c4e89c, #86be52 40%, #5c8e32 90%, #2d4715)',
                                                 border: 'none',
                                                 color: '#852100',
                                                 fontWeight: 800,
@@ -1220,12 +1220,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             className={isGleaming ? 'gleam-animating' : ''}
                                             onMouseEnter={(e) => {
                                                 e.currentTarget.style.background =
-                                                    'linear-gradient(92deg, #fff3e0, #ffb94f 50%, #ff8c00 90%, #e67c00)';
+                                                    'linear-gradient(92deg, #fff3e0, #ffb94f 50%, #5c8e32 90%, #2d4715)';
                                                 e.currentTarget.style.color = '#7a2200';
                                                 e.currentTarget.style.boxShadow = '0 0 21px 2px rgba(255,220,120,0.48), 0 3px 12px 0 rgba(0,0,0,0.22)';
                                             }}
                                             onMouseLeave={(e) => {
-                                                e.currentTarget.style.background = 'linear-gradient(90deg, #ffe0b2, #ffd180 40%, #ff8c00 90%, #cc6400)';
+                                                e.currentTarget.style.background = 'linear-gradient(90deg, #c4e89c, #86be52 40%, #5c8e32 90%, #2d4715)';
                                                 e.currentTarget.style.color = '#852100';
                                                 e.currentTarget.style.boxShadow = '0 1.5px 11px 2px rgba(0,0,0,0.08)';
                                             }}
@@ -1305,7 +1305,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             }}
                                             style={{
                                                 background: 'rgba(0, 0, 0, 0.5)',
-                                                border: '1px solid rgba(255, 140, 0, 0.6)',
+                                                border: '1px solid rgba(92, 142, 50, 0.6)',
                                                 color: '#ffb366',
                                                 fontWeight: 600,
                                                 padding: '6px 16px',
@@ -1314,22 +1314,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 cursor: 'pointer',
                                                 fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
                                                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                boxShadow: '0 0 12px rgba(255, 140, 0, 0.2)',
+                                                boxShadow: '0 0 12px rgba(92, 142, 50, 0.2)',
                                                 transition: 'all 0.2s ease',
                                                 letterSpacing: '0.8px',
                                                 textTransform: 'uppercase',
                                             }}
                                             onMouseEnter={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.9)';
+                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.9)';
                                                 e.currentTarget.style.color = '#ffcc99';
-                                                e.currentTarget.style.background = 'rgba(255, 140, 0, 0.25)';
-                                                e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 140, 0, 0.35)';
+                                                e.currentTarget.style.background = 'rgba(92, 142, 50, 0.25)';
+                                                e.currentTarget.style.boxShadow = '0 0 16px rgba(92, 142, 50, 0.35)';
                                             }}
                                             onMouseLeave={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.6)';
+                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
                                                 e.currentTarget.style.color = '#ffb366';
                                                 e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)';
-                                                e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 140, 0, 0.2)';
+                                                e.currentTarget.style.boxShadow = '0 0 12px rgba(92, 142, 50, 0.2)';
                                             }}
                                         >
                                             System Requirements
@@ -1343,7 +1343,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             }}
                                             style={{
                                                 background: 'rgba(0, 0, 0, 0.5)',
-                                                border: '1px solid rgba(255, 140, 0, 0.6)',
+                                                border: '1px solid rgba(92, 142, 50, 0.6)',
                                                 color: '#ffb366',
                                                 fontWeight: 600,
                                                 padding: '6px 16px',
@@ -1352,22 +1352,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 cursor: 'pointer',
                                                 fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
                                                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                boxShadow: '0 0 12px rgba(255, 140, 0, 0.2)',
+                                                boxShadow: '0 0 12px rgba(92, 142, 50, 0.2)',
                                                 transition: 'all 0.2s ease',
                                                 letterSpacing: '0.8px',
                                                 textTransform: 'uppercase',
                                             }}
                                             onMouseEnter={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.9)';
+                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.9)';
                                                 e.currentTarget.style.color = '#ffcc99';
-                                                e.currentTarget.style.background = 'rgba(255, 140, 0, 0.25)';
-                                                e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 140, 0, 0.35)';
+                                                e.currentTarget.style.background = 'rgba(92, 142, 50, 0.25)';
+                                                e.currentTarget.style.boxShadow = '0 0 16px rgba(92, 142, 50, 0.35)';
                                             }}
                                             onMouseLeave={(e) => {
-                                                e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.6)';
+                                                e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
                                                 e.currentTarget.style.color = '#ffb366';
                                                 e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)';
-                                                e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 140, 0, 0.2)';
+                                                e.currentTarget.style.boxShadow = '0 0 12px rgba(92, 142, 50, 0.2)';
                                             }}
                                         >
                                             FAQ
@@ -1428,7 +1428,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         maxWidth: '95vw',
                                         maxHeight: '85vh',
                                         background: 'rgba(40, 40, 60, 0.98)',
-                                        border: '2px solid rgba(255, 140, 0, 0.4)',
+                                        border: '2px solid rgba(92, 142, 50, 0.4)',
                                         borderRadius: '16px',
                                         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
                                         fontFamily: UI_FONT_FAMILY,
@@ -1440,7 +1440,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 >
                                     <h3 style={{
                                         margin: '0 0 20px 0',
-                                        color: '#ff8c00',
+                                        color: '#5c8e32',
                                         fontSize: '20px',
                                         fontWeight: 700,
                                         textTransform: 'uppercase',
@@ -1475,7 +1475,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         style={{
                                             marginTop: '16px',
                                             padding: '10px 24px',
-                                            background: 'linear-gradient(90deg, #ffe0b2, #ff8c00 90%, #cc6400)',
+                                            background: 'linear-gradient(90deg, #c4e89c, #5c8e32 90%, #2d4715)',
                                             border: 'none',
                                             color: '#852100',
                                             fontWeight: 700,
@@ -1511,7 +1511,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     style={{
                                         padding: '12px 24px',
                                         border: '1px solid rgba(255, 255, 255, 0.3)',
-                                        backgroundColor: 'rgba(255, 140, 0, 0.8)', // Orange for retry
+                                        backgroundColor: 'rgba(92, 142, 50, 0.8)', // Orange for retry
                                         color: 'white',
                                         fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
                                         fontSize: '14px',
@@ -1575,7 +1575,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 }}>
                                     <div style={{
                                         fontSize: '14px',
-                                        color: '#ff8c00',
+                                        color: '#5c8e32',
                                         fontWeight: '600',
                                         textTransform: 'uppercase',
                                         letterSpacing: '4px',
@@ -1624,14 +1624,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         maxWidth: '700px',
                                         margin: '24px auto 0',
                                     }}>
-                                        Want to play offline solo? Clone the repo, follow the <a href="https://github.com/SeloSlav/vibe-coding-starter-pack-2d-multiplayer-survival/blob/main/README.md" target="_blank" rel="noopener noreferrer" style={{ color: '#ff8c00', textDecoration: 'underline' }}>Quick Local Setup in the README</a>, and play fully offline. Run <code style={{ backgroundColor: 'rgba(0,0,0,0.4)', padding: '2px 6px', borderRadius: '4px', fontSize: '14px' }}>git pull</code> when you want updates.{' '}
+                                        Want to play offline solo? Clone the repo, follow the <a href="https://github.com/SeloSlav/vibe-coding-starter-pack-2d-multiplayer-survival/blob/main/README.md" target="_blank" rel="noopener noreferrer" style={{ color: '#5c8e32', textDecoration: 'underline' }}>Quick Local Setup in the README</a>, and play fully offline. Run <code style={{ backgroundColor: 'rgba(0,0,0,0.4)', padding: '2px 6px', borderRadius: '4px', fontSize: '14px' }}>git pull</code> when you want updates.{' '}
                                         <button
                                             type="button"
                                             onClick={() => smoothScrollTo('[data-faq-section]')}
                                             style={{
                                                 background: 'none',
                                                 border: 'none',
-                                                color: '#ff8c00',
+                                                color: '#5c8e32',
                                                 textDecoration: 'underline',
                                                 cursor: 'pointer',
                                                 fontWeight: 600,
@@ -1662,7 +1662,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 }}>
                                     <div style={{
                                         fontSize: '14px',
-                                        color: '#ff8c00',
+                                        color: '#5c8e32',
                                         fontWeight: '600',
                                         textTransform: 'uppercase',
                                         letterSpacing: '4px',
@@ -1707,7 +1707,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 }}>
                                     <div style={{
                                         fontSize: '14px',
-                                        color: '#ff8c00',
+                                        color: '#5c8e32',
                                         fontWeight: '600',
                                         textTransform: 'uppercase',
                                         letterSpacing: '4px',
@@ -1751,7 +1751,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 }}>
                                     <div style={{
                                         fontSize: '14px',
-                                        color: '#ff8c00',
+                                        color: '#5c8e32',
                                         fontWeight: '600',
                                         textTransform: 'uppercase',
                                         letterSpacing: '4px',
@@ -1805,8 +1805,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                     }}
                                                     onMouseEnter={(e) => {
                                                         e.currentTarget.style.transform = 'translateY(-4px)';
-                                                        e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.5)';
-                                                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(255, 140, 0, 0.2)';
+                                                        e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.5)';
+                                                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(92, 142, 50, 0.2)';
                                                     }}
                                                     onMouseLeave={(e) => {
                                                         e.currentTarget.style.transform = 'translateY(0)';
@@ -1836,7 +1836,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
                                                     <div style={{
                                                         fontSize: '12px',
-                                                        color: '#ff8c00',
+                                                        color: '#5c8e32',
                                                         marginBottom: '8px',
                                                         fontWeight: '600',
                                                     }}>
@@ -1865,7 +1865,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
                                                     <div style={{
                                                         fontSize: '14px',
-                                                        color: '#ff8c00',
+                                                        color: '#5c8e32',
                                                         fontWeight: '600',
                                                         display: 'flex',
                                                         alignItems: 'center',
@@ -1886,7 +1886,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         <button
                                             onClick={() => window.location.href = '/blog'}
                                             style={{
-                                                backgroundColor: '#ff8c00',
+                                                backgroundColor: '#5c8e32',
                                                 color: 'white',
                                                 border: 'none',
                                                 borderRadius: '8px',
@@ -1896,18 +1896,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 cursor: 'pointer',
                                                 textTransform: 'uppercase',
                                                 letterSpacing: '1px',
-                                                boxShadow: '0 4px 16px rgba(255, 140, 0, 0.3)',
+                                                boxShadow: '0 4px 16px rgba(92, 142, 50, 0.3)',
                                                 transition: 'all 0.3s ease',
                                             }}
                                             onMouseEnter={(e) => {
-                                                e.currentTarget.style.backgroundColor = '#ff9d1a';
+                                                e.currentTarget.style.backgroundColor = '#86be52';
                                                 e.currentTarget.style.transform = 'translateY(-2px)';
-                                                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 140, 0, 0.4)';
+                                                e.currentTarget.style.boxShadow = '0 6px 20px rgba(92, 142, 50, 0.4)';
                                             }}
                                             onMouseLeave={(e) => {
-                                                e.currentTarget.style.backgroundColor = '#ff8c00';
+                                                e.currentTarget.style.backgroundColor = '#5c8e32';
                                                 e.currentTarget.style.transform = 'translateY(0)';
-                                                e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 140, 0, 0.3)';
+                                                e.currentTarget.style.boxShadow = '0 4px 16px rgba(92, 142, 50, 0.3)';
                                             }}
                                         >
                                             View All Blog Posts
@@ -1931,7 +1931,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 }}>
                                     <div style={{
                                         fontSize: '14px',
-                                        color: '#ff8c00',
+                                        color: '#5c8e32',
                                         fontWeight: '600',
                                         textTransform: 'uppercase',
                                         letterSpacing: '4px',
@@ -1978,7 +1978,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                             fontFamily: 'monospace',
                                                             fontSize: '14px',
                                                             color: '#ffb366',
-                                                            border: '1px solid rgba(255, 140, 0, 0.4)',
+                                                            border: '1px solid rgba(92, 142, 50, 0.4)',
                                                             overflowX: 'auto',
                                                         }}>
                                                             git clone https://github.com/SeloSlav/vibe-coding-starter-pack-2d-multiplayer-survival.git
@@ -2053,7 +2053,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                             justifyContent: 'space-between',
                                                             gap: '12px',
                                                             padding: 'clamp(16px, 3vw, 24px) clamp(20px, 4vw, 32px)',
-                                                            background: isExpanded ? 'rgba(255, 140, 0, 0.08)' : 'none',
+                                                            background: isExpanded ? 'rgba(92, 142, 50, 0.08)' : 'none',
                                                             border: 'none',
                                                             cursor: 'pointer',
                                                             textAlign: 'left',
@@ -2061,7 +2061,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                             transition: 'background 0.2s ease',
                                                         }}
                                                         onMouseEnter={(e) => {
-                                                            if (!isExpanded) e.currentTarget.style.background = 'rgba(255, 140, 0, 0.06)';
+                                                            if (!isExpanded) e.currentTarget.style.background = 'rgba(92, 142, 50, 0.06)';
                                                         }}
                                                         onMouseLeave={(e) => {
                                                             if (!isExpanded) e.currentTarget.style.background = 'none';
@@ -2069,7 +2069,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                     >
                                                         <h3 style={{
                                                             fontSize: '18px',
-                                                            color: '#ff8c00',
+                                                            color: '#5c8e32',
                                                             margin: 0,
                                                             fontWeight: 'bold',
                                                             textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
@@ -2081,7 +2081,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                         <FontAwesomeIcon
                                                             icon={isExpanded ? faChevronDown : faChevronRight}
                                                             style={{
-                                                                color: '#ff8c00',
+                                                                color: '#5c8e32',
                                                                 fontSize: '14px',
                                                                 flexShrink: 0,
                                                                 transition: 'transform 0.2s ease',
@@ -2125,7 +2125,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             }}>
                                 <div style={{
                                     fontSize: '22px',
-                                    color: '#ff8c00',
+                                    color: '#5c8e32',
                                     fontWeight: '600',
                                     textTransform: 'uppercase',
                                     letterSpacing: '4px',
@@ -2160,7 +2160,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 <th style={{
                                                     textAlign: 'left',
                                                     padding: '12px 16px',
-                                                    color: '#ff8c00',
+                                                    color: '#5c8e32',
                                                     fontWeight: 'bold',
                                                     borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
                                                     fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
@@ -2173,7 +2173,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 <th style={{
                                                     textAlign: 'center',
                                                     padding: '12px 16px',
-                                                    color: '#ff8c00',
+                                                    color: '#5c8e32',
                                                     fontWeight: 'bold',
                                                     borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
                                                     fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
@@ -2251,7 +2251,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         type="button"
                                         onClick={scrollToTop}
                                         style={{
-                                            background: 'linear-gradient(135deg, #ff8c00 0%, #e67c00 50%, #cc6400 100%)',
+                                            background: 'linear-gradient(135deg, #5c8e32 0%, #2d4715 50%, #2d4715 100%)',
                                             border: '3px solid rgba(255, 200, 120, 0.6)',
                                             color: 'white',
                                             padding: '20px 56px',
@@ -2263,17 +2263,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             cursor: 'pointer',
                                             fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
                                             textShadow: '2px 2px 4px rgba(0,0,0,0.6)',
-                                            boxShadow: '0 6px 24px rgba(255, 140, 0, 0.4), 0 0 20px rgba(255, 140, 0, 0.2)',
+                                            boxShadow: '0 6px 24px rgba(92, 142, 50, 0.4), 0 0 20px rgba(92, 142, 50, 0.2)',
                                             transition: 'all 0.25s ease',
                                         }}
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                                            e.currentTarget.style.boxShadow = '0 10px 32px rgba(255, 140, 0, 0.5), 0 0 30px rgba(255, 140, 0, 0.3)';
+                                            e.currentTarget.style.boxShadow = '0 10px 32px rgba(92, 142, 50, 0.5), 0 0 30px rgba(92, 142, 50, 0.3)';
                                             e.currentTarget.style.borderColor = 'rgba(255, 220, 150, 0.9)';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                                            e.currentTarget.style.boxShadow = '0 6px 24px rgba(255, 140, 0, 0.4), 0 0 20px rgba(255, 140, 0, 0.2)';
+                                            e.currentTarget.style.boxShadow = '0 6px 24px rgba(92, 142, 50, 0.4), 0 0 20px rgba(92, 142, 50, 0.2)';
                                             e.currentTarget.style.borderColor = 'rgba(255, 200, 120, 0.6)';
                                         }}
                                     >
@@ -2299,8 +2299,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             position: 'fixed',
                             bottom: '30px',
                             right: '30px',
-                            background: 'rgba(255, 140, 0, 0.9)',
-                            border: '2px solid rgba(255, 140, 0, 0.6)',
+                            background: 'rgba(92, 142, 50, 0.9)',
+                            border: '2px solid rgba(92, 142, 50, 0.6)',
                             color: 'white',
                             padding: '16px',
                             fontSize: '18px',
@@ -2319,14 +2319,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             justifyContent: 'center',
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(255, 140, 0, 1)';
-                            e.currentTarget.style.borderColor = '#ff8c00';
+                            e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 1)';
+                            e.currentTarget.style.borderColor = '#5c8e32';
                             e.currentTarget.style.transform = 'translateY(-3px)';
                             e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), 0 0 15px rgba(255,140,0,0.6)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(255, 140, 0, 0.9)';
-                            e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.6)';
+                            e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.9)';
+                            e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
                             e.currentTarget.style.transform = 'translateY(0)';
                             e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(255,140,0,0.4)';
                         }}
@@ -2368,10 +2368,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         transform: 'translateX(-50%)',
                         width: '16px',
                         height: '16px',
-                        background: 'linear-gradient(135deg, #ff8c00 0%, #ff6600 100%)',
+                        background: 'linear-gradient(135deg, #5c8e32 0%, #5c8e32 100%)',
                         borderRadius: '50%',
                         border: '2px solid rgba(0, 0, 0, 0.95)',
-                        boxShadow: '0 0 15px rgba(255, 140, 0, 0.5)',
+                        boxShadow: '0 0 15px rgba(92, 142, 50, 0.5)',
                     }} />
 
                     {/* Footer Grid */}
@@ -2417,7 +2417,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     style={{
-                                        color: '#ff8c00',
+                                        color: '#5c8e32',
                                         textDecoration: 'none',
                                         transition: 'color 0.2s ease',
                                     }}
@@ -2425,7 +2425,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         e.currentTarget.style.color = '#ffaa33';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.color = '#ff8c00';
+                                        e.currentTarget.style.color = '#5c8e32';
                                     }}
                                 >
                                     Martin Erlic
@@ -2448,7 +2448,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         }}>
                             <h4 style={{
                                 fontSize: '14px',
-                                color: '#ff8c00',
+                                color: '#5c8e32',
                                 fontWeight: '600',
                                 textTransform: 'uppercase',
                                 letterSpacing: '2px',
@@ -2512,7 +2512,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                             }}
                                             onMouseEnter={(e) => {
-                                                e.currentTarget.style.color = '#ff8c00';
+                                                e.currentTarget.style.color = '#5c8e32';
                                             }}
                                             onMouseLeave={(e) => {
                                                 e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
@@ -2531,7 +2531,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         }}>
                             <h4 style={{
                                 fontSize: '14px',
-                                color: '#ff8c00',
+                                color: '#5c8e32',
                                 fontWeight: '600',
                                 textTransform: 'uppercase',
                                 letterSpacing: '2px',
@@ -2569,7 +2569,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                             }}
                                             onMouseEnter={(e) => {
-                                                e.currentTarget.style.color = '#ff8c00';
+                                                e.currentTarget.style.color = '#5c8e32';
                                             }}
                                             onMouseLeave={(e) => {
                                                 e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
@@ -2590,7 +2590,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         }}>
                             <h4 style={{
                                 fontSize: '14px',
-                                color: '#ff8c00',
+                                color: '#5c8e32',
                                 fontWeight: '600',
                                 textTransform: 'uppercase',
                                 letterSpacing: '2px',
@@ -2622,30 +2622,30 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             width: '40px',
                                             height: '40px',
                                             borderRadius: '50%',
-                                            border: '1px solid rgba(255, 140, 0, 0.4)',
+                                            border: '1px solid rgba(92, 142, 50, 0.4)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             fontSize: '16px',
                                             textDecoration: 'none',
                                             transition: 'all 0.3s ease',
-                                            backgroundColor: 'rgba(255, 140, 0, 0.1)',
+                                            backgroundColor: 'rgba(92, 142, 50, 0.1)',
                                             color: 'rgba(255, 255, 255, 0.7)',
-                                            boxShadow: '0 0 10px rgba(255, 140, 0, 0.2)',
+                                            boxShadow: '0 0 10px rgba(92, 142, 50, 0.2)',
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.borderColor = '#ff8c00';
-                                            e.currentTarget.style.backgroundColor = 'rgba(255, 140, 0, 0.2)';
+                                            e.currentTarget.style.borderColor = '#5c8e32';
+                                            e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.2)';
                                             e.currentTarget.style.transform = 'translateY(-2px)';
-                                            e.currentTarget.style.color = '#ff8c00';
-                                            e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 140, 0, 0.5)';
+                                            e.currentTarget.style.color = '#5c8e32';
+                                            e.currentTarget.style.boxShadow = '0 0 20px rgba(92, 142, 50, 0.5)';
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.4)';
-                                            e.currentTarget.style.backgroundColor = 'rgba(255, 140, 0, 0.1)';
+                                            e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.4)';
+                                            e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.1)';
                                             e.currentTarget.style.transform = 'translateY(0)';
                                             e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                                            e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 140, 0, 0.2)';
+                                            e.currentTarget.style.boxShadow = '0 0 10px rgba(92, 142, 50, 0.2)';
                                         }}
                                     >
                                         <FontAwesomeIcon icon={social.icon} />
@@ -2665,9 +2665,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     width: '50px',
                                     height: '50px',
                                     borderRadius: '50%',
-                                    border: '2px solid rgba(255, 140, 0, 0.6)',
-                                    background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.2) 0%, rgba(255, 100, 0, 0.4) 100%)',
-                                    color: '#ff8c00',
+                                    border: '2px solid rgba(92, 142, 50, 0.6)',
+                                    background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.2) 0%, rgba(255, 100, 0, 0.4) 100%)',
+                                    color: '#5c8e32',
                                     fontSize: '18px',
                                     fontWeight: 'bold',
                                     cursor: 'pointer',
@@ -2677,14 +2677,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     fontFamily: "'Courier New', Consolas, Monaco, monospace",
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(255, 140, 0, 0.3)';
-                                    e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.9)';
+                                    e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.3)';
+                                    e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.9)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
                                     e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4), 0 0 15px rgba(255,140,0,0.6)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'linear-gradient(135deg, rgba(255, 140, 0, 0.2) 0%, rgba(255, 100, 0, 0.4) 100%)';
-                                    e.currentTarget.style.borderColor = 'rgba(255, 140, 0, 0.6)';
+                                    e.currentTarget.style.backgroundColor = 'linear-gradient(135deg, rgba(92, 142, 50, 0.2) 0%, rgba(255, 100, 0, 0.4) 100%)';
+                                    e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(255,140,0,0.4)';
                                 }}

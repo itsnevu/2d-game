@@ -45,12 +45,12 @@ const GameMenu: React.FC<GameMenuProps> = ({
     };
 
     const menuOptions: MenuOption[] = [
-        { label: 'RESUME CONSCIOUSNESS', action: () => onClose() },
-        { label: 'AUDITORY CORTEX MODULE', action: () => onNavigate('settings'), icon: faVolumeUp },
-        { label: 'VISUAL CORTEX MODULE', action: () => onNavigate('visual_settings'), icon: faEye },
-        { label: 'MOTOR CORTEX INTERFACE', action: () => onNavigate('controls'), icon: faGamepad },
-        { label: 'TACTICAL KNOWLEDGE MATRIX', action: () => onNavigate('tips'), icon: faLightbulb },
-        { label: 'FORCE NEURAL SLEEP', action: handleSignOutRequest, isSignOut: true },
+        { label: 'RESUME', action: () => onClose() },
+        { label: 'SOUND', action: () => onNavigate('settings'), icon: faVolumeUp },
+        { label: 'VISUAL', action: () => onNavigate('visual_settings'), icon: faEye },
+        { label: 'CONTROLS', action: () => onNavigate('controls'), icon: faGamepad },
+        { label: 'TIPS', action: () => onNavigate('tips'), icon: faLightbulb },
+        { label: 'EXIT', action: handleSignOutRequest, isSignOut: true },
     ];
 
     return (
@@ -61,7 +61,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                 left: 0,
                 width: '100%',
                 height: '100%',
-                background: 'linear-gradient(135deg, #1a0d2e 0%, #16213e 50%, #0f1419 100%)',
+                background: 'linear-gradient(135deg, #e5ddb3 0%, #d8cc96 50%, #c3b57d 100%)',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -81,10 +81,10 @@ const GameMenu: React.FC<GameMenuProps> = ({
                     width: '100%',
                     height: '100%',
                     backgroundImage: `
-                        linear-gradient(rgba(0, 221, 255, 0.3) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0, 221, 255, 0.3) 1px, transparent 1px),
-                        linear-gradient(rgba(0, 150, 255, 0.15) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0, 150, 255, 0.15) 1px, transparent 1px)
+                        linear-gradient(rgba(92, 58, 33, 0.15) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(92, 58, 33, 0.15) 1px, transparent 1px),
+                        linear-gradient(rgba(92, 58, 33, 0.08) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(92, 58, 33, 0.08) 1px, transparent 1px)
                     `,
                     backgroundSize: '50px 50px, 50px 50px, 10px 10px, 10px 10px',
                     animation: 'grid-move 20s linear infinite',
@@ -94,12 +94,12 @@ const GameMenu: React.FC<GameMenuProps> = ({
             />
             <div
                 style={{
-                    background: 'linear-gradient(145deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98))',
-                    border: '2px solid #00ffff',
-                    borderRadius: '12px',
+                    background: 'linear-gradient(145deg, #f0e6b5, #e0d5a3)',
+                    border: '4px solid #5c3a21',
+                    borderRadius: '0px',
                     padding: '40px',
                     minWidth: '350px',
-                    boxShadow: '0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1)',
+                    boxShadow: '0 8px 0 #8b6e4e, 0 0 20px rgba(0, 0, 0, 0.15)',
                     position: 'relative',
                     overflow: 'hidden',
                 }}
@@ -112,7 +112,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                     left: 0,
                     right: 0,
                     height: '2px',
-                    background: 'linear-gradient(90deg, transparent, #00ffff, transparent)',
+                    background: 'linear-gradient(90deg, transparent, rgba(92, 58, 33, 0.15), transparent)',
                     animation: 'scanLine 3s linear infinite',
                 }} />
                 
@@ -121,29 +121,28 @@ const GameMenu: React.FC<GameMenuProps> = ({
                         style={{
                             fontFamily: '"Press Start 2P", cursive',
                             fontSize: '24px',
-                            color: '#00ffff',
+                            color: '#5c3a21',
                             textAlign: 'center',
                             marginBottom: '8px',
-                            textShadow: '0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4)',
+                            textShadow: 'none',
                             animation: 'glow 2s ease-in-out infinite alternate',
                             letterSpacing: '2px',
                         }}
                     >
-                        NEUROVEIL™ OCULAR INTERFACE
+                        GAME MENU
                     </h2>
                     <div
                         style={{
                             fontFamily: '"Press Start 2P", cursive',
-                            fontSize: '14px',
-                            color: '#6699cc',
+                            fontSize: '12px',
+                            color: '#5c3a21',
                             textAlign: 'center',
                             letterSpacing: '1px',
                             opacity: 0.8,
                             lineHeight: '1.4',
                         }}
                     >
-                        <div>ООО "Rozhkov Neuroscience"</div>
-                        <div>System v0.82</div>
+                        <div>SURVIVAL MATRIX</div>
                     </div>
                 </div>
                 
@@ -154,40 +153,34 @@ const GameMenu: React.FC<GameMenuProps> = ({
                             onClick={option.action}
                             style={{
                                 background: option.isSignOut 
-                                    ? 'linear-gradient(135deg, rgba(120, 20, 40, 0.8), rgba(80, 10, 30, 0.9))' 
-                                    : 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
+                                    ? 'linear-gradient(135deg, #a75454, #864343)' 
+                                    : 'linear-gradient(135deg, #a77d54, #866043)',
                                 color: '#ffffff',
-                                border: option.isSignOut ? '2px solid #ff3366' : '2px solid #00aaff',
-                                borderRadius: '8px',
+                                border: '3px solid #5c3a21',
+                                borderRadius: '0px',
                                 padding: '15px 25px',
                                 fontFamily: '"Press Start 2P", cursive',
                                 fontSize: '14px',
                                 cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                boxShadow: option.isSignOut 
-                                    ? '0 0 15px rgba(255, 51, 102, 0.3), inset 0 0 10px rgba(255, 51, 102, 0.1)' 
-                                    : '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)',
-                                textShadow: '0 0 5px currentColor',
+                                transition: 'all 0.15s ease',
+                                boxShadow: 'inset 0 -4px 0 rgba(0,0,0,0.2), 0 4px 0 rgba(0,0,0,0.1)',
+                                textShadow: '2px 2px 0px rgba(0,0,0,0.4)',
                                 position: 'relative',
                                 overflow: 'hidden',
                             }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.background = option.isSignOut 
-                                    ? 'linear-gradient(135deg, rgba(150, 30, 50, 0.9), rgba(100, 15, 35, 1))' 
-                                    : 'linear-gradient(135deg, rgba(30, 50, 100, 0.9), rgba(15, 40, 90, 1))';
-                                e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                                e.currentTarget.style.boxShadow = option.isSignOut 
-                                    ? '0 0 25px rgba(255, 51, 102, 0.6), inset 0 0 15px rgba(255, 51, 102, 0.2)' 
-                                    : '0 0 25px rgba(0, 170, 255, 0.6), inset 0 0 15px rgba(0, 170, 255, 0.2)';
+                                    ? 'linear-gradient(135deg, #b86363, #975454)' 
+                                    : 'linear-gradient(135deg, #b88d63, #977154)';
+                                e.currentTarget.style.borderColor = '#86be52';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.background = option.isSignOut 
-                                    ? 'linear-gradient(135deg, rgba(120, 20, 40, 0.8), rgba(80, 10, 30, 0.9))' 
-                                    : 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))';
-                                e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                                e.currentTarget.style.boxShadow = option.isSignOut 
-                                    ? '0 0 15px rgba(255, 51, 102, 0.3), inset 0 0 10px rgba(255, 51, 102, 0.1)' 
-                                    : '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)';
+                                    ? 'linear-gradient(135deg, #a75454, #864343)' 
+                                    : 'linear-gradient(135deg, #a77d54, #866043)';
+                                e.currentTarget.style.borderColor = '#5c3a21';
+                                e.currentTarget.style.transform = 'translateY(0px)';
                             }}
                         >
                             <div style={{
@@ -239,13 +232,13 @@ const GameMenu: React.FC<GameMenuProps> = ({
                     >
                         <div 
                             style={{
-                                background: 'linear-gradient(145deg, rgba(40, 20, 60, 0.98), rgba(30, 15, 50, 0.99))',
-                                border: '2px solid #ff3366',
-                                borderRadius: '12px',
+                                background: 'linear-gradient(145deg, #f0e6b5, #e0d5a3)',
+                                border: '4px solid #5c3a21',
+                                borderRadius: '0px',
                                 padding: '30px',
                                 maxWidth: '450px',
                                 textAlign: 'center',
-                                boxShadow: '0 0 40px rgba(255, 51, 102, 0.4), inset 0 0 20px rgba(255, 51, 102, 0.1)',
+                                boxShadow: '0 8px 0 #8b6e4e, 0 0 20px rgba(0, 0, 0, 0.15)',
                                 position: 'relative',
                                 overflow: 'hidden',
                             }}
@@ -258,15 +251,15 @@ const GameMenu: React.FC<GameMenuProps> = ({
                                 left: 0,
                                 right: 0,
                                 height: '2px',
-                                background: 'linear-gradient(90deg, transparent, #ff3366, transparent)',
+                                background: 'linear-gradient(90deg, transparent, rgba(92, 58, 33, 0.15), transparent)',
                                 animation: 'scanLine 2s linear infinite',
                             }} />
                             
                             <div style={{
-                                color: '#ff6699',
+                                color: '#5c3a21',
                                 fontSize: '18px',
                                 marginBottom: '15px',
-                                textShadow: '0 0 10px rgba(255, 102, 153, 0.8)',
+                                textShadow: '0 0 10px rgba(92, 142, 50, 0.8)',
                                 fontFamily: '"Press Start 2P", cursive',
                                 letterSpacing: '1px',
                             }}>
@@ -274,21 +267,18 @@ const GameMenu: React.FC<GameMenuProps> = ({
                             </div>
                             
                             <div style={{
-                                color: '#ffffff',
-                                fontSize: '14px',
-                                lineHeight: '1.8',
+                                color: '#5c3a21',
+                                fontSize: '12px',
+                                lineHeight: '1.6',
                                 marginBottom: '25px',
                                 padding: '20px',
-                                backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                                borderRadius: '8px',
-                                border: '1px solid rgba(255, 51, 102, 0.3)',
+                                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                                border: '2px solid #5c3a21',
                                 fontFamily: '"Press Start 2P", cursive',
                             }}>
-                                WARNING: Initiating neural sleep will disconnect your consciousness from the SOVA survival matrix.
+                                Are you sure you want to disconnect and exit the game?
                                 <br /><br />
-                                Your physical body will remain vulnerable in the world while your neural pathways are severed.
-                                <br /><br />
-                                Are you certain you wish to force neural sleep?
+                                Your character will remain in the world.
                             </div>
 
                             <div style={{
@@ -299,61 +289,55 @@ const GameMenu: React.FC<GameMenuProps> = ({
                                 <button
                                     onClick={handleSignOutConfirm}
                                     style={{
-                                        background: 'linear-gradient(135deg, rgba(120, 20, 40, 0.8), rgba(80, 10, 30, 0.9))',
+                                        background: 'linear-gradient(135deg, #a75454, #864343)',
                                         color: '#ffffff',
-                                        border: '2px solid #ff3366',
-                                        borderRadius: '8px',
+                                        border: '3px solid #5c3a21',
+                                        borderRadius: '0px',
                                         padding: '15px 25px',
                                         fontFamily: '"Press Start 2P", cursive',
                                         fontSize: '12px',
                                         cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                        boxShadow: '0 0 15px rgba(255, 51, 102, 0.3), inset 0 0 10px rgba(255, 51, 102, 0.1)',
-                                        textShadow: '0 0 5px currentColor',
-                                        letterSpacing: '1px',
+                                        transition: 'all 0.15s ease',
+                                        boxShadow: 'inset 0 -4px 0 rgba(0,0,0,0.2)',
+                                        textShadow: '1px 1px 0px rgba(0,0,0,0.4)',
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(150, 30, 50, 0.9), rgba(100, 15, 35, 1))';
-                                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                                        e.currentTarget.style.boxShadow = '0 0 25px rgba(255, 51, 102, 0.6), inset 0 0 15px rgba(255, 51, 102, 0.2)';
+                                        e.currentTarget.style.background = 'linear-gradient(135deg, #b86363, #975454)';
+                                        e.currentTarget.style.borderColor = '#86be52';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(120, 20, 40, 0.8), rgba(80, 10, 30, 0.9))';
-                                        e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                                        e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 51, 102, 0.3), inset 0 0 10px rgba(255, 51, 102, 0.1)';
+                                        e.currentTarget.style.background = 'linear-gradient(135deg, #a75454, #864343)';
+                                        e.currentTarget.style.borderColor = '#5c3a21';
                                     }}
                                 >
-                                    CONFIRM NEURAL SLEEP
+                                    CONFIRM EXIT
                                 </button>
                                 
                                 <button
                                     onClick={handleSignOutCancel}
                                     style={{
-                                        background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
+                                        background: 'linear-gradient(135deg, #a77d54, #866043)',
                                         color: '#ffffff',
-                                        border: '2px solid #00aaff',
-                                        borderRadius: '8px',
+                                        border: '3px solid #5c3a21',
+                                        borderRadius: '0px',
                                         padding: '15px 25px',
                                         fontFamily: '"Press Start 2P", cursive',
                                         fontSize: '12px',
                                         cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                        boxShadow: '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)',
-                                        textShadow: '0 0 5px currentColor',
-                                        letterSpacing: '1px',
+                                        transition: 'all 0.15s ease',
+                                        boxShadow: 'inset 0 -4px 0 rgba(0,0,0,0.2)',
+                                        textShadow: '1px 1px 0px rgba(0,0,0,0.4)',
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 50, 100, 0.9), rgba(15, 40, 90, 1))';
-                                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                                        e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 170, 255, 0.6), inset 0 0 15px rgba(0, 170, 255, 0.2)';
+                                        e.currentTarget.style.background = 'linear-gradient(135deg, #b88d63, #977154)';
+                                        e.currentTarget.style.borderColor = '#86be52';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))';
-                                        e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                                        e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)';
+                                        e.currentTarget.style.background = 'linear-gradient(135deg, #a77d54, #866043)';
+                                        e.currentTarget.style.borderColor = '#5c3a21';
                                     }}
                                 >
-                                    MAINTAIN CONNECTION
+                                    CANCEL
                                 </button>
                             </div>
                         </div>

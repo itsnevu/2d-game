@@ -371,10 +371,10 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
       
       @keyframes cyberpunk-glow-pulse {
         0%, 100% { 
-          box-shadow: 0 0 8px #00d4ff, 0 0 16px rgba(0, 212, 255, 0.5);
+          box-shadow: 0 0 8px #5c8e32, 0 0 16px rgba(92, 142, 50, 0.5);
         }
         50% { 
-          box-shadow: 0 0 16px #00d4ff, 0 0 32px rgba(0, 212, 255, 0.8);
+          box-shadow: 0 0 16px #5c8e32, 0 0 32px rgba(92, 142, 50, 0.8);
         }
       }
       
@@ -548,8 +548,8 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
             width: '90px',
             height: '90px',
             border: '3px solid transparent',
-            borderTop: '3px solid #00d4ff',
-            borderRight: '3px solid #7c3aed',
+            borderTop: '3px solid #5c8e32',
+            borderRight: '3px solid #2d4715',
             borderRadius: '50%',
             boxSizing: 'border-box',
           }}
@@ -562,8 +562,8 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
             width: '66px',
             height: '66px',
             border: '2px solid transparent',
-            borderTop: '2px solid #7c3aed',
-            borderLeft: '2px solid #00d4ff',
+            borderTop: '2px solid #2d4715',
+            borderLeft: '2px solid #5c8e32',
             borderRadius: '50%',
             boxSizing: 'border-box',
           }}
@@ -575,7 +575,7 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
             position: 'absolute',
             width: '12px',
             height: '12px',
-            background: '#00d4ff',
+            background: '#5c8e32',
             borderRadius: '50%',
           }} 
         />
@@ -584,7 +584,7 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
       {/* Loading text */}
       <div style={{
         marginTop: '24px',
-        color: '#00d4ff',
+        color: '#5c8e32',
         fontSize: '14px',
         fontWeight: 'bold',
         textAlign: 'center',
@@ -597,7 +597,7 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
         <div style={{ 
           marginTop: '10px', 
           fontSize: '11px', 
-          color: '#7c3aed',
+          color: '#2d4715',
           letterSpacing: '1px',
         }}>
           Scanning neural pathways...
@@ -647,21 +647,21 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
               cursor: 'pointer',
               fontSize: '11px',
               fontFamily: '"Courier New", monospace',
-              color: '#00d4ff',
+              color: '#5c8e32',
               backgroundColor: 'rgba(0, 0, 0, 0.7)',
               padding: '4px 8px',
               borderRadius: '4px',
-              border: '1px solid rgba(0, 212, 255, 0.3)',
+              border: '1px solid rgba(92, 142, 50, 0.3)',
               userSelect: 'none',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-              e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.6)';
+              e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.6)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-              e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.3)';
             }}
           >
             <input
@@ -672,10 +672,10 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
                 cursor: 'pointer',
                 width: '14px',
                 height: '14px',
-                accentColor: '#00d4ff',
+                accentColor: '#5c8e32',
               }}
             />
-            <span style={{ textShadow: '0 0 4px rgba(0, 212, 255, 0.8)' }}>
+            <span style={{ textShadow: '0 0 4px rgba(92, 142, 50, 0.8)' }}>
               Show Grid
             </span>
           </label>
@@ -827,7 +827,7 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
                 backdropFilter: 'blur(2px)',
               }}>
                 <div style={{
-                  color: '#7c3aed',
+                  color: '#2d4715',
                   fontSize: '14px',
                   fontWeight: 'bold',
                   textAlign: 'center',
@@ -840,7 +840,7 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
                   <div style={{ 
                     marginTop: '8px', 
                     fontSize: '12px', 
-                    color: '#00d4ff',
+                    color: '#5c8e32',
                     opacity: '0.8'
                   }}>
                     Validating memory shards...

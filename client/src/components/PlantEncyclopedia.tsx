@@ -389,13 +389,13 @@ const PlantEncyclopedia: React.FC<PlantEncyclopediaProps> = ({ plantConfigs, dis
           background: 'rgba(0, 0, 0, 0.6)',
           borderRadius: '0',
           overflow: 'hidden',
-          border: '1px solid rgba(20, 184, 166, 0.4)',
+          border: '1px solid rgba(92, 142, 50, 0.4)',
           position: 'relative',
         }}>
           <div style={{
             width: `${hasDiscoveredAny ? Math.round((discoveredCount / totalPlants) * 100) : 0}%`,
             height: '100%',
-            background: 'linear-gradient(90deg, #14b8a6, #06b6d4)',
+            background: 'linear-gradient(90deg, #5c8e32, #06b6d4)',
             transition: 'width 0.3s ease',
           }} />
           <span style={{

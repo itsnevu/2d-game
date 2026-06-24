@@ -78,7 +78,7 @@
 
 /* Faction-specific branch label styling */
 .black-wolves-branch {
-  filter: drop-shadow(0 0 4px #ef4444);
+  filter: drop-shadow(0 0 4px #5c8e32);
 }
 
 .hive-branch {
@@ -90,7 +90,7 @@
 }
 
 .data-angels-branch {
-  filter: drop-shadow(0 0 4px #8b5cf6);
+  filter: drop-shadow(0 0 4px #2d4715);
 }
 
 .battalion-branch {

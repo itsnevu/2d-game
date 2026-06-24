@@ -218,7 +218,7 @@ const ContractCard: React.FC<ContractCardProps> = ({
             {!isAccepted && isSeasonallyAvailable && (
                 <div className="contract-actions">
                     <div className="quantity-selector" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ color: '#00aaff', fontSize: '13px' }}>Contracts:</label>
+                        <label style={{ color: '#5c8e32', fontSize: '13px' }}>Contracts:</label>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
                             {/* Decrease Button */}
                             <button 
@@ -231,7 +231,7 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                     fontSize: '14px',
                                     fontWeight: 'bold',
                                     background: contractCount > 1 ? 'linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 220, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
-                                    color: contractCount > 1 ? '#00aaff' : '#666',
+                                    color: contractCount > 1 ? '#5c8e32' : '#666',
                                     border: contractCount > 1 ? '2px solid rgba(0, 170, 255, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
                                     borderRadius: '3px 0 0 3px',
                                     cursor: contractCount > 1 ? 'pointer' : 'not-allowed',
@@ -283,7 +283,7 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                     fontSize: '14px',
                                     fontWeight: 'bold',
                                     background: contractCount < maxContracts ? 'linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 220, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
-                                    color: contractCount < maxContracts ? '#00aaff' : '#666',
+                                    color: contractCount < maxContracts ? '#5c8e32' : '#666',
                                     border: contractCount < maxContracts ? '2px solid rgba(0, 170, 255, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
                                     borderRadius: '0',
                                     cursor: contractCount < maxContracts ? 'pointer' : 'not-allowed',
@@ -311,18 +311,18 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                     fontSize: '10px',
                                     fontWeight: 'bold',
                                     background: maxFromInventory > 0 
-                                        ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 200, 100, 0.4))' 
+                                        ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4))' 
                                         : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
-                                    color: maxFromInventory > 0 ? '#00ff88' : '#666',
+                                    color: maxFromInventory > 0 ? '#86be52' : '#666',
                                     border: maxFromInventory > 0 
-                                        ? '2px solid rgba(0, 255, 136, 0.4)' 
+                                        ? '2px solid rgba(134, 190, 82, 0.4)' 
                                         : '2px solid rgba(100, 100, 120, 0.3)',
                                     borderRadius: '0 3px 3px 0',
                                     cursor: maxFromInventory > 0 ? 'pointer' : 'not-allowed',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: maxFromInventory > 0 ? '0 0 8px rgba(0, 255, 136, 0.2)' : 'none',
+                                    boxShadow: maxFromInventory > 0 ? '0 0 8px rgba(134, 190, 82, 0.2)' : 'none',
                                     transition: 'all 0.2s ease',
                                     letterSpacing: '0.5px'
                                 }}
@@ -330,7 +330,7 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                 MAX
                             </button>
                         </div>
-                        <span className="bundle-info" style={{ fontSize: '12px', color: '#00ff88' }}>
+                        <span className="bundle-info" style={{ fontSize: '12px', color: '#86be52' }}>
                             ({contractCount} {contractCount === 1 ? 'contract' : 'contracts'} = {totalReward}
                             <img src={memoryShardIcon} alt="shards" className="shard-icon-small" style={{ marginLeft: '2px', marginRight: '2px' }} />
                             )
@@ -434,7 +434,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                     <span className="stat-label">Bundle Size:</span>
                     <span className="stat-value">{contract.bundleSize}</span>
                 </div>
-                <div className="contract-stat cost" style={{ background: 'rgba(255, 170, 0, 0.1)' }}>
+                <div className="contract-stat cost" style={{ background: 'rgba(45, 71, 21, 0.1)' }}>
                     <span className="stat-label" style={{ color: '#ffaa00' }}>Cost/Bundle:</span>
                     <span className="stat-value" style={{ color: '#ffaa00' }}>
                         {costPerBundle}
@@ -461,9 +461,9 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                                 padding: '0',
                                 fontSize: '14px',
                                 fontWeight: 'bold',
-                                background: bundleCount > 1 ? 'linear-gradient(135deg, rgba(255, 170, 0, 0.3), rgba(200, 130, 0, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
+                                background: bundleCount > 1 ? 'linear-gradient(135deg, rgba(45, 71, 21, 0.3), rgba(200, 130, 0, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
                                 color: bundleCount > 1 ? '#ffaa00' : '#666',
-                                border: bundleCount > 1 ? '2px solid rgba(255, 170, 0, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
+                                border: bundleCount > 1 ? '2px solid rgba(45, 71, 21, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
                                 borderRadius: '3px 0 0 3px',
                                 cursor: bundleCount > 1 ? 'pointer' : 'not-allowed',
                             }}
@@ -488,7 +488,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                                 fontSize: '13px',
                                 textAlign: 'center',
                                 background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9))',
-                                border: '2px solid rgba(255, 170, 0, 0.4)',
+                                border: '2px solid rgba(45, 71, 21, 0.4)',
                                 borderLeft: 'none',
                                 borderRight: 'none',
                                 color: '#ffdd00',
@@ -506,9 +506,9 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                                 padding: '0',
                                 fontSize: '14px',
                                 fontWeight: 'bold',
-                                background: bundleCount < 99 ? 'linear-gradient(135deg, rgba(255, 170, 0, 0.3), rgba(200, 130, 0, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
+                                background: bundleCount < 99 ? 'linear-gradient(135deg, rgba(45, 71, 21, 0.3), rgba(200, 130, 0, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
                                 color: bundleCount < 99 ? '#ffaa00' : '#666',
-                                border: bundleCount < 99 ? '2px solid rgba(255, 170, 0, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
+                                border: bundleCount < 99 ? '2px solid rgba(45, 71, 21, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
                                 borderRadius: '0',
                                 cursor: bundleCount < 99 ? 'pointer' : 'not-allowed',
                             }}
@@ -530,11 +530,11 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                                 fontSize: '10px',
                                 fontWeight: 'bold',
                                 background: maxBundles > 0 
-                                    ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 200, 100, 0.4))' 
+                                    ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4))' 
                                     : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
-                                color: maxBundles > 0 ? '#00ff88' : '#666',
+                                color: maxBundles > 0 ? '#86be52' : '#666',
                                 border: maxBundles > 0 
-                                    ? '2px solid rgba(0, 255, 136, 0.4)' 
+                                    ? '2px solid rgba(134, 190, 82, 0.4)' 
                                     : '2px solid rgba(100, 100, 120, 0.3)',
                                 borderRadius: '0 3px 3px 0',
                                 cursor: maxBundles > 0 ? 'pointer' : 'not-allowed',
@@ -545,7 +545,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                     </div>
                 </div>
                 
-                <div style={{ fontSize: '12px', color: canAfford ? '#00ff88' : '#ff6666', marginTop: '4px' }}>
+                <div style={{ fontSize: '12px', color: canAfford ? '#86be52' : '#ff6666', marginTop: '4px' }}>
                     Total: {totalItems} {cleanItemName} for {totalCost}
                     <img src={memoryShardIcon} alt="shards" className="shard-icon-small" style={{ marginLeft: '2px' }} />
                     {!canAfford && <span style={{ marginLeft: '8px' }}>⚠️ Not enough shards!</span>}
@@ -558,9 +558,9 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                     style={{
                         marginTop: '8px',
                         background: canPurchase 
-                            ? 'linear-gradient(135deg, rgba(255, 170, 0, 0.4), rgba(200, 130, 0, 0.5))' 
+                            ? 'linear-gradient(135deg, rgba(45, 71, 21, 0.4), rgba(200, 130, 0, 0.5))' 
                             : 'linear-gradient(135deg, rgba(60, 60, 80, 0.4), rgba(40, 40, 60, 0.5))',
-                        borderColor: canPurchase ? 'rgba(255, 170, 0, 0.6)' : 'rgba(100, 100, 120, 0.3)',
+                        borderColor: canPurchase ? 'rgba(45, 71, 21, 0.6)' : 'rgba(100, 100, 120, 0.3)',
                         color: canPurchase ? '#ffdd00' : '#666',
                         cursor: canPurchase ? 'pointer' : 'not-allowed',
                     }}
@@ -828,8 +828,8 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                             marginBottom: '8px', 
                             color: '#ffaa00',
                             fontSize: '13px',
-                            borderBottom: '1px solid rgba(255, 170, 0, 0.3)',
-                            background: 'rgba(255, 170, 0, 0.1)'
+                            borderBottom: '1px solid rgba(45, 71, 21, 0.3)',
+                            background: 'rgba(45, 71, 21, 0.1)'
                         }}>
                             🛒 <strong>BUY ORDERS</strong> - Spend Memory Shards to buy materials instantly
                             <br />
@@ -974,7 +974,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                 alignItems: 'center',
                 gap: '10px'
             }}>
-                <span style={{ color: '#00aaff', fontSize: '16px' }}>🔍</span>
+                <span style={{ color: '#5c8e32', fontSize: '16px' }}>🔍</span>
                 <input
                     type="text"
                     placeholder="Search contracts by item name..."
@@ -1058,15 +1058,15 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     title="Buy materials with Memory Shards (Central Compound only)"
                     style={{
                         background: activeTab === 'buy-orders' 
-                            ? 'linear-gradient(135deg, rgba(255, 170, 0, 0.4), rgba(200, 130, 0, 0.5))' 
+                            ? 'linear-gradient(135deg, rgba(45, 71, 21, 0.4), rgba(200, 130, 0, 0.5))' 
                             : 'linear-gradient(135deg, rgba(40, 40, 60, 0.6), rgba(30, 30, 50, 0.7))',
-                        borderColor: activeTab === 'buy-orders' ? 'rgba(255, 170, 0, 0.6)' : 'rgba(100, 100, 120, 0.3)',
+                        borderColor: activeTab === 'buy-orders' ? 'rgba(45, 71, 21, 0.6)' : 'rgba(100, 100, 120, 0.3)',
                         color: activeTab === 'buy-orders' ? '#ffdd00' : '#ffaa00',
                     }}
                 >
                     🛒 BUY
                     <span className="tab-count" style={{ 
-                        background: 'rgba(255, 170, 0, 0.3)', 
+                        background: 'rgba(45, 71, 21, 0.3)', 
                         color: '#ffdd00' 
                     }}>{buyOrderContracts.length}</span>
                 </button>

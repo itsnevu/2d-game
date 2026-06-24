@@ -19,10 +19,10 @@ import winterIcon from '../assets/ui/winter.png';
 
 // Style constants - Cyberpunk theme (matching QuestNotifications)
 const UI_BG_COLOR = 'linear-gradient(180deg, rgba(15, 25, 20, 0.98) 0%, rgba(20, 35, 30, 0.95) 100%)';
-const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #00d4ff, #4ade80, #c084fc, #00d4ff)';
-const ACCENT_CYAN = '#00d4ff';
-const ACCENT_GREEN = '#4ade80';
-const ACCENT_PURPLE = '#c084fc';
+const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #5c8e32, #c4e89c, #86be52, #5c8e32)';
+const ACCENT_CYAN = '#5c8e32';
+const ACCENT_GREEN = '#c4e89c';
+const ACCENT_PURPLE = '#86be52';
 const ACCENT_PINK = '#f472b6';
 
 // Colors for different times of day
@@ -42,7 +42,7 @@ const TIME_COLORS = {
 const SEASON_COLORS = {
     spring: '#90EE90',
     summer: '#FFD700',
-    autumn: '#FF8C00',
+    autumn: '#5c8e32',
     winter: '#87CEEB',
 };
 
@@ -912,9 +912,9 @@ const uplinkStyles = `
     }
     
     @keyframes uplinkPulse {
-        0% { box-shadow: 0 0 15px rgba(192, 132, 252, 0.4); }
-        50% { box-shadow: 0 0 35px rgba(192, 132, 252, 0.8); }
-        100% { box-shadow: 0 0 15px rgba(192, 132, 252, 0.4); }
+        0% { box-shadow: 0 0 15px rgba(134, 190, 82, 0.4); }
+        50% { box-shadow: 0 0 35px rgba(134, 190, 82, 0.8); }
+        100% { box-shadow: 0 0 15px rgba(134, 190, 82, 0.4); }
     }
     
     @keyframes progressFlashBorder {
@@ -934,8 +934,8 @@ const uplinkStyles = `
     }
     
     @keyframes dialPulse {
-        0%, 100% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 15px rgba(0, 212, 255, 0.8); }
-        50% { box-shadow: 0 0 12px rgba(255, 255, 255, 1), 0 0 25px rgba(0, 212, 255, 1); }
+        0%, 100% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 15px rgba(92, 142, 50, 0.8); }
+        50% { box-shadow: 0 0 12px rgba(255, 255, 255, 1), 0 0 25px rgba(92, 142, 50, 1); }
     }
     
     @keyframes notificationPulse {
@@ -945,12 +945,12 @@ const uplinkStyles = `
     }
     
     .uplink-glow-container {
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), inset 0 0 15px rgba(0, 212, 255, 0.1);
+        box-shadow: 0 0 20px rgba(92, 142, 50, 0.3), inset 0 0 15px rgba(92, 142, 50, 0.1);
         transition: all 0.3s ease;
     }
     
     .uplink-glow-container:hover {
-        box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), inset 0 0 20px rgba(0, 212, 255, 0.15);
+        box-shadow: 0 0 30px rgba(92, 142, 50, 0.5), inset 0 0 20px rgba(92, 142, 50, 0.15);
     }
     
     .uplink-glow-container.minimized:hover {
@@ -967,8 +967,8 @@ const uplinkStyles = `
             0deg,
             transparent,
             transparent 2px,
-            rgba(0, 212, 255, 0.02) 2px,
-            rgba(0, 212, 255, 0.02) 4px
+            rgba(92, 142, 50, 0.02) 2px,
+            rgba(92, 142, 50, 0.02) 4px
         );
         pointer-events: none;
         z-index: 10;
@@ -984,7 +984,7 @@ const uplinkStyles = `
         background: linear-gradient(
             180deg,
             transparent 0%,
-            rgba(0, 212, 255, 0.06) 50%,
+            rgba(92, 142, 50, 0.06) 50%,
             transparent 100%
         );
         animation: uplinkScanline 4s linear infinite;
@@ -995,7 +995,7 @@ const uplinkStyles = `
         position: absolute;
         width: 10px;
         height: 10px;
-        border: 2px solid #00d4ff;
+        border: 2px solid #5c8e32;
         z-index: 5;
     }
     
@@ -1009,13 +1009,13 @@ const uplinkStyles = `
         justify-content: space-between;
         align-items: center;
         padding: 10px 14px;
-        background: rgba(0, 212, 255, 0.08);
-        border-bottom: 1px solid rgba(0, 212, 255, 0.25);
+        background: rgba(92, 142, 50, 0.08);
+        border-bottom: 1px solid rgba(92, 142, 50, 0.25);
     }
     
     .uplink-header-text {
         font-size: 9px;
-        color: #00d4ff;
+        color: #5c8e32;
         letter-spacing: 1.5px;
         text-transform: uppercase;
     }
@@ -1032,23 +1032,23 @@ const uplinkStyles = `
     }
     
     .uplink-dot.green {
-        background: #4ade80;
+        background: #c4e89c;
         animation: uplinkDotPulse 1s ease-in-out infinite;
     }
     
     .uplink-dot.cyan {
-        background: #00d4ff;
+        background: #5c8e32;
         animation: uplinkDotPulse 1s ease-in-out infinite 0.2s;
     }
     
     .uplink-dot.purple {
-        background: #c084fc;
+        background: #86be52;
         animation: uplinkDotPulse 1s ease-in-out infinite 0.4s;
     }
     
     .uplink-minimize {
         font-size: 8px;
-        color: rgba(0, 212, 255, 0.5);
+        color: rgba(92, 142, 50, 0.5);
         cursor: pointer;
         padding: 2px 6px;
         border-radius: 3px;
@@ -1056,8 +1056,8 @@ const uplinkStyles = `
     }
     
     .uplink-minimize:hover {
-        color: #00d4ff;
-        background: rgba(0, 212, 255, 0.15);
+        color: #5c8e32;
+        background: rgba(92, 142, 50, 0.15);
     }
     
     .uplink-progress-bar {
@@ -1066,7 +1066,7 @@ const uplinkStyles = `
         background: rgba(0, 0, 0, 0.5);
         border-radius: 7px;
         overflow: hidden;
-        border: 1px solid rgba(0, 212, 255, 0.3);
+        border: 1px solid rgba(92, 142, 50, 0.3);
     }
     
     .uplink-progress-indicator {
@@ -1075,7 +1075,7 @@ const uplinkStyles = `
         transform: translateX(-50%);
         width: 4px;
         height: 100%;
-        background: linear-gradient(to bottom, #fff, #00d4ff, #fff);
+        background: linear-gradient(to bottom, #fff, #5c8e32, #fff);
         border-radius: 2px;
         animation: dialPulse 2s ease-in-out infinite;
         z-index: 5;
@@ -1089,7 +1089,7 @@ const uplinkStyles = `
     }
     
     .uplink-directives:hover {
-        background: rgba(0, 212, 255, 0.05);
+        background: rgba(92, 142, 50, 0.05);
     }
     
     .uplink-objective {
@@ -1146,7 +1146,7 @@ const uplinkStyles = `
         transform: translateY(-50%);
         padding: 6px 12px;
         background: linear-gradient(135deg, rgba(15, 25, 20, 0.98) 0%, rgba(20, 35, 30, 0.98) 100%);
-        border: 2px solid #00d4ff;
+        border: 2px solid #5c8e32;
         border-radius: 6px;
         backdrop-filter: blur(10px);
         white-space: nowrap;
@@ -1167,7 +1167,7 @@ const uplinkStyles = `
         height: 0;
         border-style: solid;
         border-width: 6px 0 6px 6px;
-        border-color: transparent transparent transparent #00d4ff;
+        border-color: transparent transparent transparent #5c8e32;
     }
 `;
 

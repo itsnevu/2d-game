@@ -4,9 +4,9 @@
   margin-top: 15px;
   padding: 15px;
   background: linear-gradient(135deg, rgba(15, 23, 35, 0.98), rgba(20, 10, 40, 0.98));
-  border: 2px solid #00d4ff;
+  border: 2px solid #5c8e32;
   border-radius: 8px;
-  box-shadow: 0 0 25px rgba(0, 212, 255, 0.4), inset 0 0 15px rgba(0, 212, 255, 0.1), 2px 2px 0px rgba(0,0,0,0.4);
+  box-shadow: 0 0 25px rgba(92, 142, 50, 0.4), inset 0 0 15px rgba(92, 142, 50, 0.1), 2px 2px 0px rgba(0,0,0,0.4);
   color: #e0e0e0;
   font-family: 'Courier New', Consolas, Monaco, monospace;
   position: relative;
@@ -36,9 +36,9 @@
 }
 
 .closeInteractionButton {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #5c8e32 0%, #dc2626 100%);
   color: #ffffff;
-  border: 2px solid #ef4444;
+  border: 2px solid #5c8e32;
   border-radius: 6px;
   padding: 6px 10px;
   cursor: pointer;
@@ -47,12 +47,12 @@
   line-height: 1;
   font-weight: bold;
   transition: all 0.2s ease;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 8px rgba(92, 142, 50, 0.5);
 }
 
 .closeInteractionButton:hover {
   background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
+  box-shadow: 0 0 12px rgba(92, 142, 50, 0.7);
   transform: scale(1.05);
 }
 
@@ -68,14 +68,14 @@
   width: 64px;
   height: 64px;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 10, 40, 0.8));
-  border: 2px solid #7c3aed;
+  border: 2px solid #2d4715;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative; /* For quantity positioning */
-  box-shadow: 0 0 15px rgba(124, 58, 237, 0.3), inset 0 0 10px rgba(124, 58, 237, 0.1);
+  box-shadow: 0 0 15px rgba(45, 71, 21, 0.3), inset 0 0 10px rgba(45, 71, 21, 0.1);
 }
 
 .itemIcon {
@@ -110,13 +110,13 @@
 .interactionItemName {
   margin: 0;
   font-size: 0.9rem;
-  color: #00d4ff;
+  color: #5c8e32;
   font-weight: bold;
   line-height: 1.4;
   text-align: left;
   padding-bottom: 6px;
-  border-bottom: 2px solid #7c3aed;
-  text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+  border-bottom: 2px solid #2d4715;
+  text-shadow: 0 0 8px rgba(92, 142, 50, 0.6);
   letter-spacing: 0.5px;
 }
 
@@ -138,7 +138,7 @@
   gap: 8px;
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 2px solid rgba(124, 58, 237, 0.3);
+  border-top: 2px solid rgba(45, 71, 21, 0.3);
   justify-content: flex-start; /* Left align buttons */
   align-items: center; /* Center items vertically */
 }
@@ -257,17 +257,17 @@
   font-size: 11px;
   text-align: center;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 10, 40, 0.8));
-  color: #00d4ff;
-  border: 2px solid #7c3aed;
+  color: #5c8e32;
+  border: 2px solid #2d4715;
   border-radius: 6px;
   outline: none;
   transition: all 0.2s ease;
-  box-shadow: 0 0 8px rgba(124, 58, 237, 0.3), inset 0 0 5px rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 8px rgba(45, 71, 21, 0.3), inset 0 0 5px rgba(92, 142, 50, 0.1);
 }
 
 .splitInput:focus {
-  border-color: #00d4ff;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.6), inset 0 0 10px rgba(0, 212, 255, 0.2);
+  border-color: #5c8e32;
+  box-shadow: 0 0 15px rgba(92, 142, 50, 0.6), inset 0 0 10px rgba(92, 142, 50, 0.2);
 }
 
 .splitInput::-webkit-inner-spin-button,
@@ -278,15 +278,15 @@
 
 .splitButton {
   background: linear-gradient(135deg, #6688cc 0%, #5577bb 100%);
-  border-color: #00d4ff;
+  border-color: #5c8e32;
   min-width: 70px; /* Smaller than other action buttons */
-  box-shadow: 0 0 10px rgba(0, 212, 255, 0.4), inset 0 0 10px rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 10px rgba(92, 142, 50, 0.4), inset 0 0 10px rgba(92, 142, 50, 0.1);
 }
 
 .splitButton:hover:not(:disabled) {
   background: linear-gradient(135deg, #7799dd 0%, #6688cc 100%);
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.6), inset 0 0 15px rgba(0, 212, 255, 0.2);
-  border-color: #7c3aed;
+  box-shadow: 0 4px 15px rgba(92, 142, 50, 0.6), inset 0 0 15px rgba(92, 142, 50, 0.2);
+  border-color: #2d4715;
 }
 
 /* Responsive adjustments */

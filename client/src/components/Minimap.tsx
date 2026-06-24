@@ -18,15 +18,15 @@ const MINIMAP_HEIGHT = Math.round(calculatedMinimapHeight); // Use calculated he
 
 // Cyberpunk color scheme
 const MINIMAP_BG_COLOR = 'rgba(20, 30, 45, 0.98)'; // Dark blue-black
-const MINIMAP_BORDER_COLOR = '#00d4ff'; // Bright cyan border
+const MINIMAP_BORDER_COLOR = '#5c8e32'; // Bright cyan border
 const MINIMAP_BORDER_WIDTH = 2;
-const MINIMAP_INNER_BORDER_COLOR = '#7c3aed'; // Purple inner border
+const MINIMAP_INNER_BORDER_COLOR = '#2d4715'; // Purple inner border
 const MINIMAP_INNER_BORDER_WIDTH = 1;
-const MINIMAP_GLOW_COLOR = '#00d4ff'; // Cyan glow effect
+const MINIMAP_GLOW_COLOR = '#5c8e32'; // Cyan glow effect
 
 // Tab and X button functionality now handled by React components
 const PLAYER_DOT_SIZE = 3;
-const LOCAL_PLAYER_DOT_COLOR = '#00FF88'; // Bright cyan-green for maximum visibility
+const LOCAL_PLAYER_DOT_COLOR = '#86be52'; // Bright cyan-green for maximum visibility
 const LOCAL_PLAYER_ICON_SIZE = 18; // Larger than other players
 // Player icon constants - Updated for directional triangular icons
 // PvP THREAT INDICATORS - Players are PRIMARY focus
@@ -36,7 +36,7 @@ const PLAYER_ICON_OUTLINE_WIDTH = 2.5; // Thick outline for instant recognition
 const REMOTE_PLAYER_DOT_COLOR = '#FF3366'; // BRIGHT PINK/RED - ENEMY THREAT COLOR
 const REMOTE_PLAYER_GLOW = '0 0 10px #FF3366'; // Pulsing glow for threats
 // Matronage member color (same matronage = friendly)
-const MATRONAGE_MEMBER_COLOR = '#00AAFF'; // Bright blue for same-matronage players
+const MATRONAGE_MEMBER_COLOR = '#5c8e32'; // Bright blue for same-matronage players
 // Enemy color (different matronage or no matronage = enemy)
 const ENEMY_PLAYER_COLOR = '#FF3366'; // Bright red for enemy players
 // Torch visibility radius at night (torches are beacons visible from far away)
@@ -55,14 +55,14 @@ const LIVING_CORAL_DOT_COLOR = 'rgba(255, 127, 200, 0.75)'; // Pink/coral color 
 // Rune stone colors - matching their rune types
 const RUNE_STONE_GREEN_COLOR = '#9dff00'; // Bright cyberpunk yellow-green for agrarian rune stones
 const RUNE_STONE_RED_COLOR = '#ff4400'; // Vibrant orange-red for production rune stones
-const RUNE_STONE_BLUE_COLOR = '#8b5cf6'; // Bright blue-purple cyberpunk violet for memory shard rune stones
+const RUNE_STONE_BLUE_COLOR = '#2d4715'; // Bright blue-purple cyberpunk violet for memory shard rune stones
 const RUNE_STONE_ICON_SIZE = 12; // Twice as large for better visibility on minimap
 
 // ALK Station constants - CRITICAL SUPPLY/OBJECTIVE MARKERS
 const ALK_STATION_ICON_SIZE = 18; // Large for high visibility as major objective points
-const ALK_CENTRAL_COLOR = '#00ff88'; // Bright cyan-green for central compound (no fee)
+const ALK_CENTRAL_COLOR = '#86be52'; // Bright cyan-green for central compound (no fee)
 const ALK_SUBSTATION_COLOR = '#ffaa00'; // Bright amber for substations (with fee)
-const ALK_STATION_GLOW_COLOR = '#00ff88'; // Matching glow
+const ALK_STATION_GLOW_COLOR = '#86be52'; // Matching glow
 const ALK_STATION_OUTLINE_COLOR = '#000000'; // Black outline for contrast
 const ALK_STATION_OUTLINE_WIDTH = 2;
 
@@ -118,7 +118,7 @@ const BEACON_EVENT_OUTLINE_WIDTH = 2.5;
 
 const RESOURCE_ICON_OUTLINE_COLOR = 'rgba(0, 0, 0, 0.8)'; // Strong black outline for clarity
 const RESOURCE_ICON_OUTLINE_WIDTH = 1.5; // Thicker outline for tactical visibility
-const CAMPFIRE_DOT_COLOR = '#FF6600'; // Bright orange for campfires and lit players
+const CAMPFIRE_DOT_COLOR = '#5c8e32'; // Bright orange for campfires and lit players
 const CAMPFIRE_GLOW_COLOR = '#FF8800'; // Orange glow effect
 const CAMPFIRE_ICON_SIZE = 8; // Larger size for better visibility
 const SLEEPING_BAG_DOT_COLOR = '#A0522D'; // Sienna (brownish)
@@ -145,8 +145,8 @@ const PIN_SIZE = 24; // Standard size
 const PIN_BORDER_WIDTH = 1; // Thin border width
 
 // Grid Constants - Cyberpunk SOVA style with enhanced readability
-const GRID_LINE_COLOR = 'rgba(0, 212, 255, 0.08)'; // Very subtle cyan grid (was 0.15)
-const GRID_LINE_HIGHLIGHT_COLOR = 'rgba(0, 212, 255, 0.20)'; // Subtle cyan for major grid lines (was 0.4)
+const GRID_LINE_COLOR = 'rgba(92, 142, 50, 0.08)'; // Very subtle cyan grid (was 0.15)
+const GRID_LINE_HIGHLIGHT_COLOR = 'rgba(92, 142, 50, 0.20)'; // Subtle cyan for major grid lines (was 0.4)
 const GRID_TEXT_COLOR = 'rgba(0, 255, 255, 1.0)'; // FULL BRIGHTNESS cyan for instant readability
 const GRID_TEXT_FONT = 'bold 13px "Courier New", monospace'; // LARGER and BOLD for combat readability
 const GRID_TEXT_SHADOW = '0 0 8px rgba(0, 255, 255, 1.0), 0 0 3px #000000'; // Stronger glow + black outline
@@ -493,7 +493,7 @@ function applyScanLines(
 ) {
   ctx.save();
   ctx.globalAlpha = 0.02; // Much more subtle (was 0.05)
-  ctx.strokeStyle = '#00d4ff';
+  ctx.strokeStyle = '#5c8e32';
   ctx.lineWidth = 1;
   
   // Batch all scan lines into a single path for better performance
@@ -824,7 +824,7 @@ export function drawMinimapOntoCanvas({
     // console.log(`[Minimap] No cached minimap data available. minimapCache:`, minimapCache);
     
     // Show a message that minimap cache is not ready
-    ctx.fillStyle = 'rgba(0, 212, 255, 0.8)';
+    ctx.fillStyle = 'rgba(92, 142, 50, 0.8)';
     ctx.font = '14px "Courier New", monospace';
     ctx.textAlign = 'center';
     // ctx.fillText('INITIALIZING TACTICAL MAP...', minimapX + minimapWidth/2, minimapY + minimapHeight/2);
@@ -1937,7 +1937,7 @@ export function drawMinimapOntoCanvas({
             // Determine player color based on matronage membership
             const remotePlayerMatronageId = matronageMembers?.get(playerId)?.matronageId?.toString();
             const isSameMatronage = localPlayerMatronageIdForNight && remotePlayerMatronageId && remotePlayerMatronageId === localPlayerMatronageIdForNight;
-            const torchColor = isSameMatronage ? '#66AAFF' : '#FF6600'; // Blue-tinted for allies, orange for others
+            const torchColor = isSameMatronage ? '#66AAFF' : '#5c8e32'; // Blue-tinted for allies, orange for others
             
             ctx.save();
             
@@ -2370,7 +2370,7 @@ export function drawMinimapOntoCanvas({
   const cornerOffset = 8;
   
   // Top-left corner bracket
-  ctx.strokeStyle = 'rgba(0, 212, 255, 0.8)';
+  ctx.strokeStyle = 'rgba(92, 142, 50, 0.8)';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(minimapX + cornerOffset + cornerSize, minimapY + cornerOffset);
@@ -2401,7 +2401,7 @@ export function drawMinimapOntoCanvas({
   
   // Add small corner dots for extra tactical feel
   const dotRadius = 2;
-  ctx.fillStyle = '#00d4ff';
+  ctx.fillStyle = '#5c8e32';
   ctx.beginPath();
   ctx.arc(minimapX + cornerOffset, minimapY + cornerOffset, dotRadius, 0, Math.PI * 2);
   ctx.fill();

@@ -136,6 +136,7 @@ pub struct Shelter {
     /// Terrain variant determines the visual style of the shelter (0=default, 1=beach, 2=tundra, 3=alpine)
     /// Set at placement time based on the tile type at the shelter's position
     pub terrain_variant: u8,
+    pub tax_expiry_time: Timestamp, // Expiry timestamp for shelter land tax
 }
 
 // --- Reducer to Place a Shelter ---
@@ -303,6 +304,9 @@ pub fn place_shelter(ctx: &ReducerContext, item_instance_id: u64, world_x: f32, 
         last_hit_time: None,
         last_damaged_by: None,
         terrain_variant, // Set terrain variant for visual style
+        tax_expiry_time: Timestamp::from_micros_since_unix_epoch(
+            current_time.to_micros_since_unix_epoch() + 24 * 3600 * 1000 * 1000
+        ), // Defaults to 1 day of tax paid upon placement
     };
 
     match shelters.try_insert(new_shelter) {

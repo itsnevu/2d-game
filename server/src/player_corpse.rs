@@ -812,6 +812,34 @@ pub fn handle_player_death(
     let death_y = player.position_y;
     let username = player.username.clone();
     
+    // Wilderness bounty reward / split logic
+    if crate::web3_logic::is_in_wilderness(death_x, death_y) {
+        let staked = player.staked_bounty;
+        if staked > 0 {
+            // Deduct the bounty from player
+            player.staked_bounty = 0;
+            
+            if let Some(killer) = killer_id {
+                if killer != player_id {
+                    let reward = ((staked as f32) * 0.70).round() as u64;
+                    let burn = ((staked as f32) * 0.20).round() as u64;
+                    let treasury = staked.saturating_sub(reward).saturating_sub(burn);
+                    
+                    if let Some(mut killer_player) = ctx.db.player().identity().find(&killer) {
+                        killer_player.gold_balance += reward;
+                        ctx.db.player().identity().update(killer_player);
+                        log::info!(
+                            "[Wilderness Bounty] Player {:?} killed {:?} in Wilderness. Staked: {} Gold. Killer Reward: {}, Burned: {}, Treasury: {}",
+                            killer, player_id, staked, reward, burn, treasury
+                        );
+                    }
+                }
+            } else {
+                log::info!("[Wilderness Bounty] Player {:?} died in Wilderness to environment/NPC. Staked: {} Gold burned.", player_id, staked);
+            }
+        }
+    }
+    
     log::info!("[PlayerDeath] Player {} ({:?}) killed by '{}' at ({:.1}, {:.1})", 
               username, player_id, death_cause, death_x, death_y);
     

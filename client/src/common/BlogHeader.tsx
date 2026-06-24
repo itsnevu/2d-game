@@ -105,8 +105,8 @@ const BlogHeader: React.FC = () => {
                                 onClick={() => handleNavigate('/')}
                                 style={{
                                     display: 'inline-block',
-                                    background: 'linear-gradient(135deg, #003366 0%, #00aaff 100%)',
-                                    border: '2px solid #00aaff',
+                                    background: 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)',
+                                    border: '2px solid #5c8e32',
                                     borderRadius: '8px',
                                     color: '#ffffff',
                                     padding: '10px 18px',
@@ -122,16 +122,16 @@ const BlogHeader: React.FC = () => {
                                     cursor: 'pointer',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #0066aa 0%, #00ddff 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #86be52 100%)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
                                     e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 170, 255, 0.6)';
-                                    e.currentTarget.style.borderColor = '#00ddff';
+                                    e.currentTarget.style.borderColor = '#86be52';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #003366 0%, #00aaff 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)';
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.3)';
-                                    e.currentTarget.style.borderColor = '#00aaff';
+                                    e.currentTarget.style.borderColor = '#5c8e32';
                                 }}
                             >
                                 Play Now
@@ -152,7 +152,7 @@ const BlogHeader: React.FC = () => {
                                     transition: 'all 0.2s ease',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.color = '#00ddff';
+                                    e.currentTarget.style.color = '#86be52';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)';
@@ -210,8 +210,8 @@ const BlogHeader: React.FC = () => {
                                 onClick={() => handleNavigate('/')}
                                 style={{
                                     display: 'inline-block',
-                                    background: 'linear-gradient(135deg, #003366 0%, #00aaff 100%)',
-                                    border: '2px solid #00aaff',
+                                    background: 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)',
+                                    border: '2px solid #5c8e32',
                                     borderRadius: '8px',
                                     color: '#ffffff',
                                     padding: '12px 24px',
@@ -228,16 +228,16 @@ const BlogHeader: React.FC = () => {
                                     cursor: 'pointer',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #0066aa 0%, #00ddff 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #86be52 100%)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
                                     e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 170, 255, 0.6)';
-                                    e.currentTarget.style.borderColor = '#00ddff';
+                                    e.currentTarget.style.borderColor = '#86be52';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #003366 0%, #00aaff 100%)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)';
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.3)';
-                                    e.currentTarget.style.borderColor = '#00aaff';
+                                    e.currentTarget.style.borderColor = '#5c8e32';
                                 }}
                             >
                                 Play Now
@@ -320,8 +320,8 @@ const BlogHeader: React.FC = () => {
                         <button
                             onClick={() => handleNavigate('/')}
                             style={{
-                                background: 'linear-gradient(135deg, #003366 0%, #00aaff 100%)',
-                                border: '2px solid #00aaff',
+                                background: 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)',
+                                border: '2px solid #5c8e32',
                                 borderRadius: '8px',
                                 color: '#ffffff',
                                 padding: '14px 20px',
@@ -336,16 +336,16 @@ const BlogHeader: React.FC = () => {
                                 boxShadow: '0 0 10px rgba(0, 170, 255, 0.3)',
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #0066aa 0%, #00ddff 100%)';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #86be52 100%)';
                                 e.currentTarget.style.transform = 'translateY(-2px)';
                                 e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 170, 255, 0.6)';
-                                e.currentTarget.style.borderColor = '#00ddff';
+                                e.currentTarget.style.borderColor = '#86be52';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #003366 0%, #00aaff 100%)';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #2d4715 0%, #5c8e32 100%)';
                                 e.currentTarget.style.transform = 'translateY(0)';
                                 e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.3)';
-                                e.currentTarget.style.borderColor = '#00aaff';
+                                e.currentTarget.style.borderColor = '#5c8e32';
                             }}
                         >
                             Play Now

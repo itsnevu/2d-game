@@ -10,7 +10,7 @@
   height: 85vh;
   max-height: 900px;
   background: linear-gradient(135deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98));
-  border: 2px solid #00aaff;
+  border: 2px solid #5c8e32;
   box-shadow: 0 0 30px rgba(0, 170, 255, 0.3), inset 0 0 20px rgba(0, 170, 255, 0.1);
   border-radius: 8px;
   padding: 0;
@@ -101,7 +101,7 @@
 .categoryItem {
   padding: 12px 16px;
   font-size: 11px;
-  color: #00aaff;
+  color: #5c8e32;
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s ease;
@@ -120,15 +120,15 @@
 }
 
 .categoryItemActive {
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 200, 100, 0.25));
-  border-color: rgba(0, 255, 136, 0.5);
-  color: #00ff88;
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.2), inset 0 0 10px rgba(0, 255, 136, 0.1);
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.2), rgba(0, 200, 100, 0.25));
+  border-color: rgba(134, 190, 82, 0.5);
+  color: #86be52;
+  text-shadow: 0 0 8px rgba(134, 190, 82, 0.6);
+  box-shadow: 0 0 15px rgba(134, 190, 82, 0.2), inset 0 0 10px rgba(134, 190, 82, 0.1);
 }
 
 .categoryItemActive:hover {
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.25), rgba(0, 200, 100, 0.3));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.25), rgba(0, 200, 100, 0.3));
 }
 
 .categoryIcon {
@@ -211,7 +211,7 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: #00aaff;
+  border-color: #5c8e32;
   background: linear-gradient(135deg, rgba(0, 170, 255, 0.15), rgba(0, 150, 255, 0.1));
   box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.2), 0 0 10px rgba(0, 170, 255, 0.3);
 }
@@ -257,13 +257,13 @@
 }
 
 .recipeCraftable {
-  border-color: rgba(0, 255, 136, 0.5);
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.2), inset 0 0 10px rgba(0, 255, 136, 0.1);
+  border-color: rgba(134, 190, 82, 0.5);
+  box-shadow: 0 0 15px rgba(134, 190, 82, 0.2), inset 0 0 10px rgba(134, 190, 82, 0.1);
 }
 
 .recipeLocked {
   background: linear-gradient(135deg, rgba(40, 30, 50, 0.6), rgba(30, 25, 40, 0.7));
-  border-color: rgba(139, 92, 246, 0.4);
+  border-color: rgba(45, 71, 21, 0.4);
   opacity: 0.7;
 }
 
@@ -293,7 +293,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(139, 92, 246, 0.2);
+  background: rgba(45, 71, 21, 0.2);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -320,8 +320,8 @@
 }
 
 .recipeNameLocked {
-  color: #8b5cf6;
-  text-shadow: 0 0 8px rgba(139, 92, 246, 0.6);
+  color: #2d4715;
+  text-shadow: 0 0 8px rgba(45, 71, 21, 0.6);
 }
 
 .lockIcon {
@@ -330,11 +330,11 @@
 
 .lockMessage {
   font-size: 10px;
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.15);
+  color: #2d4715;
+  background: rgba(45, 71, 21, 0.15);
   padding: 4px 10px;
   border-radius: 4px;
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(45, 71, 21, 0.3);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -358,9 +358,9 @@
 }
 
 .ingredientHasEnough {
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 200, 100, 0.2));
-  border: 2px solid rgba(0, 255, 136, 0.4);
-  color: #00ff88;
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.15), rgba(0, 200, 100, 0.2));
+  border: 2px solid rgba(134, 190, 82, 0.4);
+  color: #86be52;
 }
 
 .ingredientNotEnough {
@@ -464,7 +464,7 @@
   font-size: 16px;
   font-weight: bold;
   background: linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 220, 0.4));
-  color: #00aaff;
+  color: #5c8e32;
   border: 2px solid rgba(0, 170, 255, 0.4);
   cursor: pointer;
   display: flex;
@@ -521,7 +521,7 @@
   padding: 6px 10px;
   font-size: 10px;
   background: linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 220, 0.4));
-  color: #00aaff;
+  color: #5c8e32;
   border: 2px solid rgba(0, 170, 255, 0.4);
   border-radius: 4px;
   cursor: pointer;
@@ -546,23 +546,23 @@
   padding: 10px 20px;
   font-size: 12px;
   font-weight: bold;
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 200, 100, 0.4));
-  color: #00ff88;
-  border: 2px solid rgba(0, 255, 136, 0.5);
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4));
+  color: #86be52;
+  border: 2px solid rgba(134, 190, 82, 0.5);
   border-radius: 4px;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3), inset 0 0 10px rgba(0, 255, 136, 0.1);
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1);
+  text-shadow: 0 0 8px rgba(134, 190, 82, 0.6);
   transition: all 0.3s ease;
   font-family: inherit;
 }
 
 .craftBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.5), rgba(0, 200, 100, 0.6));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.5), rgba(0, 200, 100, 0.6));
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4), inset 0 0 12px rgba(0, 255, 136, 0.2);
+  box-shadow: 0 0 20px rgba(134, 190, 82, 0.4), inset 0 0 12px rgba(134, 190, 82, 0.2);
 }
 
 .craftBtn:disabled {
@@ -575,9 +575,9 @@
 }
 
 .craftBtnLocked {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(100, 70, 180, 0.4));
-  color: #8b5cf6;
-  border-color: rgba(139, 92, 246, 0.5);
+  background: linear-gradient(135deg, rgba(45, 71, 21, 0.3), rgba(100, 70, 180, 0.4));
+  color: #2d4715;
+  border-color: rgba(45, 71, 21, 0.5);
 }
 
 /* Crafting Queue Section */
@@ -669,7 +669,7 @@
 
 .queueItemTime {
   font-size: 12px;
-  color: #00aaff;
+  color: #5c8e32;
 }
 
 .queueItemCancelBtn {
@@ -690,7 +690,7 @@
 
 .emptyQueue {
   font-size: 12px;
-  color: #00aaff;
+  color: #5c8e32;
   text-align: center;
   padding: 20px;
   text-shadow: 0 0 5px rgba(0, 170, 255, 0.4);
@@ -703,7 +703,7 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: #00aaff;
+  color: #5c8e32;
   text-align: center;
 }
 

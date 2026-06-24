@@ -49,7 +49,7 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                         : 'linear-gradient(135deg, rgba(20, 40, 80, 0.9), rgba(10, 30, 70, 0.95))',
                     border: isMapOpen 
                         ? '3px solid #00ffaa'
-                        : '3px solid #00aaff',
+                        : '3px solid #5c8e32',
                     color: '#00ffff',
                     cursor: 'pointer',
                     boxShadow: isMapOpen
@@ -136,7 +136,7 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                         : 'linear-gradient(135deg, rgba(30, 15, 50, 0.9), rgba(20, 10, 40, 0.95))',
                     border: isChatOpen 
                         ? '3px solid #00ffaa'
-                        : '3px solid #00aaff',
+                        : '3px solid #5c8e32',
                     color: '#00ffff',
                     cursor: 'pointer',
                     boxShadow: isChatOpen

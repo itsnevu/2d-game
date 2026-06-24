@@ -182,6 +182,7 @@ mod mine_cart; // <<< ADDED: Mine cart loot crate system (quarry-only spawns)
 mod wild_beehive; // <<< ADDED: Wild beehive loot system (forest-only spawns)
 mod road_lamppost; // <<< ADDED: Aleutian whale oil lampposts along dirt roads
 mod sova_procedure; // <<< ADDED: SOVA HTTP procedures (ask_sova, transcribe_speech)
+pub mod web3_logic; // <<< ADDED: Web3-related reducers and functions
 
 // ADD: Re-export respawn reducer
 pub use respawn::respawn_randomly;
@@ -752,6 +753,11 @@ pub struct Player {
     // === NPC Agent Fields ===
     pub is_npc: bool, // True for ElizaOS-driven NPC agents, false for human players
     pub npc_role: String, // NPC role identifier: "gatherer", "warrior", "builder", "trader", etc. Empty for humans.
+    // === Web3 / Play-to-Earn Fields ===
+    pub owner_identity: Option<Identity>, // If rented (Scholar), holds Owner's Identity
+    pub gold_share_ratio: f32, // Ratio of gold that goes to the scholar (e.g., 0.7 = 70% to scholar, 30% to owner)
+    pub gold_balance: u64, // In-game gold balance (exchangeable for $KINS)
+    pub staked_bounty: u64, // Gold staked for Wilderness PvP
 }
 
 pub const TUTORIAL_ID_MEMORY_SHARD: &str = "memoryShard";
@@ -2301,6 +2307,11 @@ pub fn register_player(ctx: &ReducerContext, username: String) -> Result<(), Str
         // NPC fields - human players are never NPCs
         is_npc: false,
         npc_role: String::new(),
+        // === Web3 / Play-to-Earn Fields ===
+        owner_identity: None,
+        gold_share_ratio: 1.0,
+        gold_balance: 0,
+        staked_bounty: 0,
     };
 
     // Insert the new player
@@ -2465,6 +2476,11 @@ pub fn register_npc(ctx: &ReducerContext, username: String, role: String) -> Res
         // NPC-specific fields
         is_npc: true,
         npc_role: role.clone(),
+        // === Web3 / Play-to-Earn Fields ===
+        owner_identity: None,
+        gold_share_ratio: 1.0,
+        gold_balance: 0,
+        staked_bounty: 0,
     };
 
     match players.try_insert(player) {
@@ -3136,4 +3152,22 @@ pub fn mark_alk_station_tutorial_seen(ctx: &ReducerContext) -> Result<(), String
 #[spacetimedb::reducer]
 pub fn mark_crashed_drone_tutorial_seen(ctx: &ReducerContext) -> Result<(), String> {
     mark_tutorial_seen_by_id(ctx, TUTORIAL_ID_CRASHED_DRONE)
+}
+
+// === Auction House / NFT Marketplace System ===
+#[spacetimedb::table(accessor = auction_item, public)]
+#[derive(Clone)]
+pub struct AuctionItem {
+    #[primary_key]
+    #[auto_inc]
+    pub id: u64,
+    pub seller: Identity,
+    pub item_name: String, // Name of the item being sold
+    pub item_data: String, // JSON serialized item properties (durability, custom data, etc.)
+    pub quantity: u32,
+    pub starting_price: u64,
+    pub highest_bid: u64,
+    pub highest_bidder: Option<Identity>,
+    pub end_time: Timestamp,
+    pub is_claimed: bool, // True if seller claimed money or buyer claimed item
 }

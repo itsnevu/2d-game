@@ -217,7 +217,7 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                                 style={{
                                     fontFamily: '"Press Start 2P", cursive',
                                     fontSize: '16px',
-                                    color: '#00aaff',
+                                    color: '#5c8e32',
                                     marginBottom: '15px',
                                     textShadow: '0 0 8px rgba(0, 170, 255, 0.8)',
                                 }}
@@ -310,7 +310,7 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                         style={{
                             background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
                             color: '#ffffff',
-                            border: '2px solid #00aaff',
+                            border: '2px solid #5c8e32',
                             borderRadius: '8px',
                             padding: '15px 30px',
                             fontFamily: '"Press Start 2P", cursive',
