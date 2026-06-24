@@ -30,12 +30,14 @@ interface AuthContextType {
   spacetimeToken: string | null;      // This will be the id_token
   isLoading: boolean;                 // Is an auth operation in progress?
   isAuthenticated: boolean;           // Based on presence of spacetimeToken
+  isSpectator: boolean;               // Spectator mode skips player spawning
   authError: string | null;           // Store auth-related errors
   loginRedirect: () => Promise<void>; // Function to start login flow
   logout: () => Promise<void>;        // Function to logout
   handleRedirectCallback: () => Promise<void>; // Function to process callback
   invalidateCurrentToken: () => void; // New function to invalidate token
   loginWithWallet: (publicKey: string, signature: string, message: string) => Promise<void>;
+  setIsSpectator: (value: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -43,12 +45,14 @@ const AuthContext = createContext<AuthContextType>({
   spacetimeToken: null,
   isLoading: true, // Start loading until initial check is done
   isAuthenticated: false,
+  isSpectator: false,
   authError: null,
   loginRedirect: async () => { console.warn("AuthContext not initialized"); },
   logout: async () => { console.warn("AuthContext not initialized"); },
   handleRedirectCallback: async () => { console.warn("AuthContext not initialized"); },
   invalidateCurrentToken: () => { console.warn("AuthContext not initialized"); },
   loginWithWallet: async () => { console.warn("AuthContext not initialized"); },
+  setIsSpectator: () => { console.warn("AuthContext not initialized"); },
 });
 
 interface AuthProviderProps {
@@ -106,6 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isSpectator, setIsSpectator] = useState<boolean>(false);
 
   // Initialize OpenAuth client
   const [oidcClient] = useState(() => createClient({
@@ -272,6 +277,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setSpacetimeToken(null);
     setUserProfile(null);
     setAuthError(null);
+    setIsSpectator(false);
 
     // Optional: Redirect to OpenAuth end session endpoint if available/needed
     // This might require constructing a URL with id_token_hint and post_logout_redirect_uri
@@ -294,6 +300,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem(LOCAL_STORAGE_KEYS.PKCE_VERIFIER); // Just in case
       setSpacetimeToken(null); 
       setUserProfile(null);
+      setIsSpectator(false);
       // console.log("[AuthContext LOG] Cleared tokens from storage AND state.");
   };
 
@@ -352,6 +359,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       localStorage.setItem(LOCAL_STORAGE_KEYS.ID_TOKEN, id_token);
       setSpacetimeToken(id_token);
+      setIsSpectator(false);
       
       const profile = parseToken(id_token);
       setUserProfile(profile);
@@ -362,6 +370,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error("[AuthContext] Solana wallet authentication failed:", error);
       setAuthError(error.message || "Failed to log in with Solana wallet");
       clearTokens();
+      setIsSpectator(false);
     } finally {
       setIsLoading(false);
     }
@@ -468,12 +477,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         spacetimeToken,
         isLoading,
         isAuthenticated,
+        isSpectator,
         authError,
         loginRedirect,
         logout,
         handleRedirectCallback,
         invalidateCurrentToken,
-        loginWithWallet
+        loginWithWallet,
+        setIsSpectator,
       }}
     >
       {children}

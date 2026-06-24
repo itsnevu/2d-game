@@ -16,6 +16,11 @@ export default defineConfig(({ command, mode }) => {
       // Pre-render blog pages and static pages for SEO/LLEO
       Prerender({
         routes: prerenderRoutes.routes,
+        server: {
+          host: '127.0.0.1',
+          listenHost: '127.0.0.1',
+          port: 0,
+        },
         renderer: new PuppeteerRenderer({
           // Wait for network to be idle before capturing
           renderAfterDocumentEvent: 'DOMContentLoaded',

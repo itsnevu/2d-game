@@ -19,3 +19,4 @@ export { useChatRuntimeData } from './useChatRuntimeData';
 export { useQuestUiTables } from './useQuestUiTables';
 export { useSpeechBubbleRuntimeData } from './useSpeechBubbleRuntimeData';
 export { useAlkPanelRuntimeData } from './useAlkPanelRuntimeData';
+export { useEngineSnapshot } from '../useEngineSnapshot';

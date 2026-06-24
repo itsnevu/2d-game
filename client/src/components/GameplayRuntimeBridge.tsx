@@ -19,6 +19,8 @@ export interface GameplayRuntimeBridgeProps {
     localPlayerId?: string;
     playerIdentity: Identity | null;
     connection: DbConnection | null;
+    isSpectator?: boolean;
+    onQuitSpectating?: () => void;
     placementInfo: PlacementItemInfo | null;
     placementActions: PlacementActions;
     placementError: string | null;
@@ -49,6 +51,7 @@ const GameplayRuntimeBridge: React.FC<GameplayRuntimeBridgeProps> = (props) => {
         localPlayerId: props.localPlayerId,
         playerIdentity: props.playerIdentity,
         connection: props.connection,
+        isSpectator: props.isSpectator,
     });
 
     return (
@@ -80,6 +83,7 @@ const GameplayRuntimeBridge: React.FC<GameplayRuntimeBridgeProps> = (props) => {
                             {...props}
                             canvasRef={canvasRef}
                             soundSystem={soundSystem}
+                            onQuitSpectating={props.onQuitSpectating}
                         />
                     </GameUIProvider>
                 </GameplayMovementProvider>

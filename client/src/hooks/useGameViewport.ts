@@ -31,7 +31,8 @@ interface GameViewportResult {
  */
 export function useGameViewport(
     localPlayer: SpacetimeDBPlayer | null | undefined,
-    smoothedPosition?: { x: number; y: number } | null
+    smoothedPosition?: { x: number; y: number } | null,
+    overrideTarget?: { x: number; y: number } | null
 ): GameViewportResult {
   const [canvasSize, setCanvasSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
@@ -51,16 +52,22 @@ export function useGameViewport(
 
   // Calculate camera offset based on smoothed position (if available) or fallback to player position
   const cameraOffsetX = useMemo(() => {
-    if (!localPlayer) return 0;
-    const targetX = smoothedPosition ? smoothedPosition.x : localPlayer.positionX;
+    const target = overrideTarget ?? (localPlayer
+      ? (smoothedPosition ? smoothedPosition : { x: localPlayer.positionX, y: localPlayer.positionY })
+      : null);
+    if (!target) return 0;
+    const targetX = target.x;
     return canvasSize.width / 2 - targetX;
-  }, [localPlayer, smoothedPosition, canvasSize.width]);
+  }, [localPlayer, smoothedPosition, overrideTarget, canvasSize.width]);
 
   const cameraOffsetY = useMemo(() => {
-    if (!localPlayer) return 0;
-    const targetY = smoothedPosition ? smoothedPosition.y : localPlayer.positionY;
+    const target = overrideTarget ?? (localPlayer
+      ? (smoothedPosition ? smoothedPosition : { x: localPlayer.positionX, y: localPlayer.positionY })
+      : null);
+    if (!target) return 0;
+    const targetY = target.y;
     return canvasSize.height / 2 - targetY;
-  }, [localPlayer, smoothedPosition, canvasSize.height]);
+  }, [localPlayer, smoothedPosition, overrideTarget, canvasSize.height]);
 
   return {
     canvasSize,

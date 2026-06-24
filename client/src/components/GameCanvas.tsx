@@ -25,6 +25,7 @@ import { useGameUI } from '../contexts/GameUIContext';
 import { useGameplaySession } from '../contexts/GameplaySessionContext';
 import { useGameplayInteraction } from '../contexts/GameplayInteractionContext';
 import { useGameplayMovement } from '../contexts/GameplayMovementContext';
+import { useEngineWorldRuntimeState } from '../engine/react/useEngineStoreState';
 import { useLocalPlayer } from '../engine/react/selectors';
 
 // --- Rendering Utilities ---
@@ -58,6 +59,8 @@ interface GameCanvasProps {
   addSOVAMessage?: (message: { id: string; text: string; isUser: boolean; timestamp: Date; flashTab?: boolean }) => void; // SOVA message sink for cairn lore.
   showSovaSoundBox?: (audio: HTMLAudioElement, label: string) => void; // SOVA audio visualization callback.
   onCairnNotification?: (notification: { id: string; cairnNumber: number; totalCairns: number; title: string; isFirstDiscovery: boolean; timestamp: number }) => void;
+  isSpectator?: boolean;
+  onQuitSpectating?: () => void;
   showAutotileDebug: boolean;
   showChunkBoundaries: boolean;
   showInteriorDebug: boolean;
@@ -99,6 +102,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
   addSOVAMessage,
   showSovaSoundBox,
   onCairnNotification,
+  isSpectator = false,
+  onQuitSpectating,
 }) => {
   const runtimeHostRef = useRef<GameCanvasRuntimeHost | null>(null);
   if (!runtimeHostRef.current) {
@@ -218,8 +223,18 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
   // --- Core Game State Hooks ---
   const localPlayer = useLocalPlayer(localPlayerId ?? null);
+  const effectiveLocalPlayer = isSpectator ? null : localPlayer;
+  const effectiveLocalPlayerId = isSpectator ? undefined : localPlayerId;
+  const [spectatorCameraTarget, setSpectatorCameraTarget] = useEngineWorldRuntimeState<{ x: number; y: number } | null>(
+    'spectatorCameraTarget',
+    () => null,
+  );
 
-  const { canvasSize, cameraOffsetX: baseCameraOffsetX, cameraOffsetY: baseCameraOffsetY } = useGameViewport(localPlayer, predictedPosition);
+  const { canvasSize, cameraOffsetX: baseCameraOffsetX, cameraOffsetY: baseCameraOffsetY } = useGameViewport(
+    effectiveLocalPlayer,
+    predictedPosition,
+    isSpectator ? spectatorCameraTarget : null,
+  );
 
   // === AAA Combat Effects: Screen shake, vignette, heartbeat ===
   // PERFORMANCE FIX: shakeOffset and vignetteOpacity are now refs (updated by RAF loop,
@@ -228,13 +243,72 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     isLowHealth,
     isCriticalHealth,
     heartbeatPulse
-  } = useDamageEffects(localPlayer, 100); // 100 = max health
+  } = useDamageEffects(effectiveLocalPlayer, 100); // 100 = max health
 
   // Camera offset WITHOUT shake - used by hooks (mouse position, day/night, etc.)
   // Screen shake is applied directly inside renderGame() by reading shakeOffsetXRef/YRef,
   // which avoids triggering React re-renders on every shake frame.
   const cameraOffsetX = baseCameraOffsetX;
   const cameraOffsetY = baseCameraOffsetY;
+
+  useEffect(() => {
+    if (!isSpectator) {
+      setSpectatorCameraTarget(null);
+      return;
+    }
+
+    setSpectatorCameraTarget((current) => current ?? { x: 0, y: 0 });
+  }, [isSpectator, setSpectatorCameraTarget]);
+
+  useEffect(() => {
+    if (!isSpectator) {
+      return;
+    }
+
+    const PAN_SPEED = 32;
+    const keysDown = new Set<string>();
+
+    const stepPan = () => {
+      setSpectatorCameraTarget((current) => {
+        const next = current ?? { x: 0, y: 0 };
+        let dx = 0;
+        let dy = 0;
+
+        if (keysDown.has('ArrowLeft') || keysDown.has('a') || keysDown.has('A')) dx -= PAN_SPEED;
+        if (keysDown.has('ArrowRight') || keysDown.has('d') || keysDown.has('D')) dx += PAN_SPEED;
+        if (keysDown.has('ArrowUp') || keysDown.has('w') || keysDown.has('W')) dy -= PAN_SPEED;
+        if (keysDown.has('ArrowDown') || keysDown.has('s') || keysDown.has('S')) dy += PAN_SPEED;
+
+        if (dx === 0 && dy === 0) {
+          return current;
+        }
+
+        return { x: next.x + dx, y: next.y + dy };
+      });
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.repeat) {
+        return;
+      }
+      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'a', 'A', 'd', 'D', 'w', 'W', 's', 'S'].includes(event.key)) {
+        event.preventDefault();
+        keysDown.add(event.key);
+        stepPan();
+      }
+    };
+
+    const onKeyUp = (event: KeyboardEvent) => {
+      keysDown.delete(event.key);
+    };
+
+    window.addEventListener('keydown', onKeyDown, { passive: false });
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, [isSpectator, setSpectatorCameraTarget]);
 
   const { heroImageRef, heroSprintImageRef, heroIdleImageRef, heroWaterImageRef, heroCrouchImageRef, heroDodgeImageRef, itemImagesRef, cloudImagesRef, droneImageRef, shelterImageRef } = useAssetLoader();
   const doodadImagesRef = useDoodadImages(); // Extracted to dedicated hook
@@ -250,8 +324,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
   const sceneRuntime = useGameCanvasSceneRuntime({
     connection,
-    localPlayerId,
-    localPlayer,
+    localPlayerId: effectiveLocalPlayerId,
+    localPlayer: effectiveLocalPlayer,
     gameCanvasRef,
     predictedPosition,
     cameraOffsetX,
@@ -363,8 +437,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     host: runtimeHost,
     gameCanvasRef,
     sceneRuntime,
-    localPlayer,
-    localPlayerId,
+    localPlayer: effectiveLocalPlayer,
+    localPlayerId: effectiveLocalPlayerId,
     connection,
     predictedPosition,
     getCurrentPositionNow,
@@ -416,7 +490,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     getCurrentPositionNow,
     getReconciliationProfilerSnapshot,
     getCurrentFacingDirectionNow,
-    localPlayer,
+    localPlayer: effectiveLocalPlayer,
     isAutoWalking,
     canvasSize,
     gameLoopMetricsRef,
@@ -426,7 +500,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
   const { hoveredPlayerIds, handlePlayerHover, overlayProps } = useGameCanvasOverlayRuntime({
     connection,
-    localPlayerId,
+    localPlayerId: effectiveLocalPlayerId,
     itemImagesRef,
     deathMarkerImg,
     pinMarkerImg,
@@ -439,9 +513,9 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
   });
 
   const particleRuntime = useGameCanvasParticleRuntime({
-    localPlayer,
+    localPlayer: effectiveLocalPlayer,
     sceneRuntime,
-    localPlayerId,
+    localPlayerId: effectiveLocalPlayerId,
     localFacingDirectionRef: controllerRuntime.localFacingDirectionRef,
   });
 
@@ -452,8 +526,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     particleSnapshot: particleRuntime,
     ambientEffectsSnapshot: {
       connection,
-      localPlayer,
-      localPlayerId,
+      localPlayer: effectiveLocalPlayer,
+      localPlayerId: effectiveLocalPlayerId,
       predictedPosition,
       cameraOffsetX,
       cameraOffsetY,
@@ -471,8 +545,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
   useGameCanvasRenderRuntime({
     host: runtimeHost,
-    localPlayerId,
-    localPlayer,
+    localPlayerId: effectiveLocalPlayerId,
+    localPlayer: effectiveLocalPlayer,
     predictedPosition,
     connection,
     gameCanvasRef,
@@ -612,7 +686,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
       {/* === Low Health Warning Effect === */}
       {/* Pulsing red border when health is critically low */}
-      {isLowHealth && !localPlayer?.isDead && (
+      {isLowHealth && !effectiveLocalPlayer?.isDead && (
         <div
           style={{
             position: 'absolute',
@@ -629,6 +703,84 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       )}
 
       <GameCanvasOverlayUI {...overlayProps} />
+
+      {isSpectator && (
+        <>
+          <div
+            style={{
+              position: 'absolute',
+              top: '14px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 60,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '10px 14px',
+              background: 'rgba(10, 10, 14, 0.86)',
+              border: '1px solid rgba(200, 162, 60, 0.55)',
+              borderRadius: '6px',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
+              pointerEvents: 'auto',
+            }}
+          >
+            <span
+              style={{
+                color: '#ffc83c',
+                fontFamily: "'PixelOperator', sans-serif",
+                fontSize: '13px',
+                letterSpacing: '1px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Spectator Mode
+            </span>
+            <button
+              type="button"
+              onClick={onQuitSpectating}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: 'white',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                fontSize: '12px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Quit Spectating
+            </button>
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 55,
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <div
+              style={{
+                margin: '12px',
+                padding: '8px 10px',
+                color: 'rgba(255, 255, 255, 0.22)',
+                fontFamily: "'PixelOperator', sans-serif",
+                fontSize: '42px',
+                letterSpacing: '3px',
+                transform: 'rotate(-8deg)',
+                userSelect: 'none',
+              }}
+            >
+              SPECTATE
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

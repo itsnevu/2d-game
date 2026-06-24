@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faXTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faBars, faTimes, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import loginBackground from '../assets/ui/login_background.jpg';
+import heroBackgroundVideo from '../assets/ui/herobg.mp4';
 import logo from '../assets/ui/logo_alt.png';
 import ShipwreckCarousel from './ShipwreckCarousel';
 import GameplayFeaturesCarousel from './GameplayFeaturesCarousel';
@@ -259,6 +260,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
 interface LoginScreenProps {
     // Removed username/setUsername props
     handleJoinGame: (usernameToRegister: string | null) => Promise<void>; // Accepts null for existing players, returns Promise to handle errors
+    handleSpectateGame?: () => void | Promise<void>;
     loggedInPlayer: Player | null; // Player data from SpacetimeDB if exists
     connectionError?: string | null; // SpacetimeDB connection error from GameConnectionContext
     storedUsername?: string | null; // Username from localStorage for connection error fallback
@@ -271,6 +273,7 @@ interface LoginScreenProps {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({
     handleJoinGame,
+    handleSpectateGame,
     loggedInPlayer,
     connectionError,
     storedUsername,
@@ -284,6 +287,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     const {
         userProfile, // Contains { userId } after successful login 
         isAuthenticated,
+        setIsSpectator,
         isLoading: authIsLoading,
         authError,
         loginRedirect,
@@ -297,6 +301,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     // Local state for the username input field (only used for new players)
     const [inputUsername, setInputUsername] = useState<string>('');
     const [localError, setLocalError] = useState<string | null>(null);
+    const [simulatedWldrBalance, setSimulatedWldrBalance] = useState<number | null>(null);
+
+    const computeSimulatedBalance = (publicKey: string): number => {
+        let hash = 0;
+        for (let i = 0; i < publicKey.length; i += 1) {
+            hash = (hash * 31 + publicKey.charCodeAt(i)) >>> 0;
+        }
+        return hash % 2000;
+    };
 
     const handleWalletLogin = async () => {
         setLocalError(null);
@@ -308,6 +321,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             
             const connectResponse = await provider.connect();
             const publicKeyStr = connectResponse.publicKey.toString();
+            const balance = computeSimulatedBalance(publicKeyStr);
+            setSimulatedWldrBalance(balance);
             
             const timestamp = Math.floor(Date.now() / 1000);
             const messageStr = `Sign this message to log into WILDER.\nChallenge: ${timestamp}`;
@@ -317,6 +332,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             const signatureStr = bs58.encode(signResponse.signature);
             
             await loginWithWallet(publicKeyStr, signatureStr, messageStr);
+            setIsSpectator(balance < 1000);
         } catch (err: any) {
             console.error("[LoginScreen] Wallet authentication failed:", err);
             setLocalError(err.message || "Wallet sign-in cancelled or failed.");
@@ -496,6 +512,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             // If not authenticated, start the OpenAuth login flow
             await loginRedirect();
         } else {
+            if (simulatedWldrBalance !== null && simulatedWldrBalance < 1000) {
+                setIsSpectator(true);
+                handleSpectateGame?.();
+                return;
+            }
+
             // If authenticated, check if it's a new or existing player
 
             // CRITICAL CHECK: If authenticated but an authError exists, do not proceed.
@@ -885,10 +907,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                 margin: 0,
                 padding: 0,
                 backgroundColor: '#000000', // Pure black background to match gradient
-                backgroundImage: backgroundLoaded ? `url(${loginBackground})` : 'none',
-                backgroundSize: '100% auto', // Show full width, scale height proportionally
-                backgroundPosition: isMobile ? 'center 70px' : 'center top', // Mobile: push down by nav bar height
-                backgroundRepeat: 'no-repeat',
                 backgroundAttachment: 'scroll',
                 fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
                 color: 'white',
@@ -896,8 +914,51 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                 overflowX: 'hidden', // Prevent horizontal scrolling
                 overflowY: 'auto', // Allow vertical scrolling
                 boxSizing: 'border-box', // Include padding and border in width calculations
-                transition: 'background-image 0.3s ease-in-out',
+                isolation: 'isolate',
             }}>
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    poster={loginBackground}
+                    style={{
+                        position: 'absolute',
+                        inset: '-2%',
+                        width: '104%',
+                        height: '104%',
+                        objectFit: 'cover',
+                        objectPosition: isMobile ? 'center 24%' : 'center 42%',
+                        transform: 'scale(1.03)',
+                        filter: 'contrast(1.08) saturate(0.92) brightness(0.9)',
+                        opacity: 0.96,
+                        zIndex: 0,
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <source src={heroBackgroundVideo} type="video/mp4" />
+                </video>
+                {!backgroundLoaded && (
+                    <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundImage: `url(${loginBackground})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center top',
+                        backgroundRepeat: 'no-repeat',
+                        zIndex: 0,
+                        pointerEvents: 'none',
+                    }} />
+                )}
+                <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background:
+                        'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.14) 28%, rgba(0,0,0,0.38) 62%, rgba(0,0,0,0.82) 100%)',
+                    zIndex: 0,
+                    pointerEvents: 'none',
+                }} />
                 {/* Gradient Overlay - Very aggressive transition to eliminate flat line */}
                 <div style={{
                     position: 'absolute',
@@ -1150,46 +1211,69 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         {!authIsLoading && !authError && (!connectionError || storedUsername) && !localError && (
                             <form onSubmit={handleSubmit}>
                                 {isAuthenticated ? (
-                                    <button
-                                        type="submit"
-                                        disabled={authError !== null || (connectionError !== null && !storedUsername) || localError !== null}
-                                        onMouseEnter={(e) => {
-                                            const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
-                                            if (!isButtonDisabled) {
-                                                e.currentTarget.style.transform = 'translateY(-2px)';
-                                                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.4), 0 0 20px rgba(200, 162, 60, 0.3)';
-                                            }
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
-                                            if (!isButtonDisabled) {
-                                                e.currentTarget.style.transform = 'translateY(0)';
-                                                e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)';
-                                            }
-                                        }}
-                                        style={{
-                                            padding: '16px 32px',
-                                            border: '2px solid rgba(200, 162, 60, 0.5)',
-                                            background: 'linear-gradient(135deg, #C8A23C, #3B6B35)',
-                                            color: 'white',
-                                            fontFamily: "'PixelOperator', sans-serif",
-                                            fontSize: '18px',
-                                            fontWeight: 'bold',
-                                            cursor: (authError || (connectionError && !storedUsername) || localError) ? 'not-allowed' : 'pointer',
-                                            boxShadow: '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)',
-                                            display: 'inline-block',
-                                            boxSizing: 'border-box',
-                                            textTransform: 'uppercase',
-                                            borderRadius: '8px',
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            letterSpacing: '1px',
-                                            textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
-                                            position: 'relative',
-                                            overflow: 'hidden',
-                                        }}
-                                    >
-                                        Join Game
-                                    </button>
+                                    <>
+                                        {simulatedWldrBalance !== null && (
+                                            <div
+                                                style={{
+                                                    marginBottom: '14px',
+                                                    fontSize: '12px',
+                                                    color: 'rgba(255, 255, 255, 0.85)',
+                                                    fontFamily: 'monospace',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '1px',
+                                                }}
+                                            >
+                                                Simulated $WLDR balance: {simulatedWldrBalance}
+                                            </div>
+                                        )}
+                                        <button
+                                            type="submit"
+                                            disabled={authError !== null || (connectionError !== null && !storedUsername) || localError !== null}
+                                            onClick={(e) => {
+                                                if (simulatedWldrBalance !== null && simulatedWldrBalance < 1000) {
+                                                    e.preventDefault();
+                                                    setIsSpectator(true);
+                                                    handleSpectateGame?.();
+                                                }
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
+                                                if (!isButtonDisabled) {
+                                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.4), 0 0 20px rgba(200, 162, 60, 0.3)';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
+                                                if (!isButtonDisabled) {
+                                                    e.currentTarget.style.transform = 'translateY(0)';
+                                                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)';
+                                                }
+                                            }}
+                                            style={{
+                                                padding: '16px 32px',
+                                                border: '2px solid rgba(200, 162, 60, 0.5)',
+                                                background: 'linear-gradient(135deg, #C8A23C, #3B6B35)',
+                                                color: 'white',
+                                                fontFamily: "'PixelOperator', sans-serif",
+                                                fontSize: '18px',
+                                                fontWeight: 'bold',
+                                                cursor: (authError || (connectionError && !storedUsername) || localError) ? 'not-allowed' : 'pointer',
+                                                boxShadow: '0 4px 15px rgba(0,0,0,0.4), 0 0 15px rgba(200, 162, 60, 0.4)',
+                                                display: 'inline-block',
+                                                boxSizing: 'border-box',
+                                                textTransform: 'uppercase',
+                                                borderRadius: '8px',
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                letterSpacing: '1px',
+                                                textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
+                                                position: 'relative',
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            {simulatedWldrBalance !== null && simulatedWldrBalance < 1000 ? 'Spectate Game' : 'Join Game'}
+                                        </button>
+                                    </>
                                 ) : (
                                     <button
                                         type="button"

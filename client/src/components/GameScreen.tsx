@@ -104,6 +104,8 @@ interface GameScreenProps {
     playerIdentity: Identity | null;
     connection: DbConnection | null;
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
+    isSpectator?: boolean;
+    onQuitSpectating?: () => void;
 
     // Placement State/Actions (from usePlacementManager)
     placementInfo: PlacementItemInfo | null;
@@ -147,6 +149,8 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     const {
         localPlayerId, playerIdentity, connection,
         canvasRef,
+        isSpectator,
+        onQuitSpectating,
         placementInfo, placementActions, placementError, setPlacementWarning, startPlacement, cancelPlacement,
         musicSystem,
         soundSystem,
@@ -316,6 +320,8 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                 onProfilerCopied={onProfilerCopied}
                 isGameMenuOpen={currentMenu !== null}
                 onAutoActionStatesChange={handleAutoActionStatesChange}
+                isSpectator={isSpectator}
+                onQuitSpectating={onQuitSpectating}
             />
 
             {/* Use our camera offsets for SpeechBubbleManager */}

@@ -55,47 +55,47 @@ export const useSEO = ({
     }
 
     if (ogImage) {
-      const absoluteOgImage = `https://brothandbullets.com${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
+      const absoluteOgImage = `https://playwilder.com${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
       updateMetaTag('og:image', absoluteOgImage);
       updateMetaTag('og:image:secure_url', absoluteOgImage); // Added for HTTPS
-      updateMetaTag('og:image:alt', title || 'Broth & Bullets - 2D Multiplayer Survival Game');
+      updateMetaTag('og:image:alt', title || 'WILDER - 2D Multiplayer Survival Game');
       updateMetaTag('og:image:width', '1200');
       updateMetaTag('og:image:height', '630');
       updateMetaTag('og:image:type', 'image/jpeg'); // Added - specify image type
     }
 
     if (twitterImage) {
-      const absoluteTwitterImage = `https://brothandbullets.com${twitterImage.startsWith('/') ? '' : '/'}${twitterImage}`;
+      const absoluteTwitterImage = `https://playwilder.com${twitterImage.startsWith('/') ? '' : '/'}${twitterImage}`;
       updateMetaName('twitter:image', absoluteTwitterImage);
-      updateMetaName('twitter:image:alt', title || 'Broth & Bullets - 2D Multiplayer Survival Game');
+      updateMetaName('twitter:image:alt', title || 'WILDER - 2D Multiplayer Survival Game');
     } else if (ogImage) {
       // Use ogImage as fallback for Twitter
-      const absoluteOgImage = `https://brothandbullets.com${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
+      const absoluteOgImage = `https://playwilder.com${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
       updateMetaName('twitter:image', absoluteOgImage);
-      updateMetaName('twitter:image:alt', title || 'Broth & Bullets - 2D Multiplayer Survival Game');
+      updateMetaName('twitter:image:alt', title || 'WILDER - 2D Multiplayer Survival Game');
     }
 
     // Set essential Open Graph tags
     updateMetaTag('og:type', type);
-    updateMetaTag('og:site_name', 'Broth & Bullets');
+    updateMetaTag('og:site_name', 'WILDER');
     updateMetaTag('og:locale', 'en_US');
     updateMetaTag('og:url', window.location.href);
 
     // Set essential Twitter tags  
     updateMetaName('twitter:card', 'summary_large_image');
-    updateMetaName('twitter:site', '@seloslav');
-    updateMetaName('twitter:creator', '@seloslav');
+    updateMetaName('twitter:site', '@playwilder');
+    updateMetaName('twitter:creator', '@playwilder');
 
     // Set additional meta tags
-    updateMetaName('author', 'Broth & Bullets Team');
+    updateMetaName('author', 'WILDER Team');
     updateMetaName('robots', 'index, follow');
     updateMetaName('theme-color', '#00aaff');
 
     // Cleanup function to reset to defaults when component unmounts
     return () => {
-      document.title = 'Broth & Bullets';
+      document.title = 'WILDER';
       updateMetaName('description', 'A top-down 2D multiplayer survival game');
-      updateMetaTag('og:title', 'Broth & Bullets');
+      updateMetaTag('og:title', 'WILDER');
       updateMetaTag('og:description', 'A top-down 2D multiplayer survival game');
       updateMetaTag('og:type', 'website');
     };

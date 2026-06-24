@@ -58,7 +58,7 @@ function BlogPostPage() {
   const ogImageUrl = coverImage || '/images/blog/og-default.jpg';
   
   useSEO({
-    title: `${title} | Broth & Bullets Blog`,
+    title: `${title} | WILDER Blog`,
     description: subtitle,
     ogImage: ogImageUrl,
     twitterImage: ogImageUrl,
@@ -186,10 +186,10 @@ function BlogPostPage() {
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Broth & Bullets",
+      "name": "WILDER",
       "logo": {
         "@type": "ImageObject",
-        "url": "/images/blog/logo_alt.png"
+        "url": "/images/blog/logo_new.png"
       }
     },
     "description": subtitle,

@@ -51,7 +51,7 @@ import { resetInsanityState } from './utils/renderers/insanityOverlayUtils';
 import { useRuntimeBootstrap } from './engine/react/useRuntimeBootstrap';
 import { useRuntimeConnectionBridge } from './engine/react/useRuntimeConnectionBridge';
 import { useRuntimeViewport } from './engine/react/useRuntimeViewport';
-import { useLocalPlayer, useOnlinePlayerCount, useRuntimeReadiness } from './engine/react/selectors';
+import { useEngineSnapshot, useLocalPlayer, useOnlinePlayerCount, useRuntimeReadiness } from './engine/react/selectors';
 
 /** Server capacity - must match server/src/lib.rs MAX_PLAYERS */
 const MAX_PLAYERS = 50;
@@ -92,6 +92,7 @@ function AppContent() {
     const { 
         userProfile, 
         isAuthenticated, 
+        isSpectator,
         isLoading: authLoading, 
         loginRedirect,
         spacetimeToken
@@ -134,9 +135,13 @@ function AppContent() {
     const localPlayer = useLocalPlayer(identityHex);
     const onlinePlayerCount = useOnlinePlayerCount();
     const { localPlayerRegistered, loggedInPlayer } = useRuntimeReadiness(identityHex);
+    const spectatorCameraTarget = useEngineSnapshot(
+        (snapshot) => (snapshot.world.runtimeState.spectatorCameraTarget as { x: number; y: number } | null | undefined) ?? null,
+    );
 
     useRuntimeViewport({
         localPlayer,
+        spectatorViewportTarget: isSpectator ? spectatorCameraTarget : null,
         onRespawn: () => {
             console.log('[App] Respawn detected - resetting overlay states');
             resetBrothEffectsState();
@@ -199,6 +204,7 @@ function AppContent() {
             {!isAuthenticated && (
                  <LoginScreen
                     handleJoinGame={loginRedirect} // Correctly pass loginRedirect
+                    handleSpectateGame={async () => { /* login required before spectate */ }}
                     loggedInPlayer={null}
                     connectionError={connectionError}
                     isSpacetimeConnected={spacetimeConnected}
@@ -213,6 +219,7 @@ function AppContent() {
             {isAuthenticated && !localPlayerRegistered && (
                  <LoginScreen 
                     handleJoinGame={handleAttemptRegisterPlayer} // Pass the updated handler
+                    handleSpectateGame={async () => { /* handled inside LoginScreen when wallet qualifies */ }}
                     loggedInPlayer={loggedInPlayer}
                     connectionError={connectionError}
                     storedUsername={storedUsername}
@@ -224,8 +231,8 @@ function AppContent() {
                  />
             )}
             
-            {/* If authenticated AND registered/game ready */}
-            {isAuthenticated && localPlayerRegistered && loggedInPlayer && (
+            {/* If authenticated AND registered/game ready, or spectating */}
+            {isAuthenticated && (isSpectator || (localPlayerRegistered && loggedInPlayer)) && (
                 (() => { 
                     const localPlayerIdentityHex = dbIdentity ? dbIdentity.toHexString() : undefined;
                     return (
@@ -234,6 +241,8 @@ function AppContent() {
                             localPlayerId={localPlayerIdentityHex}
                             playerIdentity={dbIdentity} 
                             connection={connection}
+                            isSpectator={isSpectator}
+                            onQuitSpectating={() => window.location.assign(window.location.origin)}
                             placementInfo={placementInfo}
                             placementActions={placementActions}
                             placementError={placementError}

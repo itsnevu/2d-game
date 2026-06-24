@@ -27,15 +27,18 @@ interface UseGameplayRuntimeHostOptions {
   localPlayerId?: string;
   playerIdentity: Identity | null;
   connection: DbConnection | null;
+  isSpectator?: boolean;
 }
 
 export function useGameplayRuntimeHost({
   localPlayerId,
   playerIdentity,
   connection,
+  isSpectator,
 }: UseGameplayRuntimeHostOptions) {
   const identityHex = playerIdentity ? playerIdentity.toHexString() : null;
   const localPlayer = useLocalPlayer(identityHex);
+  const effectiveLocalPlayer = isSpectator ? null : localPlayer;
   const { waterSpeedBonus, movementSpeedModifier } = useEquipmentMovementModifiers(identityHex);
   const collisionEntities = useCollisionEntities();
   const playerDodgeRollStates = useEngineSnapshot(
@@ -63,15 +66,15 @@ export function useGameplayRuntimeHost({
     sessionRuntime.isMobileChatOpen ||
     sessionRuntime.showInventoryState ||
     sessionRuntime.showCraftingScreenState;
-  const isDead = localPlayer?.isDead ?? false;
+  const isDead = !isSpectator && (effectiveLocalPlayer?.isDead ?? false);
 
   const {
     inputState: keyboardInputState,
     inputStateRef: keyboardInputStateRef,
     isAutoWalking,
   } = useMovementInput({
-    isUIFocused: isUIFocused || isDead,
-    localPlayer,
+    isUIFocused: isUIFocused || isDead || Boolean(isSpectator),
+    localPlayer: effectiveLocalPlayer,
     onToggleAutoAttack: toggleAutoAttack,
     isFishing,
   });
@@ -84,7 +87,7 @@ export function useGameplayRuntimeHost({
     handleMobileTap,
   } = useGameplayMobileRuntime({
     isMobile,
-    localPlayer,
+    localPlayer: effectiveLocalPlayer,
     keyboardInputState,
     connection,
   });
@@ -99,7 +102,7 @@ export function useGameplayRuntimeHost({
   }, [connection]);
 
   const predictedMovement = usePredictedMovement({
-    localPlayer,
+    localPlayer: effectiveLocalPlayer,
     inputState,
     inputStateRef: isMobile ? undefined : keyboardInputStateRef,
     connection,
@@ -114,7 +117,7 @@ export function useGameplayRuntimeHost({
   });
 
   return {
-    localPlayer,
+    localPlayer: effectiveLocalPlayer,
     soundSystem,
     canvasRef,
     isFishing,

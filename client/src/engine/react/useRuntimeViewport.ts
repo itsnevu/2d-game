@@ -9,17 +9,40 @@ const VIEWPORT_UPDATE_THRESHOLD_SQ = (VIEWPORT_WIDTH / 2) ** 2;
 
 interface UseRuntimeViewportOptions {
   localPlayer: Player | undefined;
+  spectatorViewportTarget?: { x: number; y: number } | null;
   onRespawn?: () => void;
 }
 
 export function useRuntimeViewport({
   localPlayer,
+  spectatorViewportTarget,
   onRespawn,
 }: UseRuntimeViewportOptions): void {
   const lastSentViewportCenterRef = useRef<{ x: number; y: number } | null>(null);
   const prevPlayerStateRef = useRef<{ isDead: boolean; positionX: number; positionY: number } | null>(null);
 
   useEffect(() => {
+    if (spectatorViewportTarget) {
+      runtimeEngine.setWorldViewport({
+        minX: spectatorViewportTarget.x - (VIEWPORT_WIDTH / 2) - VIEWPORT_BUFFER,
+        maxX: spectatorViewportTarget.x + (VIEWPORT_WIDTH / 2) + VIEWPORT_BUFFER,
+        minY: spectatorViewportTarget.y - (VIEWPORT_HEIGHT / 2) - VIEWPORT_BUFFER,
+        maxY: spectatorViewportTarget.y + (VIEWPORT_HEIGHT / 2) + VIEWPORT_BUFFER,
+      });
+      lastSentViewportCenterRef.current = {
+        x: spectatorViewportTarget.x,
+        y: spectatorViewportTarget.y,
+      };
+      prevPlayerStateRef.current = localPlayer
+        ? {
+            isDead: localPlayer.isDead,
+            positionX: localPlayer.positionX,
+            positionY: localPlayer.positionY,
+          }
+        : null;
+      return;
+    }
+
     if (!localPlayer || localPlayer.isDead) {
       runtimeEngine.setWorldViewport(null);
       prevPlayerStateRef.current = localPlayer
