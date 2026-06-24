@@ -22,6 +22,7 @@ import BlogPostPage from './blog/BlogPostPage';
 import PrivacyPage from './components/PrivacyPage';
 import TermsPage from './components/TermsPage';
 import CookiesPage from './components/CookiesPage';
+import AboutPage from './components/AboutPage';
 
 // Context Providers
 import { GameContextsProvider } from './contexts/GameContexts';
@@ -262,6 +263,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<AppErrorBoundary><AppContent /></AppErrorBoundary>} />
                             <Route path="/blog" element={<BlogPage />} />
+                            <Route path="/about" element={<AboutPage />} />
                             <Route path="/blog/:slug" element={<BlogPostPage />} />
                             <Route path="/privacy" element={<PrivacyPage />} />
                             <Route path="/terms" element={<TermsPage />} />

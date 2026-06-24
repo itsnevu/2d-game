@@ -20,7 +20,7 @@ import { Player } from '../generated/types'; // Adjusted path
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faXTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faBars, faTimes, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import loginBackground from '../assets/ui/login_background.png';
+import loginBackground from '../assets/ui/login_background.jpg';
 import logo from '../assets/ui/logo_alt.png';
 import ShipwreckCarousel from './ShipwreckCarousel';
 import GameplayFeaturesCarousel from './GameplayFeaturesCarousel';
@@ -222,9 +222,9 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                         <button
                             onClick={handlePlayClick}
                             style={{
-                                backgroundColor: '#5c8e32',
+                                background: 'linear-gradient(135deg, #5c8e32, #2d4715)',
                                 color: 'white',
-                                border: 'none',
+                                border: '1px solid rgba(134, 190, 82, 0.3)',
                                 borderRadius: '6px',
                                 padding: '16px 24px',
                                 fontSize: '16px',
@@ -237,12 +237,12 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
                                 margin: '20px 24px 0',
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = '#86be52';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #86be52, #3b6320)';
                                 e.currentTarget.style.transform = 'translateY(-2px)';
                                 e.currentTarget.style.boxShadow = '0 6px 16px rgba(92, 142, 50, 0.4)';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = '#5c8e32';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #5c8e32, #2d4715)';
                                 e.currentTarget.style.transform = 'translateY(0)';
                                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(92, 142, 50, 0.3)';
                             }}
@@ -772,13 +772,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             )}
                             <MobileNavMenu
                                 navItems={[
-                                    { label: 'ABOUT', selector: '[data-about-section]' },
-                                    { label: 'LOADOUT', selector: '[data-tools-section]' },
-                                    { label: 'FEATURES', selector: '[data-features-section]' },
-                                    { label: 'BLOG', selector: '[data-blog-section]' },
-                                    { label: 'FAQ', selector: '[data-faq-section]' },
+                                    { label: 'ABOUT', selector: 'about' },
+                                    { label: 'HOW TO PLAY', selector: 'how-to-play' },
+                                    { label: 'BLOG', selector: 'blog' },
                                 ]}
-                                onNavigate={smoothScrollTo}
+                                onNavigate={(selector) => {
+                                    if (selector === 'about') {
+                                        navigate('/about');
+                                        window.scrollTo(0, 0);
+                                    } else if (selector === 'blog') {
+                                        navigate('/blog');
+                                        window.scrollTo(0, 0);
+                                    } else if (selector === 'how-to-play') {
+                                        const sec = document.querySelector('[data-how-to-play-section]');
+                                        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }}
                                 onPlayClick={scrollToTop}
                                 userEmail={isAuthenticated && userProfile ? (userProfile.email || null) : null}
                                 onLogout={isAuthenticated ? logout : undefined}
@@ -792,15 +801,24 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             fontSize: '14px',
                         }}>
                             {[
-                                { label: 'ABOUT', selector: '[data-about-section]' },
-                                { label: 'LOADOUT', selector: '[data-tools-section]' },
-                                { label: 'FEATURES', selector: '[data-features-section]' },
-                                { label: 'BLOG', selector: '[data-blog-section]' },
-                                { label: 'FAQ', selector: '[data-faq-section]' },
+                                { label: 'ABOUT', selector: 'about' },
+                                { label: 'HOW TO PLAY', selector: 'how-to-play' },
+                                { label: 'BLOG', selector: 'blog' },
                             ].map((item) => (
                                 <button
                                     key={item.label}
-                                    onClick={() => smoothScrollTo(item.selector)}
+                                    onClick={() => {
+                                        if (item.selector === 'about') {
+                                            navigate('/about');
+                                            window.scrollTo(0, 0);
+                                        } else if (item.selector === 'blog') {
+                                            navigate('/blog');
+                                            window.scrollTo(0, 0);
+                                        } else if (item.selector === 'how-to-play') {
+                                            const sec = document.querySelector('[data-how-to-play-section]');
+                                            if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }}
                                     style={{
                                         background: 'none',
                                         border: 'none',
@@ -830,9 +848,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             <button
                                 onClick={scrollToTop}
                                 style={{
-                                    backgroundColor: '#5c8e32',
+                                    background: 'linear-gradient(135deg, #5c8e32, #2d4715)',
                                     color: 'white',
-                                    border: 'none',
+                                    border: '1px solid rgba(134, 190, 82, 0.3)',
                                     borderRadius: '6px',
                                     padding: '10px 24px',
                                     fontSize: '15px',
@@ -844,12 +862,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     transition: 'all 0.2s ease',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#86be52';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #86be52, #3b6320)';
                                     e.currentTarget.style.transform = 'translateY(-2px)';
                                     e.currentTarget.style.boxShadow = '0 6px 16px rgba(92, 142, 50, 0.4)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#5c8e32';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, #5c8e32, #2d4715)';
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(92, 142, 50, 0.3)';
                                 }}
@@ -888,8 +906,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                     width: '100%',
                     height: '100%',
                     background: isMobile
-                        ? 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.03) 20%, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.25) 35%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.92) 55%, rgba(0,0,0,1) 60%, rgba(0,0,0,1) 100%)'
-                        : 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 4%, rgba(0,0,0,0.08) 8%, rgba(0,0,0,0.2) 12%, rgba(0,0,0,0.4) 16%, rgba(0,0,0,0.65) 20%, rgba(0,0,0,0.85) 23%, rgba(0,0,0,0.96) 25%, rgba(0,0,0,1) 27%, rgba(0,0,0,1) 100%)',
+                        ? 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.6) 75%, rgba(0,0,0,0.85) 88%, rgba(0,0,0,1) 98%)'
+                        : 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.1) 55%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.6) 82%, rgba(0,0,0,0.85) 92%, rgba(0,0,0,1) 98%)',
                     pointerEvents: 'none', // Allow clicks to pass through
                     zIndex: 1,
                 }} />
@@ -905,21 +923,45 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                     position: 'relative',
                     zIndex: 2, // Ensure content appears above the gradient overlay
                 }}>
-                    {/* Logo - Hidden on mobile since nav bar has logo */}
-                    {!isMobile && (
-                        <h1 style={{
-                            fontFamily: UI_BRAND_FONT,
-                            fontSize: 'clamp(48px, 8vw, 96px)',
-                            color: '#C8A23C',
-                            textShadow: '3px 3px 0px #000, 6px 6px 20px rgba(200, 162, 60, 0.4)',
-                            margin: '0 0 clamp(20px, 4vh, 60px) 0',
-                            letterSpacing: '2px',
-                            textTransform: 'uppercase',
-                            userSelect: 'none',
-                        }}>
-                            WILDER
-                        </h1>
-                    )}
+                    <h1 style={{
+                        fontFamily: UI_BRAND_FONT,
+                        fontSize: 'clamp(48px, 8vw, 96px)',
+                        color: '#C8A23C',
+                        textShadow: '3px 3px 0px #000, 6px 6px 20px rgba(200, 162, 60, 0.4)',
+                        margin: '0 0 10px 0',
+                        letterSpacing: '2px',
+                        textTransform: 'uppercase',
+                        userSelect: 'none',
+                    }}>
+                        WILDER
+                    </h1>
+                    <p style={{
+                        fontFamily: "'PixelOperator', sans-serif",
+                        fontSize: 'clamp(14px, 2.5vw, 18px)',
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        maxWidth: '600px',
+                        margin: '0 auto 10px auto',
+                        lineHeight: '1.4',
+                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+                    }}>
+                        Survive the Wilderness. Buy, sell, and trade <strong style={{ color: '#C8A23C' }}>$WLDR</strong> tokens to claim your destiny.
+                    </p>
+                    <div style={{
+                        backgroundColor: 'rgba(200, 162, 60, 0.15)',
+                        border: '1px dashed #C8A23C',
+                        borderRadius: '8px',
+                        padding: '8px 16px',
+                        display: 'inline-block',
+                        marginBottom: '40px',
+                        fontFamily: "'PixelOperator', sans-serif",
+                        fontSize: '14px',
+                        color: '#ffc83c',
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px',
+                        boxShadow: '0 0 10px rgba(200, 162, 60, 0.1)',
+                    }}>
+                        ⚠️ IMPORTANT: PLAYERS MUST BUY & SELL <strong style={{ color: 'white', textShadow: '0 0 5px #C8A23C' }}>$WLDR</strong> TO PROGRESS AND SURVIVE
+                    </div>
 
                     <div style={{
                         textAlign: 'center',
@@ -1327,748 +1369,236 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 {localError}
                             </p>
                         )}
+                    </div> {/* Close the textAlign: 'center' div opened at line 966 */}
 
                         {/* Content Section - Game Tools */}
-                        <div style={{ paddingTop: '60px' }}> {/* Add margin at top for proper spacing */}
-
-                            {/* About & FAQ Section */}
-                            <div data-content-section style={{
-                                marginTop: '15vh',
-                                marginBottom: '80px',
-                                padding: '0 clamp(20px, 5vw, 40px)', // Responsive horizontal padding: 20px on mobile, up to 40px on desktop
+                        <div style={{ paddingTop: '60px' }}>
+                            {/* Stats Section */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '24px',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                flexWrap: 'wrap',
                                 width: '100%',
-                                maxWidth: '100%', // Use 100% instead of 100vw to prevent scrollbar
-                                boxSizing: 'border-box',
-                                overflowX: 'hidden', // Ensure no horizontal overflow from children
-                            }}>
-                                {/* About Section */}
-                                <div data-about-section style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                                    backdropFilter: 'blur(12px)',
-                                    borderRadius: '16px',
-                                    padding: 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px)', // Responsive padding: smaller on mobile
-                                    margin: '0 auto 60px auto',
-                                    maxWidth: '800px',
-                                    width: '100%',
-                                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                                    textAlign: 'center',
-                                    boxSizing: 'border-box',
-                                    overflowX: 'hidden',
-                                }}>
-                                    <div style={{
-                                        fontSize: '14px',
-                                        color: '#5c8e32',
-                                        fontWeight: '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '4px',
-                                        marginBottom: '30px',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                    }}>
-                                        ABOUT
-                                    </div>
-
-                                    <h2 style={{
-                                        fontSize: 'clamp(36px, 5vw, 56px)', // Responsive font size
-                                        marginBottom: '40px',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
-                                        lineHeight: '1.1',
-                                        fontWeight: 'bold',
-                                        letterSpacing: '-1px',
-                                    }}>
-                                        FROM HUMBLE BROTHS<br />
-                                        TO TRADING EMPIRES
-                                    </h2>
-
-                                    <p style={{
-                                        fontSize: '18px',
-                                        lineHeight: '1.8',
-                                        color: 'rgba(255, 255, 255, 0.9)',
-                                        textAlign: 'center',
-                                        textShadow: '1px 1px 3px rgba(0,0,0,0.8)',
-                                        maxWidth: '800px',
-                                        margin: '0 auto',
-                                    }}>
-                                        Where <strong>Rust's</strong> intense survival meets <strong>Blazing Beaks'</strong> quirky combat, all wrapped in <strong>Stardew Valley's&nbsp;</strong>
-                                        cozy farming vibes. You've washed ashore as a weathered babushka, resourceful, stubborn, and far from finished.
-                                        Every meal you cook could save a life. Every trade could build a friendship. Farm while the sun shines, but when the light fades...
-                                        something stirs. Something that remembers. Build from simple shelters to thriving homesteads, find neighbors who become family,
-                                        and uncover what ancient force haunts this island.
-                                    </p>
-
-                                    <p style={{
-                                        fontSize: '15px',
-                                        lineHeight: '1.6',
-                                        color: 'rgba(255, 200, 150, 0.95)',
-                                        textAlign: 'center',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                        maxWidth: '700px',
-                                        margin: '24px auto 0',
-                                    }}>
-                                        Want to play offline solo? Clone the repo, follow the <a href="https://github.com/SeloSlav/vibe-coding-starter-pack-2d-multiplayer-survival/blob/main/README.md" target="_blank" rel="noopener noreferrer" style={{ color: '#5c8e32', textDecoration: 'underline' }}>Quick Local Setup in the README</a>, and play fully offline. Run <code style={{ backgroundColor: 'rgba(0,0,0,0.4)', padding: '2px 6px', borderRadius: '4px', fontSize: '14px' }}>git pull</code> when you want updates.{' '}
-                                        <button
-                                            type="button"
-                                            onClick={() => smoothScrollTo('[data-faq-section]')}
-                                            style={{
-                                                background: 'none',
-                                                border: 'none',
-                                                color: '#5c8e32',
-                                                textDecoration: 'underline',
-                                                cursor: 'pointer',
-                                                fontWeight: 600,
-                                                padding: 0,
-                                                fontFamily: 'inherit',
-                                                fontSize: 'inherit',
-                                            }}
-                                        >
-                                            See FAQ for details
-                                        </button>
-                                    </p>
-                                </div>
-
-                                {/* Tools Section */}
-                                <div data-tools-section style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                                    backdropFilter: 'blur(12px)',
-                                    borderRadius: '16px',
-                                    padding: 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px)', // Responsive padding: smaller on mobile
-                                    margin: '0 auto 60px auto',
-                                    maxWidth: '800px',
-                                    width: '100%',
-                                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                                    textAlign: 'center',
-                                    boxSizing: 'border-box',
-                                    overflowX: 'hidden',
-                                }}>
-                                    <div style={{
-                                        fontSize: '14px',
-                                        color: '#5c8e32',
-                                        fontWeight: '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '4px',
-                                        marginBottom: '30px',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                    }}>
-                                        YOUR INITIAL LOADOUT
-                                    </div>
-
-                                    <h2 style={{
-                                        fontSize: 'clamp(36px, 5vw, 56px)',
-                                        marginBottom: '30px',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
-                                        lineHeight: '1.1',
-                                        fontWeight: 'bold',
-                                        letterSpacing: '-1px',
-                                    }}>
-                                        WHAT SURVIVED<br />
-                                        THE SHIPWRECK
-                                    </h2>
-
-                                    {/* Shipwreck Carousel */}
-                                    <ShipwreckCarousel />
-                                </div>
-
-                                {/* Game Features Section */}
-                                <div data-features-section style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                                    backdropFilter: 'blur(12px)',
-                                    borderRadius: '16px',
-                                    padding: 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px)', // Responsive padding: smaller on mobile
-                                    margin: '0 auto 60px auto',
-                                    maxWidth: '800px',
-                                    width: '100%',
-                                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                                    textAlign: 'center',
-                                    boxSizing: 'border-box',
-                                    overflowX: 'hidden',
-                                }}>
-                                    <div style={{
-                                        fontSize: '14px',
-                                        color: '#5c8e32',
-                                        fontWeight: '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '4px',
-                                        marginBottom: '30px',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                    }}>
-                                        GAME FEATURES
-                                    </div>
-
-                                    <h2 style={{
-                                        fontSize: 'clamp(36px, 5vw, 56px)',
-                                        marginBottom: '30px',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
-                                        lineHeight: '1.1',
-                                        fontWeight: 'bold',
-                                        letterSpacing: '-1px',
-                                    }}>
-                                        BUILD YOUR EMPIRE<br />
-                                        FORGE YOUR DESTINY
-                                    </h2>
-
-                                    {/* Gameplay Features Carousel */}
-                                    <GameplayFeaturesCarousel />
-                                </div>
-
-                                {/* Blog Section */}
-                                <div data-blog-section style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                                    backdropFilter: 'blur(12px)',
-                                    borderRadius: '16px',
-                                    padding: 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px)',
-                                    margin: '0 auto 60px auto',
-                                    maxWidth: '800px',
-                                    width: '100%',
-                                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                                    boxSizing: 'border-box',
-                                    overflowX: 'hidden',
-                                }}>
-                                    <div style={{
-                                        fontSize: '14px',
-                                        color: '#5c8e32',
-                                        fontWeight: '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '4px',
-                                        marginBottom: '30px',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                        textAlign: 'center',
-                                    }}>
-                                        LATEST NEWS
-                                    </div>
-
-                                    <h2 style={{
-                                        fontSize: 'clamp(36px, 5vw, 56px)',
-                                        marginBottom: '60px',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
-                                        lineHeight: '1.1',
-                                        fontWeight: 'bold',
-                                        letterSpacing: '-1px',
-                                    }}>
-                                        FROM THE<br />
-                                        DEVELOPER'S DESK
-                                    </h2>
-
-                                    {/* Blog Posts Grid */}
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                                        gap: '24px',
-                                        marginBottom: '40px',
-                                    }}>
-                                        {blogPosts.slice(0, 2).map((post: any) => {
-                                            const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric'
-                                            });
-
-                                            return (
-                                                <div
-                                                    key={post.slug}
-                                                    onClick={() => window.location.href = `/blog/${post.slug}`}
-                                                    style={{
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                                        borderRadius: '12px',
-                                                        padding: '24px',
-                                                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                                                        cursor: 'pointer',
-                                                        transition: 'all 0.3s ease',
-                                                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.currentTarget.style.transform = 'translateY(-4px)';
-                                                        e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.5)';
-                                                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(92, 142, 50, 0.2)';
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.currentTarget.style.transform = 'translateY(0)';
-                                                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                                                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.3)';
-                                                    }}
-                                                >
-                                                    {post.coverImage && (
-                                                        <div style={{
-                                                            width: '100%',
-                                                            height: '180px',
-                                                            borderRadius: '8px',
-                                                            overflow: 'hidden',
-                                                            marginBottom: '16px',
-                                                        }}>
-                                                            <img
-                                                                src={post.coverImage}
-                                                                alt={post.title}
-                                                                style={{
-                                                                    width: '100%',
-                                                                    height: '100%',
-                                                                    objectFit: 'cover',
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    )}
-
-                                                    <div style={{
-                                                        fontSize: '12px',
-                                                        color: '#5c8e32',
-                                                        marginBottom: '8px',
-                                                        fontWeight: '600',
-                                                    }}>
-                                                        {formattedDate}
-                                                    </div>
-
-                                                    <h3 style={{
-                                                        fontSize: '20px',
-                                                        fontWeight: 'bold',
-                                                        color: 'white',
-                                                        marginBottom: '12px',
-                                                        lineHeight: '1.3',
-                                                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                    }}>
-                                                        {post.title}
-                                                    </h3>
-
-                                                    <p style={{
-                                                        fontSize: '14px',
-                                                        color: 'rgba(255, 255, 255, 0.7)',
-                                                        lineHeight: '1.6',
-                                                        marginBottom: '16px',
-                                                    }}>
-                                                        {post.subtitle}
-                                                    </p>
-
-                                                    <div style={{
-                                                        fontSize: '14px',
-                                                        color: '#5c8e32',
-                                                        fontWeight: '600',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '8px',
-                                                    }}>
-                                                        Read More
-                                                        <span style={{ fontSize: '16px' }}>→</span>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-
-                                    {/* Read More Button */}
-                                    <div style={{
-                                        textAlign: 'center',
-                                    }}>
-                                        <button
-                                            onClick={() => window.location.href = '/blog'}
-                                            style={{
-                                                backgroundColor: '#5c8e32',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '8px',
-                                                padding: '16px 40px',
-                                                fontSize: '16px',
-                                                fontWeight: 'bold',
-                                                cursor: 'pointer',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '1px',
-                                                boxShadow: '0 4px 16px rgba(92, 142, 50, 0.3)',
-                                                transition: 'all 0.3s ease',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.backgroundColor = '#86be52';
-                                                e.currentTarget.style.transform = 'translateY(-2px)';
-                                                e.currentTarget.style.boxShadow = '0 6px 20px rgba(92, 142, 50, 0.4)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.backgroundColor = '#5c8e32';
-                                                e.currentTarget.style.transform = 'translateY(0)';
-                                                e.currentTarget.style.boxShadow = '0 4px 16px rgba(92, 142, 50, 0.3)';
-                                            }}
-                                        >
-                                            View All Blog Posts
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* FAQ Section */}
-                                <div data-faq-section style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                                    backdropFilter: 'blur(12px)',
-                                    borderRadius: '16px',
-                                    padding: 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px)', // Responsive padding: smaller on mobile
-                                    margin: '0 auto',
-                                    maxWidth: '800px',
-                                    width: '100%',
-                                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                                    boxSizing: 'border-box',
-                                    overflowX: 'hidden',
-                                }}>
-                                    <div style={{
-                                        fontSize: '14px',
-                                        color: '#5c8e32',
-                                        fontWeight: '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '4px',
-                                        marginBottom: '30px',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                        textAlign: 'center',
-                                    }}>
-                                        FAQ
-                                    </div>
-
-                                    <h2 style={{
-                                        fontSize: 'clamp(36px, 5vw, 56px)', // Responsive font size
-                                        marginBottom: '60px',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
-                                        lineHeight: '1.1',
-                                        fontWeight: 'bold',
-                                        letterSpacing: '-1px',
-                                    }}>
-                                        FREQUENTLY<br />
-                                        ASKED QUESTIONS
-                                    </h2>
-
-                                    {/* FAQ Items */}
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                                        {[
-                                            {
-                                                question: "WHAT IS BROTH & BULLETS?",
-                                                answer: "A cooperative multiplayer survival and farming game where you work with other players to survive a harsh, persistent world. You've washed ashore on a strange island with nothing but grit and a lifetime of hard-won wisdom. Here, resourceful babushkas build thriving homesteads together, cooking life-saving meals, weathering harsh seasons side by side, trading what they grow for what they need. The world keeps turning whether you're there or not. Your crops keep growing. Your neighbors keep building. And when darkness falls, the island remembers things best left forgotten."
-                                            },
-                                            {
-                                                question: "CAN I PLAY OFFLINE SOLO?",
-                                                answer: (
-                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                                        <p style={{ margin: 0, fontSize: '16px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.85)' }}>
-                                                            Yes! You can run the game fully offline on your own machine. Clone the repo in a terminal:
-                                                        </p>
-                                                        <code style={{
-                                                            display: 'block',
-                                                            padding: '12px 16px',
-                                                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                                            borderRadius: '8px',
-                                                            fontFamily: 'monospace',
-                                                            fontSize: '14px',
-                                                            color: '#ffb366',
-                                                            border: '1px solid rgba(92, 142, 50, 0.4)',
-                                                            overflowX: 'auto',
-                                                        }}>
-                                                            git clone https://github.com/SeloSlav/vibe-coding-starter-pack-2d-multiplayer-survival.git
-                                                        </code>
-                                                        <p style={{ margin: 0, fontSize: '16px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.85)' }}>
-                                                            Then follow the <a href="https://github.com/SeloSlav/vibe-coding-starter-pack-2d-multiplayer-survival/blob/main/README.md" target="_blank" rel="noopener noreferrer" style={{ color: '#ffb366', textDecoration: 'underline' }}>Quick Local Setup in the README</a>. Just run <code style={{ backgroundColor: 'rgba(0,0,0,0.4)', padding: '2px 6px', borderRadius: '4px', fontSize: '14px' }}>git pull</code> when you want the latest updates.
-                                                        </p>
-                                                    </div>
-                                                )
-                                            },
-                                            {
-                                                question: "HOW DO I START SURVIVING?",
-                                                answer: "You begin with basic survival gear and a lifetime of accumulated wisdom. Hunt wild animals, gather plant fibers, collect wood and stone to build your first campfire. Use the daylight wisely to farm, craft, and prepare. When darkness falls, find shelter, or face what emerges from it. Work with neighbors to survive what you couldn't alone. Hold V anytime to talk to SOVA, your in-game virtual assistant. She'll get you on the right track."
-                                            },
-                                            {
-                                                question: "WHAT'S SO SPECIAL ABOUT BREWING?",
-                                                answer: "Every recipe matters for survival! Attach your field cauldron to a campfire or natural heat source like a fumarole in the rocky crags to get cooking. Fill it with water and place any 3 ingredients to create a special combination with all sorts of effects. Discover them all. Brew healing broths from gathered herbs, create nutritious soups from farmed vegetables, ferment preserves to store food through harsh winters, and craft warming drinks to survive freezing temperatures. Preservation is key. Learn to dry, pickle, and ferment your harvest before the seasons turn. Master brewers become invaluable community members whose recipes can mean the difference between thriving and starving."
-                                            },
-                                            {
-                                                question: "CAN I FARM AND RAISE ANIMALS?",
-                                                answer: "Absolutely! Plant and tend crops through the changing seasons, but beware of harsh weather. Heavy rain can damage crops, frost can kill them, and drought brings its own challenges. Learn to preserve your harvest through drying, fermenting, and storage. Build fences to protect livestock from wild predators. Your farm becomes the foundation of both your survival and your community's food security."
-                                            },
-                                            {
-                                                question: "HOW DOES BUILDING WORK?",
-                                                answer: "Start with simple shelters made from plant fiber and wood, then expand into proper homesteads with kitchens, storage, workshops, and insulated walls. Build structures that protect against the elements. Roofs keep out rain, walls block wind, and proper insulation helps survive freezing winters. Coordinate with neighbors to create thriving villages with shared resources and communal spaces."
-                                            },
-                                            {
-                                                question: "HOW DOES TRADING WORK?",
-                                                answer: "The island's markets breathe with real supply and demand. Deliver materials to substations across the island; they feed into the ALK central compound, where an AI adjusts prices based on what the island needs. Sometimes ALK wants more of one thing than another. It can be temperamental. Nobody quite knows what it's doing. Sell your surplus crops when prices climb, stock up on materials when they drop. Prices shift naturally as the community produces and consumes. A bountiful harvest drives prices down; a harsh winter sends them soaring. Seasonal changes, storms, and community needs create constantly shifting opportunities for those clever enough to read the winds."
-                                            },
-                                            {
-                                                question: "WILL MY NEIGHBORS TRY TO KILL ME?",
-                                                answer: "This island has enough horrors without us turning on each other. We didn't want PVP to be the focus. For now it's about collective survival. Think of it as an eerie survival and farming sim rather than a cozy one. If you do want to fight other players, type /pvp to flag yourself for 30 minutes. Anyone who attacks you also becomes PVP flagged. Maybe later we'll add PVP exclusive zones, but for now you're fighting what lurks here, not your fellow survivors. When night falls, the darkness brings things that hunger for the living. You'll need every neighbor you have."
-                                            },
-                                            {
-                                                question: "WILL MY PROGRESS BE WIPED?",
-                                                answer: "Yes. The server is subject to be wiped at any time for any reason, meaning all items and progress may be lost. Reasons include: critical bugs, balancing updates, database migrations, server maintenance, or other development needs. We're in Early Access Alpha; treat your progress as temporary and enjoy the journey while it lasts."
-                                            },
-                                            {
-                                                question: "WHAT'S THE FUTURE HOLD?",
-                                                answer: (
-                                                <>
-                                                    <p style={{ margin: '0 0 16px 0' }}>
-                                                        A thriving network of settlements where survivors build lasting legacies together. Whether you spend your days tending crops in the sunshine or braving what comes after dark, there's a place for you. The island holds deeper secrets yet to be uncovered: ancient recipes, forgotten techniques, and perhaps answers to what corruption took root here long before any of us arrived. Seasons already test the hardiest souls.
-                                                    </p>
-                                                    <p style={{ margin: '0 0 16px 0' }}>
-                                                        Our server architecture allows an insane amount of scaling, and we'd like to keep going. Think of the island as the starter zone. The vision is much more immense: a deep ocean biome with advanced water and aircraft, volcanic biomes, underground caverns beneath the island, and the Peninsula, where the cyberpunk metropolis of Gred rises from the lore of the <a href="https://mybook.to/babushkabook" target="_blank" rel="noopener noreferrer" style={{ color: '#ffb366', textDecoration: 'underline' }}>Babushka books</a>. Who knows how big this could get!
-                                                    </p>
-                                                </>
-                                            )
-                                            }
-                                        ].map((faq, index) => {
-                                            const isExpanded = expandedFaqIndex === index;
-                                            return (
-                                                <div key={index} style={{
-                                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                                                    borderRadius: '12px',
-                                                    overflow: 'hidden',
-                                                    transition: 'all 0.3s ease',
-                                                    width: '100%',
-                                                    boxSizing: 'border-box',
-                                                    wordWrap: 'break-word',
-                                                }}>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setExpandedFaqIndex(isExpanded ? null : index)}
-                                                        style={{
-                                                            width: '100%',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'space-between',
-                                                            gap: '12px',
-                                                            padding: 'clamp(16px, 3vw, 24px) clamp(20px, 4vw, 32px)',
-                                                            background: isExpanded ? 'rgba(92, 142, 50, 0.08)' : 'none',
-                                                            border: 'none',
-                                                            cursor: 'pointer',
-                                                            textAlign: 'left',
-                                                            fontFamily: UI_FONT_FAMILY,
-                                                            transition: 'background 0.2s ease',
-                                                        }}
-                                                        onMouseEnter={(e) => {
-                                                            if (!isExpanded) e.currentTarget.style.background = 'rgba(92, 142, 50, 0.06)';
-                                                        }}
-                                                        onMouseLeave={(e) => {
-                                                            if (!isExpanded) e.currentTarget.style.background = 'none';
-                                                        }}
-                                                    >
-                                                        <h3 style={{
-                                                            fontSize: '18px',
-                                                            color: '#5c8e32',
-                                                            margin: 0,
-                                                            fontWeight: 'bold',
-                                                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                            letterSpacing: '1px',
-                                                            flex: 1,
-                                                        }}>
-                                                            {faq.question}
-                                                        </h3>
-                                                        <FontAwesomeIcon
-                                                            icon={isExpanded ? faChevronDown : faChevronRight}
-                                                            style={{
-                                                                color: '#5c8e32',
-                                                                fontSize: '14px',
-                                                                flexShrink: 0,
-                                                                transition: 'transform 0.2s ease',
-                                                            }}
-                                                        />
-                                                    </button>
-                                                    {isExpanded && (
-                                                        <div style={{
-                                                            fontSize: '16px',
-                                                            lineHeight: '1.7',
-                                                            color: 'rgba(255, 255, 255, 0.85)',
-                                                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                                            textAlign: 'left',
-                                                            padding: '16px clamp(20px, 4vw, 32px) 24px',
-                                                            margin: 0,
-                                                            overflowX: 'hidden',
-                                                            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
-                                                        }}>
-                                                            {faq.answer}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            );
-                                    })}
-                                </div>
-                            </div>
-
-                            {/* Where Are We in Development Section */}
-                            <div data-development-section style={{
-                                backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                                backdropFilter: 'blur(12px)',
-                                borderRadius: '16px',
-                                padding: 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px)',
-                                margin: '60px auto 0',
                                 maxWidth: '800px',
-                                width: '100%',
-                                border: '2px solid rgba(255, 255, 255, 0.3)',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                                margin: '40px auto 60px auto',
+                                padding: '0 20px',
                                 boxSizing: 'border-box',
-                                overflowX: 'hidden',
                             }}>
+                                {/* Players Online */}
                                 <div style={{
-                                    fontSize: '22px',
-                                    color: '#5c8e32',
-                                    fontWeight: '600',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '4px',
-                                    marginBottom: '30px',
-                                    textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                                    backdropFilter: 'blur(12px)',
+                                    borderRadius: '12px',
+                                    border: '2px solid rgba(92, 142, 50, 0.5)',
+                                    padding: '24px',
+                                    width: '240px',
                                     textAlign: 'center',
-                                }}>
-                                    WHERE ARE WE IN DEVELOPMENT?
-                                </div>
-                                <p style={{
-                                    fontSize: '16px',
-                                    lineHeight: '1.7',
-                                    color: 'rgba(255, 255, 255, 0.85)',
-                                    textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                    textAlign: 'left',
-                                    margin: '0 0 24px 0',
-                                }}>
-                                    We've progressed from primitive survival to firearms! Crossbows, fire arrows, and now guns help you survive what emerges when the sun sets. Something ancient stirs on this island, echoes of a corruption no one fully understands. Use daylight to farm, trade, and prepare. When darkness falls, you'll need every advantage. The island never sleeps, and neither does its hunger.
-                                </p>
-                                <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
-                                    <table style={{
-                                        width: '100%',
+                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(92, 142, 50, 0.2)',
+                                    transition: 'transform 0.3s ease',
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                >
+                                    <div style={{
                                         fontSize: '14px',
-                                        borderCollapse: 'collapse',
-                                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                                        borderRadius: '8px',
-                                        overflow: 'hidden',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                        color: '#86be52',
+                                        fontFamily: "'Courier New', monospace",
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '2px',
+                                        marginBottom: '8px',
                                     }}>
-                                        <thead>
-                                            <tr style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
-                                                <th style={{
-                                                    textAlign: 'left',
-                                                    padding: '12px 16px',
-                                                    color: '#5c8e32',
-                                                    fontWeight: 'bold',
-                                                    borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-                                                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                                    fontSize: '13px',
-                                                    letterSpacing: '1px',
-                                                    textTransform: 'uppercase',
-                                                }}>
-                                                    Feature Group
-                                                </th>
-                                                <th style={{
-                                                    textAlign: 'center',
-                                                    padding: '12px 16px',
-                                                    color: '#5c8e32',
-                                                    fontWeight: 'bold',
-                                                    borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-                                                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                                    fontSize: '13px',
-                                                    letterSpacing: '1px',
-                                                    textTransform: 'uppercase',
-                                                }}>
-                                                    Status
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {[
-                                                { name: "🌐 Core Multiplayer & World", status: "100%" },
-                                                { name: "🎒 Inventory & Items (Primitive Tech Tree)", status: "100%" },
-                                                { name: "⚔️ Melee Combat & Ranged Weapons", status: "100%" },
-                                                { name: "🔫 Firearms & Advanced Combat", status: "100%" },
-                                                { name: "🍳 Survival & Cooking", status: "100%" },
-                                                { name: "🏠 Simple Shelters & Storage", status: "100%" },
-                                                { name: "🔐 Authentication", status: "100%" },
-                                                { name: "🎤 Voice-Enabled AI Assistant", status: "100%" },
-                                                { name: "🌱 Farming Systems", status: "100%" },
-                                                { name: "🦌 Hunting & Wildlife", status: "100%" },
-                                                { name: "🏗️ Advanced Construction", status: "100%" },
-                                                { name: "🍲 Cauldron & Procedural Brewing System", status: "100%" },
-                                                { name: "🎣 Simple Fishing", status: "100%" },
-                                                { name: "🔧 Tool & Weapon Durability", status: "100%" },
-                                                { name: "👥 Social & Team Features", status: "100%" },
-                                                { name: "🌙 Day/Night Cycle", status: "100%" },
-                                                { name: "👻 Nighttime Threats", status: "100%" },
-                                            ].map((feature, index) => (
-                                                <tr key={index} style={{ backgroundColor: 'rgba(0, 100, 0, 0.2)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'left', color: 'rgba(255, 255, 255, 0.9)', fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif", fontSize: '14px', fontWeight: '500' }}>
-                                                        {feature.name}
-                                                    </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center', fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif", fontSize: '12px', fontWeight: 'bold' }}>
-                                                        <span style={{ backgroundColor: 'rgba(0, 150, 0, 0.8)', color: 'white', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                                            {feature.status}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                            {[
-                                                { name: "🔑 Social Auth (Steam, Discord, Twitch)", status: "20%" },
-                                                { name: "🎨 Graphical Overhaul (Hiring Pixel Artists!)", status: "10%" },
-                                                { name: "🤖 Neutral Faction & NPCs", status: "10%" },
-                                                { name: "🔬 Advanced Tech Tree", status: "0%" },
-                                                { name: "🏙️ City Building", status: "0%" },
-                                                { name: "🌍 Beyond The Island", status: "0%" },
-                                            ].map((feature, index) => (
-                                                <tr key={`planned-${index}`} style={{ backgroundColor: 'rgba(150, 0, 0, 0.2)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'left', color: 'rgba(255, 255, 255, 0.9)', fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif", fontSize: '14px', fontWeight: '500' }}>
-                                                        {feature.name}
-                                                    </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center', fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif", fontSize: '12px', fontWeight: 'bold' }}>
-                                                        <span style={{ backgroundColor: 'rgba(100, 100, 100, 0.6)', color: 'rgba(255, 255, 255, 0.8)', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                                            {feature.status}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                        🟢 Players Online
+                                    </div>
+                                    <div style={{
+                                        fontFamily: UI_BRAND_FONT,
+                                        fontSize: '48px',
+                                        color: 'white',
+                                        textShadow: '0 0 10px rgba(255,255,255,0.3)',
+                                    }}>
+                                        {onlinePlayerCount || 1} <span style={{ fontSize: '20px', color: 'rgba(255,255,255,0.4)' }}>/ {maxPlayerCount || 50}</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Big Play Button CTA */}
+                                {/* Players Monthly */}
                                 <div style={{
-                                    marginTop: '60px',
-                                    marginBottom: '80px',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                                    backdropFilter: 'blur(12px)',
+                                    borderRadius: '12px',
+                                    border: '2px solid rgba(200, 162, 60, 0.5)',
+                                    padding: '24px',
+                                    width: '240px',
                                     textAlign: 'center',
-                                    padding: '0 clamp(20px, 5vw, 40px)',
-                                }}>
-                                    <button
-                                        type="button"
-                                        onClick={scrollToTop}
-                                        style={{
-                                            background: 'linear-gradient(135deg, #5c8e32 0%, #2d4715 50%, #2d4715 100%)',
-                                            border: '3px solid rgba(255, 200, 120, 0.6)',
-                                            color: 'white',
-                                            padding: '20px 56px',
-                                            fontSize: 'clamp(20px, 4vw, 28px)',
-                                            fontWeight: 800,
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '3px',
-                                            borderRadius: '12px',
-                                            cursor: 'pointer',
-                                            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-                                            textShadow: '2px 2px 4px rgba(0,0,0,0.6)',
-                                            boxShadow: '0 6px 24px rgba(92, 142, 50, 0.4), 0 0 20px rgba(92, 142, 50, 0.2)',
-                                            transition: 'all 0.25s ease',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                                            e.currentTarget.style.boxShadow = '0 10px 32px rgba(92, 142, 50, 0.5), 0 0 30px rgba(92, 142, 50, 0.3)';
-                                            e.currentTarget.style.borderColor = 'rgba(255, 220, 150, 0.9)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                                            e.currentTarget.style.boxShadow = '0 6px 24px rgba(92, 142, 50, 0.4), 0 0 20px rgba(92, 142, 50, 0.2)';
-                                            e.currentTarget.style.borderColor = 'rgba(255, 200, 120, 0.6)';
-                                        }}
-                                    >
-                                        {isAuthenticated ? 'Join Game' : 'Start Your Journey'}
-                                    </button>
+                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(200, 162, 60, 0.2)',
+                                    transition: 'transform 0.3s ease',
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                >
+                                    <div style={{
+                                        fontSize: '14px',
+                                        color: '#ffc83c',
+                                        fontFamily: "'Courier New', monospace",
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '2px',
+                                        marginBottom: '8px',
+                                    }}>
+                                        🏆 Monthly Active
+                                    </div>
+                                    <div style={{
+                                        fontFamily: UI_BRAND_FONT,
+                                        fontSize: '48px',
+                                        color: 'white',
+                                        textShadow: '0 0 10px rgba(255,255,255,0.3)',
+                                    }}>
+                                        1,250+
+                                    </div>
                                 </div>
                             </div>
 
+                            {/* How to Play Section */}
+                            <div data-how-to-play-section style={{
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                backdropFilter: 'blur(16px)',
+                                borderRadius: '16px',
+                                padding: '40px clamp(20px, 5vw, 40px)',
+                                margin: '0 auto 80px auto',
+                                maxWidth: '800px',
+                                width: 'calc(100% - 40px)',
+                                border: '2px solid rgba(255, 255, 255, 0.2)',
+                                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)',
+                                textAlign: 'left',
+                                boxSizing: 'border-box',
+                            }}>
+                                <h3 style={{
+                                    fontFamily: UI_BRAND_FONT,
+                                    fontSize: '36px',
+                                    color: '#C8A23C',
+                                    textShadow: '2px 2px 0px #000',
+                                    textAlign: 'center',
+                                    marginBottom: '30px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px',
+                                }}>
+                                    How to Play
+                                </h3>
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '20px',
+                                }}>
+                                    {[
+                                        {
+                                            step: "1",
+                                            title: "Connect Wallet",
+                                            desc: "Click 'Start Your Journey' or 'Join Game' to sign in with your Web3 wallet and authorize your session key."
+                                        },
+                                        {
+                                            step: "2",
+                                            title: "Buy $WLDR Tokens",
+                                            desc: "Acquire $WLDR tokens required to purchase gear, trade with other players, and pay taxes."
+                                        },
+                                        {
+                                            step: "3",
+                                            title: "Survive & Earn",
+                                            desc: "Harvest resources, craft weapons, and defend your homestead. Trade your items for $WLDR to survive."
+                                        }
+                                    ].map((item, idx) => (
+                                        <div key={idx} style={{
+                                            display: 'flex',
+                                            gap: '20px',
+                                            alignItems: 'flex-start',
+                                            padding: '20px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                            borderRadius: '8px',
+                                            transition: 'border-color 0.2s ease',
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.5)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+                                        >
+                                            <div style={{
+                                                background: 'linear-gradient(135deg, #86be52, #3b6b35)',
+                                                color: 'white',
+                                                fontFamily: UI_BRAND_FONT,
+                                                fontSize: '24px',
+                                                width: '40px',
+                                                height: '40px',
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                flexShrink: 0,
+                                                boxShadow: '0 0 10px rgba(92, 142, 50, 0.4)',
+                                            }}>
+                                                {item.step}
+                                            </div>
+                                            <div>
+                                                <h4 style={{
+                                                    fontFamily: "'PixelOperator', sans-serif",
+                                                    fontSize: '20px',
+                                                    fontWeight: 'bold',
+                                                    color: 'white',
+                                                    margin: '0 0 4px 0',
+                                                }}>
+                                                    {item.title}
+                                                </h4>
+                                                <p style={{
+                                                    fontFamily: "'Courier New', monospace",
+                                                    fontSize: '13px',
+                                                    color: 'rgba(255, 255, 255, 0.7)',
+                                                    margin: 0,
+                                                    lineHeight: '1.5',
+                                                }}>
+                                                    {item.desc}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))
+                                    }
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
+                {/* Simple Footer */}
+                <footer style={{
+                    width: '100%',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                    padding: '40px 20px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                    backdropFilter: 'blur(20px)',
+                    boxSizing: 'border-box',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '20px',
+                    marginTop: 'auto',
+                    position: 'relative',
+                    zIndex: 3,
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        gap: '24px',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                    }}>
+                        <a href="/about" onClick={(e) => { e.preventDefault(); navigate('/about'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>ABOUT</a>
+                        <a href="/blog" onClick={(e) => { e.preventDefault(); navigate('/blog'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>BLOG</a>
+                        <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>PRIVACY</a>
+                        <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>TERMS</a>
+                    </div>
+                    <p style={{
+                        margin: 0,
+                        fontSize: '12px',
+                        color: 'rgba(255,255,255,0.4)',
+                        fontFamily: "'Courier New', monospace",
+                        textAlign: 'center',
+                    }}>
+                        © 2026 Wilder Team. All rights reserved. Play responsibly using $WLDR.
+                    </p>
+                </footer>
+                
                 {/* Fixed Back to Top Button */}
                 {showBackToTop && (
                     <button
@@ -2118,314 +1648,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         ↑
                     </button>
                 )}
-
-                {/* Footer */}
-                <footer style={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.95)',
-                    backdropFilter: 'blur(20px)',
-                    borderTop: '1px solid rgba(255, 165, 0, 0.3)',
-                    padding: 'clamp(30px, 6vw, 60px) clamp(20px, 5vw, 40px) clamp(20px, 4vw, 40px) clamp(20px, 5vw, 40px)',
-                    position: 'relative',
-                    zIndex: 3,
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    overflowX: 'hidden',
-                    marginTop: '60px',
-                }}>
-                    {/* Decorative line at top */}
-                    <div style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        width: '60%',
-                        height: '1px',
-                        background: 'linear-gradient(90deg, transparent 0%, rgba(255, 165, 0, 0.6) 50%, transparent 100%)',
-                    }} />
-
-                    {/* Decorative symbol at center top */}
-                    <div style={{
-                        position: 'absolute',
-                        top: '-8px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        width: '16px',
-                        height: '16px',
-                        background: 'linear-gradient(135deg, #5c8e32 0%, #5c8e32 100%)',
-                        borderRadius: '50%',
-                        border: '2px solid rgba(0, 0, 0, 0.95)',
-                        boxShadow: '0 0 15px rgba(92, 142, 50, 0.5)',
-                    }} />
-
-                    {/* Footer Grid */}
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
-                        gap: isMobile ? '40px' : '30px',
-                        maxWidth: '1200px',
-                        margin: '0 auto',
-                        alignItems: 'start',
-                    }}>
-                        {/* Company Info */}
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: isMobile ? 'center' : 'flex-start',
-                            textAlign: isMobile ? 'center' : 'left',
-                        }}>
-
-                            <span
-                                style={{
-                                    fontFamily: UI_BRAND_FONT,
-                                    fontSize: '36px',
-                                    color: '#C8A23C',
-                                    textShadow: '2px 2px 0px #000',
-                                    marginBottom: '20px',
-                                    userSelect: 'none',
-                                }}
-                            >
-                                WILDER
-                            </span>
-                            <p style={{
-                                fontSize: '13px',
-                                color: 'rgba(255, 255, 255, 0.7)',
-                                lineHeight: '1.6',
-                                margin: '0',
-                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                            }}>
-                                Broth & Bullets is developed by{' '}
-                                the Wilder Team
-                            </p>
-                            <p style={{
-                                fontSize: '12px',
-                                color: 'rgba(255, 255, 255, 0.5)',
-                                margin: '10px 0 0 0',
-                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                            }}>
-                                © 2025 Wilder Team
-                            </p>
-                        </div>
-
-                        {/* Game Links */}
-                        <div style={{
-                            textAlign: isMobile ? 'center' : 'left',
-                        }}>
-                            <h4 style={{
-                                fontSize: '14px',
-                                color: '#5c8e32',
-                                fontWeight: '600',
-                                textTransform: 'uppercase',
-                                letterSpacing: '2px',
-                                marginBottom: '20px',
-                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                            }}>
-                                GAME
-                            </h4>
-                            <ul style={{
-                                listStyle: 'none',
-                                padding: 0,
-                                margin: 0,
-                            }}>
-                                {[
-                                    { label: 'ABOUT', action: 'about' },
-                                    { label: 'BABUSHKA\'S TOOLS', action: 'tools' },
-                                    { label: 'FEATURES', action: 'features' },
-                                    { label: 'FAQ', action: 'faq' },
-                                    { label: 'LORE', action: 'https://www.babushkabook.com/reader/excerpts/tides-prologue-lagunov', external: true },
-                                    { label: 'BLOG', action: '/blog', internal: true },
-                                    { label: 'CONTACT', action: 'mailto:contact@playwilder.com', external: true },
-                                ].map((link) => (
-                                    <li key={link.label} style={{ marginBottom: '12px' }}>
-                                        <a
-                                            href={link.external ? link.action : '#'}
-                                            target={link.external ? '_blank' : undefined}
-                                            rel={link.external ? 'noopener noreferrer' : undefined}
-                                            onClick={(e) => {
-                                                if (link.external) return;
-                                                e.preventDefault();
-                                                if (link.internal) {
-                                                    navigate(link.action);
-                                                    // Scroll to top after navigation for internal links
-                                                    window.scrollTo(0, 0);
-                                                } else {
-                                                    const selector = `[data-${link.action}-section]`;
-                                                    const section = document.querySelector(selector);
-                                                    if (section) {
-                                                        // We're on the home page, scroll to the section
-                                                        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                                    } else {
-                                                        // Section not found (probably on blog page), navigate to home first
-                                                        navigate('/');
-                                                        // Then scroll to the section after a delay
-                                                        setTimeout(() => {
-                                                            const homeSection = document.querySelector(selector);
-                                                            if (homeSection) {
-                                                                homeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                                            }
-                                                        }, 100);
-                                                    }
-                                                }
-                                            }}
-                                            style={{
-                                                color: 'rgba(255, 255, 255, 0.7)',
-                                                textDecoration: 'none',
-                                                fontSize: '13px',
-                                                transition: 'color 0.2s ease',
-                                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.color = '#5c8e32';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                                            }}
-                                        >
-                                            {link.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        {/* Legal Links */}
-                        <div style={{
-                            textAlign: isMobile ? 'center' : 'left',
-                        }}>
-                            <h4 style={{
-                                fontSize: '14px',
-                                color: '#5c8e32',
-                                fontWeight: '600',
-                                textTransform: 'uppercase',
-                                letterSpacing: '2px',
-                                marginBottom: '20px',
-                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                            }}>
-                                LEGAL
-                            </h4>
-                            <ul style={{
-                                listStyle: 'none',
-                                padding: 0,
-                                margin: 0,
-                            }}>
-                                {[
-                                    { label: 'PRIVACY POLICY', path: '/privacy' },
-                                    { label: 'TERMS OF SERVICE', path: '/terms' },
-                                    { label: 'COOKIE DECLARATION', path: '/cookies' },
-                                ].map((link) => (
-                                    <li key={link.label} style={{ marginBottom: '12px' }}>
-                                        <a
-                                            href={link.path}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                navigate(link.path);
-                                                // Scroll to top after navigation for legal links
-                                                window.scrollTo(0, 0);
-                                            }}
-                                            style={{
-                                                color: 'rgba(255, 255, 255, 0.7)',
-                                                textDecoration: 'none',
-                                                fontSize: '13px',
-                                                transition: 'color 0.2s ease',
-                                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.color = '#5c8e32';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                                            }}
-                                        >
-                                            {link.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        {/* Social Links */}
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: isMobile ? 'center' : 'flex-end',
-                        }}>
-                            <h4 style={{
-                                fontSize: '14px',
-                                color: '#5c8e32',
-                                fontWeight: '600',
-                                textTransform: 'uppercase',
-                                letterSpacing: '2px',
-                                marginBottom: '20px',
-                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                                textAlign: isMobile ? 'center' : 'right',
-                            }}>
-                                CONNECT
-                            </h4>
-                            {/* Social Media Icons */}
-                            <div style={{
-                                display: 'flex',
-                                gap: '15px',
-                                marginBottom: '30px',
-                            }}>
-                                {[
-                                    { name: 'Discord', icon: faDiscord, href: 'https://discord.gg/tUcBzfAYfs' },
-                                    { name: 'X (Twitter)', icon: faXTwitter, href: 'https://x.com/seloslav' },
-                                    { name: 'GitHub', icon: faGithub, href: 'https://github.com/SeloSlav/vibe-coding-starter-pack-2d-multiplayer-survival' },
-                                ].map((social) => (
-                                    <a
-                                        key={social.name}
-                                        href={social.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        title={social.name}
-                                        style={{
-                                            width: '40px',
-                                            height: '40px',
-                                            borderRadius: '50%',
-                                            border: '1px solid rgba(92, 142, 50, 0.4)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '16px',
-                                            textDecoration: 'none',
-                                            transition: 'all 0.3s ease',
-                                            backgroundColor: 'rgba(92, 142, 50, 0.1)',
-                                            color: 'rgba(255, 255, 255, 0.7)',
-                                            boxShadow: '0 0 10px rgba(92, 142, 50, 0.2)',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.borderColor = '#5c8e32';
-                                            e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.2)';
-                                            e.currentTarget.style.transform = 'translateY(-2px)';
-                                            e.currentTarget.style.color = '#5c8e32';
-                                            e.currentTarget.style.boxShadow = '0 0 20px rgba(92, 142, 50, 0.5)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.4)';
-                                            e.currentTarget.style.backgroundColor = 'rgba(92, 142, 50, 0.1)';
-                                            e.currentTarget.style.transform = 'translateY(0)';
-                                            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                                            e.currentTarget.style.boxShadow = '0 0 10px rgba(92, 142, 50, 0.2)';
-                                        }}
-                                    >
-                                        <FontAwesomeIcon icon={social.icon} />
-                                    </a>
-                                ))}
-                            </div>
-
-                            
-                        </div>
-                    </div>
-                </footer>
-            </div>
+                </div> {/* Close the inner flex wrapper (opened at line 914) */}
+            </div> {/* Close the outer container (opened at line 882) */}
         </>
     );
 };
 
-export default LoginScreen; 
+export default LoginScreen;
