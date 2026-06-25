@@ -24,6 +24,7 @@ import loginBackground from '../assets/ui/login_background.jpg';
 // Using direct public path for video to avoid Vite import errors
 
 
+
 export const theme = {
     palette: {
         background: {
@@ -417,6 +418,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
     // Ref for username input focus
     const usernameInputRef = useRef<HTMLInputElement>(null);
+
+    // Ref for video element (smooth loop)
+    const videoRef = useRef<HTMLVideoElement>(null);
 
     // Gleam animation hook for "Learn More" button
     const [isGleaming, setIsGleaming] = useState(false);
