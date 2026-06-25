@@ -21,7 +21,67 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faXTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faBars, faTimes, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import loginBackground from '../assets/ui/login_background.jpg';
-import heroBackgroundVideo from '../assets/ui/herobg.mp4';
+// Using direct public path for video to avoid Vite import errors
+
+
+export const theme = {
+    palette: {
+        background: {
+            default: '#000000',
+            dark: '#1a1a1a',
+            light: '#000000',
+        },
+        text: {
+            primary: '#ffffff',
+            secondary: '#cccccc',
+        },
+        accent: '#00e5ff',
+    },
+    typography: {
+        useNextVariants: true,
+        fontFamily: [
+            'system-ui',
+            '-apple-system',
+            'BlinkMacSystemFont',
+            'Segoe UI',
+            'Roboto',
+            'Oxygen',
+            'Ubuntu',
+            'Cantarell',
+            'Open Sans',
+            'Helvetica Neue',
+            'sans-serif',
+        ].join(','),
+    },
+    layout: {
+        containerMaxWidth: '1400px',
+        sectionPadding: '0px',
+        headerHeight: '70px',
+    },
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: `
+        html, body {
+          minHeight: '100vh', // Ensure page is tall enough to scroll
+          width: '100%', // Match the background image width exactly
+          margin: 0,
+          padding: 0,
+          backgroundColor: '#000000', // Pure black background to match gradient
+          backgroundAttachment: 'scroll',
+          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+          color: 'white',
+          position: 'relative',
+          overflowX: 'hidden', // Prevent horizontal scrolling
+          overflowY: 'auto', // Allow vertical scrolling
+          boxSizing: 'border-box', // Include padding and border in width calculations
+          isolation: 'isolate',
+          display: 'flex', // Add flex to push footer to bottom
+          flexDirection: 'column', // Column layout
+        }
+      `,
+        },
+    },
+};
 import logo from '../assets/ui/logo_alt.png';
 import ShipwreckCarousel from './ShipwreckCarousel';
 import GameplayFeaturesCarousel from './GameplayFeaturesCarousel';
@@ -937,7 +997,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         pointerEvents: 'none',
                     }}
                 >
-                    <source src={heroBackgroundVideo} type="video/mp4" />
+                    <source src='/assets/ui/herobg.mp4' type="video/mp4" />
                 </video>
                 {!backgroundLoaded && (
                     <div style={{
