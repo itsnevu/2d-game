@@ -515,6 +515,22 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
   });
   const app  = new Hono();
 
+  // --- CORS Middleware --- 
+  app.use('*', cors({ 
+      origin: [
+          'http://localhost:3008', 
+          'http://localhost:3009',
+          'http://localhost:5173',
+          'http://127.0.0.1:5173',
+          'https://brothandbullets.com',
+          'https://www.brothandbullets.com',
+          'https://broth-and-bullets-production-client-production.up.railway.app'
+      ],
+      allowMethods: ['GET', 'POST', 'OPTIONS'],
+      allowHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
+  }));
+
   // --- Solana Wallet Signature Authentication & OIDC Token Issuance ---
   app.post('/auth/solana-login', async (c) => {
     try {
@@ -633,21 +649,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     }
   });
 
-  // --- CORS Middleware --- 
-  app.use('*', cors({ 
-      origin: [
-          'http://localhost:3008', 
-          'http://localhost:3009',
-          'http://localhost:5173',
-          'http://127.0.0.1:5173',
-          'https://brothandbullets.com',
-          'https://www.brothandbullets.com',
-          'https://broth-and-bullets-production-client-production.up.railway.app'
-      ],
-      allowMethods: ['GET', 'POST', 'OPTIONS'],
-      allowHeaders: ['Content-Type', 'Authorization'],
-      credentials: true,
-  }));
+
 
   // --- OIDC Discovery Endpoint --- 
   app.get('/.well-known/openid-configuration', (c) => {

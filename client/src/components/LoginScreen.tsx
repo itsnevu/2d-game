@@ -409,6 +409,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     const [isMobile, setIsMobile] = useState<boolean>(false);
     const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
     const [showStickyNav, setShowStickyNav] = useState<boolean>(false);
+    const [isScrolled, setIsScrolled] = useState<boolean>(false);
     const [backgroundLoaded, setBackgroundLoaded] = useState<boolean>(false);
     const [logoLoaded, setLogoLoaded] = useState<boolean>(false);
 
@@ -470,6 +471,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
             setShowBackToTop(scrollTop > 300); // Show after scrolling 300px
             setShowStickyNav(scrollTop > window.innerHeight * 0.8); // Show after scrolling past 80% of viewport height
+            setIsScrolled(scrollTop > 20); // Add scrolled state when page is scrolled past 20px
 
             // Auth header visibility logic
             if (currentScrollY < 50) {
@@ -698,12 +700,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         display: 'flex',
                         alignItems: 'center',
                         gap: '16px',
-                        background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 30, 0.9) 100%)',
+                        background: 'linear-gradient(135deg, rgba(15, 23, 13, 0.95) 0%, rgba(25, 35, 20, 0.95) 100%)',
                         backdropFilter: 'blur(10px)',
                         borderBottomLeftRadius: '8px',
-                        borderLeft: '1px solid rgba(0, 255, 255, 0.3)',
-                        borderBottom: '1px solid rgba(0, 255, 255, 0.3)',
-                        boxShadow: '0 4px 20px rgba(0, 255, 255, 0.15)',
+                        borderLeft: '1px solid rgba(200, 162, 60, 0.4)',
+                        borderBottom: '1px solid rgba(200, 162, 60, 0.4)',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6), 0 0 10px rgba(200, 162, 60, 0.1)',
                         transform: showAuthHeader ? 'translateY(0)' : 'translateY(-100%)',
                         transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         pointerEvents: showAuthHeader ? 'auto' : 'none',
@@ -711,10 +713,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                 >
                     <span
                         style={{
-                            color: 'rgba(0, 255, 255, 0.9)',
+                            color: '#ffc83c',
                             fontSize: '14px',
-                            fontFamily: 'monospace',
-                            textShadow: '0 0 10px rgba(0, 255, 255, 0.5)',
+                            fontFamily: "'PixelOperator', monospace",
+                            fontWeight: 'bold',
+                            textShadow: '1px 1px 2px #000, 0 0 8px rgba(200, 162, 60, 0.4)',
                         }}
                     >
                         {userProfile.email || 'User'}
@@ -723,26 +726,27 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         onClick={logout}
                         style={{
                             padding: '6px 16px',
-                            background: 'linear-gradient(135deg, rgba(45, 71, 21, 0.2) 0%, rgba(45, 71, 21, 0.3) 100%)',
-                            border: '1px solid rgba(45, 71, 21, 0.5)',
+                            background: 'linear-gradient(135deg, #7c1f1f 0%, #4a1010 100%)',
+                            border: '1px solid rgba(200, 162, 60, 0.5)',
                             borderRadius: '4px',
-                            color: 'rgba(255, 100, 150, 0.95)',
+                            color: '#fff',
                             fontSize: '13px',
-                            fontFamily: 'monospace',
+                            fontWeight: 'bold',
+                            fontFamily: "'PixelOperator', monospace",
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
-                            textShadow: '0 0 8px rgba(45, 71, 21, 0.4)',
-                            boxShadow: '0 2px 10px rgba(45, 71, 21, 0.2)',
+                            textShadow: '1px 1px 2px #000',
+                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(45, 71, 21, 0.4) 0%, rgba(45, 71, 21, 0.5) 100%)';
-                            e.currentTarget.style.borderColor = 'rgba(45, 71, 21, 0.8)';
-                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(45, 71, 21, 0.4)';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, #9e2a2a 0%, #5e1515 100%)';
+                            e.currentTarget.style.borderColor = 'rgba(200, 162, 60, 0.8)';
+                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(200, 162, 60, 0.2)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(45, 71, 21, 0.2) 0%, rgba(45, 71, 21, 0.3) 100%)';
-                            e.currentTarget.style.borderColor = 'rgba(45, 71, 21, 0.5)';
-                            e.currentTarget.style.boxShadow = '0 2px 10px rgba(45, 71, 21, 0.2)';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, #7c1f1f 0%, #4a1010 100%)';
+                            e.currentTarget.style.borderColor = 'rgba(200, 162, 60, 0.5)';
+                            e.currentTarget.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.5)';
                         }}
                     >
                         LOG OUT
@@ -780,31 +784,34 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                 }
             `}</style>
 
-            {/* Sticky Navigation Bar - Always visible on mobile, scroll-triggered on desktop */}
-            {(isMobile || showStickyNav) && (
+            {/* Sticky Navigation Bar - Always visible, transparent at first, solid/themed on scroll */}
+            {true && (
                 <div style={{
                     position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
+                    top: isScrolled ? '0' : '15px',
+                    left: isScrolled ? '0' : '20px',
+                    right: isScrolled ? '0' : '20px',
+                    boxSizing: 'border-box',
                     height: '70px',
-                    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                    backgroundColor: isScrolled ? 'rgba(15, 23, 13, 0.95)' : 'rgba(15, 23, 13, 0.65)',
                     backdropFilter: 'blur(10px)',
-                    borderBottom: '2px solid rgba(92, 142, 50, 0.3)',
+                    border: isScrolled ? 'none' : '1px solid rgba(200, 162, 60, 0.3)',
+                    borderBottom: isScrolled ? '2px solid rgba(200, 162, 60, 0.4)' : '1px solid rgba(200, 162, 60, 0.3)',
+                    borderRadius: isScrolled ? '0px' : '12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '0 clamp(20px, 5vw, 60px)',
+                    padding: '0 clamp(16px, 4vw, 40px)',
                     zIndex: 1000,
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-                    animation: 'slideDown 0.3s ease-out',
+                    boxShadow: isScrolled ? '0 4px 20px rgba(0, 0, 0, 0.6)' : '0 8px 32px rgba(0, 0, 0, 0.4)',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}>
                     {/* Logo */}
                     <span
                         onClick={scrollToTop}
                         style={{
                             fontFamily: UI_BRAND_FONT,
-                            fontSize: '32px',
+                            fontSize: 'clamp(24px, 3vw, 32px)',
                             color: '#C8A23C',
                             textShadow: '2px 2px 0px #000',
                             cursor: 'pointer',
@@ -883,7 +890,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         <nav style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '30px',
+                            gap: 'clamp(10px, 2vw, 30px)',
                             fontSize: '14px',
                         }}>
                             {[
@@ -980,62 +987,74 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                 boxSizing: 'border-box', // Include padding and border in width calculations
                 isolation: 'isolate',
             }}>
-                <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    poster={loginBackground}
-                    style={{
-                        position: 'absolute',
-                        inset: '-2%',
-                        width: '104%',
-                        height: '104%',
-                        objectFit: 'cover',
-                        objectPosition: isMobile ? 'center 24%' : 'center 42%',
-                        transform: 'scale(1.03)',
-                        filter: 'contrast(1.08) saturate(0.92) brightness(0.9)',
-                        opacity: 0.96,
-                        zIndex: 0,
-                        pointerEvents: 'none',
-                    }}
-                >
-                    <source src='/assets/ui/herobg.mp4' type="video/mp4" />
-                </video>
-                {!backgroundLoaded && (
-                    <div style={{
-                        position: 'absolute',
-                        inset: 0,
-                        backgroundImage: `url(${loginBackground})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center top',
-                        backgroundRepeat: 'no-repeat',
-                        zIndex: 0,
-                        pointerEvents: 'none',
-                    }} />
-                )}
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background:
-                        'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.14) 28%, rgba(0,0,0,0.38) 62%, rgba(0,0,0,0.82) 100%)',
-                    zIndex: 0,
-                    pointerEvents: 'none',
-                }} />
-                {/* Gradient Overlay - Very aggressive transition to eliminate flat line */}
+                {/* Background Wrapper to clip the video overflow */}
                 <div style={{
                     position: 'absolute',
                     top: 0,
                     left: 0,
-                    width: '100%',
-                    height: '100%',
-                    background: isMobile
-                        ? 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.6) 75%, rgba(0,0,0,0.85) 88%, rgba(0,0,0,1) 98%)'
-                        : 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.1) 55%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.6) 82%, rgba(0,0,0,0.85) 92%, rgba(0,0,0,1) 98%)',
-                    pointerEvents: 'none', // Allow clicks to pass through
-                    zIndex: 1,
-                }} />
+                    right: 0,
+                    bottom: 0,
+                    overflow: 'hidden',
+                    pointerEvents: 'none',
+                    zIndex: 0,
+                }}>
+                    <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        poster={loginBackground}
+                        style={{
+                            position: 'absolute',
+                            inset: '-2%',
+                            width: '104%',
+                            height: '104%',
+                            objectFit: 'cover',
+                            objectPosition: isMobile ? 'center 24%' : 'center 42%',
+                            transform: 'scale(1.03)',
+                            filter: 'contrast(1.08) saturate(0.92) brightness(0.9)',
+                            opacity: 0.96,
+                            zIndex: 0,
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        <source src='/assets/ui/herobg.mp4' type="video/mp4" />
+                    </video>
+                    {!backgroundLoaded && (
+                        <div style={{
+                            position: 'absolute',
+                            inset: 0,
+                            backgroundImage: `url(${loginBackground})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center top',
+                            backgroundRepeat: 'no-repeat',
+                            zIndex: 0,
+                            pointerEvents: 'none',
+                        }} />
+                    )}
+                    <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background:
+                            'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.14) 28%, rgba(0,0,0,0.38) 62%, rgba(0,0,0,0.82) 100%)',
+                        zIndex: 0,
+                        pointerEvents: 'none',
+                    }} />
+                    {/* Gradient Overlay - Very aggressive transition to eliminate flat line */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: isMobile
+                            ? 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.6) 75%, rgba(0,0,0,0.85) 88%, rgba(0,0,0,1) 98%)'
+                            : 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.1) 55%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.6) 82%, rgba(0,0,0,0.85) 92%, rgba(0,0,0,1) 98%)',
+                        pointerEvents: 'none', // Allow clicks to pass through
+                        zIndex: 1,
+                    }} />
+                </div>
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -1095,7 +1114,81 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
                         {/* Display based on authentication and player existence */}
                         {authIsLoading ? (
-                            <p>Loading...</p>
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '30px',
+                                background: 'linear-gradient(135deg, rgba(15, 23, 13, 0.85) 0%, rgba(25, 35, 20, 0.9) 100%)',
+                                border: '1px solid rgba(200, 162, 60, 0.3)',
+                                borderRadius: '12px',
+                                maxWidth: '380px',
+                                margin: '20px auto',
+                                backdropFilter: 'blur(8px)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(200, 162, 60, 0.05)',
+                                animation: 'fadeIn 0.5s ease-out',
+                            }}>
+                                {/* Enhanced Outer/Inner Rotating Rings */}
+                                <div style={{ position: 'relative', width: '60px', height: '60px', marginBottom: '20px' }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        width: '100%',
+                                        height: '100%',
+                                        border: '4px solid rgba(200, 162, 60, 0.1)',
+                                        borderTop: '4px solid #C8A23C',
+                                        borderBottom: '4px solid #C8A23C',
+                                        borderRadius: '50%',
+                                        animation: 'spin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+                                    }} />
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '8px',
+                                        left: '8px',
+                                        width: '40px',
+                                        height: '40px',
+                                        border: '3px solid rgba(59, 107, 53, 0.1)',
+                                        borderLeft: '3px solid #3B6B35',
+                                        borderRight: '3px solid #3B6B35',
+                                        borderRadius: '50%',
+                                        animation: 'spin 1s linear infinite reverse',
+                                    }} />
+                                    {/* Central glowing core */}
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '20px',
+                                        left: '20px',
+                                        width: '20px',
+                                        height: '20px',
+                                        backgroundColor: '#C8A23C',
+                                        borderRadius: '50%',
+                                        boxShadow: '0 0 15px #C8A23C',
+                                        animation: 'pulse 1.2s ease-in-out infinite alternate',
+                                    }} />
+                                </div>
+                                <h3 style={{
+                                    fontFamily: "'PixelOperator', sans-serif",
+                                    fontSize: '18px',
+                                    color: '#ffc83c',
+                                    margin: '0 0 8px 0',
+                                    letterSpacing: '1px',
+                                    textTransform: 'uppercase',
+                                    textShadow: '1px 1px 2px #000',
+                                }}>
+                                    Securing Session
+                                </h3>
+                                <p style={{
+                                    fontFamily: "'PixelOperator', sans-serif",
+                                    fontSize: '14px',
+                                    color: 'rgba(255, 255, 255, 0.85)',
+                                    margin: '0',
+                                    textAlign: 'center',
+                                    lineHeight: '1.4',
+                                    textShadow: '1px 1px 2px #000',
+                                }}>
+                                    Authenticating wallet signature and authorizing session key. Please confirm in your wallet.
+                                </p>
+                            </div>
                         ) : (authError || (connectionError && (loggedInPlayer || storedUsername))) ? (
                             <>
                                 <p style={{
@@ -1191,18 +1284,34 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     gap: '12px'
                                 }}>
                                     {/* Loading Spinner */}
-                                    <div style={{
-                                        width: '32px',
-                                        height: '32px',
-                                        border: '3px solid rgba(255, 165, 0, 0.3)',
-                                        borderTop: '3px solid #5c8e32',
-                                        borderRadius: '50%',
-                                        animation: 'spin 1s linear infinite',
-                                    }} />
+                                    <div style={{ position: 'relative', width: '48px', height: '48px', marginBottom: '8px' }}>
+                                        <div style={{
+                                            position: 'absolute',
+                                            width: '100%',
+                                            height: '100%',
+                                            border: '3px solid rgba(200, 162, 60, 0.1)',
+                                            borderTop: '3px solid #C8A23C',
+                                            borderBottom: '3px solid #C8A23C',
+                                            borderRadius: '50%',
+                                            animation: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+                                        }} />
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '6px',
+                                            left: '6px',
+                                            width: '32px',
+                                            height: '32px',
+                                            border: '2px solid rgba(59, 107, 53, 0.1)',
+                                            borderLeft: '2px solid #3B6B35',
+                                            borderRadius: '50%',
+                                            animation: 'spin 0.8s linear infinite reverse',
+                                        }} />
+                                    </div>
                                     <p style={{
                                         fontSize: '14px',
+                                        fontFamily: "'PixelOperator', sans-serif",
                                         margin: '0',
-                                        color: 'rgba(255, 255, 255, 0.9)',
+                                        color: '#ffc83c',
                                         textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                     }}>
                                         Authenticated - Reconnecting to game...

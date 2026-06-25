@@ -216,7 +216,7 @@ function AppContent() {
             )}
 
             {/* If authenticated but not yet registered/connected to game */}
-            {isAuthenticated && !localPlayerRegistered && (
+            {isAuthenticated && !localPlayerRegistered && !isSpectator && (
                  <LoginScreen 
                     handleJoinGame={handleAttemptRegisterPlayer} // Pass the updated handler
                     handleSpectateGame={async () => { /* handled inside LoginScreen when wallet qualifies */ }}
