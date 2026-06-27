@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CyberpunkLoadingScreen.css';
-import sovaImage from '../assets/ui/sova.png';
+import sovaImage from '../assets/ui/echo.png';
 import { useMobileDetection } from '../hooks/useMobileDetection';
 import { ASSISTANT_NAME } from '../constants/branding';
 

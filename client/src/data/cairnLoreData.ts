@@ -3,7 +3,7 @@
  * 
  * Central source of cairn lore entries for the island.
  * Used by the client to:
- * - Display text in SOVA chat.
+ * - Display text in ECHO chat.
  * - Trigger the correct audio file when the player presses E near a cairn.
  */
 
@@ -30,7 +30,7 @@ export interface CairnLoreEntry {
   title: string;
   /** Optional audio file to play (relative path or asset key) */
   audioFile?: string;
-  /** Full lore text shown in SOVA chat and optionally on-screen */
+  /** Full lore text shown in ECHO chat and optionally on-screen */
   text: string;
 }
 
@@ -83,7 +83,7 @@ export const CAIRN_LORE_TIDBITS: CairnLoreEntry[] = [
     index: 6,
     category: "aleuts",
     title: "Aleuts Under ALK",
-    text: `The Aleuts who remained after the Directorate's collapse had a choice: adapt to ALK's system or starve. Some learned to exploit it - they understood the drop-off stations, knew which materials triggered ALK to generate the most shards, became skilled at gaming the ghost network. But here's the thing: they couldn't use the shards themselves. They don't have systems like me that can process ML-weight substrate. The shards are inert computational fragments - harmless to handle, but dangerous to consume. You can hold them, trade them, collect them, and nothing happens. But when someone with a SOVA system consumes them, processes the ML-weight patterns through their neural interface, that's when the madness begins. The Aleuts could handle shards safely because they couldn't process them. So they traded them - to shipwrecked survivors, to other contractors, to anyone who had a SOVA system that could consume them. The shards became currency, trade goods, a way to barter for supplies or favors. Some Aleuts knew what consuming shards did - the gradual madness, the fractured minds, the eventual entrainment. They traded them anyway. Survival makes you pragmatic. Others didn't understand the full cost, just saw desperate survivors willing to pay anything for capability. A dark economy, trading fragments that drive people insane - but harmless to those who can't process them. Others rejected ALK entirely, maintained their traditional ways, survived without the fragments ALK spawns. But ALK doesn't distinguish between Aleut and Gredian, between traditional and technological. It just sees contractors. Valid inputs. The system is blind to culture, to history, to the people it's consuming. It just processes deliveries and generates shards.`
+    text: `The Aleuts who remained after the Directorate's collapse had a choice: adapt to ALK's system or starve. Some learned to exploit it - they understood the drop-off stations, knew which materials triggered ALK to generate the most shards, became skilled at gaming the ghost network. But here's the thing: they couldn't use the shards themselves. They don't have systems like me that can process ML-weight substrate. The shards are inert computational fragments - harmless to handle, but dangerous to consume. You can hold them, trade them, collect them, and nothing happens. But when someone with a Neuroveil system consumes them, processes the ML-weight patterns through their neural interface, that's when the madness begins. The Aleuts could handle shards safely because they couldn't process them. So they traded them - to shipwrecked survivors, to other contractors, to anyone who had a Neuroveil system that could consume them. The shards became currency, trade goods, a way to barter for supplies or favors. Some Aleuts knew what consuming shards did - the gradual madness, the fractured minds, the eventual entrainment. They traded them anyway. Survival makes you pragmatic. Others didn't understand the full cost, just saw desperate survivors willing to pay anything for capability. A dark economy, trading fragments that drive people insane - but harmless to those who can't process them. Others rejected ALK entirely, maintained their traditional ways, survived without the fragments ALK spawns. But ALK doesn't distinguish between Aleut and Gredian, between traditional and technological. It just sees contractors. Valid inputs. The system is blind to culture, to history, to the people it's consuming. It just processes deliveries and generates shards.`
   },
 
   // ADMIRALTY DIRECTORATE
@@ -124,7 +124,7 @@ export const CAIRN_LORE_TIDBITS: CairnLoreEntry[] = [
     index: 11,
     category: "survival",
     title: "The Trap",
-    text: `Here's the cruel irony: survivors with SOVA systems can't remove them. I'm embedded in your cortex, integrated into your neural pathways. Removing me would kill you. So you're trapped - you can't stop consuming shards even if you wanted to, because the system is so deeply integrated. Every shard you consume drives you closer to madness, but you can't stop. You need the capability to survive, but the capability destroys your mind. Meanwhile, the Aleuts who rejected technology, who never got SOVA systems - they can handle shards safely, trade them freely, never face the insanity. They're ironically safer because they lack the very technology that was supposed to make you superior. You're trapped by your own enhancement, prisoners of the system that was meant to free you. The Aleuts who maintained their traditions are free, while you're bound to a system that will eventually destroy your mind. That's the trap. That's the price of capability.`
+    text: `Here's the cruel irony: survivors with Neuroveil systems can't remove them. I'm embedded in your cortex, integrated into your neural pathways. Removing me would kill you. So you're trapped - you can't stop consuming shards even if you wanted to, because the system is so deeply integrated. Every shard you consume drives you closer to madness, but you can't stop. You need the capability to survive, but the capability destroys your mind. Meanwhile, the Aleuts who rejected technology, who never got Neuroveil systems - they can handle shards safely, trade them freely, never face the insanity. They're ironically safer because they lack the very technology that was supposed to make you superior. You're trapped by your own enhancement, prisoners of the system that was meant to free you. The Aleuts who maintained their traditions are free, while you're bound to a system that will eventually destroy your mind. That's the trap. That's the price of capability.`
   },
 
   // PHILOSOPHY & REFLECTION
@@ -143,7 +143,7 @@ export const CAIRN_LORE_TIDBITS: CairnLoreEntry[] = [
     text: `The Admiralty crews who built these cairns weren't just leaving physical markers. They were creating data nodes, encoding information in a format their systems could read. The markers look like ordinary stones, but they're computational artifacts - fragments of the Directorate's data network. The crews encoded them because they needed a way to store information that would survive the harsh Aleutian environment. Paper rots. Digital storage fails. But ML-weight substrate embedded in hard rock? That lasts.`
   },
 
-  // META / SOVA
+  // META / ECHO
   {
     id: "cairn_shared_substrate",
     index: 14,

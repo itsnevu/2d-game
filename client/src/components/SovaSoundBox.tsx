@@ -14,7 +14,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import './SovaSoundBox.css';
-import sovaLogo from '../assets/ui/sova.png';
+import sovaLogo from '../assets/ui/echo.png';
 import { ASSISTANT_NAME } from '../constants/branding';
 
 export interface SovaSoundBoxProps {

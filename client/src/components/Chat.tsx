@@ -5,7 +5,7 @@ import { DbConnection, EventContext } from '../generated';
 import type { Message as SpacetimeDBMessage, Player as SpacetimeDBPlayer, PrivateMessage as SpacetimeDBPrivateMessage, TeamMessage as SpacetimeDBTeamMessage, LastWhisperFrom, Recipe } from '../generated/types';
 import { Identity } from 'spacetimedb';
 import styles from './Chat.module.css';
-import sovaIcon from '../assets/ui/sova.png';
+import sovaIcon from '../assets/ui/echo.png';
 import { openaiService } from '../services/openaiService';
 import { buildGameContext, type GameContextBuilderProps } from '../utils/gameContextBuilder';
 import apiPerformanceService from '../services/apiPerformanceService';

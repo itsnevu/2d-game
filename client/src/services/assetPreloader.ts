@@ -17,7 +17,7 @@ import heroCrouchSpriteSheet from '../assets/hero_crouch.png';
 import heroDodgeSpriteSheet from '../assets/hero_dodge.png';
 
 // Import UI assets
-import sovaImage from '../assets/ui/sova.png';
+import sovaImage from '../assets/ui/echo.png';
 import heartIcon from '../assets/ui/heart.png';
 import hungerIcon from '../assets/ui/hunger.png';
 import thirstIcon from '../assets/ui/thirst.png';

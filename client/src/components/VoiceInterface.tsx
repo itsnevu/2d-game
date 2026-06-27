@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import whisperService, { type WhisperResponse } from '../services/whisperService';
 import { openaiService } from '../services/openaiService';
 import { buildGameContext, type GameContextBuilderProps } from '../utils/gameContextBuilder';
-import sovaIcon from '../assets/ui/sova.png';
+import sovaIcon from '../assets/ui/echo.png';
 import './VoiceInterface.css';
 import { ASSISTANT_NAME } from '../constants/branding';
 import { kokoroService } from '../services/kokoroService';

@@ -12,7 +12,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faForward, faSeedling, faHammer, faShieldHalved, faCoins } from '@fortawesome/free-solid-svg-icons';
-import echoLogo from '../assets/ui/sova.png';
+import echoLogo from '../assets/ui/echo.png';
 import { ASSISTANT_NAME } from '../constants/branding';
 
 const SEEN_KEY = 'broth_game_intro_overlay_seen';
