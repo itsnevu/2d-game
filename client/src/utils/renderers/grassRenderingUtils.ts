@@ -1,5 +1,6 @@
 import { GrassAppearanceType } from '../../generated/types';
 import { imageManager } from './imageManager';
+import { getTintedDrawable } from './assetTintUtils';
 import { InterpolatedGrassData } from '../../hooks/useGrassInterpolation';
 import { renderCyberpunkAssetPlaceholder } from './cyberpunkAssetPlaceholder';
 
@@ -381,11 +382,12 @@ export function renderGrass(
     // Per-instance Y offsets make identical grass types sort differently.
     const offsetY = 0;
 
+    const drawImg = getTintedDrawable(img, imgSrc); // dark-fantasy recolor (same dimensions) when matched
     const drawGrassSprite = (dx: number, dy: number, dw: number, dh: number) => {
         if (isBeachGrassStrip) {
             const sx = beachFrame * BEACH_GRASS_FRAME_W;
             ctx.drawImage(
-                img,
+                drawImg,
                 sx,
                 0,
                 BEACH_GRASS_FRAME_W,
@@ -396,7 +398,7 @@ export function renderGrass(
                 dh
             );
         } else {
-            ctx.drawImage(img, dx, dy, dw, dh);
+            ctx.drawImage(drawImg, dx, dy, dw, dh);
         }
     };
 

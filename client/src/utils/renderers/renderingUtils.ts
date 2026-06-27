@@ -1261,7 +1261,8 @@ export const renderYSortedEntities = ({
                 playerActiveTitle,
                 effectiveIsOnWater,
                 isOnSeaTransitionTile,
-                isSwimmingInHotSpringWater
+                isSwimmingInHotSpringWater,
+                playerStatsEntry?.level ?? null
               );
             } else {
               renderCyberpunkPlayerPlaceholder(ctx, playerForRendering, nowMs, jumpOffset);
@@ -1337,7 +1338,8 @@ export const renderYSortedEntities = ({
                 playerActiveTitle2,
                 effectiveIsOnWater,
                 isOnSeaTransitionTile,
-                isSwimmingInHotSpringWater
+                isSwimmingInHotSpringWater,
+                playerStatsEntry2?.level ?? null
               );
             } else {
               renderCyberpunkPlayerPlaceholder(ctx, playerForRendering, nowMs, jumpOffset);

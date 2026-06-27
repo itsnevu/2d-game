@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Components
 import LoginScreen from './components/LoginScreen';
 import GameplayRuntimeBridge from './components/GameplayRuntimeBridge';
+import GameProtection from './components/GameProtection';
 
 // Legal Pages
 import PrivacyPage from './components/PrivacyPage';
@@ -266,6 +267,9 @@ function App() {
         <AuthProvider>
             <GameContextsProvider>
                 <DebugProvider>
+                    {/* Content-protection deterrents (config/gameProtection.ts). The world reskin tint
+                        is a canvas render pass — see utils/renderers/worldColorOverlayUtils.ts. */}
+                    <GameProtection />
                     <Router>
                         <Routes>
                             <Route path="/" element={<AppErrorBoundary><AppContent /></AppErrorBoundary>} />

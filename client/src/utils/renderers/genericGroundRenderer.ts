@@ -1,4 +1,5 @@
 import { imageManager } from './imageManager';
+import { getTintedDrawable } from './assetTintUtils';
 import { renderCyberpunkAssetPlaceholder } from './cyberpunkAssetPlaceholder';
 
 interface BaseEntity {
@@ -230,12 +231,13 @@ export function renderConfiguredGroundEntity<T extends BaseEntity>({
                     effectsResult
                 );
             } else {
-                // Draw the image centered around the new (transformed) origin
+                // Draw the image centered around the new (transformed) origin.
+                // getTintedDrawable applies the dark-fantasy recolor (same dimensions) when the src matches.
                 ctx.drawImage(
-                    img, 
-                    -targetImgWidth / 2, 
-                    -targetImgHeight / 2, 
-                    targetImgWidth, 
+                    getTintedDrawable(img, imgSrc!),
+                    -targetImgWidth / 2,
+                    -targetImgHeight / 2,
+                    targetImgWidth,
                     targetImgHeight
                 );
             }

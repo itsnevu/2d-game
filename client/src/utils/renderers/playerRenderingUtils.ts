@@ -461,6 +461,112 @@ export const drawNameTag = (
   }
 };
 
+// ============================================================================
+// PLAYER LEVEL BADGE + LEVEL-UP CELEBRATION
+// ============================================================================
+// Always-visible "Lv N" pill above each player's head, plus a festive burst
+// (rising "LEVEL UP!" + sparkles + glow) the moment their level increases.
+const PLAYER_LEVEL_FONT = 'bold 10px "Courier New", Consolas, Monaco, monospace';
+const LEVELUP_TITLE_FONT = 'bold 14px "Courier New", Consolas, Monaco, monospace';
+const LEVELUP_CELEBRATION_MS = 2600; // how long the celebration animates
+
+// Per-player level tracking so we can detect "just leveled up" purely at render time.
+// Keyed by identity hex (falls back to username). Works for local AND remote players,
+// since player_stats is subscribed globally.
+const levelCelebrations = new Map<string, { prev: number; startMs: number }>();
+
+export const drawPlayerLevelBadge = (
+  ctx: CanvasRenderingContext2D,
+  player: SpacetimeDBPlayer,
+  spriteTopY: number,
+  spriteX: number,
+  level?: number | null,
+  currentTimeMs?: number,
+) => {
+  if (level == null || level <= 0) return;
+  const now = currentTimeMs ?? 0;
+  const key = (player as any).identity?.toHexString?.() ?? player.username;
+
+  // Detect level change -> kick off a celebration (skip the very first sighting).
+  const tracked = levelCelebrations.get(key);
+  if (tracked === undefined) {
+    levelCelebrations.set(key, { prev: level, startMs: -Infinity });
+  } else if (level > tracked.prev) {
+    tracked.prev = level;
+    tracked.startMs = now;
+  } else if (level < tracked.prev) {
+    tracked.prev = level; // resync (e.g. respawn/reset) without celebrating
+  }
+  const startMs = levelCelebrations.get(key)!.startMs;
+  const elapsed = now - startMs;
+  const celebrating = elapsed >= 0 && elapsed < LEVELUP_CELEBRATION_MS;
+  const p = celebrating ? elapsed / LEVELUP_CELEBRATION_MS : 0; // 0 -> 1
+  const fade = celebrating ? 1 - p : 0;                          // 1 -> 0
+
+  ctx.save();
+  ctx.textAlign = 'center';
+
+  // --- Level pill (sits just above where the name tag renders) ---
+  const text = `Lv ${level}`;
+  ctx.font = PLAYER_LEVEL_FONT;
+  const textW = getCachedTextWidth(ctx, PLAYER_LEVEL_FONT, text);
+  const pillH = 14;
+  const pillW = textW + 10;
+  const pillX = spriteX - pillW / 2;
+  const pillY = spriteTopY - 16 /* name tag height */ - pillH - 2;
+
+  if (celebrating) {
+    ctx.shadowColor = `rgba(255, 215, 0, ${0.55 + fade * 0.45})`;
+    ctx.shadowBlur = 8 + fade * 16;
+  }
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.72)';
+  ctx.beginPath();
+  ctx.roundRect(pillX, pillY, pillW, pillH, 4);
+  ctx.fill();
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = celebrating
+    ? `rgba(255, 226, 130, ${0.7 + fade * 0.3})`
+    : 'rgba(134, 190, 82, 0.85)';
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  ctx.font = PLAYER_LEVEL_FONT;
+  ctx.fillStyle = celebrating ? '#fff3b0' : '#c4e89c';
+  ctx.fillText(text, spriteX, pillY + pillH - 4);
+
+  // --- Celebration: sparkles + rising "LEVEL UP!" ---
+  if (celebrating) {
+    const cx = spriteX;
+    const cy = pillY + pillH / 2;
+    const sparkleCount = 10;
+    for (let i = 0; i < sparkleCount; i++) {
+      const ang = (Math.PI * 2 * i) / sparkleCount + p * 1.6;
+      const dist = 6 + p * 28;
+      const sx = cx + Math.cos(ang) * dist;
+      const sy = cy + Math.sin(ang) * dist * 0.65 - p * 12;
+      ctx.beginPath();
+      ctx.fillStyle = i % 2 === 0
+        ? `rgba(255, 215, 0, ${fade})`
+        : `rgba(196, 232, 156, ${fade})`;
+      ctx.arc(sx, sy, 1.4 + fade * 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    const titleAlpha = p < 0.15 ? p / 0.15 : Math.max(0, 1 - (p - 0.15) / 0.85);
+    const titleY = pillY - 6 - p * 18;
+    ctx.globalAlpha = titleAlpha;
+    ctx.font = LEVELUP_TITLE_FONT;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(40, 28, 0, 0.9)';
+    ctx.strokeText('LEVEL UP!', cx, titleY);
+    ctx.fillStyle = '#ffd700';
+    ctx.fillText('LEVEL UP!', cx, titleY);
+    ctx.globalAlpha = 1;
+  }
+
+  ctx.restore();
+};
+
 // --- THROW INDICATOR BUBBLE ---
 // Draws a chat bubble with 🤾 emoji above player when aiming to throw
 export const drawThrowIndicatorBubble = (
@@ -551,7 +657,8 @@ export const renderPlayer = (
   activeTitle?: string | null,
   effectiveIsOnWaterFromCaller?: boolean,
   isOnSeaTransitionTile?: boolean, // Standing on Beach/Sea, Beach/HotSpringWater, or Asphalt/Sea: draw feet-level water line
-  isSwimmingInHotSpringWater?: boolean // HotSpringWater tile: dark-teal surface ripples
+  isSwimmingInHotSpringWater?: boolean, // HotSpringWater tile: dark-teal surface ripples
+  playerLevel?: number | null // NEW: player level for the floating "Lv N" badge + level-up celebration
 ) => {
   // --- Per-character recolor: swap each sheet for its tinted variant (character 0 = original) ---
   const characterId = (player as { characterId?: number }).characterId ?? 0;
@@ -1378,7 +1485,10 @@ export const renderPlayer = (
     const showingDueToPersistentState = shouldShowLabel;
     const willShowLabel = showingDueToCurrentHover || showingDueToPersistentState;
     drawNameTag(ctx, player, spriteDrawY, currentDisplayX + shakeX, finalIsOnline, willShowLabel, activeTitle, nowMs);
-    
+
+    // Always-visible level badge + level-up celebration above the character
+    drawPlayerLevelBadge(ctx, player, spriteDrawY, currentDisplayX + shakeX, playerLevel ?? null, nowMs);
+
     // NOTE: Throw indicator bubble disabled - was confusing for players
     // drawThrowIndicatorBubble(ctx, player, spriteDrawY, currentDisplayX + shakeX, nowMs);
   }

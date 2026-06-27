@@ -3,6 +3,7 @@ import { renderRain } from '../../utils/renderers/rainRenderingUtils';
 import { renderWeatherOverlay } from '../../utils/renderers/weatherOverlayUtils';
 import { renderWardRadius, LANTERN_TYPE_LANTERN } from '../../utils/renderers/lanternRenderingUtils';
 import { renderStatusOverlayPasses } from './renderStatusOverlayPasses';
+import { renderWorldColorOverlay } from '../../utils/renderers/worldColorOverlayUtils';
 
 interface RenderScreenSpaceWorldEffectsOptions {
   ctx: CanvasRenderingContext2D;
@@ -161,6 +162,9 @@ export function renderScreenSpaceWorldEffects({
     renderParticles(ctx, hostileDeathParticles);
     ctx.restore();
   }
+
+  // Global reskin tint — recolors the world canvas only (HUD/UI draws on top, untinted).
+  renderWorldColorOverlay(ctx, currentCanvasWidth, currentCanvasHeight);
 
   renderStatusOverlayPasses({
     ctx,

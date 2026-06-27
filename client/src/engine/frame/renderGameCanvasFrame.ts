@@ -1,6 +1,7 @@
 import { gameConfig, getViewBounds } from '../../config/gameConfig';
 import { renderPlayerCorpse } from '../../utils/renderers/playerCorpseRenderingUtils';
 import { renderAllFootprints } from '../../utils/renderers/terrainTrailUtils';
+import { renderTerrainColorOverlay } from '../../utils/renderers/worldColorOverlayUtils';
 import { beginProjectileRenderPass } from '../../utils/renderers/projectileRenderingUtils';
 import { worldPosToTileCoords } from '../../utils/renderers/placementRenderingUtils';
 import { logLagDiagnostic } from '../../utils/gameDebugUtils';
@@ -435,6 +436,10 @@ export function renderGameCanvasFrame(args: any): void {
   if (!isSnorkeling && footprintsEnabled) {
     renderAllFootprints(ctx, viewBounds, nowMs);
   }
+
+  // Dark-fantasy recolor: hue-tint the ground/terrain layer before entities draw on top of it.
+  renderTerrainColorOverlay(ctx, currentCanvasWidth, currentCanvasHeight);
+
   const _t2a = mark(showFpsProfiler);
 
   const { t2b: _t2b, t2c: _t2c, t3: _t3, t3a: _t3a } = renderEntityWorldPasses({

@@ -1,5 +1,6 @@
 import { drawDynamicGroundShadow, drawShadow } from './shadowUtils';
 import { imageManager } from './imageManager';
+import { ASSET_RECOLOR } from '../../config/assetRecolor';
 import type { WildAnimal, AnimalSpecies, AnimalState } from '../../generated/types';
 import {
     getAnimalCollisionBounds,
@@ -1402,6 +1403,13 @@ export function renderWildAnimal({
         // (players, corals, projectiles) for consistent visibility when snorkeling with Reed Diver's Helm
         ctx.globalAlpha = 1.0;
         ctx.filter = UNDERWATER_TINT_FILTER;
+    }
+
+    // Dark-fantasy recolor: tint hostile MONSTERS only (regular animals + human NPCs stay natural).
+    // Appends to any aquatic filter; restored together via savedFilter below.
+    if (ASSET_RECOLOR.enabled && ASSET_RECOLOR.monster.enabled && animal.isHostileNpc) {
+        const existing = ctx.filter && ctx.filter !== 'none' ? ctx.filter + ' ' : '';
+        ctx.filter = existing + ASSET_RECOLOR.monster.filter;
     }
 
     if (useImageFallback) {

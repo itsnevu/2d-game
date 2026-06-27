@@ -527,8 +527,10 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             onMouseEnter={(e) => { e.stopPropagation(); setHoveredElement('time'); }}
                             onMouseLeave={() => setHoveredElement(null)}
                         >
-                            <span style={{ 
+                            <span style={{
                                 fontSize: '12px',
+                                color: '#fff',
+                                textShadow: `0 0 6px ${ACCENT_CYAN}`,
                                 transition: 'transform 0.2s ease',
                                 display: 'inline-block',
                                 transform: hoveredElement === 'time' ? 'scale(1.2)' : 'scale(1)',
@@ -552,8 +554,9 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             onMouseEnter={(e) => { e.stopPropagation(); setHoveredElement('weather'); }}
                             onMouseLeave={() => setHoveredElement(null)}
                         >
-                            <span style={{ 
+                            <span style={{
                                 fontSize: '12px',
+                                color: '#9ab08a',
                                 transition: 'transform 0.2s ease',
                                 display: 'inline-block',
                                 transform: hoveredElement === 'weather' ? 'scale(1.2)' : 'scale(1)',
