@@ -378,22 +378,38 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     const handleWalletLogin = async () => {
         setLocalError(null);
         try {
-            const provider = (window as any).solana;
-            if (!provider) {
-                throw new Error("Solana wallet extension not found. Please install Phantom or Solflare.");
+            // Newer Phantom injects at window.phantom.solana; older builds expose window.solana.
+            const provider = (window as any).phantom?.solana ?? (window as any).solana;
+            if (!provider || (!provider.isPhantom && typeof provider.connect !== 'function')) {
+                throw new Error("Solana wallet not found. Install Phantom or Solflare, then refresh the page.");
             }
             
-            const connectResponse = await provider.connect();
-            const publicKeyStr = connectResponse.publicKey.toString();
+            const connectResponse = await provider.connect().catch((e: any) => {
+                throw new Error(/reject/i.test(e?.message || '') ? "Wallet connection was rejected." : (e?.message || "Could not open the wallet."));
+            });
+            const publicKey = connectResponse?.publicKey ?? provider.publicKey;
+            const publicKeyStr = publicKey?.toString?.();
+            if (!publicKeyStr) {
+                throw new Error("Could not read your wallet address. Unlock the wallet and try again.");
+            }
             const balance = computeSimulatedBalance(publicKeyStr);
             setSimulatedWldrBalance(balance);
             
             const timestamp = Math.floor(Date.now() / 1000);
             const messageStr = `Sign this message to log into WILDER.\nChallenge: ${timestamp}`;
             const encodedMessage = new TextEncoder().encode(messageStr);
-            const signResponse = await provider.signMessage(encodedMessage, "utf8");
-            
-            const signatureStr = bs58.encode(signResponse.signature);
+            // Phantom returns { signature: Uint8Array }; some wallets return the bytes directly.
+            const signResponse = await provider.signMessage(encodedMessage).catch((e: any) => {
+                throw new Error(/reject/i.test(e?.message || '') ? "Signature request was rejected." : (e?.message || "Could not sign the login message."));
+            });
+            let sigBytes: any = signResponse?.signature ?? signResponse;
+            if (sigBytes && !(sigBytes instanceof Uint8Array)) {
+                sigBytes = new Uint8Array(Object.values(sigBytes as Record<string, number>));
+            }
+            if (!sigBytes || sigBytes.length === 0) {
+                throw new Error("Wallet returned an empty signature.");
+            }
+            const signatureStr = bs58.encode(sigBytes);
 
             await loginWithWallet(publicKeyStr, signatureStr, messageStr);
             // A successful wallet login ALWAYS enters the game as a player.
@@ -401,7 +417,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             setIsSpectator(false);
         } catch (err: any) {
             console.error("[LoginScreen] Wallet authentication failed:", err);
-            setLocalError(err.message || "Wallet sign-in cancelled or failed.");
+            const raw = err?.message || String(err);
+            const friendly = /failed to fetch|networkerror|load failed/i.test(raw)
+                ? "Cannot reach the login server. Make sure the auth server is running (localhost:4001) and try again."
+                : (raw || "Wallet sign-in cancelled or failed.");
+            setLocalError(friendly);
         }
     };
 
