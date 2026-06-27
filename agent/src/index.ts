@@ -1,5 +1,5 @@
 /**
- * Broth & Bullets — NPC Agent Runtime Entry Point
+ * WILDER — NPC Agent Runtime Entry Point
  *
  * This process manages ~20 NPC agents that connect to SpacetimeDB
  * as real clients, register as players, and behave autonomously.
@@ -27,7 +27,7 @@ import { loadConfig } from './config.js';
 import { NpcManager } from './npc-manager.js';
 
 async function main(): Promise<void> {
-  console.log('=== Broth & Bullets NPC Agent Runtime ===');
+  console.log('=== WILDER NPC Agent Runtime ===');
   console.log(`Time: ${new Date().toISOString()}`);
 
   const config = loadConfig();

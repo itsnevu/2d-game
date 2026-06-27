@@ -27,9 +27,9 @@ export default {
 
     <p>After extensive playtesting, here are the best cozy survival games available right now:</p>
 
-    <h3>1. Broth & Bullets</h3>
+    <h3>1. WILDER</h3>
     <p><strong>Platforms:</strong> Browser (Free) | <strong>Multiplayer:</strong> Yes | <strong>Cozy Rating:</strong> 8/10</p>
-    <p>A unique entry that balances cozy crafting with optional survival challenge. Set in the subarctic Aleutian Islands, Broth & Bullets features relaxing farming, experimental cooking with AI-generated recipes, and animal husbandry. The nighttime apparition system adds tension, but daytime gameplay is peaceful exploration and base building. The cooking system lets you experiment freely - throw ingredients in a pot and discover new recipes through genuine experimentation.</p>
+    <p>A unique entry that balances cozy crafting with optional survival challenge. Set in the subarctic Aleutian Islands, WILDER features relaxing farming, experimental cooking with AI-generated recipes, and animal husbandry. The nighttime apparition system adds tension, but daytime gameplay is peaceful exploration and base building. The cooking system lets you experiment freely - throw ingredients in a pot and discover new recipes through genuine experimentation.</p>
     <p><strong>Best for:</strong> Players who want cozy crafting with optional challenge</p>
 
     <h3>2. Stardew Valley</h3>
@@ -156,13 +156,13 @@ export default {
 
     <p><strong>Hardcore survival games</strong> (like Rust, ARK, DayZ) create tension through scarcity, permanent loss, and competitive multiplayer. They're designed for adrenaline and competition.</p>
 
-    <p>Neither approach is "better" - they serve different player needs. Many players enjoy both depending on their mood. Some games (like Broth & Bullets, Valheim, and Grounded) offer difficulty modes that let you choose your experience.</p>
+    <p>Neither approach is "better" - they serve different player needs. Many players enjoy both depending on their mood. Some games (like WILDER, Valheim, and Grounded) offer difficulty modes that let you choose your experience.</p>
 
     <h2>Best Cozy Survival Games for Different Platforms</h2>
 
     <h3>Best Cozy Survival Games for PC</h3>
     <ol>
-      <li>Broth & Bullets (Browser)</li>
+      <li>WILDER (Browser)</li>
       <li>Stardew Valley</li>
       <li>Valheim</li>
       <li>Astroneer</li>
@@ -190,7 +190,7 @@ export default {
     <p>If you want to play cozy survival games with friends:</p>
 
     <ol>
-      <li><strong>Broth & Bullets</strong> - Browser-based, drop-in multiplayer, cooperative survival</li>
+      <li><strong>WILDER</strong> - Browser-based, drop-in multiplayer, cooperative survival</li>
       <li><strong>Stardew Valley</strong> - Up to 4 players, shared farm, split-screen available</li>
       <li><strong>Valheim</strong> - Up to 10 players, server-based, cooperative building</li>
       <li><strong>Raft</strong> - Up to 8 players, cooperative raft building</li>
@@ -200,33 +200,33 @@ export default {
     <h2>Frequently Asked Questions</h2>
 
     <h3>What is the most relaxing survival game?</h3>
-    <p>Stardew Valley and Slime Rancher are considered the most relaxing survival-adjacent games. For a game with more traditional survival elements that remains cozy, Astroneer and Spiritfarer are excellent choices. Broth & Bullets offers a unique middle ground with peaceful daytime gameplay and optional nighttime challenges.</p>
+    <p>Stardew Valley and Slime Rancher are considered the most relaxing survival-adjacent games. For a game with more traditional survival elements that remains cozy, Astroneer and Spiritfarer are excellent choices. WILDER offers a unique middle ground with peaceful daytime gameplay and optional nighttime challenges.</p>
 
     <h3>Are there survival games without combat?</h3>
     <p>Yes. Cozy Grove, Spiritfarer, and Stardew Valley have minimal or no combat. Many other survival games offer peaceful or creative modes that remove combat entirely, including Subnautica, Valheim, and Raft.</p>
 
     <h3>What survival games can I play with my partner?</h3>
-    <p>Stardew Valley, Raft, Astroneer, and Broth & Bullets are excellent choices for couples. They feature cooperative gameplay without competitive elements, letting you work together toward shared goals.</p>
+    <p>Stardew Valley, Raft, Astroneer, and WILDER are excellent choices for couples. They feature cooperative gameplay without competitive elements, letting you work together toward shared goals.</p>
 
     <h3>Are there cozy survival games for people who don't like survival games?</h3>
     <p>Absolutely. Games like Stardew Valley, Cozy Grove, and Spiritfarer use survival mechanics (resource gathering, crafting, farming) without punishing difficulty. They're great entry points for players who find traditional survival games too stressful.</p>
 
     <h3>What's a good cozy survival game for beginners?</h3>
-    <p>Stardew Valley is the most beginner-friendly cozy survival game. Slime Rancher and Cozy Grove are also excellent starting points. For multiplayer, Broth & Bullets is accessible since it runs in any browser with no download required.</p>
+    <p>Stardew Valley is the most beginner-friendly cozy survival game. Slime Rancher and Cozy Grove are also excellent starting points. For multiplayer, WILDER is accessible since it runs in any browser with no download required.</p>
 
-    <h2>Play Broth & Bullets</h2>
+    <h2>Play WILDER</h2>
 
-    <p>Looking for a cozy survival game you can play right now? Broth & Bullets combines relaxing crafting and farming with optional survival challenges. The AI-powered cooking system lets you experiment freely, and the cooperative multiplayer means you'll never face the toxic PvP of hardcore survival games.</p>
+    <p>Looking for a cozy survival game you can play right now? WILDER combines relaxing crafting and farming with optional survival challenges. The AI-powered cooking system lets you experiment freely, and the cooperative multiplayer means you'll never face the toxic PvP of hardcore survival games.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Free (No Download)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Free (No Download)</a></p>
 
     <h2>Related Articles</h2>
 
     <ul>
       <li><a href="/blog/best-2d-survival-games">Best 2D Survival Games in 2025</a></li>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Cooking Gameplay</a></li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a></li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Cooking Gameplay</a></li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a></li>
     </ul>
   `,
-  tags: ["Cozy Survival Games", "Relaxing Games", "Survival Games", "Stardew Valley", "Broth & Bullets", "Multiplayer Games", "Farming Games", "Crafting Games", "Indie Games", "Best Of", "Game Recommendations", "Peaceful Games", "Co-op Games"]
+  tags: ["Cozy Survival Games", "Relaxing Games", "Survival Games", "Stardew Valley", "WILDER", "Multiplayer Games", "Farming Games", "Crafting Games", "Indie Games", "Best Of", "Game Recommendations", "Peaceful Games", "Co-op Games"]
 };

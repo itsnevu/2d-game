@@ -106,7 +106,7 @@ fn extract_json_block(text: &str) -> String {
     text.trim().to_string()
 }
 
-const BREW_SYSTEM_PROMPT: &str = r#"You are an AI recipe generator for a survival game called "Broth & Bullets".
+const BREW_SYSTEM_PROMPT: &str = r#"You are an AI recipe generator for a survival game called "WILDER".
 Players combine 3 ingredients in a broth pot to create unique brews.
 
 Return ONLY valid JSON (no markdown, no prose) with this shape:

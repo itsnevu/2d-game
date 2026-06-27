@@ -166,44 +166,6 @@ const BlogHeader: React.FC = () => {
                             alignItems: 'center',
                             gap: '16px',
                         }}>
-                            {/* Back to Blog Button */}
-                            <button
-                                onClick={() => handleNavigate('/blog')}
-                                style={{
-                                    display: 'inline-block',
-                                    background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 100%)',
-                                    border: '2px solid #666666',
-                                    borderRadius: '8px',
-                                    color: '#ffffff',
-                                    padding: '12px 24px',
-                                    fontSize: '14px',
-                                    fontWeight: 'bold',
-                                    letterSpacing: '1px',
-                                    textTransform: 'uppercase',
-                                    textDecoration: 'none',
-                                    transition: 'all 0.3s ease',
-                                    boxShadow: '0 0 10px rgba(102, 102, 102, 0.3)',
-                                    fontFamily: "'PixelOperatorMono', monospace",
-                                    minWidth: '120px',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #404040 0%, #606060 100%)';
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(102, 102, 102, 0.6)';
-                                    e.currentTarget.style.borderColor = '#888888';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2a2a2a 0%, #404040 100%)';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 0 10px rgba(102, 102, 102, 0.3)';
-                                    e.currentTarget.style.borderColor = '#666666';
-                                }}
-                            >
-                                Blog
-                            </button>
-
                             {/* Play Now Button */}
                             <button
                                 onClick={() => handleNavigate('/')}
@@ -285,37 +247,6 @@ const BlogHeader: React.FC = () => {
                             overflowY: 'auto',
                         }}
                     >
-                        <button
-                            onClick={() => handleNavigate('/blog')}
-                            style={{
-                                background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 100%)',
-                                border: '2px solid #666666',
-                                borderRadius: '8px',
-                                color: '#ffffff',
-                                padding: '14px 20px',
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                                letterSpacing: '1px',
-                                textTransform: 'uppercase',
-                                margin: '0 20px 16px',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                fontFamily: "'PixelOperatorMono', monospace",
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #404040 0%, #606060 100%)';
-                                e.currentTarget.style.transform = 'translateY(-2px)';
-                                e.currentTarget.style.borderColor = '#888888';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #2a2a2a 0%, #404040 100%)';
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.borderColor = '#666666';
-                            }}
-                        >
-                            Blog
-                        </button>
-
                         <button
                             onClick={() => handleNavigate('/')}
                             style={{

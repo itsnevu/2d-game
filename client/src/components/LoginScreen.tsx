@@ -86,6 +86,7 @@ export const theme = {
     },
 };
 import logo from '../assets/ui/logo_alt.png';
+import wilderFooterLogo from '../assets/ui/wilder-logo.png';
 import ShipwreckCarousel from './ShipwreckCarousel';
 import GameplayFeaturesCarousel from './GameplayFeaturesCarousel';
 // @ts-ignore - importing JavaScript module
@@ -893,9 +894,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     if (selector === 'about') {
                                         navigate('/about');
                                         window.scrollTo(0, 0);
-                                    } else if (selector === 'blog') {
-                                        navigate('/blog');
-                                        window.scrollTo(0, 0);
                                     } else if (selector === 'how-to-play') {
                                         const sec = document.querySelector('[data-how-to-play-section]');
                                         if (sec) sec.scrollIntoView({ behavior: 'smooth' });
@@ -922,9 +920,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     onClick={() => {
                                         if (item.selector === 'about') {
                                             navigate('/about');
-                                            window.scrollTo(0, 0);
-                                        } else if (item.selector === 'blog') {
-                                            navigate('/blog');
                                             window.scrollTo(0, 0);
                                         } else if (item.selector === 'how-to-play') {
                                             const sec = document.querySelector('[data-how-to-play-section]');
@@ -1653,7 +1648,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             <strong>Recommended:</strong> 8GB+ RAM, GPU for faster canvas rendering, broadband connection.
                                         </p>
                                         <p style={{ marginBottom: '16px' }}>
-                                            Broth and Bullets runs in your browser and shares CPU, GPU, and memory with other apps. For best performance:
+                                            WILDER runs in your browser and shares CPU, GPU, and memory with other apps. For best performance:
                                         </p>
                                         <ul style={{ margin: '0 0 16px 0', paddingLeft: '20px', textAlign: 'left' }}>
                                             <li style={{ marginBottom: '8px' }}>Close other games in the background</li>
@@ -1663,7 +1658,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             <li style={{ marginBottom: '8px' }}>Close other games even when minimized</li>
                                         </ul>
                                         <p style={{ marginBottom: 0, fontSize: '13px', color: 'rgba(255, 255, 255, 0.75)' }}>
-                                            Running multiple heavy applications at once will cause noticeable slowdown. For the smoothest experience, play Broth and Bullets when no other demanding games are running.
+                                            Running multiple heavy applications at once will cause noticeable slowdown. For the smoothest experience, play WILDER when no other demanding games are running.
                                         </p>
                                     </div>
                                     <button
@@ -1950,6 +1945,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                     position: 'relative',
                     zIndex: 3,
                 }}>
+                    <img
+                        src={wilderFooterLogo}
+                        alt="WILDER"
+                        draggable={false}
+                        style={{
+                            width: 'auto',
+                            maxWidth: '280px',
+                            height: 'auto',
+                            imageRendering: 'pixelated',
+                            userSelect: 'none',
+                            opacity: 0.95,
+                        }}
+                    />
                     <div style={{
                         display: 'flex',
                         gap: '24px',

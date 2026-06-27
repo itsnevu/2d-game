@@ -1,16 +1,16 @@
 export default {
-  slug: 'broth-bullets-spacetimedb-architecture',
-  title: 'Why Broth & Bullets Uses SpacetimeDB Instead of Traditional Game Servers',
+  slug: 'wilder-spacetimedb-architecture',
+  title: 'Why WILDER Uses SpacetimeDB Instead of Traditional Game Servers',
   subtitle: 'How we cut development time by 70% and eliminated an entire class of bugs',
   date: '2025-11-17',
   author: 'Wilder Team',
   authorImage: '',
   authorTwitter: 'seloslav',
-  excerpt: 'The technical story of migrating Broth & Bullets from a traditional Node.js backend to SpacetimeDB, including real metrics, lessons learned, and why we\'ll never go back.',
-  tags: ['Broth & Bullets', 'SpacetimeDB', 'Game Development', 'Architecture', 'Technical', 'Case Study'],
-  coverImage: '/images/blog/broth-bullets-spacetimedb-cover.jpg',
+  excerpt: 'The technical story of migrating WILDER from a traditional Node.js backend to SpacetimeDB, including real metrics, lessons learned, and why we\'ll never go back.',
+  tags: ['WILDER', 'SpacetimeDB', 'Game Development', 'Architecture', 'Technical', 'Case Study'],
+  coverImage: '/images/blog/wilder-spacetimedb-cover.jpg',
   content: `
-    <p>When we started building Broth & Bullets, we did what most developers do: Node.js + Socket.io + PostgreSQL. It worked, but barely. After months of fighting state synchronization bugs and scaling issues, we made a radical decision: migrate everything to SpacetimeDB. Here's why it was the best technical decision we ever made. For the complete game development story, see <a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">how we built Broth & Bullets</a>.</p>
+    <p>When we started building WILDER, we did what most developers do: Node.js + Socket.io + PostgreSQL. It worked, but barely. After months of fighting state synchronization bugs and scaling issues, we made a radical decision: migrate everything to SpacetimeDB. Here's why it was the best technical decision we ever made. For the complete game development story, see <a href="/blog/how-we-built-wilder-multiplayer-survival-game">how we built WILDER</a>.</p>
 
     <h2>🔥 The Problem: Traditional Game Server Hell</h2>
 
@@ -84,7 +84,7 @@ export default {
 
     <h3>The Two-Week Prototype</h3>
 
-    <p>We gave ourselves two weeks to rebuild core Broth & Bullets mechanics in SpacetimeDB:</p>
+    <p>We gave ourselves two weeks to rebuild core WILDER mechanics in SpacetimeDB:</p>
 
     <p><strong>Week 1: Learning Rust and SpacetimeDB</strong></p>
     <ul>
@@ -411,7 +411,7 @@ pub fn gather_resource(ctx: &ReducerContext, resource_id: u64) -> Result<(), Str
 
     <h3>2. Spatial Subscriptions</h3>
 
-    <p>One of SpacetimeDB's killer features for games is built-in spatial queries. In Broth & Bullets, players only subscribe to chunks near them:</p>
+    <p>One of SpacetimeDB's killer features for games is built-in spatial queries. In WILDER, players only subscribe to chunks near them:</p>
 
     <pre><code class="language-typescript">// Client automatically subscribes to nearby chunks
 const visibleChunks = calculateVisibleChunks(playerX, playerY, viewportWidth, viewportHeight);
@@ -506,10 +506,10 @@ pub fn craft_item(ctx: &ReducerContext, recipe_id: String) -> Result<(), String>
       <li><strong>Large Persistent Worlds</strong>: Spatial queries make this feasible</li>
       <li><strong>Complex Game Logic</strong>: Transactional reducers prevent bugs</li>
       <li><strong>Small Teams</strong>: Less code = faster development</li>
-      <li><strong>Survival/Crafting Games</strong>: Perfect fit for Broth & Bullets-style games</li>
+      <li><strong>Survival/Crafting Games</strong>: Perfect fit for WILDER-style games</li>
     </ul>
 
-    <h2>🎮 The Results in Broth & Bullets</h2>
+    <h2>🎮 The Results in WILDER</h2>
 
     <h3>What Players Experience</h3>
 
@@ -533,7 +533,7 @@ pub fn craft_item(ctx: &ReducerContext, recipe_id: String) -> Result<(), String>
 
     <h2>🔮 The Future</h2>
 
-    <p>We're all-in on SpacetimeDB for Broth & Bullets. Our roadmap includes:</p>
+    <p>We're all-in on SpacetimeDB for WILDER. Our roadmap includes:</p>
 
     <ul>
       <li><strong>Clan System</strong>: Shared bases and resources</li>
@@ -573,7 +573,7 @@ pub fn craft_item(ctx: &ReducerContext, recipe_id: String) -> Result<(), String>
 
     <h2>🎯 Conclusion</h2>
 
-    <p>Migrating Broth & Bullets to SpacetimeDB was the best technical decision we made. It:</p>
+    <p>Migrating WILDER to SpacetimeDB was the best technical decision we made. It:</p>
 
     <ul>
       <li>Cut our backend code by 90%</li>
@@ -589,7 +589,7 @@ pub fn craft_item(ctx: &ReducerContext, recipe_id: String) -> Result<(), String>
     <h2>🔗 Resources</h2>
 
     <ul>
-      <li><strong>Play Broth & Bullets</strong>: <a href="https://brothbullets.com" target="_blank" rel="noopener noreferrer">brothbullets.com</a></li>
+      <li><strong>Play WILDER</strong>: <a href="https://playwilder.com" target="_blank" rel="noopener noreferrer">playwilder.com</a></li>
       <li><strong>SpacetimeDB Docs</strong>: <a href="https://spacetimedb.com/docs" target="_blank" rel="noopener noreferrer">spacetimedb.com/docs</a></li>
       <li><strong>Join Our Discord</strong>: <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Discuss technical details</a></li>
       <li><strong>Follow Development</strong>: <a href="https://twitter.com/seloslav" target="_blank" rel="noopener noreferrer">@seloslav on Twitter</a></li>
@@ -598,7 +598,7 @@ pub fn craft_item(ctx: &ReducerContext, recipe_id: String) -> Result<(), String>
     <h2>📚 Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets: A 2D Multiplayer Survival Game</a></li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER: A 2D Multiplayer Survival Game</a></li>
       <li><a href="/blog/minimap-spatial-subscriptions">The Hardlight Map: Spatial Awareness in a 2D World</a></li>
       <li><a href="/blog/field-cauldron-mechanics">The Field Cauldron: Brewing Innovation in Survival Gameplay</a></li>
     </ul>

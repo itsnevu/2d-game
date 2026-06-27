@@ -304,7 +304,7 @@ const connection = DbConnection.builder()
 
     <p>SpacetimeDB eliminates the complexity of traditional multiplayer game development. No backend servers, no REST APIs, no complex state synchronization - just write your game logic and let SpacetimeDB handle the rest.</p>
 
-    <p>The patterns shown in this tutorial scale from simple prototypes to production games with thousands of concurrent players. We use these exact patterns in Broth & Bullets, our 2D multiplayer survival game.</p>
+    <p>The patterns shown in this tutorial scale from simple prototypes to production games with thousands of concurrent players. We use these exact patterns in WILDER, our 2D multiplayer survival game.</p>
 
     <h3>Key Takeaways</h3>
 
@@ -328,7 +328,7 @@ const connection = DbConnection.builder()
 
     <ul>
       <li><a href="https://spacetimedb.com/docs" target="_blank" rel="noopener noreferrer">SpacetimeDB Documentation</a></li>
-      <li><a href="https://github.com/clockworklabs/broth-bullets" target="_blank" rel="noopener noreferrer">Broth & Bullets Source Code</a></li>
+      <li><a href="https://github.com/clockworklabs/wilder" target="_blank" rel="noopener noreferrer">WILDER Source Code</a></li>
       <li><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">SpacetimeDB Discord Community</a></li>
     </ul>
 

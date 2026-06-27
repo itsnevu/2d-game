@@ -1,5 +1,5 @@
 /**
- * Service Worker for Broth & Bullets
+ * Service Worker for WILDER
  * 
  * Caches game assets for instant loading on subsequent visits.
  * Uses a cache-first strategy for static assets (images, audio).

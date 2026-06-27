@@ -85,14 +85,14 @@ export default {
     <h2>🔗 Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/broth-bullets-february-2026-update">February 2026 Update</a> — ALK Buy Orders and the living world</li>
+      <li><a href="/blog/wilder-february-2026-update">February 2026 Update</a> — ALK Buy Orders and the living world</li>
       <li><a href="/blog/diegetic-ui-design-sova">Diegetic UI and SOVA</a> — Your AI assistant and shard consumption</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> — The complete development story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> — The complete development story</li>
     </ul>
 
     <p>The tundra is waiting. The Compound is running. And the Admiralty Logistics Kernel will pay you in Memory Shards for as long as its geothermal core holds out.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Alpha (Free)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Alpha (Free)</a></p>
   `,
-  tags: ["ALK", "Admiralty Logistics Kernel", "Central Compound", "Memory Shards", "Broth & Bullets", "Lore", "Economy", "Matronage", "Survival Games", "Indie Game Development"]
+  tags: ["ALK", "Admiralty Logistics Kernel", "Central Compound", "Memory Shards", "WILDER", "Lore", "Economy", "Matronage", "Survival Games", "Indie Game Development"]
 };

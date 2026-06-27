@@ -52,7 +52,7 @@ const PrivacyPage: React.FC = () => {
                         color: 'rgba(255, 255, 255, 0.9)',
                         margin: 0,
                     }}>
-                        <strong>Note:</strong> Broth & Bullets is currently in early access development. This privacy policy may be updated as we add new features and finalize our data handling practices.
+                        <strong>Note:</strong> WILDER is currently in early access development. This privacy policy may be updated as we add new features and finalize our data handling practices.
                     </p>
                 </div>
 
@@ -70,7 +70,7 @@ const PrivacyPage: React.FC = () => {
                         color: 'rgba(255, 255, 255, 0.8)',
                         marginBottom: '20px',
                     }}>
-                        When you play Broth & Bullets, we collect the following information:
+                        When you play WILDER, we collect the following information:
                     </p>
                     <ul style={{
                         fontSize: '16px',

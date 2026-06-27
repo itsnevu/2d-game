@@ -468,9 +468,9 @@ function sendMessage(text: string) {
       <li><strong>Building a turn-based game?</strong> → Either works, Firebase might be easier</li>
     </ul>
 
-    <h3>Why We Chose SpacetimeDB for Broth & Bullets</h3>
+    <h3>Why We Chose SpacetimeDB for WILDER</h3>
 
-    <p>We migrated Broth & Bullets from a traditional Node.js + PostgreSQL backend to SpacetimeDB and saw:</p>
+    <p>We migrated WILDER from a traditional Node.js + PostgreSQL backend to SpacetimeDB and saw:</p>
 
     <ul>
       <li><strong>70% reduction in latency</strong> (from 150ms to 45ms average)</li>
@@ -487,7 +487,7 @@ function sendMessage(text: string) {
       <li><a href="https://spacetimedb.com/docs" target="_blank" rel="noopener noreferrer">SpacetimeDB Documentation</a></li>
       <li><a href="https://firebase.google.com/docs" target="_blank" rel="noopener noreferrer">Firebase Documentation</a></li>
       <li><a href="/blog/spacetimedb-tutorial-build-multiplayer-game-30-minutes">SpacetimeDB Tutorial</a></li>
-      <li><a href="/blog/broth-bullets-alpha-launch">Broth & Bullets Case Study</a></li>
+      <li><a href="/blog/wilder-alpha-launch">WILDER Case Study</a></li>
     </ul>
 
     <p>Have questions? Join our <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Discord</a> or leave a comment below!</p>

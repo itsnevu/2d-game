@@ -1,12 +1,12 @@
 export default {
   slug: "field-cauldron-ai-recipe-generation",
   title: "The Field Cauldron: AI-Powered Recipe Generation in Survival Games",
-  subtitle: "How Broth & Bullets is redefining crafting with semantic generation technology",
+  subtitle: "How WILDER is redefining crafting with semantic generation technology",
   date: "2025-04-02",
   author: "Wilder Team",
   authorImage: "",
   authorTwitter: "seloslav",
-  excerpt: "Traditional survival games rely on predetermined recipes, but Broth & Bullets' Field Cauldron system uses AI to generate contextually appropriate recipes in real-time, creating truly emergent gameplay.",
+  excerpt: "Traditional survival games rely on predetermined recipes, but WILDER' Field Cauldron system uses AI to generate contextually appropriate recipes in real-time, creating truly emergent gameplay.",
   coverImage: "/images/blog/field-cauldron-ai-recipe-generation.jpg",
   content: `
     <h2>The Current State of 2D Survival Games</h2>
@@ -27,9 +27,9 @@ export default {
     
     <p>This approach, while familiar, fundamentally limits player creativity and experimental gameplay. Once players learn all recipes (or look them up online), the discovery element disappears entirely.</p>
     
-    <h2>How Broth & Bullets Revolutionizes Crafting with AI</h2>
+    <h2>How WILDER Revolutionizes Crafting with AI</h2>
     
-    <p>The centerpiece of Broth & Bullets' innovation is the Field Cauldron system - a completely new approach to crafting that leverages large language models to generate contextually appropriate recipes in real-time.</p>
+    <p>The centerpiece of WILDER' innovation is the Field Cauldron system - a completely new approach to crafting that leverages large language models to generate contextually appropriate recipes in real-time.</p>
     
     <h3>True Semantic Generation</h3>
     
@@ -71,7 +71,7 @@ export default {
     
     <h2>Player-Driven Knowledge Economy</h2>
     
-    <p>Perhaps most interesting is how this system transforms the social aspect of the game. Rather than all players having access to the same wiki-documented recipes, Broth & Bullets creates:</p>
+    <p>Perhaps most interesting is how this system transforms the social aspect of the game. Rather than all players having access to the same wiki-documented recipes, WILDER creates:</p>
     
     <ul>
       <li>Specialized knowledge that becomes valuable for trading</li>
@@ -95,7 +95,7 @@ export default {
     
     <h2>Is This the Future of Survival Crafting?</h2>
     
-    <p>While traditional elements of survival games remain important, Broth & Bullets demonstrates how AI can transform core gameplay loops that have remained largely unchanged for over a decade.</p>
+    <p>While traditional elements of survival games remain important, WILDER demonstrates how AI can transform core gameplay loops that have remained largely unchanged for over a decade.</p>
     
     <p>Rather than being a gimmick, this approach creates genuinely new gameplay possibilities where:</p>
     
@@ -105,22 +105,22 @@ export default {
       <li>The crafting system itself evolves over time as the underlying model is refined</li>
     </ul>
     
-    <p>For players exhausted by the "gather resources, craft predefined items" loop of traditional survival games, Broth & Bullets offers something genuinely new to discover.</p>
+    <p>For players exhausted by the "gather resources, craft predefined items" loop of traditional survival games, WILDER offers something genuinely new to discover.</p>
     
     <h2>Experience Semantic Generation Yourself</h2>
     
-    <p>Broth & Bullets is currently in closed alpha testing, with open beta scheduled for Q3 2025. Players interested in experiencing this innovative crafting system can <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">join our Discord server</a> for the latest development updates and a chance to participate in upcoming test weekends.</p>
+    <p>WILDER is currently in closed alpha testing, with open beta scheduled for Q3 2025. Players interested in experiencing this innovative crafting system can <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">join our Discord server</a> for the latest development updates and a chance to participate in upcoming test weekends.</p>
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Learn more about the Field Cauldron and Broth & Bullets' innovative systems:</p>
+    <p>Learn more about the Field Cauldron and WILDER' innovative systems:</p>
 
     <ul>
       <li><a href="/blog/field-cauldron-mechanics">The Field Cauldron: Brewing Innovation in Survival Gameplay</a> - Complete mechanics breakdown</li>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The Broth & Bullets Cooking System</a> - Deep dive into emergent gameplay</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The WILDER Cooking System</a> - Deep dive into emergent gameplay</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
       <li><a href="/blog/resource-system-implementation">Resource System: From Harvest to Inventory</a> - Gathering ingredients for cooking</li>
     </ul>
   `,
-  tags: ["Survival Games", "Game Innovation", "Broth & Bullets", "AI Integration", "Procedural Generation", "Semantic Crafting"]
+  tags: ["Survival Games", "Game Innovation", "WILDER", "AI Integration", "Procedural Generation", "Semantic Crafting"]
 }; 

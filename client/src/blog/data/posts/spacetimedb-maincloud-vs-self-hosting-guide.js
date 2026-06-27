@@ -7,9 +7,9 @@ export default {
   authorImage: "",
   authorTwitter: "seloslav",
   excerpt: "We're based in the EU and use SpacetimeDB Maincloud in the US — it doesn't have an EU region yet. Maincloud's dashboard and energy metering are giving us invaluable insights into reducer and transaction costs, helping us optimize our server code. Here's our complete guide.",
-  coverImage: "/images/blog/broth-bullets-spacetimedb-cover.jpg",
+  coverImage: "/images/blog/wilder-spacetimedb-cover.jpg",
   content: `
-    <p>When building Broth & Bullets, we faced a choice every SpacetimeDB developer eventually confronts: deploy to <a href="https://spacetimedb.com/maincloud" target="_blank" rel="noopener noreferrer">SpacetimeDB Maincloud</a> — the fully managed, serverless platform — or run the open-source SpacetimeDB Standalone on our own infrastructure. We're based in the EU, and Maincloud doesn't currently offer a European region, so we may consider self-hosting there in the future. For now, we're on Maincloud in the US — and its dashboard and energy metering have been invaluable for optimizing our server code. In this guide, we'll cover why Maincloud makes sense for many teams, its standout features, how open-source hosting works, and how Maincloud's optimization insights are helping us build a leaner, faster game.</p>
+    <p>When building WILDER, we faced a choice every SpacetimeDB developer eventually confronts: deploy to <a href="https://spacetimedb.com/maincloud" target="_blank" rel="noopener noreferrer">SpacetimeDB Maincloud</a> — the fully managed, serverless platform — or run the open-source SpacetimeDB Standalone on our own infrastructure. We're based in the EU, and Maincloud doesn't currently offer a European region, so we may consider self-hosting there in the future. For now, we're on Maincloud in the US — and its dashboard and energy metering have been invaluable for optimizing our server code. In this guide, we'll cover why Maincloud makes sense for many teams, its standout features, how open-source hosting works, and how Maincloud's optimization insights are helping us build a leaner, faster game.</p>
 
     <h2>Why SpacetimeDB Maincloud Makes Sense</h2>
 
@@ -58,7 +58,7 @@ export default {
 
     <h3>4. Optimize Subscriptions</h3>
 
-    <p>Spatial chunk-based subscriptions (which we use in Broth & Bullets) drastically reduce bytes sent to clients. Maincloud's metering made it obvious how much we saved.</p>
+    <p>Spatial chunk-based subscriptions (which we use in WILDER) drastically reduce bytes sent to clients. Maincloud's metering made it obvious how much we saved.</p>
 
     <p>Applying these patterns has improved our server performance and kept our Maincloud costs low. The feedback loop is immediate: you see what's expensive, you optimize, and the bill reflects it.</p>
 
@@ -140,7 +140,7 @@ export default {
 
     <h2>How Maincloud's Insights Are Helping Us Optimize</h2>
 
-    <p>Broth & Bullets runs on Maincloud in the US. The dashboard and energy breakdown are eye-opening. We see which reducers burn the most energy, which tables were scanned heavily, and how subscription patterns affect egress — in real time.</p>
+    <p>WILDER runs on Maincloud in the US. The dashboard and energy breakdown are eye-opening. We see which reducers burn the most energy, which tables were scanned heavily, and how subscription patterns affect egress — in real time.</p>
 
     <p>That feedback loop has led us to:</p>
 
@@ -163,16 +163,16 @@ export default {
       <li><a href="https://spacetimedb.com/maincloud" target="_blank" rel="noopener noreferrer">SpacetimeDB Maincloud</a> — Managed platform and pricing</li>
       <li><a href="https://spacetimedb.com/docs/deploying/spacetimedb-standalone" target="_blank" rel="noopener noreferrer">Self-Hosting SpacetimeDB</a> — Standalone deployment guide</li>
       <li><a href="https://spacetimedb.com/docs" target="_blank" rel="noopener noreferrer">SpacetimeDB Documentation</a> — Reducers, tables, subscriptions</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> — Our architecture deep dive</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> — Our architecture deep dive</li>
     </ul>
 
     <h2>Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB Instead of Traditional Game Servers</a></li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB Instead of Traditional Game Servers</a></li>
       <li><a href="/blog/spacetimedb-vs-firebase-comparison">SpacetimeDB vs Firebase: Complete Comparison for Game Developers</a></li>
       <li><a href="/blog/spatial-subscriptions-multiplayer-games">Spatial Subscriptions for Multiplayer Games</a></li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a></li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a></li>
     </ul>
 
     <p>Questions about Maincloud vs self-hosting? Join our <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Discord</a> — we're happy to share our setup and optimization tips.</p>
@@ -187,7 +187,7 @@ export default {
     "EU",
     "Data Residency",
     "Optimization",
-    "Broth & Bullets",
+    "WILDER",
     "Reducers",
     "Performance"
   ]

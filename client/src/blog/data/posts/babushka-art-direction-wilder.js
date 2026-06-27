@@ -1,20 +1,20 @@
 export default {
-  slug: 'babushka-art-direction-broth-bullets',
-  title: 'Babushka Art Direction: Creating Broth & Bullets\' Unique Visual Style',
+  slug: 'babushka-art-direction-wilder',
+  title: 'Babushka Art Direction: Creating WILDER\' Unique Visual Style',
   subtitle: 'How we blended Eastern European folk art with tactical survival gameplay',
   date: '2025-11-17',
   author: 'Wilder Team',
   authorImage: '',
   authorTwitter: 'seloslav',
-  excerpt: 'The complete story behind Broth & Bullets\' distinctive "Babushka aesthetic" - from Soviet-era inspiration to modern pixel art execution.',
-  tags: ['Broth & Bullets', 'Art Direction', 'Game Design', 'Pixel Art', 'Visual Design', 'Indie Games'],
+  excerpt: 'The complete story behind WILDER\' distinctive "Babushka aesthetic" - from Soviet-era inspiration to modern pixel art execution.',
+  tags: ['WILDER', 'Art Direction', 'Game Design', 'Pixel Art', 'Visual Design', 'Indie Games'],
   coverImage: '/images/blog/babushka-art-direction-cover.jpg',
   content: `
-    <p>In a sea of generic survival games, Broth & Bullets stands out with its distinctive "Babushka aesthetic" - a unique blend of Eastern European folk art, Soviet-era industrial design, and modern pixel art techniques. This is the story of how we created a visual identity that players recognize instantly. For the complete development story, see <a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">how we built Broth & Bullets</a>.</p>
+    <p>In a sea of generic survival games, WILDER stands out with its distinctive "Babushka aesthetic" - a unique blend of Eastern European folk art, Soviet-era industrial design, and modern pixel art techniques. This is the story of how we created a visual identity that players recognize instantly. For the complete development story, see <a href="/blog/how-we-built-wilder-multiplayer-survival-game">how we built WILDER</a>.</p>
 
     <h2>🎨 The Vision: Beyond Generic Survival</h2>
 
-    <p>When we started Broth & Bullets, we knew we didn't want another brown-and-gray post-apocalyptic survival game. The market is saturated with gritty realism and military aesthetics. We wanted something that felt fresh, culturally rich, and immediately recognizable.</p>
+    <p>When we started WILDER, we knew we didn't want another brown-and-gray post-apocalyptic survival game. The market is saturated with gritty realism and military aesthetics. We wanted something that felt fresh, culturally rich, and immediately recognizable.</p>
 
     <h3>Why "Babushka"?</h3>
 
@@ -312,7 +312,7 @@ export default {
     <p>Our visual identity creates instant recognition:</p>
 
     <ul>
-      <li><strong>Screenshots</strong>: Players can identify Broth & Bullets from a single image</li>
+      <li><strong>Screenshots</strong>: Players can identify WILDER from a single image</li>
       <li><strong>Social Media</strong>: Art style performs well in feeds and thumbnails</li>
       <li><strong>Streaming</strong>: Streamers comment on the unique aesthetic</li>
       <li><strong>Word of Mouth</strong>: "That Babushka game" becomes shorthand</li>
@@ -354,10 +354,10 @@ export default {
 
     <h2>🎮 Experience the Aesthetic</h2>
 
-    <p>The best way to appreciate the Babushka aesthetic is to play Broth & Bullets yourself:</p>
+    <p>The best way to appreciate the Babushka aesthetic is to play WILDER yourself:</p>
 
     <ul>
-      <li><strong>Play Now</strong>: <a href="https://brothbullets.com" target="_blank" rel="noopener noreferrer">brothbullets.com</a></li>
+      <li><strong>Play Now</strong>: <a href="https://playwilder.com" target="_blank" rel="noopener noreferrer">playwilder.com</a></li>
       <li><strong>Join Discord</strong>: <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">See development progress and art updates</a></li>
       <li><strong>Follow on Twitter</strong>: <a href="https://twitter.com/seloslav" target="_blank" rel="noopener noreferrer">@seloslav</a> for art reveals and behind-the-scenes</li>
     </ul>
@@ -365,7 +365,7 @@ export default {
     <h2>🔗 Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets: A 2D Multiplayer Survival Game</a></li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER: A 2D Multiplayer Survival Game</a></li>
       <li><a href="/blog/field-cauldron-mechanics">The Field Cauldron: Brewing Innovation in Survival Gameplay</a></li>
       <li><a href="/blog/babushka-sprite-evolution">The Evolution of the Babushka Sprite</a></li>
     </ul>

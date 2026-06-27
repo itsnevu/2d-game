@@ -6,11 +6,11 @@ export default {
   author: 'Wilder Team',
   authorImage: '',
   authorTwitter: 'seloslav',
-  excerpt: 'A comprehensive guide covering every aspect of 2D multiplayer survival game development, based on our experience building Broth & Bullets.',
+  excerpt: 'A comprehensive guide covering every aspect of 2D multiplayer survival game development, based on our experience building WILDER.',
   tags: ['Game Development', 'Multiplayer', 'Survival Games', 'SpacetimeDB', 'Tutorial', 'React'],
   coverImage: '/images/blog/spacetimedb-revolution-cover.jpg',
   content: `
-    <p>Building a multiplayer survival game is one of the most challenging yet rewarding projects in game development. This comprehensive guide covers everything you need to know, from architecture decisions to implementing core survival mechanics, based on our experience building <a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">Broth & Bullets</a>. For a deep dive into our tech stack, see our <a href="/blog/broth-bullets-spacetimedb-architecture">SpacetimeDB architecture article</a>.</p>
+    <p>Building a multiplayer survival game is one of the most challenging yet rewarding projects in game development. This comprehensive guide covers everything you need to know, from architecture decisions to implementing core survival mechanics, based on our experience building <a href="/blog/how-we-built-wilder-multiplayer-survival-game">WILDER</a>. For a deep dive into our tech stack, see our <a href="/blog/wilder-spacetimedb-architecture">SpacetimeDB architecture article</a>.</p>
 
     <h2>Table of Contents</h2>
 
@@ -635,10 +635,10 @@ vercel deploy --prod</code></pre>
       <li><a href="/blog/spacetimedb-vs-firebase-comparison">SpacetimeDB vs Firebase Comparison</a></li>
     </ul>
 
-    <p><strong>Broth & Bullets:</strong></p>
+    <p><strong>WILDER:</strong></p>
     <ul>
-      <li><a href="https://brothbullets.com">Play Broth & Bullets</a></li>
-      <li><a href="https://github.com/clockworklabs/broth-bullets" target="_blank" rel="noopener noreferrer">Source Code</a></li>
+      <li><a href="https://playwilder.com">Play WILDER</a></li>
+      <li><a href="https://github.com/clockworklabs/wilder" target="_blank" rel="noopener noreferrer">Source Code</a></li>
       <li><a href="/blog">Development Blog</a></li>
     </ul>
 

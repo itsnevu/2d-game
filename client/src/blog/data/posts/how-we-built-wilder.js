@@ -1,20 +1,20 @@
 export default {
-  slug: 'how-we-built-broth-bullets-multiplayer-survival-game',
-  title: 'How We Built Broth & Bullets: A 2D Multiplayer Survival Game',
+  slug: 'how-we-built-wilder-multiplayer-survival-game',
+  title: 'How We Built WILDER: A 2D Multiplayer Survival Game',
   subtitle: 'From concept to playable alpha - the complete development story',
   date: '2025-11-17',
   author: 'Wilder Team',
   authorImage: '',
   authorTwitter: 'seloslav',
-  excerpt: 'The complete story of building Broth & Bullets, a real-time multiplayer survival game set in the Aleutian Islands. Learn about our technical decisions, gameplay mechanics, and lessons learned.',
-  tags: ['Broth & Bullets', 'Game Development', 'Multiplayer', 'Survival Games', 'Indie Games', 'Case Study'],
-  coverImage: '/images/blog/how-we-built-broth-bullets-cover.jpg',
+  excerpt: 'The complete story of building WILDER, a real-time multiplayer survival game set in the Aleutian Islands. Learn about our technical decisions, gameplay mechanics, and lessons learned.',
+  tags: ['WILDER', 'Game Development', 'Multiplayer', 'Survival Games', 'Indie Games', 'Case Study'],
+  coverImage: '/images/blog/how-we-built-wilder-cover.jpg',
   content: `
-    <p>Broth & Bullets is a 2D multiplayer survival game where genetically enhanced operatives fight to survive on a mysterious Aleutian island. After months of development, we're sharing the complete story of how we built it - the technical decisions, gameplay innovations, and hard lessons learned along the way.</p>
+    <p>WILDER is a 2D multiplayer survival game where genetically enhanced operatives fight to survive on a mysterious Aleutian island. After months of development, we're sharing the complete story of how we built it - the technical decisions, gameplay innovations, and hard lessons learned along the way.</p>
 
-    <h2>🎮 What is Broth & Bullets?</h2>
+    <h2>🎮 What is WILDER?</h2>
 
-    <p>Broth & Bullets combines the tension of survival games like Rust and DayZ with the accessibility of 2D top-down gameplay. Players scavenge resources, craft items, build bases, and fight for survival in a persistent multiplayer world where every decision matters.</p>
+    <p>WILDER combines the tension of survival games like Rust and DayZ with the accessibility of 2D top-down gameplay. Players scavenge resources, craft items, build bases, and fight for survival in a persistent multiplayer world where every decision matters.</p>
 
     <h3>Core Features</h3>
 
@@ -43,7 +43,7 @@ export default {
 
     <h2>🎨 Art Direction: The Babushka Aesthetic</h2>
 
-    <p>One of Broth & Bullets' most distinctive features is its unique art style. We call it the "Babushka aesthetic" - a blend of Eastern European folk art, Soviet-era industrial design, and modern pixel art techniques. For a deep dive into our art direction philosophy, read our article on <a href="/blog/babushka-art-direction-broth-bullets">the Babushka aesthetic</a>.</p>
+    <p>One of WILDER' most distinctive features is its unique art style. We call it the "Babushka aesthetic" - a blend of Eastern European folk art, Soviet-era industrial design, and modern pixel art techniques. For a deep dive into our art direction philosophy, read our article on <a href="/blog/babushka-art-direction-wilder">the Babushka aesthetic</a>.</p>
 
     <h3>Character Design</h3>
 
@@ -141,7 +141,7 @@ export default {
 
     <h3>3. Field Cauldron Cooking</h3>
 
-    <p>The signature feature of Broth & Bullets is the Field Cauldron - a sophisticated cooking system that brings the "Broth" in our name to life. Learn more in our <a href="/blog/broth-bullets-cooking-system-emergent-gameplay">cooking system deep dive</a>:</p>
+    <p>The signature feature of WILDER is the Field Cauldron - a sophisticated cooking system that brings the "Broth" in our name to life. Learn more in our <a href="/blog/wilder-cooking-system-emergent-gameplay">cooking system deep dive</a>:</p>
 
     <ul>
       <li><strong>Water Management</strong>: Fill cauldrons with freshwater or desalinate seawater</li>
@@ -262,12 +262,12 @@ export default {
       <li><strong>Clan System</strong>: Team mechanics for cooperative play</li>
     </ul>
 
-    <h2>🎮 Play Broth & Bullets</h2>
+    <h2>🎮 Play WILDER</h2>
 
-    <p>Broth & Bullets is currently in alpha testing. We're running regular test weekends where players can jump in, explore the island, and help shape the game's development.</p>
+    <p>WILDER is currently in alpha testing. We're running regular test weekends where players can jump in, explore the island, and help shape the game's development.</p>
 
     <ul>
-      <li><strong>Play Now</strong>: <a href="https://brothbullets.com" target="_blank" rel="noopener noreferrer">brothbullets.com</a></li>
+      <li><strong>Play Now</strong>: <a href="https://playwilder.com" target="_blank" rel="noopener noreferrer">playwilder.com</a></li>
       <li><strong>Join Discord</strong>: <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Get alpha access and updates</a></li>
       <li><strong>Follow Development</strong>: <a href="https://twitter.com/seloslav" target="_blank" rel="noopener noreferrer">@seloslav on Twitter</a></li>
     </ul>
@@ -289,13 +289,13 @@ export default {
     <p>Interested in the technical details? Check out our other articles:</p>
 
     <ul>
-      <li><a href="/blog/babushka-art-direction-broth-bullets">Babushka Art Direction: Creating Broth & Bullets' Unique Visual Style</a></li>
+      <li><a href="/blog/babushka-art-direction-wilder">Babushka Art Direction: Creating WILDER' Unique Visual Style</a></li>
       <li><a href="/blog/field-cauldron-mechanics">The Field Cauldron: Brewing Innovation in Survival Gameplay</a></li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB Instead of Traditional Game Servers</a></li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB Instead of Traditional Game Servers</a></li>
       <li><a href="/blog/minimap-spatial-subscriptions">The Hardlight Map: Spatial Awareness in a 2D World</a></li>
     </ul>
 
-    <p>Questions about Broth & Bullets? Join our <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Discord community</a> and chat with the dev team!</p>
+    <p>Questions about WILDER? Join our <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Discord community</a> and chat with the dev team!</p>
   `
 };
 

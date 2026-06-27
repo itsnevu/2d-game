@@ -1,15 +1,15 @@
 export default {
   slug: "field-cauldron-mechanics",
   title: "The Field Cauldron: Brewing Innovation in Survival Gameplay",
-  subtitle: "Deep dive into the mechanics of Broth & Bullets' signature cooking system",
+  subtitle: "Deep dive into the mechanics of WILDER' signature cooking system",
   date: "2025-11-16",
   author: "Wilder Team",
   authorImage: "",
   authorTwitter: "seloslav",
-  excerpt: "From desalinating seawater to crafting healing potions, the Field Cauldron system brings the 'Broth' in Broth & Bullets to life with deep, interconnected survival mechanics.",
+  excerpt: "From desalinating seawater to crafting healing potions, the Field Cauldron system brings the 'Broth' in WILDER to life with deep, interconnected survival mechanics.",
   coverImage: "/images/blog/cauldron-campfire-rain-cover.jpg",
   content: `
-    <p>The Field Cauldron - officially designated the "Cerametal Field Cauldron Mk. II" - is more than just a cooking pot. It's the heart of survival in Broth & Bullets, and the inspiration behind the game's very name. After months of development, we're excited to share how this system is coming together and what's next.</p>
+    <p>The Field Cauldron - officially designated the "Cerametal Field Cauldron Mk. II" - is more than just a cooking pot. It's the heart of survival in WILDER, and the inspiration behind the game's very name. After months of development, we're excited to share how this system is coming together and what's next.</p>
     
     <h2>🔥 The Campfire Connection</h2>
     
@@ -52,7 +52,7 @@ export default {
     
     <h2>🍲 Broths, Teas, and Beyond</h2>
     
-    <p>The name "Broth & Bullets" isn't just catchy - it reflects the game's core philosophy that survival depends as much on what you cook as what you carry. The cauldron enables a vast array of preparations:</p>
+    <p>The name "WILDER" isn't just catchy - it reflects the game's core philosophy that survival depends as much on what you cook as what you carry. The cauldron enables a vast array of preparations:</p>
     
     <h3>🥘 Broths and Soups</h3>
     
@@ -154,7 +154,7 @@ export default {
     
     <h2>🚀 SpacetimeDB: The Engine Behind the Magic</h2>
     
-    <p>One of the most exciting aspects of developing the Field Cauldron system has been leveraging SpacetimeDB's reducer architecture to create genuinely emergent gameplay interactions. Unlike traditional game servers that require complex state synchronization logic, SpacetimeDB's reducers make it trivial to implement sophisticated systems that interact in real-time. Learn more about our technical architecture in <a href="/blog/broth-bullets-spacetimedb-architecture">why we chose SpacetimeDB</a>.</p>
+    <p>One of the most exciting aspects of developing the Field Cauldron system has been leveraging SpacetimeDB's reducer architecture to create genuinely emergent gameplay interactions. Unlike traditional game servers that require complex state synchronization logic, SpacetimeDB's reducers make it trivial to implement sophisticated systems that interact in real-time. Learn more about our technical architecture in <a href="/blog/wilder-spacetimedb-architecture">why we chose SpacetimeDB</a>.</p>
     
     <h3>🌧️ Real-Time Environmental Interactions</h3>
     
@@ -206,7 +206,7 @@ export default {
     
     <h2>🎯 The Philosophy Behind the Broth</h2>
     
-    <p>The Field Cauldron embodies Broth & Bullets' core design philosophy: survival through knowledge and preparation, not just reflexes and gear. In many survival games, food is an afterthought - a simple hunger meter to manage. We're building a system where what you cook is as important as what you craft.</p>
+    <p>The Field Cauldron embodies WILDER' core design philosophy: survival through knowledge and preparation, not just reflexes and gear. In many survival games, food is an afterthought - a simple hunger meter to manage. We're building a system where what you cook is as important as what you craft.</p>
     
     <p>The cauldron represents the "Broth" in our game's title - the careful, thoughtful preparation that keeps you alive when the "Bullets" start flying. It's about being a survivor who understands the land, knows which plants heal and which harm, and can turn the island's resources into powerful tools for survival.</p>
     
@@ -214,22 +214,22 @@ export default {
     
     <p>Over the coming weeks, we'll be completing the cooking process implementation, integrating the AI recipe generation system, and beginning extensive playtesting of the cauldron mechanics. Our goal is to create a cooking system that feels meaningful without being tedious - where experimentation is rewarded and knowledge compounds over time.</p>
     
-    <p>The Field Cauldron is more than a feature - it's the heart of what makes Broth & Bullets unique in the crowded survival genre. We can't wait to see what recipes players discover when they get their hands on it.</p>
+    <p>The Field Cauldron is more than a feature - it's the heart of what makes WILDER unique in the crowded survival genre. We can't wait to see what recipes players discover when they get their hands on it.</p>
     
     <h2>🔗 Related Articles</h2>
 
-    <p>Dive deeper into Broth & Bullets' systems and design philosophy:</p>
+    <p>Dive deeper into WILDER' systems and design philosophy:</p>
 
     <ul>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The Broth & Bullets Cooking System</a> - Deep dive into AI recipe generation and emergent gameplay</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Technical architecture behind the real-time systems</li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The WILDER Cooking System</a> - Deep dive into AI recipe generation and emergent gameplay</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Technical architecture behind the real-time systems</li>
       <li><a href="/blog/resource-system-implementation">Resource System: From Harvest to Inventory</a> - How resources integrate with cooking</li>
     </ul>
 
     <h2>🎮 Join the Alpha</h2>
 
-    <p>Broth & Bullets is currently in active development with alpha testing ongoing. <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Join our Discord</a> to stay updated on development progress, participate in test weekends, and be among the first to experiment with the Field Cauldron system when it goes live.</p>
+    <p>WILDER is currently in active development with alpha testing ongoing. <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Join our Discord</a> to stay updated on development progress, participate in test weekends, and be among the first to experiment with the Field Cauldron system when it goes live.</p>
   `,
   tags: ["Development", "Game Mechanics", "Field Cauldron", "Cooking System", "Survival", "Game Design", "SpacetimeDB", "Technical"]
 };

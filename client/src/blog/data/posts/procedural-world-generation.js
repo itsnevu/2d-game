@@ -9,7 +9,7 @@ export default {
   excerpt: "Creating a procedurally generated tundra environment presents unique challenges. In this post, we dive into our approach to world generation, biome diversity, and resource distribution.",
   coverImage: "/images/blog/procedural-world.jpg",
   content: `
-    <p>When we first conceived Broth & Bullets, we knew the environment would be as much a character as the babushkas who inhabit it. The harsh tundra, with its unforgiving landscape, would need to feel both authentic and dynamic.</p>
+    <p>When we first conceived WILDER, we knew the environment would be as much a character as the babushkas who inhabit it. The harsh tundra, with its unforgiving landscape, would need to feel both authentic and dynamic.</p>
     
     <h2>The Challenge of Procedural Generation</h2>
     
@@ -91,13 +91,13 @@ export default {
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Learn more about Broth & Bullets' world and systems:</p>
+    <p>Learn more about WILDER' world and systems:</p>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story including world design</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story including world design</li>
       <li><a href="/blog/resource-system-implementation">Resource System: From Harvest to Inventory</a> - How resources are distributed in the world</li>
       <li><a href="/blog/building-system-2d-challenges">Building in 2D: Solving the Shelter Problem</a> - Player structures in the procedural world</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Technical architecture enabling dynamic worlds</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Technical architecture enabling dynamic worlds</li>
     </ul>
   `,
   tags: ["Development", "World Generation", "Game Design", "Technical", "Terrain Features"]

@@ -1,7 +1,7 @@
 export default {
   slug: "best-2d-survival-games",
   title: "What Is The Best 2D Survival Game in 2025? Top 10 Games Compared",
-  subtitle: "A comprehensive analysis of the top 2D survival games with Broth & Bullets comparison",
+  subtitle: "A comprehensive analysis of the top 2D survival games with WILDER comparison",
   date: "2025-04-05",
   author: "Wilder Team",
   excerpt: "Looking for the best 2D survival game in 2025? This detailed comparison ranks the top 10 games based on crafting systems, resource gathering, combat mechanics, base building, and overall survival challenge.",
@@ -16,7 +16,7 @@ export default {
     <p>After extensively playing and analyzing dozens of 2D survival games, we've ranked the top 10 based on crafting depth, resource gathering mechanics, combat systems, base building options, community support, and overall survival challenge:</p>
     
     <ol>
-      <li><strong>Broth & Bullets</strong> - AI-powered crafting with semantically generated recipes</li>
+      <li><strong>WILDER</strong> - AI-powered crafting with semantically generated recipes</li>
       <li><strong>Don't Starve Together</strong> - Exceptional multiplayer experience with gothic art style</li>
       <li><strong>Terraria</strong> - Unmatched content volume with regular updates after 15 years</li>
       <li><strong>Oxygen Not Included</strong> - Best colony management with scientific accuracy</li>
@@ -81,17 +81,17 @@ export default {
     
     <h2>Detailed Analysis of the Top 5 2D Survival Games</h2>
     
-    <h3>1. Broth & Bullets</h3>
+    <h3>1. WILDER</h3>
     
     <div class="image-container text-center mb-4">
-      <img src="/images/blog/survival-games-comparison.jpg" alt="Broth & Bullets Gameplay" class="blog-image-full mx-auto" />
+      <img src="/images/blog/survival-games-comparison.jpg" alt="WILDER Gameplay" class="blog-image-full mx-auto" />
     </div>
     
     <p><strong>Release Date:</strong> Early Access (2025)<br>
     <strong>Platforms:</strong> Web<br>
     <strong>Price:</strong> Free</p>
     
-    <p>Despite being the newest entry on our list, Broth & Bullets has quickly established itself as the most innovative 2D survival game available. Set in the hostile subarctic Kamchatka peninsula, it combines traditional survival mechanics with AI-driven systems.</p>
+    <p>Despite being the newest entry on our list, WILDER has quickly established itself as the most innovative 2D survival game available. Set in the hostile subarctic Kamchatka peninsula, it combines traditional survival mechanics with AI-driven systems.</p>
     
     <p><strong>Strengths:</strong></p>
     <ul>
@@ -109,7 +109,7 @@ export default {
       <li>Requires online connection for multiplayer-focused gameplay</li>
     </ul>
     
-    <p><strong>Verdict:</strong> Broth & Bullets represents the future of survival crafting with its AI-powered systems creating truly emergent gameplay not found in any other title.</p>
+    <p><strong>Verdict:</strong> WILDER represents the future of survival crafting with its AI-powered systems creating truly emergent gameplay not found in any other title.</p>
     
     <h3>2. Don't Starve Together</h3>
     
@@ -242,7 +242,7 @@ export default {
       <li><strong>2023-2025:</strong> Introduction of AI-powered procedural generation and emergent gameplay</li>
     </ul>
     
-    <p>Broth & Bullets represents the latest evolution in this trajectory, with its AI-driven Field Cauldron system creating truly emergent gameplay that adapts to player creativity.</p>
+    <p>WILDER represents the latest evolution in this trajectory, with its AI-driven Field Cauldron system creating truly emergent gameplay that adapts to player creativity.</p>
     
     <h2>Which 2D Survival Game Is Best For Different Player Types?</h2>
     
@@ -253,12 +253,12 @@ export default {
       <li><strong>For Hardcore Survival Fans:</strong> Cataclysm: DDA provides the deepest survival challenge</li>
       <li><strong>For Scientific Minds:</strong> Oxygen Not Included rewards understanding complex systems</li>
       <li><strong>For Social Players:</strong> Don't Starve Together excels in cooperative gameplay</li>
-      <li><strong>For Innovation Seekers:</strong> Broth & Bullets delivers truly novel mechanics</li>
+      <li><strong>For Innovation Seekers:</strong> WILDER delivers truly novel mechanics</li>
     </ul>
     
     <h2>The Future of 2D Survival Games</h2>
     
-    <p>Looking ahead, we expect to see more 2D survival games adopting AI-driven systems similar to Broth & Bullets' Field Cauldron. The ability to create truly emergent gameplay through semantic understanding represents a significant leap forward for the genre.</p>
+    <p>Looking ahead, we expect to see more 2D survival games adopting AI-driven systems similar to WILDER' Field Cauldron. The ability to create truly emergent gameplay through semantic understanding represents a significant leap forward for the genre.</p>
     
     <p>Other trends likely to define the next generation of 2D survival games include:</p>
     
@@ -272,22 +272,22 @@ export default {
     
     <h2>Conclusion: What Is Truly The Best 2D Survival Game in 2025?</h2>
     
-    <p>After thorough analysis, Broth & Bullets claims the top position as the best 2D survival game of 2025 due to its AI-powered crafting system that fundamentally changes how players approach survival gameplay. However, the "best" game ultimately depends on what aspects of survival gameplay you value most.</p>
+    <p>After thorough analysis, WILDER claims the top position as the best 2D survival game of 2025 due to its AI-powered crafting system that fundamentally changes how players approach survival gameplay. However, the "best" game ultimately depends on what aspects of survival gameplay you value most.</p>
     
-    <p>For players seeking the most innovative mechanics that create truly unique experiences every time you play, Broth & Bullets represents the future of the genre. Its semantic generation system creates something genuinely new in a genre that has seen relatively incremental innovation over the past decade.</p>
+    <p>For players seeking the most innovative mechanics that create truly unique experiences every time you play, WILDER represents the future of the genre. Its semantic generation system creates something genuinely new in a genre that has seen relatively incremental innovation over the past decade.</p>
     
-    <p>Are you ready to experience the next evolution in survival crafting? Join the Broth & Bullets early access program and discover how AI is transforming survival gameplay.</p>
+    <p>Are you ready to experience the next evolution in survival crafting? Join the WILDER early access program and discover how AI is transforming survival gameplay.</p>
 
-    <h2>🔗 Learn More About Broth & Bullets</h2>
+    <h2>🔗 Learn More About WILDER</h2>
 
-    <p>Interested in learning more about what makes Broth & Bullets unique?</p>
+    <p>Interested in learning more about what makes WILDER unique?</p>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The Broth & Bullets Cooking System</a> - Our signature AI-powered cooking system</li>
-      <li><a href="/blog/babushka-art-direction-broth-bullets">Babushka Art Direction: Creating Broth & Bullets' Unique Visual Style</a> - Our distinctive art style</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Technical architecture behind the innovation</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The WILDER Cooking System</a> - Our signature AI-powered cooking system</li>
+      <li><a href="/blog/babushka-art-direction-wilder">Babushka Art Direction: Creating WILDER' Unique Visual Style</a> - Our distinctive art style</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Technical architecture behind the innovation</li>
     </ul>
   `,
-  tags: ["2D Survival Games", "Game Comparison", "Don't Starve Together", "Terraria", "Oxygen Not Included", "Broth & Bullets", "Cataclysm Dark Days Ahead", "Top 10", "Game Rankings", "Survival Crafting"]
+  tags: ["2D Survival Games", "Game Comparison", "Don't Starve Together", "Terraria", "Oxygen Not Included", "WILDER", "Cataclysm Dark Days Ahead", "Top 10", "Game Rankings", "Survival Crafting"]
 }; 

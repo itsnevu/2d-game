@@ -1,5 +1,5 @@
 export default {
-  slug: "broth-bullets-may-2026-update",
+  slug: "wilder-may-2026-update",
   title: "Faster First Steps: May 2026 Development Update",
   subtitle: "A cleaner path into the island, diegetic loading, sharper performance, and more tactile survival feedback",
   date: "2026-05-06",
@@ -9,7 +9,7 @@ export default {
   excerpt: "The old login gate is gone, first-load assets now materialize through your ocular implant, and the client has picked up a round of rendering, caching, and particle polish.",
   coverImage: "/images/blog/may-2026-update-cover.png",
   content: `
-    <p>It's been a while since the last development update, and the work since then has been less about one giant headline feature and more about making Broth & Bullets feel faster, stranger, and easier to get into. A survival game can have all the systems in the world, but if the first thirty seconds feel like paperwork, people bounce.</p>
+    <p>It's been a while since the last development update, and the work since then has been less about one giant headline feature and more about making WILDER feel faster, stranger, and easier to get into. A survival game can have all the systems in the world, but if the first thirty seconds feel like paperwork, people bounce.</p>
 
     <p>So this update is about flow. We removed friction from the front door, moved more of the loading experience into the fiction of the world, and spent a lot of time on the unglamorous parts of performance that make the island feel better moment to moment.</p>
 
@@ -17,7 +17,7 @@ export default {
 
     <p>The old login screen was causing more pain than it was worth. I liked the presentation, and I still have a soft spot for the SOVA survival tips that used to sit there while you loaded in, but in practice it was getting between players and the game.</p>
 
-    <p>Broth & Bullets is already a weird enough pitch: a top-down multiplayer survival game on a hostile Aleutian island, with ocular implants, Memory Shards, haunted logistics infrastructure, and cooking systems that keep mutating. The first interaction shouldn't be "please wait on a marketing screen." It should be "you are waking up in the world."</p>
+    <p>WILDER is already a weird enough pitch: a top-down multiplayer survival game on a hostile Aleutian island, with ocular implants, Memory Shards, haunted logistics infrastructure, and cooking systems that keep mutating. The first interaction shouldn't be "please wait on a marketing screen." It should be "you are waking up in the world."</p>
 
     <p>So we cut the ceremony. The game now treats connection, registration, and first asset readiness as part of the boot sequence instead of a separate lobby moment. The goal is simple: less waiting, less second-guessing, and fewer places for authentication state to confuse players before they have even seen the tundra.</p>
 
@@ -41,7 +41,7 @@ export default {
       <li><strong>Viewport-aware filtering</strong> - The renderer keeps its attention on the part of the island you can actually see, with buffers large enough to avoid obvious pop-in.</li>
     </ul>
 
-    <p>The aim isn't to hide the fact that Broth & Bullets is running a lot of systems at once. The aim is to make those systems feel like part of a living world instead of a pile of update loops competing for your frame time.</p>
+    <p>The aim isn't to hide the fact that WILDER is running a lot of systems at once. The aim is to make those systems feel like part of a living world instead of a pile of update loops competing for your frame time.</p>
 
     <h2>🔥 More Physical Feedback</h2>
 
@@ -67,7 +67,7 @@ export default {
 
     <h2>🛠️ Why This Update Matters</h2>
 
-    <p>The funny thing about optimization is that it often sounds like retreat: cutting a login screen, loading fewer things up front, caching more aggressively, doing less work per frame. But for Broth & Bullets, this is what lets the stranger ideas breathe.</p>
+    <p>The funny thing about optimization is that it often sounds like retreat: cutting a login screen, loading fewer things up front, caching more aggressively, doing less work per frame. But for WILDER, this is what lets the stranger ideas breathe.</p>
 
     <p>If the world loads faster, then diegetic materialization feels intentional instead of broken. If particles don't thrash React, then furnaces, wards, fire arrows, and base attacks can be richer. If placement checks are cheaper, then base building can keep growing. If the front door is cleaner, then players are more likely to reach the systems we actually want feedback on.</p>
 
@@ -83,11 +83,11 @@ export default {
       <li><strong>Loading polish</strong> - Smoother materialization, better cache behavior, and fewer moments where the browser shows through the fiction.</li>
     </ul>
 
-    <h2>🎮 Play Broth & Bullets</h2>
+    <h2>🎮 Play WILDER</h2>
 
     <p>If you tried the alpha before and bounced off the first-load flow, this is a good time to try again. The island should get out of its own way faster now.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Alpha (Free)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Alpha (Free)</a></p>
 
     <p><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer" class="cta-link">→ Join the Discord Community</a></p>
 
@@ -97,10 +97,10 @@ export default {
 
     <ul>
       <li><a href="/blog/alk-central-compound-admiralty-logistics-kernel">The ALK Central Compound</a> - The ghost logistics system at the heart of the island</li>
-      <li><a href="/blog/broth-bullets-february-2026-update">The Living World: February 2026 Development Update</a> - Animals, predators, food systems, and monuments</li>
+      <li><a href="/blog/wilder-february-2026-update">The Living World: February 2026 Development Update</a> - Animals, predators, food systems, and monuments</li>
       <li><a href="/blog/diegetic-ui-design-sova">Diegetic UI and SOVA</a> - Why the interface belongs inside the fiction</li>
       <li><a href="/blog/minimap-spatial-subscriptions">The Hardlight Map</a> - Spatial awareness, performance, and SOVA's map overlay</li>
     </ul>
   `,
-  tags: ["Development Update", "Broth & Bullets", "Performance", "Diegetic UI", "SOVA", "Loading", "Rendering", "Particles", "Survival Games", "Indie Game Development", "Alpha Testing"]
+  tags: ["Development Update", "WILDER", "Performance", "Diegetic UI", "SOVA", "Loading", "Rendering", "Particles", "Survival Games", "Indie Game Development", "Alpha Testing"]
 };

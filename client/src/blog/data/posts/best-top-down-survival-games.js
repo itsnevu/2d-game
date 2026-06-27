@@ -30,7 +30,7 @@ export default {
     <p>The deepest zombie survival game ever made. Project Zomboid simulates everything from individual wounds to emotional states. The isometric view lets you see zombies approaching from all sides - crucial when one bite means death. Multiplayer servers support both PvP and PvE.</p>
     <p><strong>Key Features:</strong> Unmatched simulation depth, extensive crafting, vehicle mechanics, multiplayer servers</p>
 
-    <h3>2. Broth & Bullets</h3>
+    <h3>2. WILDER</h3>
     <p><strong>Platforms:</strong> Browser | <strong>Price:</strong> Free | <strong>Perspective:</strong> Top-Down</p>
     <p>A multiplayer survival game with pixel art graphics and a true top-down perspective. Set in the subarctic Aleutian Islands, it features crafting, farming, animal husbandry, and an AI-powered cooking system. The overhead view makes resource gathering and base building intuitive. Runs in your browser with no download required.</p>
     <p><strong>Key Features:</strong> AI cooking system, persistent multiplayer world, farming and breeding, browser-based</p>
@@ -157,7 +157,7 @@ export default {
     <h3>Best for Multiplayer</h3>
     <ol>
       <li>Don't Starve Together - Cooperative survival</li>
-      <li>Broth & Bullets - MMO survival</li>
+      <li>WILDER - MMO survival</li>
       <li>Project Zomboid - Server-based multiplayer</li>
       <li>One Hour One Life - Generational MMO</li>
     </ol>
@@ -166,7 +166,7 @@ export default {
     <ol>
       <li>Rimworld - Colony management</li>
       <li>Oxygen Not Included - Underground bases</li>
-      <li>Broth & Bullets - Persistent structures</li>
+      <li>WILDER - Persistent structures</li>
       <li>Sheltered - Bunker building</li>
     </ol>
 
@@ -174,32 +174,32 @@ export default {
     <ol>
       <li>Forager - Accessible progression</li>
       <li>Crashlands - Action-focused survival</li>
-      <li>Broth & Bullets - Free and browser-based</li>
+      <li>WILDER - Free and browser-based</li>
       <li>Don't Starve - Clear mechanics</li>
     </ol>
 
     <h2>Frequently Asked Questions</h2>
 
     <h3>What is the best top-down survival game?</h3>
-    <p>Project Zomboid is widely considered the best top-down survival game for its unmatched depth. For multiplayer, Don't Starve Together and Broth & Bullets are excellent. Rimworld is best for colony management.</p>
+    <p>Project Zomboid is widely considered the best top-down survival game for its unmatched depth. For multiplayer, Don't Starve Together and WILDER are excellent. Rimworld is best for colony management.</p>
 
     <h3>Are top-down games easier than first-person survival games?</h3>
     <p>Not necessarily easier, but different. Top-down games offer better awareness, making them more tactical but often featuring deeper mechanics to compensate. Project Zomboid and Cataclysm: DDA are among the most challenging survival games ever made.</p>
 
     <h3>Can I play top-down survival games on low-end hardware?</h3>
-    <p>Yes, most top-down survival games have modest system requirements. Cataclysm: DDA runs on almost anything. Broth & Bullets runs in a browser. Even Project Zomboid is relatively lightweight compared to 3D alternatives.</p>
+    <p>Yes, most top-down survival games have modest system requirements. Cataclysm: DDA runs on almost anything. WILDER runs in a browser. Even Project Zomboid is relatively lightweight compared to 3D alternatives.</p>
 
     <h3>Are there any free top-down survival games?</h3>
-    <p>Yes. Cataclysm: Dark Days Ahead is completely free and open source. Broth & Bullets is free and browser-based. UnReal World offers a free version with optional paid updates.</p>
+    <p>Yes. Cataclysm: Dark Days Ahead is completely free and open source. WILDER is free and browser-based. UnReal World offers a free version with optional paid updates.</p>
 
     <h3>What top-down survival game has the best graphics?</h3>
-    <p>Don't Starve has the most distinctive art style. Darkwood creates excellent atmosphere. Oxygen Not Included uses charming 2D animation. Broth & Bullets features detailed pixel art.</p>
+    <p>Don't Starve has the most distinctive art style. Darkwood creates excellent atmosphere. Oxygen Not Included uses charming 2D animation. WILDER features detailed pixel art.</p>
 
-    <h2>Play Broth & Bullets</h2>
+    <h2>Play WILDER</h2>
 
-    <p>Looking for a top-down survival game you can play immediately? Broth & Bullets offers crafting, farming, and multiplayer survival from an overhead perspective - all in your browser for free.</p>
+    <p>Looking for a top-down survival game you can play immediately? WILDER offers crafting, farming, and multiplayer survival from an overhead perspective - all in your browser for free.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Free</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Free</a></p>
 
     <h2>Related Articles</h2>
 
@@ -209,5 +209,5 @@ export default {
       <li><a href="/blog/best-cozy-survival-games">Best Cozy Survival Games</a></li>
     </ul>
   `,
-  tags: ["Top-Down Games", "Survival Games", "Isometric Games", "Project Zomboid", "Don't Starve", "Rimworld", "Broth & Bullets", "Indie Games", "Roguelike", "Colony Survival", "Best Of"]
+  tags: ["Top-Down Games", "Survival Games", "Isometric Games", "Project Zomboid", "Don't Starve", "Rimworld", "WILDER", "Indie Games", "Roguelike", "Colony Survival", "Best Of"]
 };

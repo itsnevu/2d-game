@@ -206,7 +206,7 @@ function renderForgotPasswordPage(opts: { error?: string; success?: string } = {
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Forgot Password - Broth & Bullets</title>
+      <title>Forgot Password - WILDER</title>
       <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
@@ -325,7 +325,7 @@ function renderForgotPasswordPage(opts: { error?: string; success?: string } = {
   <body>
       <div class="container">
           <div class="game-title">
-              <img src="/logo_alt.png" alt="Broth & Bullets Logo" style="height: 100%; width: auto;">
+              <img src="/logo_alt.png" alt="WILDER Logo" style="height: 100%; width: auto;">
           </div>
           <div class="game-subtitle">2D Multiplayer Survival</div>
           <h1 class="form-title">Forgot Password</h1>
@@ -358,7 +358,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Reset Password - Broth & Bullets</title>
+      <title>Reset Password - WILDER</title>
       <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
@@ -470,7 +470,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
   <body>
       <div class="container">
           <div class="game-title">
-              <img src="/logo_alt.png" alt="Broth & Bullets Logo" style="height: 100%; width: auto;">
+              <img src="/logo_alt.png" alt="WILDER Logo" style="height: 100%; width: auto;">
           </div>
           <div class="game-subtitle">2D Multiplayer Survival</div>
           <h1 class="form-title">Reset Password</h1>
@@ -723,7 +723,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Create Account - Broth & Bullets</title>
+        <title>Create Account - WILDER</title>
         <style>
             * {
                 margin: 0;
@@ -911,7 +911,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <body>
         <div class="container">
             <div class="game-title">
-                <img src="logo_alt.png" alt="Broth & Bullets Logo" style="height: 100%; width: auto;">
+                <img src="logo_alt.png" alt="WILDER Logo" style="height: 100%; width: auto;">
             </div>
             <div class="game-subtitle">2D Multiplayer Survival</div>
             
@@ -1038,7 +1038,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sign In - Broth & Bullets</title>
+        <title>Sign In - WILDER</title>
         <style>
             * {
                 margin: 0;
@@ -1216,7 +1216,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <body>
         <div class="container">
             <div class="game-title">
-                <img src="logo_alt.png" alt="Broth & Bullets Logo" style="height: 100%; width: auto;">
+                <img src="logo_alt.png" alt="WILDER Logo" style="height: 100%; width: auto;">
             </div>
             <div class="game-subtitle">2D Multiplayer Survival</div>
             
@@ -1307,7 +1307,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Sign In - Broth & Bullets</title>
+                <title>Sign In - WILDER</title>
                 <style>
                     * {
                         margin: 0;
@@ -1485,7 +1485,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
             <body>
                 <div class="container">
                     <div class="game-title">
-                        <img src="logo_alt.png" alt="Broth & Bullets Logo" style="height: 100%; width: auto;">
+                        <img src="logo_alt.png" alt="WILDER Logo" style="height: 100%; width: auto;">
                     </div>
                     <div class="game-subtitle">2D Multiplayer Survival</div>
                     <h1 class="form-title">Sign In</h1>
@@ -1525,7 +1525,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Forgot Password - Broth & Bullets</title>
+        <title>Forgot Password - WILDER</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -1653,7 +1653,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <body>
         <div class="container">
             <div class="game-title">
-                <img src="logo_alt.png" alt="Broth & Bullets Logo" style="height: 100%; width: auto;">
+                <img src="logo_alt.png" alt="WILDER Logo" style="height: 100%; width: auto;">
             </div>
             <div class="game-subtitle">2D Multiplayer Survival</div>
             <h1 class="form-title">Forgot Password</h1>
@@ -1708,9 +1708,9 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     if (resend) {
       try {
         await resend.emails.send({
-          from: 'Broth & Bullets <noreply@brothandbullets.com>',
+          from: 'WILDER <noreply@brothandbullets.com>',
           to: email,
-          subject: 'Reset your Broth & Bullets password',
+          subject: 'Reset your WILDER password',
           html: `
             <!DOCTYPE html>
             <html>
@@ -1722,7 +1722,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
               <div style="max-width: 500px; margin: 0 auto; background: rgba(40, 40, 60, 0.95); border-radius: 16px; padding: 40px; border: 2px solid rgba(255, 140, 0, 0.3);">
                 <h1 style="color: #ff8c00; margin-bottom: 20px; font-size: 24px;">Reset Your Password</h1>
                 <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6; margin-bottom: 30px;">
-                  You requested a password reset for your Broth & Bullets account. Click the button below to set a new password:
+                  You requested a password reset for your WILDER account. Click the button below to set a new password:
                 </p>
                 <a href="${resetLink}" style="display: inline-block; background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
                   Reset Password
@@ -1733,7 +1733,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
                 </p>
                 <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 30px 0;">
                 <p style="color: rgba(255, 255, 255, 0.4); font-size: 12px;">
-                  Broth & Bullets - 2D Multiplayer Survival
+                  WILDER - 2D Multiplayer Survival
                 </p>
               </div>
             </body>
@@ -1836,7 +1836,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Password Reset - Broth & Bullets</title>
+        <title>Password Reset - WILDER</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -1895,7 +1895,7 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
     <body>
         <div class="container">
             <div class="game-title">
-                <img src="/logo_alt.png" alt="Broth & Bullets Logo" style="height: 100%; width: auto;">
+                <img src="/logo_alt.png" alt="WILDER Logo" style="height: 100%; width: auto;">
             </div>
             <div class="success-icon">✓</div>
             <h1 class="form-title">Password Reset Successful!</h1>

@@ -1,6 +1,6 @@
 # Blog Content Management
 
-This directory contains the blog posts and data for the Broth & Bullets blog section.
+This directory contains the blog posts and data for the WILDER blog section.
 
 ## Structure
 

@@ -1,6 +1,6 @@
 export default {
   slug: "spacetimedb-revolution",
-  title: "SpacetimeDB: How We Rebuilt Broth & Bullets and Unlocked Development at Lightning Speed",
+  title: "SpacetimeDB: How We Rebuilt WILDER and Unlocked Development at Lightning Speed",
   subtitle: "From visual overhaul to dynamic weather systems - our journey with SpacetimeDB has transformed everything",
   date: "2025-01-15",
   author: "Wilder Team",
@@ -36,7 +36,7 @@ export default {
       <p class="image-caption text-sm text-gray-600 mt-2">Heavy storms now affect visibility, plant growth, and tactical positioning</p>
     </div>
     
-    <p>One of the most exciting developments has been our implementation of dynamic weather systems that go far beyond visual effects. Weather in Broth & Bullets now fundamentally affects gameplay:</p>
+    <p>One of the most exciting developments has been our implementation of dynamic weather systems that go far beyond visual effects. Weather in WILDER now fundamentally affects gameplay:</p>
     
     <ul>
       <li><strong>Cloud Cover and Plant Growth</strong> - Overcast skies reduce photosynthesis rates, slowing the regeneration of harvestable plants</li>
@@ -144,7 +144,7 @@ export default {
     
     <p>For indie developers especially, SpacetimeDB represents an opportunity to compete with much larger studios by focusing on innovation rather than infrastructure. We're building features that would have required a team of backend engineers just months ago.</p>
     
-    <p>Broth & Bullets is becoming the game we always envisioned, but never thought we could actually build. And we're just getting started.</p>
+    <p>WILDER is becoming the game we always envisioned, but never thought we could actually build. And we're just getting started.</p>
     
     <h2>A Note on Terrain Generation</h2>
     
@@ -154,11 +154,11 @@ export default {
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Explore more about Broth & Bullets and SpacetimeDB:</p>
+    <p>Explore more about WILDER and SpacetimeDB:</p>
 
     <ul>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB Instead of Traditional Game Servers</a> - Complete technical architecture story</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development journey</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB Instead of Traditional Game Servers</a> - Complete technical architecture story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development journey</li>
       <li><a href="/blog/spacetimedb-tutorial-build-multiplayer-game-30-minutes">SpacetimeDB Tutorial: Build a Multiplayer Game in 30 Minutes</a> - Get started with SpacetimeDB</li>
       <li><a href="/blog/spatial-subscriptions-multiplayer-games">Implementing Spatial Subscriptions in Multiplayer Games</a> - Technical deep dive</li>
     </ul>

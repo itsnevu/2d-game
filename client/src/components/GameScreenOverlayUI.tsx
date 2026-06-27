@@ -7,6 +7,7 @@ import GameSettingsMenu from './GameSettingsMenu';
 import GameVisualSettingsMenu from './GameVisualSettingsMenu';
 import type { MenuType } from './GameMenu';
 import DayNightCycleTracker from './DayNightCycleTracker';
+import NightfallCue from './NightfallCue';
 import QuestsPanel from './QuestsPanel';
 import MusicControlPanel from './MusicControlPanel';
 import ErrorDisplay from './ErrorDisplay';
@@ -174,6 +175,9 @@ export default function GameScreenOverlayUI({
         onOpenQuestsPanel={onOpenQuestsPanel}
         hasNewNotification={hasNewQuestNotification}
       />
+
+      {/* Cinematic "the wild stirs" flash + howl when night falls */}
+      <NightfallCue isMobile={isMobile} />
 
       <QuestsPanel
         isOpen={isQuestsPanelOpen}

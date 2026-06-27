@@ -1,7 +1,7 @@
 /**
  * ElizaOS Plugin: broth-bullets-agent
  *
- * This plugin bundles all NPC intelligence for Broth & Bullets.
+ * This plugin bundles all NPC intelligence for WILDER.
  * It follows the ElizaOS plugin architecture:
  *   - Providers: supply structured world data to the agent context
  *   - Actions: map to SpacetimeDB reducers
@@ -238,9 +238,9 @@ export const episodeEvaluator: ElizaEvaluator = {
 // Plugin export
 // ---------------------------------------------------------------------------
 
-export const brothBulletsPlugin: ElizaPlugin = {
+export const wilderPlugin: ElizaPlugin = {
   name: 'broth-bullets-agent',
-  description: 'NPC agent intelligence for Broth & Bullets survival game',
+  description: 'NPC agent intelligence for WILDER survival game',
   providers: [
     selfStateProvider,
     worldStateProvider,
@@ -259,4 +259,4 @@ export const brothBulletsPlugin: ElizaPlugin = {
   evaluators: [episodeEvaluator],
 };
 
-export default brothBulletsPlugin;
+export default wilderPlugin;

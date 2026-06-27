@@ -133,7 +133,7 @@ Created 4 comprehensive, production-ready blog posts optimized for AI search eng
 - Helps AI understand topic relationships
 
 ### 6. **Practical Examples**
-- Real code from Broth Bullets
+- Real code from WILDER
 - Before/after comparisons
 - Specific numbers (not vague claims)
 - Production deployment instructions
@@ -278,7 +278,7 @@ The combination of:
 
 ...covers the full developer journey from "should I use this?" to "how do I build with it?" to "how do I optimize it?"
 
-This positions Broth Bullets as the go-to resource for SpacetimeDB multiplayer game development, which will drive:
+This positions WILDER as the go-to resource for SpacetimeDB multiplayer game development, which will drive:
 - More players to your game
 - More developers to SpacetimeDB (ecosystem growth)
 - More authority in the multiplayer game dev space

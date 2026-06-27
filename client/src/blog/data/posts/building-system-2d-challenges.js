@@ -9,7 +9,7 @@ export default {
   excerpt: "Creating a building system for a 2D survival game presents unique challenges. We dive into the algorithms, design decisions, and gameplay implications of constructing shelter in a flat world.",
   coverImage: "/images/blog/building-interior-screenshot.jpg",
   content: `
-    <p>When we started implementing the building system for Broth & Bullets, we knew we were facing a fundamental challenge: how do you create meaningful shelter mechanics in a 2D game where there's no true vertical dimension?</p>
+    <p>When we started implementing the building system for WILDER, we knew we were facing a fundamental challenge: how do you create meaningful shelter mechanics in a 2D game where there's no true vertical dimension?</p>
     
     <p>In 3D survival games like Rust or Valheim, building is intuitive. You place walls, add a roof, and you're inside. The Z-axis handles everything. But in 2D, we needed to get creative.</p>
     
@@ -113,7 +113,7 @@ export default {
     
     <h2>Where Building Fits in the Bigger Picture</h2>
     
-    <p>As we continue developing Broth & Bullets, we're finding that the 2D building limitations might actually push the game in interesting directions. Since we can't compete with Rust's elaborate building system, we're leaning into other aspects:</p>
+    <p>As we continue developing WILDER, we're finding that the 2D building limitations might actually push the game in interesting directions. Since we can't compete with Rust's elaborate building system, we're leaning into other aspects:</p>
     
     <ul>
       <li><strong>Farming Systems</strong> - Protected greenhouses for growing crops</li>
@@ -147,19 +147,19 @@ export default {
     
     <p>Building in 2D isn't about trying to replicate 3D building systems - it's about finding what works uniquely well in a top-down perspective. The automatic ceiling generation, the enclosure detection algorithm, the emphasis on horizontal layout strategy - these are solutions that only make sense in 2D.</p>
 
-    <p>As we continue development, we're excited to see how players push the building system in unexpected directions. Maybe the future of Broth & Bullets isn't about towering fortresses, but about sprawling farming communes and intricate trap mazes. We'll find out together.</p>
+    <p>As we continue development, we're excited to see how players push the building system in unexpected directions. Maybe the future of WILDER isn't about towering fortresses, but about sprawling farming communes and intricate trap mazes. We'll find out together.</p>
 
     <p>And honestly? That's the fun part of game development - discovering what your game wants to be, even when it's different from what you initially imagined.</p>
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Learn more about Broth & Bullets' interconnected survival systems:</p>
+    <p>Learn more about WILDER' interconnected survival systems:</p>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
       <li><a href="/blog/armor-system-design">Armor System: More Than Just Protection</a> - Another example of meaningful survival mechanics</li>
       <li><a href="/blog/building-2d-multiplayer-survival-games-guide">Complete Guide to Building 2D Multiplayer Survival Games</a> - Comprehensive tutorial</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Technical architecture enabling real-time building</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Technical architecture enabling real-time building</li>
     </ul>
   `,
   tags: ["Development", "Building System", "Game Design", "Technical", "2D Challenges", "Algorithms"]

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faXTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
-import logo from '../assets/ui/logo_alt.png';
+import logo from '../assets/ui/wilder-logo.png';
 
 const BlogFooter: React.FC = () => {
     // Check if we're on mobile
@@ -84,18 +84,19 @@ const BlogFooter: React.FC = () => {
                     alignItems: isMobile ? 'center' : 'flex-start',
                     textAlign: isMobile ? 'center' : 'left',
                 }}>
-                    <span
+                    <img
+                        src={logo}
+                        alt="WILDER"
+                        draggable={false}
                         style={{
-                            fontFamily: "'KiwiSoda', sans-serif",
-                            fontSize: '36px',
-                            color: '#C8A23C',
-                            textShadow: '2px 2px 0px #000',
+                            width: 'auto',
+                            maxWidth: isMobile ? '220px' : '240px',
+                            height: 'auto',
                             marginBottom: '20px',
+                            imageRendering: 'pixelated',
                             userSelect: 'none',
                         }}
-                    >
-                        WILDER
-                    </span>
+                    />
                     <p style={{
                         fontSize: '13px',
                         color: 'rgba(255, 255, 255, 0.7)',
@@ -104,7 +105,7 @@ const BlogFooter: React.FC = () => {
                         textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                         fontFamily: "'Courier New', Consolas, Monaco, monospace",
                     }}>
-                        Broth & Bullets is developed by{' '}
+                        WILDER is developed by{' '}
                         the Wilder Team
                     </p>
                     <p style={{
@@ -145,35 +146,10 @@ const BlogFooter: React.FC = () => {
                             { label: 'FEATURES', action: 'features', section: true },
                             { label: 'FAQ', action: 'faq', section: true },
                             { label: 'LORE', action: 'https://www.babushkabook.com/reader/excerpts/tides-prologue-lagunov', external: true },
-                            { label: 'BLOG', action: '/blog', internal: true },
                             { label: 'CONTACT', action: 'mailto:contact@playwilder.com', external: true },
                         ].map((link) => (
                             <li key={link.label} style={{ marginBottom: '12px' }}>
-                                {link.internal ? (
-                                    <button
-                                        onClick={() => handleNavigate(link.action)}
-                                        style={{
-                                            color: 'rgba(255, 255, 255, 0.7)',
-                                            textDecoration: 'none',
-                                            fontSize: '13px',
-                                            transition: 'color 0.2s ease',
-                                            fontFamily: "'Courier New', Consolas, Monaco, monospace",
-                                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
-                                            background: 'none',
-                                            border: 'none',
-                                            padding: 0,
-                                            cursor: 'pointer',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.color = '#5c8e32';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                                        }}
-                                    >
-                                        {link.label}
-                                    </button>
-                                ) : link.section ? (
+                                {link.section ? (
                                     <button
                                         onClick={() => handleSectionNavigate(link.action)}
                                         style={{

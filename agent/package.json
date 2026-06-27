@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "ElizaOS-powered NPC agents for Broth & Bullets",
+  "description": "ElizaOS-powered NPC agents for WILDER",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",

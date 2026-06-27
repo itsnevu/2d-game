@@ -25,7 +25,7 @@ export default {
 
     <h2>12 Best Browser Survival Games in 2026</h2>
 
-    <h3>1. Broth & Bullets</h3>
+    <h3>1. WILDER</h3>
     <p><strong>Genre:</strong> Multiplayer Crafting Survival | <strong>Price:</strong> Free | <strong>Multiplayer:</strong> Yes</p>
     <p>A full-featured multiplayer survival game set in the subarctic Aleutian Islands. Features include crafting, farming, cooking with AI-generated recipes, animal husbandry, base building, and dynamic weather. Built with SpacetimeDB for real-time multiplayer, it runs entirely in your browser with no download required. The persistent world means your progress saves automatically.</p>
     <p><strong>Key Features:</strong> AI-powered cooking system, 100+ craftable items, farming and animal breeding, cooperative multiplayer, persistent world</p>
@@ -135,7 +135,7 @@ export default {
 
     <h3>Best for Multiplayer Crafting</h3>
     <ol>
-      <li>Broth & Bullets - Full survival experience with AI crafting</li>
+      <li>WILDER - Full survival experience with AI crafting</li>
       <li>Starve.io - Classic survival crafting mechanics</li>
       <li>Devast.io - Hardcore crafting survival</li>
     </ol>
@@ -151,12 +151,12 @@ export default {
     <ol>
       <li>Zombs.io - Tower defense base building</li>
       <li>Moomoo.io - Village construction</li>
-      <li>Broth & Bullets - Persistent base building</li>
+      <li>WILDER - Persistent base building</li>
     </ol>
 
     <h3>Best for Cooperative Play</h3>
     <ol>
-      <li>Broth & Bullets - Full co-op survival</li>
+      <li>WILDER - Full co-op survival</li>
       <li>Zombs.io - Team base defense</li>
       <li>Starve.io - Cooperative crafting</li>
     </ol>
@@ -172,41 +172,41 @@ export default {
       <li><strong>RAM:</strong> 4GB minimum for smooth gameplay</li>
     </ul>
 
-    <p>Games like Broth & Bullets use WebAssembly and modern web technologies to deliver performance comparable to native applications while remaining accessible through any browser.</p>
+    <p>Games like WILDER use WebAssembly and modern web technologies to deliver performance comparable to native applications while remaining accessible through any browser.</p>
 
     <h2>Frequently Asked Questions</h2>
 
     <h3>What is the best browser survival game?</h3>
-    <p>For full survival features (crafting, farming, base building, multiplayer), Broth & Bullets offers the most complete experience. For quick battle royale sessions, Surviv.io is excellent. For base defense, Zombs.io is the top choice.</p>
+    <p>For full survival features (crafting, farming, base building, multiplayer), WILDER offers the most complete experience. For quick battle royale sessions, Surviv.io is excellent. For base defense, Zombs.io is the top choice.</p>
 
     <h3>Are browser survival games free?</h3>
-    <p>Most browser survival games are free to play. Some offer optional cosmetic purchases or premium features, but core gameplay is typically free. Broth & Bullets is completely free with no pay-to-win mechanics.</p>
+    <p>Most browser survival games are free to play. Some offer optional cosmetic purchases or premium features, but core gameplay is typically free. WILDER is completely free with no pay-to-win mechanics.</p>
 
     <h3>Can I play browser games on my phone?</h3>
     <p>Many browser survival games work on mobile devices, though the experience varies. Games designed with mobile in mind (like Surviv.io) work well. More complex games may require a desktop browser for optimal experience.</p>
 
     <h3>Do browser survival games save progress?</h3>
-    <p>It depends on the game. Many .io games don't save progress between sessions. Broth & Bullets uses persistent servers that save your progress, buildings, and inventory automatically.</p>
+    <p>It depends on the game. Many .io games don't save progress between sessions. WILDER uses persistent servers that save your progress, buildings, and inventory automatically.</p>
 
     <h3>Are browser games safe?</h3>
     <p>Reputable browser games from known developers are safe. Avoid games that request unusual permissions or downloads. Stick to established games and verified URLs.</p>
 
     <h3>Why do some browser games lag?</h3>
-    <p>Browser game performance depends on your internet connection, browser, and device. Close other tabs, use a modern browser, and ensure stable internet for best performance. Games like Broth & Bullets are optimized to run smoothly on average hardware.</p>
+    <p>Browser game performance depends on your internet connection, browser, and device. Close other tabs, use a modern browser, and ensure stable internet for best performance. Games like WILDER are optimized to run smoothly on average hardware.</p>
 
-    <h2>Play Broth & Bullets Now</h2>
+    <h2>Play WILDER Now</h2>
 
-    <p>Ready to try the most feature-complete browser survival game available? Broth & Bullets runs entirely in your browser - no download required. Click the link below and start surviving in under 30 seconds.</p>
+    <p>Ready to try the most feature-complete browser survival game available? WILDER runs entirely in your browser - no download required. Click the link below and start surviving in under 30 seconds.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Free (No Download)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Free (No Download)</a></p>
 
     <h2>Related Articles</h2>
 
     <ul>
       <li><a href="/blog/best-2d-survival-games">Best 2D Survival Games Ranked</a></li>
       <li><a href="/blog/best-cozy-survival-games">Best Cozy Survival Games</a></li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a></li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a></li>
     </ul>
   `,
-  tags: ["Browser Games", "Survival Games", "Free Games", "No Download Games", "Multiplayer Games", "io Games", "Broth & Bullets", "Web Games", "Online Games", "Battle Royale", "Crafting Games", "Base Building"]
+  tags: ["Browser Games", "Survival Games", "Free Games", "No Download Games", "Multiplayer Games", "io Games", "WILDER", "Web Games", "Online Games", "Battle Royale", "Crafting Games", "Base Building"]
 };

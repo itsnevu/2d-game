@@ -52,7 +52,7 @@ const CookiesPage: React.FC = () => {
                         color: 'rgba(255, 255, 255, 0.9)',
                         margin: 0,
                     }}>
-                        <strong>Note:</strong> Broth & Bullets is currently in early access development. Our cookie usage may change as we add new features and integrate additional services.
+                        <strong>Note:</strong> WILDER is currently in early access development. Our cookie usage may change as we add new features and integrate additional services.
                     </p>
                 </div>
 

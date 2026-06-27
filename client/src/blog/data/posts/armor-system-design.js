@@ -9,7 +9,7 @@ export default {
   excerpt: "We've implemented a comprehensive armor system with seven distinct sets, each offering unique resistances, special abilities, and gameplay implications. Every piece matters, with per-piece accumulation that rewards mix-and-match experimentation.",
   coverImage: "/images/blog/armor-system-cover.jpg",
   content: `
-    <p>When we started designing the armor system for Broth & Bullets, I wanted every piece of armor to feel meaningful on its own. Most survival games just have individual pieces with stats that accumulate - which is great - but I wanted to take it further by making each piece offer unique gameplay implications beyond just raw protection numbers.</p>
+    <p>When we started designing the armor system for WILDER, I wanted every piece of armor to feel meaningful on its own. Most survival games just have individual pieces with stats that accumulate - which is great - but I wanted to take it further by making each piece offer unique gameplay implications beyond just raw protection numbers.</p>
     
     <p>The result is seven distinct armor sets, each with their own identity, strengths, and weaknesses. No piece is just "better" than another - they're all tools for different situations.</p>
     
@@ -371,7 +371,7 @@ export default {
     
     <h2>Primitive Tier: Just the Beginning</h2>
     
-    <p>It's worth noting that everything I've described here is just the <strong>primitive tier</strong> of armor in Broth & Bullets. We're currently in the "broth" phase of development - focusing on survival, crafting, and primitive technology.</p>
+    <p>It's worth noting that everything I've described here is just the <strong>primitive tier</strong> of armor in WILDER. We're currently in the "broth" phase of development - focusing on survival, crafting, and primitive technology.</p>
     
     <p>The "bullets" part of our name isn't just for show. We've got plans for higher technology tiers that will introduce completely different armor systems:</p>
     
@@ -415,13 +415,13 @@ export default {
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Explore more of Broth & Bullets' interconnected survival systems:</p>
+    <p>Explore more of WILDER' interconnected survival systems:</p>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
       <li><a href="/blog/resource-system-implementation">Resource System: From Harvest to Inventory</a> - Gathering materials for crafting armor</li>
       <li><a href="/blog/building-system-2d-challenges">Building in 2D: Solving the Shelter Problem</a> - Complementary survival mechanics</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Technical architecture enabling complex systems</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Technical architecture enabling complex systems</li>
     </ul>
   `,
   tags: ["Development", "Armor System", "Game Design", "Combat", "Crafting", "Survival Mechanics", "Technical"]

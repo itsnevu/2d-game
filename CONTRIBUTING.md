@@ -1,6 +1,6 @@
-# Contributing to Broth & Bullets
+# Contributing to WILDER
 
-First off, thank you for considering contributing to Broth & Bullets! We welcome contributions that improve correctness, stability, or player experience.
+First off, thank you for considering contributing to WILDER! We welcome contributions that improve correctness, stability, or player experience.
 
 ## Table of Contents
 
@@ -169,6 +169,6 @@ By contributing to this project, you agree that your contributions will be licen
 
 ---
 
-Thank you for contributing to Broth & Bullets! 🎮
+Thank you for contributing to WILDER! 🎮
 
 Questions? Join our [Discord](https://discord.gg/tUcBzfAYfs) or open an issue.

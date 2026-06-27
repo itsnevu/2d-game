@@ -1,21 +1,21 @@
 export default {
-  slug: "broth-bullets-core-game-loop",
+  slug: "wilder-core-game-loop",
   title: "Committing to the Core Loop: May 2026 Design Update",
-  subtitle: "Why Broth & Bullets is building around PvE survival, co-op defense, farming, cooking, and night apparitions",
+  subtitle: "Why WILDER is building around PvE survival, co-op defense, farming, cooking, and night apparitions",
   date: "2026-05-06",
   author: "Wilder Team",
   authorImage: "",
   authorTwitter: "seloslav",
-  excerpt: "Broth & Bullets is committing to a PvE survival loop: grow food, cook broth, survive the night, harvest apparition materials, and push farther next time.",
+  excerpt: "WILDER is committing to a PvE survival loop: grow food, cook broth, survive the night, harvest apparition materials, and push farther next time.",
   coverImage: "/images/blog/core-game-loop.png",
   content: `
     <p>One of the most important decisions in a survival game is deciding what the game is actually about. Not what systems it has. Not what genres it references. The real question is: <strong>what loop do players repeat because it keeps producing stories?</strong></p>
 
-    <p>For Broth & Bullets, that answer is becoming clearer. The strongest base game is not full-loot PvP raiding. It is <strong>PvE survival with co-op pressure, persistent settlements, farming that matters, cooking that matters, and night apparitions that force players to prepare together.</strong></p>
+    <p>For WILDER, that answer is becoming clearer. The strongest base game is not full-loot PvP raiding. It is <strong>PvE survival with co-op pressure, persistent settlements, farming that matters, cooking that matters, and night apparitions that force players to prepare together.</strong></p>
 
     <p>The Rust loop is seductive because it is brutally clean: farm, craft, raid, steal, repeat. But once base raiding becomes the spine, every other system bends around it. Farming becomes risk management. Building becomes anti-raid geometry. Social play becomes paranoia. Casual players become loot pinatas. A world that could have felt like a strange village starts feeling like a battlefield with chores.</p>
 
-    <p>Broth & Bullets has a different center of gravity. The best version is closer to <strong>Stardew Valley meets Valheim meets Don't Starve Together, with a little Rust danger kept on a leash.</strong></p>
+    <p>WILDER has a different center of gravity. The best version is closer to <strong>Stardew Valley meets Valheim meets Don't Starve Together, with a little Rust danger kept on a leash.</strong></p>
 
     <h2>🌅 The Daily Rhythm</h2>
 
@@ -37,7 +37,7 @@ export default {
 
     <h2>🍲 The Actual Progression Loop</h2>
 
-    <p>Written as a progression chain, the long-term Broth & Bullets loop looks like this:</p>
+    <p>Written as a progression chain, the long-term WILDER loop looks like this:</p>
 
     <p><strong>Grow food → cook broth → survive nights → gather apparition materials → upgrade weapons and base defenses → explore farther → unlock deeper threats → build a stronger settlement.</strong></p>
 
@@ -85,7 +85,7 @@ export default {
 
     <p>Once the core loop is tight, the long-term roadmap gets much more exciting. These are not promises for the next patch, but they are the kinds of major updates that make sense when the survival spine is working.</p>
 
-    <h3>Broth & Bullets: Tides of the Forgotten</h3>
+    <h3>WILDER: Tides of the Forgotten</h3>
     <p>The cold waters around the island stop being a boundary and become a resource, a risk, and a new frontier.</p>
     <ul>
       <li>Nearshore vs deep sea fishing with distinct loot tables</li>
@@ -96,7 +96,7 @@ export default {
       <li>New marine threats and environmental hazards</li>
     </ul>
 
-    <h3>Broth & Bullets: Ashfall Frontier</h3>
+    <h3>WILDER: Ashfall Frontier</h3>
     <p>Something beneath the island is still alive. The volcanic interior opens up with heat, ash, sulfur, cliffs, and new high-risk resource pockets.</p>
     <ul>
       <li>Fully explorable volcanic biome</li>
@@ -107,7 +107,7 @@ export default {
       <li>New hostile wildlife adapted to the ashlands</li>
     </ul>
 
-    <h3>Broth & Bullets: Genesis Fields</h3>
+    <h3>WILDER: Genesis Fields</h3>
     <p>The island was abandoned, but it was never empty. Agriculture expands from survival gardens into real food infrastructure.</p>
     <ul>
       <li>Advanced farming systems and crop optimization</li>
@@ -118,7 +118,7 @@ export default {
       <li>Early GMO-style crop upgrades for yield and resilience</li>
     </ul>
 
-    <h3>Broth & Bullets: Lines in the Snow</h3>
+    <h3>WILDER: Lines in the Snow</h3>
     <p>Survival was only the beginning. Once settlements endure, people start choosing sides.</p>
     <ul>
       <li>Six major factions to align with</li>
@@ -129,7 +129,7 @@ export default {
       <li>Emerging player politics and territorial pressure</li>
     </ul>
 
-    <h3>Broth & Bullets: Endless Peninsula</h3>
+    <h3>WILDER: Endless Peninsula</h3>
     <p>The island is not the edge of the world. The map expands, and player civilization starts to scale beyond isolated camps.</p>
     <ul>
       <li>Seamless procedural world expansion</li>
@@ -141,11 +141,11 @@ export default {
       <li>Foundations for large-scale city construction</li>
     </ul>
 
-    <h2>🎮 Play Broth & Bullets</h2>
+    <h2>🎮 Play WILDER</h2>
 
     <p>The immediate goal is not to become bigger for the sake of it. It is to make the daily rhythm sing: grow food, cook broth, survive the night, recover, and push farther into the island.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Alpha (Free)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Alpha (Free)</a></p>
 
     <p><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer" class="cta-link">→ Join the Discord Community</a></p>
 
@@ -154,11 +154,11 @@ export default {
     <h2>🔗 Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/broth-bullets-may-2026-update">Faster First Steps: May 2026 Development Update</a> - Performance, loading, and diegetic materialization</li>
+      <li><a href="/blog/wilder-may-2026-update">Faster First Steps: May 2026 Development Update</a> - Performance, loading, and diegetic materialization</li>
       <li><a href="/blog/alk-central-compound-admiralty-logistics-kernel">The ALK Central Compound</a> - Economy, Memory Shards, and the island's ghost infrastructure</li>
-      <li><a href="/blog/broth-bullets-february-2026-update">The Living World: February 2026 Development Update</a> - Animals, predators, food systems, and monuments</li>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Cooking</a> - Why food can be more than a hunger meter</li>
+      <li><a href="/blog/wilder-february-2026-update">The Living World: February 2026 Development Update</a> - Animals, predators, food systems, and monuments</li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Cooking</a> - Why food can be more than a hunger meter</li>
     </ul>
   `,
-  tags: ["Game Design", "Core Game Loop", "Development Update", "Broth & Bullets", "PvE Survival", "Co-op", "Night Apparitions", "Farming", "Cooking", "Base Defense", "Roadmap", "Survival Games", "Indie Game Development"]
+  tags: ["Game Design", "Core Game Loop", "Development Update", "WILDER", "PvE Survival", "Co-op", "Night Apparitions", "Farming", "Cooking", "Base Defense", "Roadmap", "Survival Games", "Indie Game Development"]
 };

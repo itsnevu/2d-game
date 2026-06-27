@@ -1,15 +1,15 @@
 export default {
   slug: "diegetic-ui-design-sova",
-  title: "Diegetic Design: Why Every UI Element in Broth & Bullets Exists In-World",
+  title: "Diegetic Design: Why Every UI Element in WILDER Exists In-World",
   subtitle: "SOVA, neural implants, and the art of making game interfaces feel real",
   date: "2025-12-12",
   author: "Wilder Team",
   authorImage: "",
   authorTwitter: "seloslav",
-  excerpt: "You don't open a menu in Broth & Bullets - you activate a neural interface. Your minimap lives in your occipital lobe. When you log off, your body stays on the tundra. Here's why diegetic UI matters for immersive 2D survival games.",
+  excerpt: "You don't open a menu in WILDER - you activate a neural interface. Your minimap lives in your occipital lobe. When you log off, your body stays on the tundra. Here's why diegetic UI matters for immersive 2D survival games.",
   coverImage: "/images/blog/diegetic-ui-cover.jpg",
   content: `
-    <p>Most survival games treat UI as a necessary evil - health bars floating in space, inventory screens that pause the world, maps that materialize from nowhere. In Broth & Bullets, we asked a different question: <strong>what if every interface element actually existed within the game world?</strong></p>
+    <p>Most survival games treat UI as a necessary evil - health bars floating in space, inventory screens that pause the world, maps that materialize from nowhere. In WILDER, we asked a different question: <strong>what if every interface element actually existed within the game world?</strong></p>
     
     <p>The answer led us deep into diegetic design - the practice of making UI elements part of the narrative reality. And it all starts with your on-board AI.</p>
 
@@ -23,13 +23,13 @@ export default {
 
     <h2>🗺️ The Minimap Lives in Your Brain</h2>
 
-    <p>When you open the map in Broth & Bullets, you're not pulling out a piece of paper. You're activating a hardlight projection from your neural implant - a cached GRU satellite feed that SOVA downloaded before your ship crashed on this Aleutian island.</p>
+    <p>When you open the map in WILDER, you're not pulling out a piece of paper. You're activating a hardlight projection from your neural implant - a cached GRU satellite feed that SOVA downloaded before your ship crashed on this Aleutian island.</p>
 
     <p>This explains why the map is opaque (it's literally blocking your vision), why you can't see yourself moving while it's open (you're distracted by the projection), and why opening it makes you vulnerable. Diegetic design creates natural consequences.</p>
 
     <h2>💤 Force Neural Sleep: You Don't "Log Off"</h2>
 
-    <p>Here's where it gets interesting. When you disconnect from Broth & Bullets, you don't simply vanish from the world. Your body enters <strong>Force Neural Sleep</strong> - an emergency low-power state where your mind drifts elsewhere while your physical form remains on the tundra.</p>
+    <p>Here's where it gets interesting. When you disconnect from WILDER, you don't simply vanish from the world. Your body enters <strong>Force Neural Sleep</strong> - an emergency low-power state where your mind drifts elsewhere while your physical form remains on the tundra.</p>
 
     <p>Your character stays vulnerable. Other players can find you. The world continues. This isn't a punishment - it's narrative consistency. In a diegetic world, you can't just pop out of existence.</p>
 
@@ -43,7 +43,7 @@ export default {
 
     <h2>💎 Memory Shards: Craftable Knowledge</h2>
 
-    <p>In other survival games, you collect "scrap" or "blueprints." In Broth & Bullets, you harvest <strong>Memory Shards</strong>.</p>
+    <p>In other survival games, you collect "scrap" or "blueprints." In WILDER, you harvest <strong>Memory Shards</strong>.</p>
 
     <p>Like the cairns, Memory Shards contain encoded weights - but these are modular, collectible fragments that your neural implant can process and integrate. They're the building blocks for the Memory Grid, our tech tree system where you literally construct schematics in your mind.</p>
 
@@ -66,7 +66,7 @@ export default {
 
     <h2>📚 Connected to a Larger Story</h2>
 
-    <p>Broth & Bullets isn't a standalone game. It's part of the Babushka universe - a four-book series exploring a world of bioelectric enhancement, corporate warfare, and survival against impossible odds.</p>
+    <p>WILDER isn't a standalone game. It's part of the Babushka universe - a four-book series exploring a world of bioelectric enhancement, corporate warfare, and survival against impossible odds.</p>
 
     <p>The companion book, <strong><a href="https://mybook.to/brothandbullets4" target="_blank" rel="noopener noreferrer">Tides of Oblivion</a></strong>, serves as an epilogue to the <strong><a href="https://mybook.to/brothandbullets4" target="_blank" rel="noopener noreferrer">Babushka series</a></strong> and focuses specifically on the events of this island – the same island you're surviving on. The cairns you discover, the factions you align with, the technology you scavenge – it all connects to a larger narrative.</p>
 
@@ -78,11 +78,11 @@ export default {
 
     <p>For a 2D survival game competing against 3D giants, this kind of narrative cohesion becomes a differentiator. We can't match the visual fidelity of Rust or DayZ, but we can offer something they don't: a world where every element, from cairn monuments to the minimap in your brain, tells a consistent story.</p>
 
-    <h2>🎮 Play Broth & Bullets</h2>
+    <h2>🎮 Play WILDER</h2>
 
-    <p>Ready to experience diegetic design in action? Broth & Bullets is playable now in alpha. Activate your neural implants, let SOVA guide you, and discover why the previous inhabitants carved their knowledge into stone.</p>
+    <p>Ready to experience diegetic design in action? WILDER is playable now in alpha. Activate your neural implants, let SOVA guide you, and discover why the previous inhabitants carved their knowledge into stone.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Alpha (Free)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Alpha (Free)</a></p>
 
     <p><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer" class="cta-link">→ Join the Discord Community</a></p>
 
@@ -90,8 +90,8 @@ export default {
 
     <ul>
       <li><a href="/blog/minimap-spatial-subscriptions">The Hardlight Map: Spatial Awareness in a 2D World</a> - Deep dive into our minimap system</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Gameplay Through Cooking</a> - Another example of diegetic mechanics</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Gameplay Through Cooking</a> - Another example of diegetic mechanics</li>
     </ul>
   `,
   tags: ["Game Design", "Diegetic UI", "SOVA", "Immersion", "2D Survival Game", "Multiplayer Survival", "UI Design", "Narrative Design", "Babushka Universe", "Memory Grid", "Indie Game Development"]

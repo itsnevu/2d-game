@@ -52,7 +52,7 @@ const TermsPage: React.FC = () => {
                         color: 'rgba(255, 255, 255, 0.9)',
                         margin: 0,
                     }}>
-                        <strong>Note:</strong> Broth & Bullets is currently in early access development. These terms may be updated as we add new features and finalize our service offerings.
+                        <strong>Note:</strong> WILDER is currently in early access development. These terms may be updated as we add new features and finalize our service offerings.
                     </p>
                 </div>
 
@@ -69,7 +69,7 @@ const TermsPage: React.FC = () => {
                         fontSize: '16px',
                         color: 'rgba(255, 255, 255, 0.8)',
                     }}>
-                        By accessing or using Broth & Bullets ("the Game"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Game. These Terms constitute a legally binding agreement between you and Wilder Team ("we," "us," or "Company").
+                        By accessing or using WILDER ("the Game"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Game. These Terms constitute a legally binding agreement between you and Wilder Team ("we," "us," or "Company").
                     </p>
                 </section>
 
@@ -87,7 +87,7 @@ const TermsPage: React.FC = () => {
                         color: 'rgba(255, 255, 255, 0.8)',
                         marginBottom: '20px',
                     }}>
-                        To play Broth & Bullets, you must:
+                        To play WILDER, you must:
                     </p>
                     <ul style={{
                         fontSize: '16px',
@@ -144,7 +144,7 @@ const TermsPage: React.FC = () => {
                         fontSize: '16px',
                         color: 'rgba(255, 255, 255, 0.8)',
                     }}>
-                        Broth & Bullets is currently in early access development. The Game may contain bugs, incomplete features, or undergo significant changes. We provide the Game "as is" without warranty of any kind. Your progress, items, or account data may be affected by updates or technical issues.
+                        WILDER is currently in early access development. The Game may contain bugs, incomplete features, or undergo significant changes. We provide the Game "as is" without warranty of any kind. Your progress, items, or account data may be affected by updates or technical issues.
                     </p>
                 </section>
 

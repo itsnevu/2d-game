@@ -1,17 +1,17 @@
 export default {
   slug: "custom-babushka-art-direction",
   title: "Crafting Our Babushka: A Journey Toward a Unique Art Style",
-  subtitle: "Hand-pixeling our protagonist and exploring the future of Broth & Bullets' visual identity",
+  subtitle: "Hand-pixeling our protagonist and exploring the future of WILDER' visual identity",
   date: "2025-11-16",
   author: "Wilder Team",
   authorImage: "",
   authorTwitter: "seloslav",
-  excerpt: "Our first fully custom, hand-crafted character sprite marks a turning point in Broth & Bullets' art direction. See how we're moving from AI-generated placeholders toward a distinctive visual style that might blend pixel art with painterly environments.",
+  excerpt: "Our first fully custom, hand-crafted character sprite marks a turning point in WILDER' art direction. See how we're moving from AI-generated placeholders toward a distinctive visual style that might blend pixel art with painterly environments.",
   coverImage: "/images/blog/babushka-custom-cover.jpg",
   content: `
     <h2>The First Hand-Crafted Sprite</h2>
     
-    <p>Today marks a significant milestone in Broth & Bullets' development: our first completely custom, hand-pixeled character sprite with zero AI assistance. While we've been iterating on our babushka design for months, this new version represents our commitment to developing a truly unique art style.</p>
+    <p>Today marks a significant milestone in WILDER' development: our first completely custom, hand-pixeled character sprite with zero AI assistance. While we've been iterating on our babushka design for months, this new version represents our commitment to developing a truly unique art style.</p>
     
     <div class="image-container text-center mb-4">
       <img src="/images/blog/hero_walk.png" alt="Babushka Walking Animation" class="blog-sprite-image-large" />
@@ -20,7 +20,7 @@ export default {
     
     <h2>Our Art Direction Philosophy</h2>
     
-    <p>Let's be transparent: most of the pixel art assets in Broth & Bullets right now are AI-generated placeholders. We're not trying to hide that fact. When you're building a multiplayer survival game with complex systems like crafting, building, combat, and procedural generation, you need <em>something</em> to work with while you figure out the core gameplay.</p>
+    <p>Let's be transparent: most of the pixel art assets in WILDER right now are AI-generated placeholders. We're not trying to hide that fact. When you're building a multiplayer survival game with complex systems like crafting, building, combat, and procedural generation, you need <em>something</em> to work with while you figure out the core gameplay.</p>
     
     <p>But AI-generated art, while useful for prototyping, lacks soul. It's generic. It doesn't have the intentionality and craft that makes a game visually memorable. That's why we're committed to replacing all of it with custom artwork as development progresses.</p>
     
@@ -80,7 +80,7 @@ export default {
       <li><strong>Visual Depth</strong> - Painterly environments could provide richer atmosphere and mood</li>
       <li><strong>Artistic Expression</strong> - More freedom to create detailed, evocative landscapes</li>
       <li><strong>Performance Benefits</strong> - Static painted backgrounds can be more efficient than tile-based systems</li>
-      <li><strong>Distinctive Identity</strong> - A unique blend that sets Broth & Bullets apart visually</li>
+      <li><strong>Distinctive Identity</strong> - A unique blend that sets WILDER apart visually</li>
     </ul>
     
     <p>The pixel art characters would maintain that crisp, readable quality that works perfectly for gameplay, while the environments could have a more artistic, atmospheric quality that enhances the game's Eastern European folklore aesthetic.</p>
@@ -92,7 +92,7 @@ export default {
     
     <h2>The Armor Customization Challenge</h2>
     
-    <p>Here's where things get really interesting - and potentially overwhelming. The sprite you're seeing here is what we're calling the "cloth armor" set. But the vision for Broth & Bullets includes a deep progression system with multiple armor tiers and extensive visual customization.</p>
+    <p>Here's where things get really interesting - and potentially overwhelming. The sprite you're seeing here is what we're calling the "cloth armor" set. But the vision for WILDER includes a deep progression system with multiple armor tiers and extensive visual customization.</p>
     
     <h3>The Progression System</h3>
     
@@ -184,32 +184,32 @@ export default {
     
     <h2>Join Us on This Journey</h2>
     
-    <p>We're sharing this process because we believe in transparency. Broth & Bullets is a work in progress, and we're figuring out our visual identity as we go. The AI-generated placeholders served their purpose, but now it's time to build something truly unique.</p>
+    <p>We're sharing this process because we believe in transparency. WILDER is a work in progress, and we're figuring out our visual identity as we go. The AI-generated placeholders served their purpose, but now it's time to build something truly unique.</p>
     
     <p>Whether we stick with pure pixel art or explore a hybrid pixel-painterly style, one thing is certain: every asset will be crafted with care, intention, and respect for the game's Eastern European folklore roots.</p>
     
     <p>This babushka sprite represents more than just a character redesign - it's a commitment to quality, authenticity, and artistic vision. And she's just the first of many custom assets to come.</p>
     
-    <p>Stay tuned as we continue to evolve Broth & Bullets' visual identity. The journey from AI placeholders to a fully realized, hand-crafted art style is just beginning, and we're excited to share every step with you.</p>
+    <p>Stay tuned as we continue to evolve WILDER' visual identity. The journey from AI placeholders to a fully realized, hand-crafted art style is just beginning, and we're excited to share every step with you.</p>
     
     <h2>Join the Conversation</h2>
     
-    <p>We're building Broth & Bullets in the open, and we want you to be part of the process. Have thoughts on the armor customization challenge? Ideas for the art direction? Want to see work-in-progress sprites and give feedback?</p>
+    <p>We're building WILDER in the open, and we want you to be part of the process. Have thoughts on the armor customization challenge? Ideas for the art direction? Want to see work-in-progress sprites and give feedback?</p>
     
     <p><strong>Join our Discord community!</strong> We're actively discussing art direction, sharing development updates, and getting feedback from players who care about the game's visual identity. Whether you're a pixel art enthusiast, a game developer, or just someone who appreciates hand-crafted work, we'd love to have you in the conversation.</p>
     
-    <p>This is where decisions get made, where we share early prototypes, and where the community helps shape what Broth & Bullets becomes. Don't just read about the development - be part of it.</p>
+    <p>This is where decisions get made, where we share early prototypes, and where the community helps shape what WILDER becomes. Don't just read about the development - be part of it.</p>
     
-    <p><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer" class="cta-link">→ Join the Broth & Bullets Discord</a></p>
+    <p><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer" class="cta-link">→ Join the WILDER Discord</a></p>
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Explore more about Broth & Bullets' art and design philosophy:</p>
+    <p>Explore more about WILDER' art and design philosophy:</p>
 
     <ul>
-      <li><a href="/blog/babushka-art-direction-broth-bullets">Babushka Art Direction: Creating Broth & Bullets' Unique Visual Style</a> - Our complete art direction story</li>
+      <li><a href="/blog/babushka-art-direction-wilder">Babushka Art Direction: Creating WILDER' Unique Visual Style</a> - Our complete art direction story</li>
       <li><a href="/blog/babushka-sprite-evolution">The Evolution of Our Babushka: From Simple Sprites to Battle-Hardened Matriarchs</a> - Character design journey</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
       <li><a href="/blog/armor-system-design">Armor System: More Than Just Protection</a> - Visual customization challenges</li>
     </ul>
   `,

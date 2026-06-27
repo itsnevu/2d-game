@@ -11,7 +11,7 @@ export default {
   content: `
     <h2>Finding the Soul of a Babushka</h2>
     
-    <p>When we first conceptualized Broth & Bullets, one of our earliest challenges was creating character sprites that embodied the essence of tough, survival-ready babushkas. While there's no shortage of survival game protagonists, creating elderly Slavic women capable of hunting, fighting, and crafting presented a unique character design challenge.</p>
+    <p>When we first conceptualized WILDER, one of our earliest challenges was creating character sprites that embodied the essence of tough, survival-ready babushkas. While there's no shortage of survival game protagonists, creating elderly Slavic women capable of hunting, fighting, and crafting presented a unique character design challenge.</p>
     
     <p>Our initial character sprites were directly inspired by the simplistic, charming style of games like Blazing Beaks.</p>
     
@@ -76,7 +76,7 @@ export default {
     
     <h2>Looking Forward</h2>
     
-    <p>Character design in Broth & Bullets continues to evolve as we add customization options. Players will eventually be able to customize their babushkas with different:</p>
+    <p>Character design in WILDER continues to evolve as we add customization options. Players will eventually be able to customize their babushkas with different:</p>
     
     <ul>
       <li>Headscarf patterns and colors</li>
@@ -92,12 +92,12 @@ export default {
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Dive deeper into Broth & Bullets' art and design:</p>
+    <p>Dive deeper into WILDER' art and design:</p>
 
     <ul>
-      <li><a href="/blog/babushka-art-direction-broth-bullets">Babushka Art Direction: Creating Broth & Bullets' Unique Visual Style</a> - Our complete art direction philosophy</li>
+      <li><a href="/blog/babushka-art-direction-wilder">Babushka Art Direction: Creating WILDER' Unique Visual Style</a> - Our complete art direction philosophy</li>
       <li><a href="/blog/custom-babushka-art-direction">Crafting Our Babushka: A Journey Toward a Unique Art Style</a> - Hand-pixeling process and future plans</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
       <li><a href="/blog/armor-system-design">Armor System: More Than Just Protection</a> - Visual customization in gameplay</li>
     </ul>
   `,

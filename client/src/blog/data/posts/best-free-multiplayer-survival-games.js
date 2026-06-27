@@ -15,7 +15,7 @@ export default {
 
     <h2>Top 15 Free Multiplayer Survival Games Ranked</h2>
 
-    <h3>1. Broth & Bullets</h3>
+    <h3>1. WILDER</h3>
     <p><strong>Platform:</strong> Browser | <strong>Players:</strong> MMO | <strong>Pay-to-Win:</strong> No</p>
     <p>A browser-based multiplayer survival game set in the subarctic Aleutian Islands. Features full crafting, farming, animal husbandry, base building, and an AI-powered cooking system. The persistent world saves your progress, and cooperative gameplay is encouraged. No downloads required - just open your browser and play.</p>
     <p><strong>Why it's great:</strong> Complete survival experience with zero monetization. The AI cooking system creates genuinely emergent gameplay not found in paid alternatives.</p>
@@ -150,14 +150,14 @@ export default {
       <li><strong>Mod support</strong> - Some paid games have better modding</li>
     </ul>
 
-    <p>For most players, free multiplayer survival games now offer experiences comparable to paid alternatives. Games like Broth & Bullets, Unturned, and Fortnite prove that free doesn't mean inferior.</p>
+    <p>For most players, free multiplayer survival games now offer experiences comparable to paid alternatives. Games like WILDER, Unturned, and Fortnite prove that free doesn't mean inferior.</p>
 
     <h2>Best Free Survival Games by Platform</h2>
 
     <h3>Best Free Survival Games for PC</h3>
     <ol>
       <li>Unturned - Deep zombie survival</li>
-      <li>Broth & Bullets - Browser-based crafting survival</li>
+      <li>WILDER - Browser-based crafting survival</li>
       <li>Creativerse - Voxel building and survival</li>
       <li>Muck - Roguelike survival</li>
       <li>Fortnite - Battle royale survival</li>
@@ -182,7 +182,7 @@ export default {
 
     <h3>Best Free Survival Games for Browser</h3>
     <ol>
-      <li>Broth & Bullets - Full survival experience</li>
+      <li>WILDER - Full survival experience</li>
       <li>Surviv.io - Battle royale</li>
       <li>Starve.io - Crafting survival</li>
       <li>Zombs.io - Base defense</li>
@@ -191,28 +191,28 @@ export default {
     <h2>Frequently Asked Questions</h2>
 
     <h3>What is the best free survival game?</h3>
-    <p>It depends on what you're looking for. For full crafting and base building, Unturned and Broth & Bullets are excellent. For battle royale, Fortnite remains the gold standard. For depth, Cataclysm: Dark Days Ahead is unmatched.</p>
+    <p>It depends on what you're looking for. For full crafting and base building, Unturned and WILDER are excellent. For battle royale, Fortnite remains the gold standard. For depth, Cataclysm: Dark Days Ahead is unmatched.</p>
 
     <h3>Are free survival games pay-to-win?</h3>
-    <p>Not the good ones. Games like Broth & Bullets, Unturned, Fortnite, and Muck have zero pay-to-win elements. Always check reviews before investing time in a free game.</p>
+    <p>Not the good ones. Games like WILDER, Unturned, Fortnite, and Muck have zero pay-to-win elements. Always check reviews before investing time in a free game.</p>
 
     <h3>Can I play free survival games with friends?</h3>
-    <p>Yes. Most free survival games are designed for multiplayer. Games like Broth & Bullets, Fortnite, Apex Legends, and Unturned all support playing with friends.</p>
+    <p>Yes. Most free survival games are designed for multiplayer. Games like WILDER, Fortnite, Apex Legends, and Unturned all support playing with friends.</p>
 
     <h3>Do free survival games have good content?</h3>
-    <p>Many free survival games have more content than paid alternatives. Unturned, Warframe, and Fortnite have years of accumulated content. Newer games like Broth & Bullets are adding features rapidly.</p>
+    <p>Many free survival games have more content than paid alternatives. Unturned, Warframe, and Fortnite have years of accumulated content. Newer games like WILDER are adding features rapidly.</p>
 
     <h3>What free survival game has the best crafting?</h3>
-    <p>Cataclysm: Dark Days Ahead has the deepest crafting system of any game, period. For more accessible crafting, Broth & Bullets offers AI-powered recipe generation, and Unturned has extensive crafting trees.</p>
+    <p>Cataclysm: Dark Days Ahead has the deepest crafting system of any game, period. For more accessible crafting, WILDER offers AI-powered recipe generation, and Unturned has extensive crafting trees.</p>
 
     <h3>Are there free survival games without zombies?</h3>
-    <p>Yes. Broth & Bullets features supernatural apparitions instead of zombies. Fortnite and Apex Legends are player-vs-player. Path of Titans features dinosaurs. Starve.io focuses on environmental survival.</p>
+    <p>Yes. WILDER features supernatural apparitions instead of zombies. Fortnite and Apex Legends are player-vs-player. Path of Titans features dinosaurs. Starve.io focuses on environmental survival.</p>
 
-    <h2>Play Broth & Bullets Free</h2>
+    <h2>Play WILDER Free</h2>
 
-    <p>Looking for a free multiplayer survival game with no downloads and no pay-to-win? Broth & Bullets offers a complete survival experience in your browser. Craft, farm, build, and survive with friends - completely free.</p>
+    <p>Looking for a free multiplayer survival game with no downloads and no pay-to-win? WILDER offers a complete survival experience in your browser. Craft, farm, build, and survive with friends - completely free.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Free Now</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Free Now</a></p>
 
     <h2>Related Articles</h2>
 
@@ -222,5 +222,5 @@ export default {
       <li><a href="/blog/best-cozy-survival-games">Best Cozy Survival Games</a></li>
     </ul>
   `,
-  tags: ["Free Games", "Multiplayer Games", "Survival Games", "Free to Play", "No Pay to Win", "Broth & Bullets", "Fortnite", "Unturned", "Battle Royale", "Crafting Games", "Online Games", "Best Of"]
+  tags: ["Free Games", "Multiplayer Games", "Survival Games", "Free to Play", "No Pay to Win", "WILDER", "Fortnite", "Unturned", "Battle Royale", "Crafting Games", "Online Games", "Best Of"]
 };

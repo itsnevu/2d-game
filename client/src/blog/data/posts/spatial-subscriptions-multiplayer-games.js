@@ -12,7 +12,7 @@ export default {
   content: `
     <p>One of the biggest challenges in multiplayer game development is efficiently synchronizing game state across large worlds. Sending every entity to every player is wasteful and doesn't scale. The solution? <strong>Spatial subscriptions</strong> - only send players the data they can actually see.</p>
 
-    <p>In this comprehensive guide, we'll show you how to implement spatial subscriptions using SpacetimeDB, complete with code examples from our production game, Broth & Bullets. For a practical implementation example, see how we used this system in our <a href="/blog/minimap-spatial-subscriptions">Hardlight Map feature</a>.</p>
+    <p>In this comprehensive guide, we'll show you how to implement spatial subscriptions using SpacetimeDB, complete with code examples from our production game, WILDER. For a practical implementation example, see how we used this system in our <a href="/blog/minimap-spatial-subscriptions">Hardlight Map feature</a>.</p>
 
     <h2>The Problem: Naive Synchronization</h2>
 
@@ -293,7 +293,7 @@ export default function Game() {
 
     <h2>Performance Metrics</h2>
 
-    <p>Here's what we measured in Broth & Bullets after implementing spatial subscriptions:</p>
+    <p>Here's what we measured in WILDER after implementing spatial subscriptions:</p>
 
     <h3>Before Spatial Subscriptions</h3>
     <ul>
@@ -426,7 +426,7 @@ if new_chunk != entity.chunk_index {
       <li><strong>Reduce server costs significantly</strong></li>
     </ul>
 
-    <p>The implementation requires careful coordination between server and client, but the performance gains are worth it. We've used this exact pattern in Broth & Bullets to support hundreds of concurrent players in a 10,000×10,000 world.</p>
+    <p>The implementation requires careful coordination between server and client, but the performance gains are worth it. We've used this exact pattern in WILDER to support hundreds of concurrent players in a 10,000×10,000 world.</p>
 
     <h2>Next Steps</h2>
 
@@ -439,7 +439,7 @@ if new_chunk != entity.chunk_index {
     <h2>Resources</h2>
 
     <ul>
-      <li><a href="https://github.com/clockworklabs/broth-bullets" target="_blank" rel="noopener noreferrer">Broth & Bullets Source Code</a></li>
+      <li><a href="https://github.com/clockworklabs/wilder" target="_blank" rel="noopener noreferrer">WILDER Source Code</a></li>
       <li><a href="https://spacetimedb.com/docs" target="_blank" rel="noopener noreferrer">SpacetimeDB Documentation</a></li>
       <li><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">SpacetimeDB Discord</a></li>
     </ul>

@@ -31,7 +31,7 @@ export default {
     <p>The king of pixel art survival. Terraria's detailed sprites make every biome, enemy, and item instantly recognizable. After 13+ years of updates, the pixel art has evolved while maintaining consistency. The game proves that 2D pixel graphics can deliver epic boss fights and massive worlds.</p>
     <p><strong>Pixel Art Highlights:</strong> Thousands of unique items, animated bosses, biome-specific palettes, weather effects</p>
 
-    <h3>2. Broth & Bullets</h3>
+    <h3>2. WILDER</h3>
     <p><strong>Platforms:</strong> Browser | <strong>Price:</strong> Free | <strong>Art Style:</strong> Detailed top-down pixel art</p>
     <p>A modern pixel art survival game set in the subarctic. The detailed sprites bring the Aleutian Islands to life with animated wildlife, weather effects, and charming character designs. Features crafting, farming, animal husbandry, and AI-powered cooking - all rendered in cohesive pixel art. Runs in your browser for free.</p>
     <p><strong>Pixel Art Highlights:</strong> Animated animals, weather systems, seasonal changes, detailed item sprites</p>
@@ -153,7 +153,7 @@ export default {
     <h3>Best for Multiplayer</h3>
     <ol>
       <li>Terraria - Up to 16 players</li>
-      <li>Broth & Bullets - Browser MMO</li>
+      <li>WILDER - Browser MMO</li>
       <li>Core Keeper - Cooperative mining</li>
       <li>Starbound - Server-based exploration</li>
     </ol>
@@ -171,7 +171,7 @@ export default {
       <li>Stardew Valley - Relaxing farming</li>
       <li>Forager - Satisfying progression</li>
       <li>Vampire Survivors - Quick sessions</li>
-      <li>Broth & Bullets - Browser accessibility</li>
+      <li>WILDER - Browser accessibility</li>
     </ol>
 
     <h2>The Appeal of Pixel Art in Modern Games</h2>
@@ -191,25 +191,25 @@ export default {
     <h2>Frequently Asked Questions</h2>
 
     <h3>What is the best pixel art survival game?</h3>
-    <p>Terraria is the most content-rich pixel art survival game. For farming-focused survival, Stardew Valley is unmatched. For free browser play, Broth & Bullets offers excellent pixel art survival.</p>
+    <p>Terraria is the most content-rich pixel art survival game. For farming-focused survival, Stardew Valley is unmatched. For free browser play, WILDER offers excellent pixel art survival.</p>
 
     <h3>Are pixel art games just for nostalgia?</h3>
-    <p>No. Modern pixel art games like Terraria, Stardew Valley, and Broth & Bullets use the aesthetic deliberately for clarity and artistic expression. They're designed for modern players, not just those seeking nostalgia.</p>
+    <p>No. Modern pixel art games like Terraria, Stardew Valley, and WILDER use the aesthetic deliberately for clarity and artistic expression. They're designed for modern players, not just those seeking nostalgia.</p>
 
     <h3>Can pixel art games be immersive?</h3>
     <p>Absolutely. Darkwood proves pixel/2D art can create genuine horror. Stardew Valley creates emotional connection. Terraria delivers epic moments. Immersion comes from design, not graphical fidelity.</p>
 
     <h3>Do pixel art games run better?</h3>
-    <p>Generally yes. Pixel art requires less processing power than 3D graphics. Games like Broth & Bullets run in browsers, and even detailed games like Terraria have modest system requirements.</p>
+    <p>Generally yes. Pixel art requires less processing power than 3D graphics. Games like WILDER run in browsers, and even detailed games like Terraria have modest system requirements.</p>
 
     <h3>What pixel art survival game should I start with?</h3>
-    <p>Stardew Valley for cozy survival, Terraria for action-focused survival, or Broth & Bullets for free multiplayer survival. All three are accessible to new players.</p>
+    <p>Stardew Valley for cozy survival, Terraria for action-focused survival, or WILDER for free multiplayer survival. All three are accessible to new players.</p>
 
-    <h2>Play Broth & Bullets</h2>
+    <h2>Play WILDER</h2>
 
-    <p>Experience pixel art survival in your browser. Broth & Bullets features detailed sprites, animated wildlife, and atmospheric weather - all for free with no download required.</p>
+    <p>Experience pixel art survival in your browser. WILDER features detailed sprites, animated wildlife, and atmospheric weather - all for free with no download required.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Free</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Free</a></p>
 
     <h2>Related Articles</h2>
 
@@ -217,8 +217,8 @@ export default {
       <li><a href="/blog/best-2d-survival-games">Best 2D Survival Games Ranked</a></li>
       <li><a href="/blog/best-top-down-survival-games">Best Top-Down Survival Games</a></li>
       <li><a href="/blog/best-cozy-survival-games">Best Cozy Survival Games</a></li>
-      <li><a href="/blog/babushka-art-direction-broth-bullets">Babushka Art Direction in Broth & Bullets</a></li>
+      <li><a href="/blog/babushka-art-direction-wilder">Babushka Art Direction in WILDER</a></li>
     </ul>
   `,
-  tags: ["Pixel Art Games", "Survival Games", "Retro Games", "Indie Games", "Terraria", "Stardew Valley", "Broth & Bullets", "2D Games", "Best Of", "Game Art", "Pixel Graphics"]
+  tags: ["Pixel Art Games", "Survival Games", "Retro Games", "Indie Games", "Terraria", "Stardew Valley", "WILDER", "2D Games", "Best Of", "Game Art", "Pixel Graphics"]
 };

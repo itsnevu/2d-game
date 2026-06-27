@@ -9,7 +9,7 @@ export default {
   excerpt: "After five days of intensive development, we've implemented a fully functional resource system that spans from server-side node management to client-side harvesting and inventory interaction.",
   coverImage: "/images/blog/resource-system.jpg",
   content: `
-    <p>Our goal with Broth & Bullets has always been to create a survival experience where resource gathering feels meaningful and integrated with the world. After an intense five-day development sprint, I'm excited to share that we've built a comprehensive resource system that handles everything from node spawning to inventory management.</p>
+    <p>Our goal with WILDER has always been to create a survival experience where resource gathering feels meaningful and integrated with the world. After an intense five-day development sprint, I'm excited to share that we've built a comprehensive resource system that handles everything from node spawning to inventory management.</p>
     
     <h2>Resource Nodes: The Foundation</h2>
     
@@ -139,13 +139,13 @@ export default {
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Discover how resources integrate with other Broth & Bullets systems:</p>
+    <p>Discover how resources integrate with other WILDER systems:</p>
 
     <ul>
       <li><a href="/blog/field-cauldron-mechanics">The Field Cauldron: Brewing Innovation in Survival Gameplay</a> - How resources become powerful consumables</li>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The Broth & Bullets Cooking System</a> - AI-powered recipe generation</li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">Creating Emergent Gameplay: The WILDER Cooking System</a> - AI-powered recipe generation</li>
       <li><a href="/blog/armor-system-design">Armor System: More Than Just Protection</a> - Crafting armor from gathered resources</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
     </ul>
   `,
   tags: ["Development", "Resource System", "Inventory", "Game Design", "Technical", "AI Integration"]

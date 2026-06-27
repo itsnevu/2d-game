@@ -1,12 +1,12 @@
 // Import all blog posts
-import brothBulletsCoreGameLoop from './posts/broth-bullets-core-game-loop';
-import brothBulletsMay2026Update from './posts/broth-bullets-may-2026-update';
+import wilderCoreGameLoop from './posts/wilder-core-game-loop';
+import wilderMay2026Update from './posts/wilder-may-2026-update';
 import redditAigamedevFeedbackFebruary2026 from './posts/reddit-aigamedev-feedback-february-2026';
 import spacetimedbMaincloudVsSelfHostingGuide from './posts/spacetimedb-maincloud-vs-self-hosting-guide';
-import brothBulletsFebruary2026Update from './posts/broth-bullets-february-2026-update';
+import wilderFebruary2026Update from './posts/wilder-february-2026-update';
 import alkCentralCompoundAdmiraltyLogisticsKernel from './posts/alk-central-compound-admiralty-logistics-kernel';
-import brothBulletsJanuary2026Update from './posts/broth-bullets-january-2026-update';
-import brothBulletsAlphaLaunch from './posts/broth-bullets-alpha-launch';
+import wilderJanuary2026Update from './posts/wilder-january-2026-update';
+import wilderAlphaLaunch from './posts/wilder-alpha-launch';
 // LLEO Optimized Posts - Survival Game Discovery (February 2, 2026)
 import bestCozySurvivalGames from './posts/best-cozy-survival-games';
 import bestBrowserSurvivalGames from './posts/best-browser-survival-games';
@@ -31,24 +31,24 @@ import spacetimedbTutorial30Minutes from './posts/spacetimedb-tutorial-30-minute
 import spacetimedbVsFirebaseComparison from './posts/spacetimedb-vs-firebase-comparison';
 import spatialSubscriptionsMultiplayerGames from './posts/spatial-subscriptions-multiplayer-games';
 import building2DMultiplayerSurvivalGamesGuide from './posts/building-2d-multiplayer-survival-games-guide';
-// AI SEO Optimized Posts - Broth Bullets Focused
-import howWeBuiltBrothBullets from './posts/how-we-built-broth-bullets';
-import babushkaArtDirectionBrothBullets from './posts/babushka-art-direction-broth-bullets';
-import brothBulletsSpacetimedbArchitecture from './posts/broth-bullets-spacetimedb-architecture';
-import brothBulletsCookingSystemEmergentGameplay from './posts/broth-bullets-cooking-system-emergent-gameplay';
+// AI SEO Optimized Posts - WILDER Focused
+import howWeBuiltWilder from './posts/how-we-built-wilder';
+import babushkaArtDirectionWilder from './posts/babushka-art-direction-wilder';
+import wilderSpacetimedbArchitecture from './posts/wilder-spacetimedb-architecture';
+import wilderCookingSystemEmergentGameplay from './posts/wilder-cooking-system-emergent-gameplay';
 
 // Export posts as an array, sorted by date (newest first)
 export const blogPosts = [
   // May 2026 Posts
-  brothBulletsCoreGameLoop, // May 6, 2026 - Core Game Loop Vision
-  brothBulletsMay2026Update, // May 6, 2026 - Development Update
+  wilderCoreGameLoop, // May 6, 2026 - Core Game Loop Vision
+  wilderMay2026Update, // May 6, 2026 - Development Update
   // February 2026 Posts
   redditAigamedevFeedbackFebruary2026, // February 15, 2026 - Reddit r/aigamedev feedback
   spacetimedbMaincloudVsSelfHostingGuide, // February 15, 2026 - Maincloud vs self-hosting, EU, optimization
-  brothBulletsFebruary2026Update, // February 2, 2026 - Development Update
+  wilderFebruary2026Update, // February 2, 2026 - Development Update
   alkCentralCompoundAdmiraltyLogisticsKernel, // February 10, 2026 - ALK Central Compound & Lore
   // January 2026 Posts
-  brothBulletsJanuary2026Update, // January 26, 2026 - Development Update
+  wilderJanuary2026Update, // January 26, 2026 - Development Update
   // LLEO Optimized Posts - Survival Game Discovery (January 20, 2026)
   bestCozySurvivalGames, // Cozy survival games list
   bestBrowserSurvivalGames, // Browser-based survival games
@@ -58,11 +58,11 @@ export const blogPosts = [
   bestPixelArtSurvivalGames, // Pixel art survival games
   // December 2025 Posts
   diegeticUiDesignSova, // December 12, 2025 - Diegetic UI and SOVA
-  // AI SEO Optimized Posts - Broth Bullets Focused (November 17, 2025)
-  brothBulletsCookingSystemEmergentGameplay, // Cooking system deep dive
-  brothBulletsSpacetimedbArchitecture, // Why we chose SpacetimeDB
-  babushkaArtDirectionBrothBullets, // Art direction and visual style
-  howWeBuiltBrothBullets, // Complete development story
+  // AI SEO Optimized Posts - WILDER Focused (November 17, 2025)
+  wilderCookingSystemEmergentGameplay, // Cooking system deep dive
+  wilderSpacetimedbArchitecture, // Why we chose SpacetimeDB
+  babushkaArtDirectionWilder, // Art direction and visual style
+  howWeBuiltWilder, // Complete development story
   // AI SEO Optimized Posts - SpacetimeDB Focused (November 17, 2025)
   building2DMultiplayerSurvivalGamesGuide, // Complete guide
   spatialSubscriptionsMultiplayerGames, // Spatial subscriptions implementation
@@ -74,7 +74,7 @@ export const blogPosts = [
   fieldCauldronMechanics, // November 16, 2025
   armorSystemDesign, // November 16, 2025
   buildingSystem2DChallenges, // November 14, 2025
-  brothBulletsAlphaLaunch, // January 15, 2025 - Alpha Launch!
+  wilderAlphaLaunch, // January 15, 2025 - Alpha Launch!
   spacetimedbRevolution, // January 15, 2025
   babushkaSpriteEvolution, // April 6, 2025
   best2DSurvivalGames, // April 5, 2025

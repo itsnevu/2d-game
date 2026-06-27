@@ -1,15 +1,15 @@
 export default {
-  slug: "broth-bullets-january-2026-update",
+  slug: "wilder-january-2026-update",
   title: "Closing In: January 2026 Development Update",
   subtitle: "New monuments, tree planting, food preservation, auto turrets, and a complete game loop taking shape",
   date: "2026-01-26",
   author: "Wilder Team",
   authorImage: "",
   authorTwitter: "seloslav",
-  excerpt: "It's been a while since our last update. The production server has been wiped a few times as we add new systems, but we're closing in on something special. Here's what we've shipped recently and where Broth & Bullets is headed.",
+  excerpt: "It's been a while since our last update. The production server has been wiped a few times as we add new systems, but we're closing in on something special. Here's what we've shipped recently and where WILDER is headed.",
   coverImage: "/images/blog/january-2026-update-cover.jpg",
   content: `
-    <p>It's been a minute since our last development update, and a lot has happened. We've been heads-down building, breaking, and rebuilding systems as Broth & Bullets evolves from a promising alpha into something that's starting to feel like a complete game.</p>
+    <p>It's been a minute since our last development update, and a lot has happened. We've been heads-down building, breaking, and rebuilding systems as WILDER evolves from a promising alpha into something that's starting to feel like a complete game.</p>
 
     <p>The short version? <strong>We're closing in.</strong> The full game loop is taking shape, and we're getting excited about what comes next - more distribution, podcasts, YouTube shorts, gameplay clips, and opening up the beta to more players.</p>
 
@@ -23,7 +23,7 @@ export default {
 
     <h2>🏛️ New Monuments In Progress</h2>
 
-    <p>Monuments are the backbone of exploration and progression in Broth & Bullets. Here's what we're building:</p>
+    <p>Monuments are the backbone of exploration and progression in WILDER. Here's what we're building:</p>
 
     <h3>Completed This Sprint ✅</h3>
 
@@ -109,7 +109,7 @@ export default {
     <p>We're not just building the game - we're preparing to share it more broadly. Over the coming months, expect:</p>
 
     <ul>
-      <li><strong>Podcasts</strong> - We'll be talking about Broth & Bullets, SpacetimeDB, and indie game development on various shows.</li>
+      <li><strong>Podcasts</strong> - We'll be talking about WILDER, SpacetimeDB, and indie game development on various shows.</li>
       <li><strong>YouTube Shorts</strong> - Quick gameplay clips showcasing the chaos of multiplayer survival.</li>
       <li><strong>Gameplay Sharing</strong> - More community content, streams, and player-generated clips.</li>
       <li><strong>Beta Distribution</strong> - Opening up access to more players as the core loop stabilizes.</li>
@@ -117,11 +117,11 @@ export default {
 
     <p>We're genuinely excited about where this is going. The foundation is solid, the systems are connecting, and the world is starting to feel alive.</p>
 
-    <h2>🎮 Play Broth & Bullets</h2>
+    <h2>🎮 Play WILDER</h2>
 
-    <p>Want to see where we are right now? Broth & Bullets is playable in alpha. Jump in, experience the current state of the game, and help us shape what comes next.</p>
+    <p>Want to see where we are right now? WILDER is playable in alpha. Jump in, experience the current state of the game, and help us shape what comes next.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Alpha (Free)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Alpha (Free)</a></p>
 
     <p><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer" class="cta-link">→ Join the Discord Community</a></p>
 
@@ -132,11 +132,11 @@ export default {
     <h2>🔗 Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/broth-bullets-alpha-launch">Broth & Bullets Alpha Now Live</a> - Our original alpha launch announcement</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/wilder-alpha-launch">WILDER Alpha Now Live</a> - Our original alpha launch announcement</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
       <li><a href="/blog/diegetic-ui-design-sova">Diegetic Design: Why Every UI Element Exists In-World</a> - Deep dive into our UI philosophy</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Technical architecture deep dive</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Technical architecture deep dive</li>
     </ul>
   `,
-  tags: ["Development Update", "Broth & Bullets", "SpacetimeDB", "Survival Games", "Multiplayer Gaming", "Indie Game Development", "Alpha Testing", "Game Loop", "Monuments", "Tree Planting", "Crafting System", "Food Preservation", "Auto Turrets"]
+  tags: ["Development Update", "WILDER", "SpacetimeDB", "Survival Games", "Multiplayer Gaming", "Indie Game Development", "Alpha Testing", "Game Loop", "Monuments", "Tree Planting", "Crafting System", "Food Preservation", "Auto Turrets"]
 };

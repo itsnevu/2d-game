@@ -1,5 +1,5 @@
 export default {
-  slug: "broth-bullets-february-2026-update",
+  slug: "wilder-february-2026-update",
   title: "The Living World: February 2026 Development Update",
   subtitle: "Animal husbandry, new predators, traditional food systems, and a tundra that feels alive",
   date: "2026-02-02",
@@ -11,7 +11,7 @@ export default {
   content: `
     <p>It's only been a week since our last update, but the pace of development has been relentless. What started as "let's add a few more animals" turned into a fundamental shift in how the world feels. The tundra is alive now - caribou herds migrate and breed, salmon sharks patrol the deep waters, and the alpine regions finally have the predators they deserve.</p>
 
-    <p>The short version? <strong>The ecosystem is real.</strong> Animals breed, produce resources, and create a living food chain. Combined with traditional Aleutian food preparation methods and new monuments to explore, Broth & Bullets is starting to feel like a place you could actually survive in - not just a game you play.</p>
+    <p>The short version? <strong>The ecosystem is real.</strong> Animals breed, produce resources, and create a living food chain. Combined with traditional Aleutian food preparation methods and new monuments to explore, WILDER is starting to feel like a place you could actually survive in - not just a game you play.</p>
 
     <h2>🦌 Animal Husbandry: Breeding, Milking, and Sustainable Survival</h2>
 
@@ -122,11 +122,11 @@ export default {
       <li><strong>Underwater Lab</strong> - The main lake monument is in development. What secrets does it hold?</li>
     </ul>
 
-    <h2>🎮 Play Broth & Bullets</h2>
+    <h2>🎮 Play WILDER</h2>
 
     <p>The world is more alive than ever. Jump in and experience the new ecosystem, hunt salmon sharks, milk caribou, and explore the alpine monuments.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Alpha (Free)</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Alpha (Free)</a></p>
 
     <p><a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer" class="cta-link">→ Join the Discord Community</a></p>
 
@@ -135,11 +135,11 @@ export default {
     <h2>🔗 Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/broth-bullets-january-2026-update">January 2026 Update: Closing In</a> - Last month's development update</li>
-      <li><a href="/blog/broth-bullets-alpha-launch">Broth & Bullets Alpha Now Live</a> - Our original alpha launch announcement</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
-      <li><a href="/blog/broth-bullets-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Cooking</a> - Deep dive into our cooking system</li>
+      <li><a href="/blog/wilder-january-2026-update">January 2026 Update: Closing In</a> - Last month's development update</li>
+      <li><a href="/blog/wilder-alpha-launch">WILDER Alpha Now Live</a> - Our original alpha launch announcement</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
+      <li><a href="/blog/wilder-cooking-system-emergent-gameplay">The Field Cauldron: Emergent Cooking</a> - Deep dive into our cooking system</li>
     </ul>
   `,
-  tags: ["Development Update", "Broth & Bullets", "SpacetimeDB", "Survival Games", "Multiplayer Gaming", "Indie Game Development", "Alpha Testing", "Animal Husbandry", "Breeding System", "Salmon Shark", "Polar Bear", "Traditional Food", "Monuments", "Combat System"]
+  tags: ["Development Update", "WILDER", "SpacetimeDB", "Survival Games", "Multiplayer Gaming", "Indie Game Development", "Alpha Testing", "Animal Husbandry", "Breeding System", "Salmon Shark", "Polar Bear", "Traditional Food", "Monuments", "Combat System"]
 };

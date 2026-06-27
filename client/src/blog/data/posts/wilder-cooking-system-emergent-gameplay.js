@@ -1,20 +1,20 @@
 export default {
-  slug: 'broth-bullets-cooking-system-emergent-gameplay',
-  title: 'Creating Emergent Gameplay: The Broth & Bullets Cooking System',
+  slug: 'wilder-cooking-system-emergent-gameplay',
+  title: 'Creating Emergent Gameplay: The WILDER Cooking System',
   subtitle: 'How AI-generated recipes and environmental interactions create endless discovery',
   date: '2025-11-17',
   author: 'Wilder Team',
   authorImage: '',
   authorTwitter: 'seloslav',
-  excerpt: 'Deep dive into Broth & Bullets\' signature Field Cauldron system - from AI recipe generation to environmental interactions that create emergent survival gameplay.',
-  tags: ['Broth & Bullets', 'Game Design', 'AI', 'Cooking System', 'Emergent Gameplay', 'Game Mechanics'],
-  coverImage: '/images/blog/broth-bullets-cooking-system-cover.jpg',
+  excerpt: 'Deep dive into WILDER\' signature Field Cauldron system - from AI recipe generation to environmental interactions that create emergent survival gameplay.',
+  tags: ['WILDER', 'Game Design', 'AI', 'Cooking System', 'Emergent Gameplay', 'Game Mechanics'],
+  coverImage: '/images/blog/wilder-cooking-system-cover.jpg',
   content: `
-    <p>The Field Cauldron isn't just a crafting station - it's the heart of Broth & Bullets' survival gameplay and the inspiration behind our name. This sophisticated cooking system combines AI-generated recipes, environmental interactions, and player experimentation to create truly emergent gameplay. Here's how we built it. For more on our overall game design philosophy, read <a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">how we built Broth & Bullets</a>.</p>
+    <p>The Field Cauldron isn't just a crafting station - it's the heart of WILDER' survival gameplay and the inspiration behind our name. This sophisticated cooking system combines AI-generated recipes, environmental interactions, and player experimentation to create truly emergent gameplay. Here's how we built it. For more on our overall game design philosophy, read <a href="/blog/how-we-built-wilder-multiplayer-survival-game">how we built WILDER</a>.</p>
 
     <h2>🍲 Why "Broth" & Bullets?</h2>
 
-    <p>The name "Broth & Bullets" reflects our core design philosophy: survival depends as much on what you cook as what you carry. While other survival games treat food as a simple hunger meter, we wanted cooking to be a deep, rewarding system that players actively engage with.</p>
+    <p>The name "WILDER" reflects our core design philosophy: survival depends as much on what you cook as what you carry. While other survival games treat food as a simple hunger meter, we wanted cooking to be a deep, rewarding system that players actively engage with.</p>
 
     <h3>The Design Goals</h3>
 
@@ -173,7 +173,7 @@ const recipe = await claude.generate(prompt);</code></pre>
 
     <h3>Weather System Integration</h3>
 
-    <p>The cauldron doesn't exist in isolation - it interacts with Broth & Bullets' dynamic weather:</p>
+    <p>The cauldron doesn't exist in isolation - it interacts with WILDER' dynamic weather:</p>
 
     <p><strong>During Rain:</strong></p>
     <ul>
@@ -450,10 +450,10 @@ pub fn add_ingredient_to_cauldron(
 
     <h2>🎮 Experience the System</h2>
 
-    <p>The Field Cauldron is best experienced firsthand. Join Broth & Bullets and discover your own recipes:</p>
+    <p>The Field Cauldron is best experienced firsthand. Join WILDER and discover your own recipes:</p>
 
     <ul>
-      <li><strong>Play Now</strong>: <a href="https://brothbullets.com" target="_blank" rel="noopener noreferrer">brothbullets.com</a></li>
+      <li><strong>Play Now</strong>: <a href="https://playwilder.com" target="_blank" rel="noopener noreferrer">playwilder.com</a></li>
       <li><strong>Join Discord</strong>: <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Share recipes and strategies</a></li>
       <li><strong>Follow Development</strong>: <a href="https://twitter.com/seloslav" target="_blank" rel="noopener noreferrer">@seloslav on Twitter</a></li>
     </ul>
@@ -461,9 +461,9 @@ pub fn add_ingredient_to_cauldron(
     <h2>🔗 Related Articles</h2>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets: A 2D Multiplayer Survival Game</a></li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER: A 2D Multiplayer Survival Game</a></li>
       <li><a href="/blog/field-cauldron-mechanics">The Field Cauldron: Brewing Innovation in Survival Gameplay</a></li>
-      <li><a href="/blog/field-cauldron-ai-recipe-generation">AI-Powered Recipe Generation in Broth & Bullets</a></li>
+      <li><a href="/blog/field-cauldron-ai-recipe-generation">AI-Powered Recipe Generation in WILDER</a></li>
     </ul>
 
     <p>Questions about the cooking system? Join our <a href="https://discord.gg/tUcBzfAYfs" target="_blank" rel="noopener noreferrer">Discord</a> and chat with the dev team!</p>

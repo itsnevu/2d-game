@@ -1,22 +1,22 @@
 export default {
-  slug: "broth-bullets-alpha-launch",
-  title: "Broth & Bullets Alpha Now Live: Survival in the Subarctic Tundra",
+  slug: "wilder-alpha-launch",
+  title: "WILDER Alpha Now Live: Survival in the Subarctic Tundra",
   subtitle: "Hunt, farm, craft, and fight for survival with seasonal crops, pack hunting wolves, and multiplayer PvP",
   date: "2025-01-15",
   author: "Wilder Team",
   authorImage: "",
   authorTwitter: "seloslav",
-  excerpt: "The Broth & Bullets alpha is now available! Featuring AI systems, 3D audio, seasonal farming mechanics, and SpacetimeDB integration. Play now at www.brothandbullets.com",
+  excerpt: "The WILDER alpha is now available! Featuring AI systems, 3D audio, seasonal farming mechanics, and SpacetimeDB integration. Play now at www.brothandbullets.com",
   coverImage: "/images/blog/alpha-launch-cover.jpg",
   content: `
     <h2>The Alpha is Here - Play Now at www.brothandbullets.com</h2>
     
-    <p>After months of development, we're excited to announce that the Broth & Bullets alpha is now live and available to play at <strong><a href="http://www.brothandbullets.com" target="_blank" rel="noopener noreferrer">www.brothandbullets.com</a></strong>. We've been working on our take on survival games, focusing on features that make multiplayer survival feel more dynamic and engaging.</p>
+    <p>After months of development, we're excited to announce that the WILDER alpha is now live and available to play at <strong><a href="http://www.brothandbullets.com" target="_blank" rel="noopener noreferrer">www.brothandbullets.com</a></strong>. We've been working on our take on survival games, focusing on features that make multiplayer survival feel more dynamic and engaging.</p>
     
     <p>The alpha includes a bunch of interconnected survival systems - from seasonal farming that changes throughout the year to wildlife that actually behaves like real animals. Everything from weather affecting your campfires to pack hunting wolves creates a world that feels alive and challenging.</p>
     
           <div class="image-container text-center mb-4">
-        <img src="/images/blog/alpha-gameplay-overview.jpg" alt="Broth & Bullets Alpha Gameplay Overview" data-caption="Player starting their survival journey in a forest during rainfall" class="blog-image-full mx-auto" />
+        <img src="/images/blog/alpha-gameplay-overview.jpg" alt="WILDER Alpha Gameplay Overview" data-caption="Player starting their survival journey in a forest during rainfall" class="blog-image-full mx-auto" />
         <p class="image-caption text-sm text-gray-600 mt-2">Player starting their survival journey in a forest during rainfall</p>
       </div>
     
@@ -228,7 +228,7 @@ export default {
       <li><strong>Performance Optimization</strong> - Balancing visual fidelity with smooth multiplayer performance</li>
     </ul>
     
-    <h3>The Missing Broth and Bullets</h3>
+    <h3>The Missing WILDER</h3>
     
     <p>Despite our name, two major systems await implementation:</p>
     
@@ -243,7 +243,7 @@ export default {
     <ul>
       <li>Currently, only primitive technology tier is implemented - no guns yet!</li>
       <li>All core systems are in place, meaning development will accelerate rapidly</li>
-      <li>We promise plenty of both broth AND bullets for our 1.0 release</li>
+      <li>We promise plenty of both WILDER for our 1.0 release</li>
     </ul>
     
           <div class="image-container text-center mb-4">
@@ -252,25 +252,25 @@ export default {
     
     <h2>Join the Alpha</h2>
     
-    <p>The Broth & Bullets alpha showcases what we've been able to build using SpacetimeDB. Every system you experience has been developed much faster than we initially expected thanks to this tech stack.</p>
+    <p>The WILDER alpha showcases what we've been able to build using SpacetimeDB. Every system you experience has been developed much faster than we initially expected thanks to this tech stack.</p>
     
     <p><strong>Want to try it out? Head to <a href="http://www.brothandbullets.com" target="_blank" rel="noopener noreferrer">www.brothandbullets.com</a> and jump into the alpha.</strong></p>
     
     <p>Your feedback will directly shape development of features like the Field Cauldron system, combat mechanics, and expanded building systems. This is your chance to influence the direction of the game while it's still in early development.</p>
     
-    <p>Thanks for checking out Broth & Bullets!</p>
+    <p>Thanks for checking out WILDER!</p>
 
     <h2>🔗 Deep Dive Articles</h2>
 
-    <p>Want to learn more about specific systems in Broth & Bullets?</p>
+    <p>Want to learn more about specific systems in WILDER?</p>
 
     <ul>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Technical architecture deep dive</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Technical architecture deep dive</li>
       <li><a href="/blog/field-cauldron-mechanics">The Field Cauldron: Brewing Innovation in Survival Gameplay</a> - Cooking system mechanics</li>
       <li><a href="/blog/armor-system-design">Armor System: More Than Just Protection</a> - Combat and survival systems</li>
       <li><a href="/blog/minimap-spatial-subscriptions">The Hardlight Map: Spatial Awareness in a 2D World</a> - Minimap implementation</li>
     </ul>
   `,
-  tags: ["Alpha Launch", "Broth & Bullets", "SpacetimeDB", "Survival Games", "Multiplayer Gaming", "AI Assistant", "React", "Game Development", "PvP", "Crafting System", "3D Audio", "Wildlife AI", "Alpha Testing", "Seasonal Farming"]
+  tags: ["Alpha Launch", "WILDER", "SpacetimeDB", "Survival Games", "Multiplayer Gaming", "AI Assistant", "React", "Game Development", "PvP", "Crafting System", "3D Audio", "Wildlife AI", "Alpha Testing", "Seasonal Farming"]
 }; 

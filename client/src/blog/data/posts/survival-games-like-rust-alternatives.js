@@ -31,7 +31,7 @@ export default {
     <p><strong>Similar to Rust:</strong> Resource gathering, base building, crafting progression, PvE combat</p>
     <p><strong>Different from Rust:</strong> Cooperative only, no PvP, Norse mythology setting</p>
 
-    <h3>2. Broth & Bullets</h3>
+    <h3>2. WILDER</h3>
     <p><strong>Platforms:</strong> Browser | <strong>Price:</strong> Free | <strong>Multiplayer:</strong> MMO</p>
     <p>A survival game that captures Rust's crafting depth without the toxicity. PvP exists but isn't the focus - most players cooperate or ignore each other. The AI-powered cooking system adds depth that Rust lacks. Runs in browser so friends can join instantly.</p>
     <p><strong>Similar to Rust:</strong> Crafting, base building, resource gathering, persistent world</p>
@@ -130,7 +130,7 @@ export default {
       <li>V Rising - Structured PvP with raid windows</li>
       <li>Conan Exiles (PvE-Conflict) - Limited PvP</li>
       <li>ARK (private servers) - Curated communities</li>
-      <li>Broth & Bullets - Optional PvP, cooperative focus</li>
+      <li>WILDER - Optional PvP, cooperative focus</li>
     </ol>
 
     <h3>If You Want Pure PvE</h3>
@@ -144,7 +144,7 @@ export default {
     <h3>If You Have Limited Time</h3>
     <ol>
       <li>Icarus - Session-based, no offline raids</li>
-      <li>Broth & Bullets - Persistent but not raid-focused</li>
+      <li>WILDER - Persistent but not raid-focused</li>
       <li>Valheim - Progress at your own pace</li>
       <li>Grounded - Single-player option</li>
     </ol>
@@ -170,7 +170,7 @@ export default {
         <tr>
           <td>Toxic voice chat</td>
           <td>Anonymous PvP encourages abuse</td>
-          <td>Valheim, Broth & Bullets (less PvP focus)</td>
+          <td>Valheim, WILDER (less PvP focus)</td>
         </tr>
         <tr>
           <td>Time requirements</td>
@@ -180,7 +180,7 @@ export default {
         <tr>
           <td>Wipe anxiety</td>
           <td>Progress is temporary</td>
-          <td>Valheim, Broth & Bullets (persistent)</td>
+          <td>Valheim, WILDER (persistent)</td>
         </tr>
         <tr>
           <td>New player experience</td>
@@ -193,25 +193,25 @@ export default {
     <h2>Frequently Asked Questions</h2>
 
     <h3>What game is most like Rust but less toxic?</h3>
-    <p>Valheim offers the closest experience to Rust's building and crafting without any PvP. For games that include optional PvP without the toxicity, Broth & Bullets and Conan Exiles (on PvE-Conflict servers) are excellent choices.</p>
+    <p>Valheim offers the closest experience to Rust's building and crafting without any PvP. For games that include optional PvP without the toxicity, WILDER and Conan Exiles (on PvE-Conflict servers) are excellent choices.</p>
 
     <h3>Is there a PvE version of Rust?</h3>
     <p>Rust itself offers PvE servers, but they're not officially supported. For a similar experience designed for PvE, Valheim, 7 Days to Die, and The Forest are better options with cooperative multiplayer.</p>
 
     <h3>What survival game has the best community?</h3>
-    <p>Valheim and Grounded have notably positive communities due to their cooperative focus. Browser games like Broth & Bullets tend to have better communities because the lower barrier to entry attracts casual players rather than hardcore griefers.</p>
+    <p>Valheim and Grounded have notably positive communities due to their cooperative focus. Browser games like WILDER tend to have better communities because the lower barrier to entry attracts casual players rather than hardcore griefers.</p>
 
     <h3>Can I play survival games solo?</h3>
     <p>Yes. Most Rust alternatives support solo play. Valheim, The Forest, Grounded, Project Zomboid, and 7 Days to Die all work excellently as single-player experiences.</p>
 
     <h3>What's the best free Rust alternative?</h3>
-    <p>Broth & Bullets is free with no pay-to-win and runs in your browser. Unturned (on Steam) is another excellent free option with similar survival mechanics.</p>
+    <p>WILDER is free with no pay-to-win and runs in your browser. Unturned (on Steam) is another excellent free option with similar survival mechanics.</p>
 
-    <h2>Try Broth & Bullets</h2>
+    <h2>Try WILDER</h2>
 
-    <p>Want Rust-style survival without the toxicity? Broth & Bullets offers crafting, building, and multiplayer survival in a more cooperative environment. It's free, runs in your browser, and you can start playing in seconds.</p>
+    <p>Want Rust-style survival without the toxicity? WILDER offers crafting, building, and multiplayer survival in a more cooperative environment. It's free, runs in your browser, and you can start playing in seconds.</p>
 
-    <p><a href="/" class="cta-link">→ Play Broth & Bullets Free</a></p>
+    <p><a href="/" class="cta-link">→ Play WILDER Free</a></p>
 
     <h2>Related Articles</h2>
 
@@ -221,5 +221,5 @@ export default {
       <li><a href="/blog/best-2d-survival-games">Best 2D Survival Games</a></li>
     </ul>
   `,
-  tags: ["Rust Alternatives", "Survival Games", "Multiplayer Games", "Base Building", "Crafting Games", "Valheim", "Broth & Bullets", "PvE Survival", "Cooperative Games", "Less Toxic", "Game Recommendations"]
+  tags: ["Rust Alternatives", "Survival Games", "Multiplayer Games", "Base Building", "Crafting Games", "Valheim", "WILDER", "PvE Survival", "Cooperative Games", "Less Toxic", "Game Recommendations"]
 };

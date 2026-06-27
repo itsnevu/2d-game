@@ -9,7 +9,7 @@ export default {
   excerpt: "In 3D survival games you scan the horizon. In 2D top-down? Your viewport is your prison. Here's how we used SpacetimeDB's spatial subscriptions to give players the awareness they deserve.",
   coverImage: "/images/blog/minimap-cover.jpg",
   content: `
-    <p>When we started building Broth & Bullets, we hit a fundamental problem that plagues every 2D top-down survival game: the viewport paradox. In a 3D game like Rust or DayZ, you can literally scan the horizon and spot resource nodes, bases, and threats in the distance. But in a 2D top-down game? You're locked to your viewport. What you see is all you get.</p>
+    <p>When we started building WILDER, we hit a fundamental problem that plagues every 2D top-down survival game: the viewport paradox. In a 3D game like Rust or DayZ, you can literally scan the horizon and spot resource nodes, bases, and threats in the distance. But in a 2D top-down game? You're locked to your viewport. What you see is all you get.</p>
     
     <p>Except that doesn't make sense, does it? Your character - a genetically enhanced operative with ocular implants and an on-board AI - should be able to see further than the arbitrary rectangle of your screen. That's where the minimap comes in, and it's not just a quality-of-life feature. It's a lore-consistent solution to a fundamental game design problem.</p>
 
@@ -89,7 +89,7 @@ const getChunkIndicesForViewportWithBuffer = (viewport, bufferChunks = 1) => {
 
     <h2>🎮 The Gameplay Impact</h2>
 
-    <p>The minimap fundamentally changes how you play Broth & Bullets:</p>
+    <p>The minimap fundamentally changes how you play WILDER:</p>
 
     <ul>
       <li><strong>Resource Gathering:</strong> Spot clusters of trees or ore deposits without wandering aimlessly</li>
@@ -116,12 +116,12 @@ const getChunkIndicesForViewportWithBuffer = (viewport, bufferChunks = 1) => {
 
     <h2>🔗 Related Articles</h2>
 
-    <p>Want to learn more about the technical systems behind Broth & Bullets?</p>
+    <p>Want to learn more about the technical systems behind WILDER?</p>
 
     <ul>
       <li><a href="/blog/spatial-subscriptions-multiplayer-games">Implementing Spatial Subscriptions in Multiplayer Games</a> - Deep dive into the chunk-based subscription system</li>
-      <li><a href="/blog/broth-bullets-spacetimedb-architecture">Why Broth & Bullets Uses SpacetimeDB</a> - Our complete technical architecture story</li>
-      <li><a href="/blog/how-we-built-broth-bullets-multiplayer-survival-game">How We Built Broth & Bullets</a> - The complete development story</li>
+      <li><a href="/blog/wilder-spacetimedb-architecture">Why WILDER Uses SpacetimeDB</a> - Our complete technical architecture story</li>
+      <li><a href="/blog/how-we-built-wilder-multiplayer-survival-game">How We Built WILDER</a> - The complete development story</li>
       <li><a href="/blog/building-2d-multiplayer-survival-games-guide">Complete Guide to Building 2D Multiplayer Survival Games</a> - Comprehensive tutorial</li>
     </ul>
 
