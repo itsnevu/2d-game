@@ -18,6 +18,7 @@ import TargetingReticle from './TargetingReticle';
 import FishingManager from './FishingManager';
 import { type CairnNotification } from './CairnUnlockNotification';
 import GameScreenOverlayUI from './GameScreenOverlayUI';
+import GameIntroOverlay, { hasSeenGameIntro } from './GameIntroOverlay';
 import { ASSISTANT_NAME } from '../constants/branding';
 
 // Import types used by props
@@ -130,6 +131,8 @@ interface GameScreenProps {
 
 const GameScreen: React.FC<GameScreenProps> = (props) => {
     const [autoActionStates, setAutoActionStates] = useState({ isAutoAttacking: false });
+    // First-time onboarding overlay (skippable; voice keeps playing if skipped).
+    const [showIntro, setShowIntro] = useState<boolean>(() => !hasSeenGameIntro());
 
     // Cairn unlock notification state
     const [cairnNotification, setCairnNotification] = useState<CairnNotification | null>(null);
@@ -275,6 +278,9 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
 
     return (
         <div className="game-container">
+            {showIntro && !isSpectator && localPlayer && (
+                <GameIntroOverlay onClose={() => setShowIntro(false)} />
+            )}
             <GameScreenOverlayUI
                 isMobile={isMobile}
                 localPlayer={localPlayer}

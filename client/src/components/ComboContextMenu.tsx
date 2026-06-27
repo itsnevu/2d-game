@@ -81,7 +81,7 @@ const ComboContextMenu: React.FC<ComboContextMenuProps> = ({
                     e.currentTarget.style.boxShadow = 'none';
                 }}
             >
-                🔥 Campfire
+                Campfire
             </button>
             
             <button
@@ -112,7 +112,7 @@ const ComboContextMenu: React.FC<ComboContextMenuProps> = ({
                     e.currentTarget.style.boxShadow = 'none';
                 }}
             >
-                🍲 Broth Pot
+                Broth Pot
             </button>
             
             <button

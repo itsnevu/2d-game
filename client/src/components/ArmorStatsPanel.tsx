@@ -56,12 +56,12 @@ interface AbilityHint {
 
 const ITEM_ABILITY_HINTS: Record<string, AbilityHint> = {
     "Reed Diver's Helm": {
-        icon: '🌊',
+        icon: '',
         label: 'Dive',
         hint: 'Press [F] over water to submerge'
     },
     "Headlamp": {
-        icon: '💡',
+        icon: '',
         label: 'Light',
         hint: 'Press [F] to toggle light'
     },
@@ -183,7 +183,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
     if (equippedArmor.length === 0) {
         return (
             <div className={styles.armorStatsPanel}>
-                <h4 className={styles.title}>⚔️ Armor Stats</h4>
+                <h4 className={styles.title}>Armor Stats</h4>
                 <div className={styles.emptyState}>No armor equipped</div>
             </div>
         );
@@ -191,11 +191,11 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
 
     return (
         <div className={styles.armorStatsPanel}>
-            <h4 className={styles.title}>⚔️ Armor Stats</h4>
+            <h4 className={styles.title}>Armor Stats</h4>
 
             {/* Resistances Section */}
             <div className={styles.section}>
-                <div className={styles.sectionTitle}>🛡️ Resistances</div>
+                <div className={styles.sectionTitle}>Resistances</div>
                 {stats.meleeResistance > 0 && (
                     <div className={styles.statRow}>
                         <span className={styles.statLabel}>Melee:</span>
@@ -236,7 +236,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                 )}
                 {stats.coldResistance > 0 && (
                     <div className={styles.statRow}>
-                        <span className={styles.statLabel}>❄️ Cold:</span>
+                        <span className={styles.statLabel}>Cold:</span>
                         <span className={styles.statValue}>{formatPercent(stats.coldResistance, false)}</span>
                     </div>
                 )}
@@ -245,10 +245,10 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
             {/* Bonuses Section */}
             {(stats.warmthBonus !== 0 || stats.movementSpeedModifier !== 0 || stats.enduranceDrainReduction !== 0 || stats.waterSpeedBonus !== 0) && (
                 <div className={styles.section}>
-                    <div className={styles.sectionTitle}>✨ Bonuses</div>
+                    <div className={styles.sectionTitle}>Bonuses</div>
                     {stats.warmthBonus !== 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🔥 Warmth:</span>
+                            <span className={styles.statLabel}>Warmth:</span>
                             <span className={`${styles.statValue} ${stats.warmthBonus > 0 ? styles.positive : styles.negative}`}>
                                 {formatDecimal(stats.warmthBonus)}/s
                             </span>
@@ -256,7 +256,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.movementSpeedModifier !== 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>👟 Speed:</span>
+                            <span className={styles.statLabel}>Speed:</span>
                             <span className={`${styles.statValue} ${stats.movementSpeedModifier > 0 ? styles.positive : styles.negative}`}>
                                 {formatPercent(stats.movementSpeedModifier)}
                             </span>
@@ -264,7 +264,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.waterSpeedBonus !== 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🏊 Water Speed:</span>
+                            <span className={styles.statLabel}>Water Speed:</span>
                             <span className={`${styles.statValue} ${styles.positive}`}>
                                 {formatPercent(stats.waterSpeedBonus)}
                             </span>
@@ -272,7 +272,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.enduranceDrainReduction !== 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>⚡ Hunger/Thirst Drain:</span>
+                            <span className={styles.statLabel}>Hunger/Thirst Drain:</span>
                             <span className={styles.statValue}>-{formatPercent(stats.enduranceDrainReduction, false)}</span>
                         </div>
                     )}
@@ -283,10 +283,10 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
             {(stats.burnImmunityPieces > 0 || stats.coldImmunityPieces > 0 || stats.wetnessImmunityPieces > 0 || 
               stats.knockbackImmunityPieces > 0 || stats.bleedImmunityPieces > 0) && (
                 <div className={styles.section}>
-                    <div className={styles.sectionTitle}>🛡️ Immunities</div>
+                    <div className={styles.sectionTitle}>Immunities</div>
                     {stats.burnImmunityPieces > 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🔥 Burn:</span>
+                            <span className={styles.statLabel}>Burn:</span>
                             <span className={`${styles.statValue} ${stats.burnImmunityPieces >= 5 ? styles.immune : ''}`}>
                                 {stats.burnImmunityPieces}/5 {stats.burnImmunityPieces >= 5 ? '✓' : ''}
                             </span>
@@ -294,7 +294,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.coldImmunityPieces > 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>❄️ Cold:</span>
+                            <span className={styles.statLabel}>Cold:</span>
                             <span className={`${styles.statValue} ${stats.coldImmunityPieces >= 5 ? styles.immune : ''}`}>
                                 {stats.coldImmunityPieces}/5 {stats.coldImmunityPieces >= 5 ? '✓' : ''}
                             </span>
@@ -302,7 +302,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.wetnessImmunityPieces > 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>💧 Wetness:</span>
+                            <span className={styles.statLabel}>Wetness:</span>
                             <span className={`${styles.statValue} ${stats.wetnessImmunityPieces >= 5 ? styles.immune : ''}`}>
                                 {stats.wetnessImmunityPieces}/5 {stats.wetnessImmunityPieces >= 5 ? '✓' : ''}
                             </span>
@@ -310,7 +310,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.knockbackImmunityPieces > 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>💥 Knockback:</span>
+                            <span className={styles.statLabel}>Knockback:</span>
                             <span className={`${styles.statValue} ${stats.knockbackImmunityPieces >= 5 ? styles.immune : ''}`}>
                                 {stats.knockbackImmunityPieces}/5 {stats.knockbackImmunityPieces >= 5 ? '✓' : ''}
                             </span>
@@ -318,7 +318,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.bleedImmunityPieces > 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🩸 Bleed:</span>
+                            <span className={styles.statLabel}>Bleed:</span>
                             <span className={`${styles.statValue} ${stats.bleedImmunityPieces >= 3 ? styles.immune : ''}`}>
                                 {stats.bleedImmunityPieces}/3 {stats.bleedImmunityPieces >= 3 ? '✓' : ''}
                             </span>
@@ -331,16 +331,16 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
             {(stats.meleeReflection > 0 || stats.fireDamageMultiplier !== 1.0 || stats.detectionBonus !== 0 || 
               stats.lowHealthDamageBonus > 0 || stats.makesNoiseOnSprint || stats.hasSilentMovement || stats.intimidatesAnimals) && (
                 <div className={styles.section}>
-                    <div className={styles.sectionTitle}>🌟 Special Effects</div>
+                    <div className={styles.sectionTitle}>Special Effects</div>
                     {stats.meleeReflection > 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🪞 Melee Reflect:</span>
+                            <span className={styles.statLabel}>Melee Reflect:</span>
                             <span className={styles.statValue}>{formatPercent(stats.meleeReflection, false)}</span>
                         </div>
                     )}
                     {stats.fireDamageMultiplier > 1.0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🔥 Fire Damage:</span>
+                            <span className={styles.statLabel}>Fire Damage:</span>
                             <span className={styles.statValue + ' ' + styles.negative}>
                                 ×{stats.fireDamageMultiplier.toFixed(1)}
                             </span>
@@ -348,7 +348,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.detectionBonus !== 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>👁️ Stealth:</span>
+                            <span className={styles.statLabel}>Stealth:</span>
                             <span className={styles.statValue + ' ' + styles.positive}>
                                 {formatPercent(stats.detectionBonus, false)}
                             </span>
@@ -356,7 +356,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.lowHealthDamageBonus > 0 && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>⚔️ Low HP Damage:</span>
+                            <span className={styles.statLabel}>Low HP Damage:</span>
                             <span className={styles.statValue + ' ' + styles.positive}>
                                 {formatPercent(stats.lowHealthDamageBonus)}
                             </span>
@@ -364,19 +364,19 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
                     )}
                     {stats.hasSilentMovement && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🦊 Silent Movement</span>
+                            <span className={styles.statLabel}>Silent Movement</span>
                             <span className={styles.statValue + ' ' + styles.positive}>✓</span>
                         </div>
                     )}
                     {stats.intimidatesAnimals && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🐺 Intimidation</span>
+                            <span className={styles.statLabel}>Intimidation</span>
                             <span className={styles.statValue + ' ' + styles.positive}>✓</span>
                         </div>
                     )}
                     {stats.makesNoiseOnSprint && (
                         <div className={styles.statRow}>
-                            <span className={styles.statLabel}>🔊 Noisy Sprint</span>
+                            <span className={styles.statLabel}>Noisy Sprint</span>
                             <span className={styles.statValue + ' ' + styles.negative}>✓</span>
                         </div>
                     )}
@@ -386,7 +386,7 @@ const ArmorStatsPanel: React.FC<ArmorStatsPanelProps> = ({ equippedArmor }) => {
             {/* Ability Hints Section */}
             {abilityHints.length > 0 && (
                 <div className={styles.section}>
-                    <div className={styles.sectionTitle}>💡 Abilities</div>
+                    <div className={styles.sectionTitle}>Abilities</div>
                     {abilityHints.map((hint, index) => (
                         <div key={index} className={styles.abilityHint}>
                             <span className={styles.abilityIcon}>{hint.icon}</span>

@@ -282,9 +282,9 @@ const UplinkNotifications: React.FC<UplinkNotificationsProps> = ({
   const colors = getTypeColors();
   const getIcon = () => {
     switch (activeNotification.type) {
-      case 'level_up': return '⚡';
-      case 'achievement': return '🏆';
-      case 'mission_complete': return '✓';
+      case 'level_up': return 'LVL';
+      case 'achievement': return 'ACH';
+      case 'mission_complete': return 'OK';
     }
   };
 

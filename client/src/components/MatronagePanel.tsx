@@ -25,37 +25,37 @@ const memoryShardIcon = getItemIcon('memory_shard.png');
 
 // Available FontAwesome icons for matronages (must match server-side ALLOWED_ICONS)
 const MATRONAGE_ICONS = [
-    { id: 'fa-users', label: 'Users', symbol: '👥' },
-    { id: 'fa-shield', label: 'Shield', symbol: '🛡️' },
-    { id: 'fa-hammer', label: 'Hammer', symbol: '🔨' },
-    { id: 'fa-gem', label: 'Gem', symbol: '💎' },
-    { id: 'fa-crown', label: 'Crown', symbol: '👑' },
-    { id: 'fa-fire', label: 'Fire', symbol: '🔥' },
-    { id: 'fa-bolt', label: 'Bolt', symbol: '⚡' },
-    { id: 'fa-star', label: 'Star', symbol: '⭐' },
-    { id: 'fa-skull', label: 'Skull', symbol: '💀' },
-    { id: 'fa-dragon', label: 'Dragon', symbol: '🐉' },
-    { id: 'fa-sword', label: 'Sword', symbol: '⚔️' },
-    { id: 'fa-axe', label: 'Axe', symbol: '🪓' },
-    { id: 'fa-bow-arrow', label: 'Bow', symbol: '🏹' },
-    { id: 'fa-helmet-battle', label: 'Helmet', symbol: '🪖' },
-    { id: 'fa-castle', label: 'Castle', symbol: '🏰' },
-    { id: 'fa-coins', label: 'Coins', symbol: '🪙' },
-    { id: 'fa-flask', label: 'Flask', symbol: '⚗️' },
-    { id: 'fa-hand-fist', label: 'Fist', symbol: '✊' },
-    { id: 'fa-mountain', label: 'Mountain', symbol: '⛰️' },
-    { id: 'fa-tree', label: 'Tree', symbol: '🌲' },
-    { id: 'fa-wolf', label: 'Wolf', symbol: '🐺' },
-    { id: 'fa-raven', label: 'Raven', symbol: '🐦‍⬛' },
-    { id: 'fa-compass', label: 'Compass', symbol: '🧭' },
-    { id: 'fa-anchor', label: 'Anchor', symbol: '⚓' },
-    { id: 'fa-scroll', label: 'Scroll', symbol: '📜' },
+    { id: 'fa-users', label: 'Users', symbol: '' },
+    { id: 'fa-shield', label: 'Shield', symbol: '' },
+    { id: 'fa-hammer', label: 'Hammer', symbol: '' },
+    { id: 'fa-gem', label: 'Gem', symbol: '' },
+    { id: 'fa-crown', label: 'Crown', symbol: '' },
+    { id: 'fa-fire', label: 'Fire', symbol: '' },
+    { id: 'fa-bolt', label: 'Bolt', symbol: '' },
+    { id: 'fa-star', label: 'Star', symbol: '' },
+    { id: 'fa-skull', label: 'Skull', symbol: '' },
+    { id: 'fa-dragon', label: 'Dragon', symbol: '' },
+    { id: 'fa-sword', label: 'Sword', symbol: '' },
+    { id: 'fa-axe', label: 'Axe', symbol: '' },
+    { id: 'fa-bow-arrow', label: 'Bow', symbol: '' },
+    { id: 'fa-helmet-battle', label: 'Helmet', symbol: '' },
+    { id: 'fa-castle', label: 'Castle', symbol: '' },
+    { id: 'fa-coins', label: 'Coins', symbol: '' },
+    { id: 'fa-flask', label: 'Flask', symbol: '' },
+    { id: 'fa-hand-fist', label: 'Fist', symbol: '' },
+    { id: 'fa-mountain', label: 'Mountain', symbol: '' },
+    { id: 'fa-tree', label: 'Tree', symbol: '' },
+    { id: 'fa-wolf', label: 'Wolf', symbol: '' },
+    { id: 'fa-raven', label: 'Raven', symbol: '' },
+    { id: 'fa-compass', label: 'Compass', symbol: '' },
+    { id: 'fa-anchor', label: 'Anchor', symbol: '' },
+    { id: 'fa-scroll', label: 'Scroll', symbol: '' },
 ];
 
 // Get icon symbol from id
 const getIconSymbol = (iconId: string): string => {
     const icon = MATRONAGE_ICONS.find(i => i.id === iconId);
-    return icon?.symbol || '👥';
+    return icon?.symbol || '';
 };
 
 // Helper to format BigInt values
@@ -156,7 +156,7 @@ const MatronagePanel: React.FC = () => {
         <div className="dissolve-dialog-overlay" onClick={() => setShowDissolveDialog(false)}>
             <div className="dissolve-dialog" onClick={e => e.stopPropagation()}>
                 <div className="dissolve-dialog-header">
-                    <span className="dissolve-icon">⚠️</span>
+                    <span className="dissolve-icon"></span>
                     <h3>Dissolve Matronage</h3>
                 </div>
                 <div className="dissolve-dialog-content">
@@ -194,7 +194,7 @@ const MatronagePanel: React.FC = () => {
             {/* Pending Invitations */}
             {pendingInvitations.length > 0 && (
                 <div className="matronage-pending-invitations">
-                    <h4>📨 Pending Invitations</h4>
+                    <h4>Pending Invitations</h4>
                     {pendingInvitations.map((inv: any) => (
                         <div key={inv.id?.toString()} className="invitation-card">
                             <div className="invitation-info">
@@ -229,7 +229,7 @@ const MatronagePanel: React.FC = () => {
             {/* Owed Shards (from past membership) */}
             {owedShards > 0n && (
                 <div className="matronage-owed-shards-section">
-                    <h4>💎 Owed Shards</h4>
+                    <h4>Owed Shards</h4>
                     <p>You have {formatBigInt(owedShards)} shards to withdraw from past matronage membership.</p>
                     <button 
                         className="withdraw-btn"
@@ -243,13 +243,13 @@ const MatronagePanel: React.FC = () => {
 
             {/* Info about creating a matronage */}
             <div className="matronage-create-info">
-                <h4>🏛️ Create a Matronage</h4>
+                <h4>Create a Matronage</h4>
                 <p>To found a Matronage, craft a <strong>Matron's Mark</strong> (100 Metal Fragments) and visit the <strong>ALK Central Compound</strong>.</p>
             </div>
 
             {/* Browse existing matronages */}
             <div className="matronage-explore-preview">
-                <h4>🔍 Browse Matronages</h4>
+                <h4>Browse Matronages</h4>
                 <p>There are <strong>{matronages.size}</strong> active matronages on the server.</p>
                 <button 
                     className="explore-btn"
@@ -267,7 +267,7 @@ const MatronagePanel: React.FC = () => {
             <div className="matronage-header">
                 <span className="matronage-icon-display">{getIconSymbol(playerMatronage?.icon)}</span>
                 <h2 className="matronage-name">{playerMatronage?.name || 'Unknown'}</h2>
-                {isPraMatron && <span className="pra-matron-badge">👑 Pra Matron</span>}
+                {isPraMatron && <span className="pra-matron-badge">Pra Matron</span>}
             </div>
 
             {playerMatronage?.description && (
@@ -295,7 +295,7 @@ const MatronagePanel: React.FC = () => {
             </div>
 
             <div className="owed-shards-section">
-                <h3>💎 Your Owed Shards</h3>
+                <h3>Your Owed Shards</h3>
                 <div className="owed-shards-display">
                     <img src={memoryShardIcon} alt="Shards" className="shard-icon-large" />
                     <span className="owed-amount">{formatBigInt(owedShards)}</span>
@@ -321,7 +321,7 @@ const MatronagePanel: React.FC = () => {
     // Render members tab
     const renderMembers = () => (
         <div className="matronage-members">
-            <h3>👥 Members ({matronageAllMembers.length})</h3>
+            <h3>Members ({matronageAllMembers.length})</h3>
             <div className="members-list">
                 {matronageAllMembers.map((member: any) => {
                     const username = getUsernameForIdentity(member.playerId);
@@ -333,7 +333,7 @@ const MatronagePanel: React.FC = () => {
                             <div className="member-info">
                                 <span className="member-name">
                                     {username}
-                                    {memberIsPraMatron && <span className="pra-matron-indicator">👑</span>}
+                                    {memberIsPraMatron && <span className="pra-matron-indicator"></span>}
                                     {isCurrentPlayer && <span className="you-indicator">(You)</span>}
                                 </span>
                                 <span className="member-joined">
@@ -348,7 +348,6 @@ const MatronagePanel: React.FC = () => {
                                         disabled={isLoading}
                                         title="Transfer leadership"
                                     >
-                                        👑
                                     </button>
                                     <button 
                                         className="remove-btn"
@@ -370,7 +369,7 @@ const MatronagePanel: React.FC = () => {
     // Render invitations tab (for Pra Matron)
     const renderInvitations = () => (
         <div className="matronage-invitations">
-            <h3>📨 Invite Players</h3>
+            <h3>Invite Players</h3>
             {isPraMatron ? (
                 <>
                     {/* Unified search/invite input */}
@@ -402,7 +401,7 @@ const MatronagePanel: React.FC = () => {
 
                     {/* Filtered player list */}
                     <div className="player-list-section">
-                        <h4>{playerSearchFilter ? '🔍 Matching Players' : '🔍 Available Players'}</h4>
+                        <h4>{playerSearchFilter ? 'Matching Players' : 'Available Players'}</h4>
                         <div className="player-invite-list">
                             {invitablePlayers.length === 0 ? (
                                 <p className="no-players">
@@ -442,7 +441,7 @@ const MatronagePanel: React.FC = () => {
     // Render management tab (for Pra Matron)
     const renderManagement = () => (
         <div className="matronage-management">
-            <h3>⚙️ Management</h3>
+            <h3>Management</h3>
             
             {isPraMatron ? (
                 <>
@@ -524,7 +523,7 @@ const MatronagePanel: React.FC = () => {
 
                     {/* Danger zone */}
                     <div className="management-section danger-section">
-                        <h4>⚠️ Danger Zone</h4>
+                        <h4>Danger Zone</h4>
                         <button 
                             className="dissolve-btn"
                             onClick={() => setShowDissolveDialog(true)}
@@ -579,7 +578,7 @@ const MatronagePanel: React.FC = () => {
                                         <span className="your-matronage-badge">Your Matronage</span>
                                     )}
                                 </div>
-                                <span className="explore-members">{m.memberCount} 👥</span>
+                                <span className="explore-members">{m.memberCount}</span>
                             </div>
                             {m.description && (
                                 <p className="explore-description">{m.description}</p>

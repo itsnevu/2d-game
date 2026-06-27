@@ -237,7 +237,6 @@ const ContainerSlots: React.FC<ContainerSlotsProps> = ({
                                 pointerEvents: 'none',
                                 textShadow: '0 0 2px rgba(0, 0, 0, 0.8)'
                             }}>
-                                💧
                             </div>
                         )}
                         
@@ -253,7 +252,6 @@ const ContainerSlots: React.FC<ContainerSlotsProps> = ({
                                 pointerEvents: 'none',
                                 textShadow: '0 0 2px rgba(0, 0, 0, 0.8)'
                             }} title="Hot! Use gloves to avoid burn damage">
-                                🔥
                             </div>
                         )}
                         </DroppableSlot>
@@ -379,7 +377,7 @@ const DurabilityIndicator: React.FC<{ item: PopulatedItem }> = ({ item }) => {
                         textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                         userSelect: 'none'
                     }}>
-                        {isFood ? '🦠' : '✖'}
+                        {'✖'}
                     </span>
                 </div>
             )}

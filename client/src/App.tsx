@@ -14,10 +14,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginScreen from './components/LoginScreen';
 import GameplayRuntimeBridge from './components/GameplayRuntimeBridge';
 
-// Blog Components
-import BlogPage from './blog/BlogPage';
-import BlogPostPage from './blog/BlogPostPage';
-
 // Legal Pages
 import PrivacyPage from './components/PrivacyPage';
 import TermsPage from './components/TermsPage';
@@ -273,9 +269,7 @@ function App() {
                     <Router>
                         <Routes>
                             <Route path="/" element={<AppErrorBoundary><AppContent /></AppErrorBoundary>} />
-                            <Route path="/blog" element={<BlogPage />} />
                             <Route path="/about" element={<AboutPage />} />
-                            <Route path="/blog/:slug" element={<BlogPostPage />} />
                             <Route path="/privacy" element={<PrivacyPage />} />
                             <Route path="/terms" element={<TermsPage />} />
                             <Route path="/cookies" element={<CookiesPage />} />

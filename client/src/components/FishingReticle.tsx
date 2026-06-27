@@ -210,7 +210,7 @@ const FishingReticle: React.FC<FishingReticleProps> = ({
         <div className={styles.reticleTitle}>FISHING MODE</div>
         <div className={styles.reticleInstruction}>Left-Click on water to cast your line</div>
         <div className={`${styles.reticleStatus} ${isValidTarget ? styles.reticleStatusValid : styles.reticleStatusInvalid}`}>
-          {isValidTarget ? '✓ Ready to cast' : '⚠ Move to water within range'}
+          {isValidTarget ? '✓ Ready to cast' : 'Move to water within range'}
         </div>
       </div>
     </>

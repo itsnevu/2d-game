@@ -859,7 +859,7 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
       {showResult && (
         <div className={`${styles.resultNotification} ${showResult.type === 'success' ? styles.resultSuccess : styles.resultFailure}`}>
           <span className={styles.resultIcon}>
-            {showResult.type === 'success' ? '🎣' : '😞'}
+            {showResult.type === 'success' ? '' : ''}
           </span>
           <div>{showResult.type === 'success' ? 'Success!' : 'Fish Lost!'}</div>
           <div className={styles.resultMessage}>{showResult.message}</div>
@@ -870,14 +870,14 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
       {!isRemotePlayer && (
         <div className={phase === 'caught' ? styles.fishingPanelWide : styles.fishingPanel}>
           <div className={styles.panelTitle}>
-            🎣 {phase === 'waiting' ? 'Waiting for bite...' : 'FISH ON!'}
+            {phase === 'waiting' ? 'Waiting for bite...' : 'FISH ON!'}
           </div>
           
           {phase === 'waiting' && (
             <>
               {/* Fishing depth and conditions */}
               <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>📏 Depth:</span>
+                <span className={styles.infoLabel}>Depth:</span>
                 <span className={`${styles.infoValue} ${distanceBiteMultiplier > 1.5 ? styles.infoValueGood : distanceBiteMultiplier > 1.0 ? styles.infoValueMedium : styles.infoValueBad}`}>
                   {Math.round(calculateBobberToShoreDistance(bobber.x, bobber.y, isWaterTile) / 10)}m ({distanceBiteMultiplier.toFixed(1)}x)
                 </span>
@@ -885,12 +885,12 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
               
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>
-                  {worldState?.currentWeather?.tag === 'Clear' && '☀️ Weather:'}
-                  {worldState?.currentWeather?.tag === 'LightRain' && '🌦️ Weather:'}
-                  {worldState?.currentWeather?.tag === 'ModerateRain' && '🌧️ Weather:'}
-                  {worldState?.currentWeather?.tag === 'HeavyRain' && '⛈️ Weather:'}
-                  {worldState?.currentWeather?.tag === 'HeavyStorm' && '🌩️ Weather:'}
-                  {!worldState?.currentWeather && '☀️ Weather:'}
+                  {worldState?.currentWeather?.tag === 'Clear' && 'Weather:'}
+                  {worldState?.currentWeather?.tag === 'LightRain' && 'Weather:'}
+                  {worldState?.currentWeather?.tag === 'ModerateRain' && 'Weather:'}
+                  {worldState?.currentWeather?.tag === 'HeavyRain' && 'Weather:'}
+                  {worldState?.currentWeather?.tag === 'HeavyStorm' && 'Weather:'}
+                  {!worldState?.currentWeather && 'Weather:'}
                 </span>
                 <span className={`${styles.infoValue} ${rainBiteMultiplier > 2.0 ? styles.infoValueGood : rainBiteMultiplier > 1.0 ? styles.infoValueMedium : ''}`}>
                   {rainBiteMultiplier.toFixed(1)}x
@@ -898,7 +898,7 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
               </div>
               
               <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>🎣 Bite Chance:</span>
+                <span className={styles.infoLabel}>Bite Chance:</span>
                 <span className={`${styles.infoValue} ${totalBiteMultiplier > 3.0 ? styles.infoValueGood : totalBiteMultiplier > 1.5 ? styles.infoValueMedium : styles.infoValueBad}`}>
                   {totalBiteMultiplier.toFixed(1)}x
                 </span>
@@ -931,11 +931,11 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
                 tension.currentTension > 85 ? styles.statusTextDanger : 
                 tension.escapeProgress > 50 ? styles.statusTextWarning : ''
               }`}>
-                {tension.currentTension > 90 ? '💀 LINE BREAKING!' : 
-                 tension.currentTension > 80 ? '⚠️ Too much tension!' :
-                 tension.currentTension < 20 ? '⚠️ Give less slack!' :
-                 tension.escapeProgress > 70 ? '🐟 Fish escaping!' :
-                 '🎣 Keep it in the zone!'}
+                {tension.currentTension > 90 ? 'LINE BREAKING!' :
+                 tension.currentTension > 80 ? 'Too much tension!' :
+                 tension.currentTension < 20 ? 'Give less slack!' :
+                 tension.escapeProgress > 70 ? 'Fish escaping!' :
+                 'Keep it in the zone!'}
               </div>
               
               {/* TENSION BALANCE METER - The main mini-game! */}
@@ -943,7 +943,7 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
                 <div className={styles.meterLabel}>
                   <span>Line Tension</span>
                   <span className={styles.meterLabelValue}>
-                    {tension.isReeling ? '🔄 REELING' : '〰️ SLACK'}
+                    {tension.isReeling ? 'REELING' : 'SLACK'}
                   </span>
                 </div>
                 <div className={styles.tensionMeterTrack}>
@@ -979,7 +979,7 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
                 {/* Catch Progress */}
                 <div className={styles.meterContainer}>
                   <div className={styles.meterLabel}>
-                    <span>🐟 Catch</span>
+                    <span>Catch</span>
                     <span className={styles.meterLabelValue}>{Math.round(tension.catchProgress)}%</span>
                   </div>
                   <div className={styles.meterTrack}>
@@ -993,7 +993,7 @@ const FishingSystem: React.FC<FishingSystemProps> = ({
                 {/* Escape Progress (danger meter) */}
                 <div className={styles.meterContainer}>
                   <div className={styles.meterLabel}>
-                    <span>⚠️ Escape</span>
+                    <span>Escape</span>
                     <span className={styles.meterLabelValue}>{Math.round(tension.escapeProgress)}%</span>
                   </div>
                   <div className={styles.meterTrack}>

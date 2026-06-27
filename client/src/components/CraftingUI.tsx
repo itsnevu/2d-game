@@ -573,7 +573,6 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                                         fontSize: '12px',
                                         filter: 'drop-shadow(0 0 3px rgba(0,0,0,0.8))'
                                     }}>
-                                        🔒
                                     </div>
                                 )}
                                 {/* Cooking station indicator for recipes that need a station */}
@@ -585,7 +584,6 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                                         fontSize: '10px',
                                         filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.9))'
                                     }}>
-                                        🍳
                                     </div>
                                 )}
                             </div>
@@ -739,7 +737,6 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                             alignItems: 'center',
                             gap: '4px'
                         }}>
-                            <span>🍳</span>
                             <span>Requires {hoveredRecipe.requiresStation}</span>
                         </div>
                     )}

@@ -243,7 +243,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
                 <div className="achievement-content">
                   {/* Trophy icon with glow */}
                   <div className="achievement-icon">
-                    <span className="trophy-emoji">🏆</span>
+                    <span className="trophy-emoji"></span>
                     <div className="trophy-glow" />
                   </div>
                   

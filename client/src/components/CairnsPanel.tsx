@@ -394,7 +394,7 @@ const CairnsPanel: React.FC<CairnsPanelProps> = ({
                           {isDiscovered ? (
                             <span className="cairn-checkmark" style={{ color: categoryColor }}>✓</span>
                           ) : (
-                            <span className="cairn-lock">🔒</span>
+                            <span className="cairn-lock"></span>
                           )}
                         </div>
                         <div className="cairn-info">
@@ -426,7 +426,7 @@ const CairnsPanel: React.FC<CairnsPanelProps> = ({
                             }}
                             title={playingCairnIndex === loreEntry.index ? "Stop audio" : "Play audio"}
                           >
-                            {playingCairnIndex === loreEntry.index ? '⏹️' : '🔊'}
+                            {playingCairnIndex === loreEntry.index ? '' : ''}
                           </button>
                           <button
                             className="cairn-expand-button"

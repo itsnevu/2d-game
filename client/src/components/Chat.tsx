@@ -1061,9 +1061,9 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
                     </div>
                     <div className={styles.messageContent}>
                       <div className={styles.sovaLoadingDots}>
-                        <span className={styles.dot}>●</span>
-                        <span className={styles.dot}>●</span>
-                        <span className={styles.dot}>●</span>
+                        <span className={styles.dot}>.</span>
+                        <span className={styles.dot}>.</span>
+                        <span className={styles.dot}>.</span>
                       </div>
                     </div>
                   </div>
@@ -1111,7 +1111,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
         <div className={styles.performanceReportModal}>
           <div className={styles.performanceReportContent}>
             <div className={styles.performanceReportTitle}>
-              📊 {ASSISTANT_NAME} API PERFORMANCE REPORT
+              {ASSISTANT_NAME} API PERFORMANCE REPORT
             </div>
             
             <pre className={styles.performanceReportText}>

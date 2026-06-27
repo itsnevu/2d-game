@@ -547,7 +547,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
             }}
           >
             <div style={{ fontWeight: 'bold' }}>
-              ⚔ {unlockedFaction.name}
+              {unlockedFaction.name}
             </div>
             {onFactionReset && (
               <button
@@ -624,7 +624,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
               fontWeight: 'bold', 
               marginBottom: '16px' 
             }}>
-              ⚠ FACTION RESET
+              FACTION RESET
             </div>
             
             <div style={{ 
@@ -806,7 +806,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                     fontSize: '11px'
                   }}>
                     <div style={{ color: '#2d4715', fontWeight: 'bold', marginBottom: '6px', fontSize: '16px' }}>
-                      🚧 Coming Soon
+                      Coming Soon
                     </div>
                     <div style={{ color: '#9ca3af', fontSize: '12px', lineHeight: '1.5' }}>
                       Faction unlocks will be available in v1.0 release after early access ends.
@@ -835,7 +835,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                         fontSize: '11px'
                       }}>
                         <div style={{ color: '#5c8e32', fontWeight: 'bold', marginBottom: '4px' }}>
-                          ⚔ Faction Locked
+                          Faction Locked
                         </div>
                         <div style={{ color: '#9ca3af', marginBottom: '4px' }}>
                           You have already joined <span style={{ color: unlockedFaction.color, fontWeight: 'bold' }}>{unlockedFaction.name}</span>.
@@ -859,7 +859,7 @@ const MemoryGrid: React.FC<MemoryGridProps> = ({
                         fontSize: '11px'
                       }}>
                         <div style={{ color: '#3b82f6', fontWeight: 'bold', marginBottom: '6px' }}>
-                          🔒 Faction Unlock Requirement
+                          Faction Unlock Requirement
                         </div>
                         <div style={{ color: '#9ca3af', fontSize: '10px', lineHeight: '1.5', display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span style={{ color: '#5c8e32' }}>✗</span>

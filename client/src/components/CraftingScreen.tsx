@@ -26,15 +26,15 @@ import Tooltip, { TooltipContent, TooltipStats, AlternativeItem } from './Toolti
 
 // Category definitions with icons
 const CATEGORIES = [
-    { id: 'All', name: 'All Items', icon: '📦' },
-    { id: 'Tool', name: 'Tools', icon: '⚒️' },
-    { id: 'Weapon', name: 'Melee', icon: '⚔️' },
-    { id: 'RangedWeapon', name: 'Ranged', icon: '🏹' },
-    { id: 'Armor', name: 'Armor', icon: '🛡️' },
-    { id: 'Consumable', name: 'Consumables', icon: '🧪' },
-    { id: 'Material', name: 'Materials', icon: '🧱' },
-    { id: 'Placeable', name: 'Building', icon: '🏠' },
-    { id: 'Ammunition', name: 'Ammo', icon: '🎯' },
+    { id: 'All', name: 'All Items', icon: '' },
+    { id: 'Tool', name: 'Tools', icon: '' },
+    { id: 'Weapon', name: 'Melee', icon: '' },
+    { id: 'RangedWeapon', name: 'Ranged', icon: '' },
+    { id: 'Armor', name: 'Armor', icon: '' },
+    { id: 'Consumable', name: 'Consumables', icon: '' },
+    { id: 'Material', name: 'Materials', icon: '' },
+    { id: 'Placeable', name: 'Building', icon: '' },
+    { id: 'Ammunition', name: 'Ammo', icon: '' },
 ];
 
 interface CraftingScreenProps {
@@ -597,7 +597,7 @@ const CraftingScreen: React.FC<CraftingScreenProps> = ({
                     <div className={styles.recipeListContainer}>
                         {filteredRecipes.length === 0 ? (
                             <div className={styles.emptyState}>
-                                <div className={styles.emptyStateIcon}>🔍</div>
+                                <div className={styles.emptyStateIcon}></div>
                                 <div className={styles.emptyStateText}>No recipes found</div>
                             </div>
                         ) : (
@@ -636,21 +636,20 @@ const CraftingScreen: React.FC<CraftingScreenProps> = ({
                                                     style={{ filter: !isMemoryGridUnlocked ? 'grayscale(60%) brightness(0.7)' : 'none' }}
                                                 />
                                                 {!isMemoryGridUnlocked && (
-                                                    <div className={styles.lockOverlay}>🔒</div>
+                                                    <div className={styles.lockOverlay}></div>
                                                 )}
                                             </div>
 
                                             {/* Recipe Content */}
                                             <div className={styles.recipeContent}>
                                                 <div className={`${styles.recipeName} ${!isMemoryGridUnlocked ? styles.recipeNameLocked : ''}`}>
-                                                    {!isMemoryGridUnlocked && <span className={styles.lockIcon}>🔒</span>}
+                                                    {!isMemoryGridUnlocked && <span className={styles.lockIcon}></span>}
                                                     {outputDef.name}
                                                     {recipe.outputQuantity > 1 && <span style={{ color: '#888', fontSize: '12px' }}> x{recipe.outputQuantity}</span>}
                                                 </div>
 
                                                 {!isMemoryGridUnlocked && requiredNodeName && (
                                                     <div className={styles.lockMessage}>
-                                                        <span>⚡</span>
                                                         <span>Unlock "<strong>{requiredNodeName}</strong>" in Memory Grid</span>
                                                     </div>
                                                 )}
@@ -666,7 +665,6 @@ const CraftingScreen: React.FC<CraftingScreenProps> = ({
                                                         alignItems: 'center',
                                                         gap: '4px'
                                                     }}>
-                                                        <span>🍳</span>
                                                         <span>Requires <strong>{requiredStation}</strong> nearby</span>
                                                     </div>
                                                 )}

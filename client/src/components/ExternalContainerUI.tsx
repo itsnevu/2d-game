@@ -311,7 +311,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                         fuelBurnDurationSecs: enhancedBurnTime
                     }
                 };
-                descriptionAddition = `\n\n🎐 Reed Bellows: +50% burn time (${item.definition.fuelBurnDurationSecs}s → ${enhancedBurnTime}s)`;
+                descriptionAddition = `\n\nReed Bellows: +50% burn time (${item.definition.fuelBurnDurationSecs}s → ${enhancedBurnTime}s)`;
             }
             // Handle cookable items - show enhanced cooking speed
             else if (item.definition.cookTimeSecs && item.definition.cookTimeSecs > 0) {
@@ -323,7 +323,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                         cookTimeSecs: enhancedCookTime
                     }
                 };
-                descriptionAddition = `\n\n🎐 Reed Bellows: +20% cooking speed (${item.definition.cookTimeSecs}s → ${enhancedCookTime}s)`;
+                descriptionAddition = `\n\nReed Bellows: +20% cooking speed (${item.definition.cookTimeSecs}s → ${enhancedCookTime}s)`;
             }
 
             // Add description if we have enhancement info
@@ -377,7 +377,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                         fuelBurnDurationSecs: enhancedBurnTime
                     }
                 };
-                descriptionAddition = `\n\n🎐 Reed Bellows: +50% burn time (${item.definition.fuelBurnDurationSecs}s → ${enhancedBurnTime}s)`;
+                descriptionAddition = `\n\nReed Bellows: +50% burn time (${item.definition.fuelBurnDurationSecs}s → ${enhancedBurnTime}s)`;
             }
             // Handle smeltable items - show enhanced smelting speed
             else if (item.definition.cookTimeSecs && item.definition.cookTimeSecs > 0) {
@@ -391,7 +391,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                         cookTimeSecs: enhancedSmeltTimeRounded
                     }
                 };
-                descriptionAddition = `\n\n🎐 Reed Bellows: +20% smelting speed (${baseTimeRounded}s → ${enhancedSmeltTimeRounded}s)`;
+                descriptionAddition = `\n\nReed Bellows: +20% smelting speed (${baseTimeRounded}s → ${enhancedSmeltTimeRounded}s)`;
             }
 
             // Add description if we have enhancement info
@@ -554,11 +554,11 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
         
         switch (weatherTag) {
             case 'HeavyRain':
-                return "Heavy rain - May require shelter 🏠 or tree cover 🌳";
+                return "Heavy rain - May require shelter or tree cover";
             case 'HeavyStorm':
-                return "Heavy storm - May require shelter 🏠 or tree cover 🌳";
+                return "Heavy storm - May require shelter or tree cover";
             default:
-                return "Severe weather - May require shelter 🏠 or tree cover 🌳";
+                return "Severe weather - May require shelter or tree cover";
         }
     }, [isHeavyRaining, container.containerType, container.containerEntity, chunkWeather, worldState]);
 
@@ -1288,7 +1288,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                     color: '#aab',
                     fontStyle: 'italic'
                 }}>
-                    🌋 Add items to <strong style={{ color: '#ff8c46' }}>incinerate</strong> them into charcoal
+                    Add items to <strong style={{ color: '#ff8c46' }}>incinerate</strong> them into charcoal
                 </div>
             )}
             
@@ -1326,9 +1326,9 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                         justifyContent: 'center',
                         gap: '6px',
                     }}>
-                        <span style={{ fontSize: '16px' }}>🔥</span>
+                        <span style={{ fontSize: '16px' }}></span>
                         <span>Incinerating for Charcoal</span>
-                        <span style={{ fontSize: '16px' }}>🔥</span>
+                        <span style={{ fontSize: '16px' }}></span>
                     </div>
                 </div>
             )}
@@ -1384,7 +1384,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 textAlign: 'center',
                                 fontStyle: 'italic'
                             }}>
-                            🌧️ {getWeatherWarningMessage || ''}
+                            {getWeatherWarningMessage || ''}
                             </div>
                     )}
                 </ContainerButtons>
@@ -1407,7 +1407,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 textAlign: 'center',
                                 fontStyle: 'italic'
                             }}>
-                            🌧️ {getWeatherWarningMessage || ''}
+                            {getWeatherWarningMessage || ''}
                             </div>
                     )}
                 </ContainerButtons>
@@ -1431,8 +1431,8 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             opacity: 0.9
                         }}>
                             {container.containerType === 'fumarole' 
-                                ? '🌋 Always-On Volcanic Heat (No Fuel Required)' 
-                                : '🔥 Campfire Heat (Requires Fuel)'}
+                                ? 'Always-On Volcanic Heat (No Fuel Required)'
+                                : 'Campfire Heat (Requires Fuel)'}
                         </div>
                         
                         {/* All 5 slots in one row: Water Container + 3 Ingredient slots + Arrow + Output slot */}
@@ -1518,7 +1518,6 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                         pointerEvents: 'none',
                                         textShadow: '0 0 2px rgba(0, 0, 0, 0.8)'
                                     }}>
-                                        💧
                                     </div>
                                 </DroppableSlot>
 
@@ -1581,7 +1580,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                 color: isEmpty ? 'rgba(100, 200, 100, 0.6)' : 'inherit',
                                                 fontWeight: isEmpty ? 'bold' : 'normal',
                                             }}>
-                                                {isEmpty ? `${index + 1}` : '⚪'}
+                                                {isEmpty ? `${index + 1}` : ''}
                                             </div>
                                         </DroppableSlot>
                                     );
@@ -1685,7 +1684,6 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                     pointerEvents: 'none',
                                                     textShadow: '0 0 2px rgba(0, 0, 0, 0.8)'
                                                 }}>
-                                                    🍲
                                                 </div>
                                             )}
                                         </DroppableSlot>
@@ -1723,12 +1721,12 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 }}>
                                     {/* Ingredient count indicator */}
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                                        <span style={{ fontSize: '9px' }}>⚪</span>
+                                        <span style={{ fontSize: '9px' }}></span>
                                         <span>{filledIngredientCount}/3</span>
                                     </div>
                                     {/* Water indicator */}
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                                        <span style={{ fontSize: '9px' }}>{attachedBrothPot.isSeawater ? '🌊' : '💧'}</span>
+                                        <span style={{ fontSize: '9px' }}></span>
                                         <span>{hasEnoughWater ? '✓' : `${Math.round(attachedBrothPot.waterLevelMl)}/${BREWING_WATER_REQUIREMENT_ML}ml`}</span>
                                     </div>
                                 </div>
@@ -1745,7 +1743,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 fontWeight: 'bold',
                                 textShadow: '0 0 4px rgba(135, 206, 250, 0.6)',
                             }}>
-                                {attachedBrothPot.isSeawater ? '🌊' : '💧'} Water: {attachedBrothPot.waterLevelMl}ml / {BROTH_POT_MAX_WATER_CAPACITY_ML}ml
+                                Water: {attachedBrothPot.waterLevelMl}ml / {BROTH_POT_MAX_WATER_CAPACITY_ML}ml
                             </div>
                             
                                 {/* Visual water level bar - LARGER and more prominent */}
@@ -1891,9 +1889,9 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                         justifyContent: 'center',
                                         gap: '6px',
                                     }}>
-                                        <span style={{ fontSize: '16px' }}>🍲</span>
+                                        <span style={{ fontSize: '16px' }}></span>
                                         <span>{isGeneratingRecipe ? 'Generating Recipe...' : 'Preparing Brew...'}</span>
-                                        <span style={{ fontSize: '16px' }}>🍲</span>
+                                        <span style={{ fontSize: '16px' }}></span>
                                     </div>
                                     <div style={{
                                         marginTop: '6px',
@@ -1950,9 +1948,9 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     justifyContent: 'center',
                                     gap: '6px',
                                 }}>
-                                    <span style={{ fontSize: '16px' }}>🔥</span>
+                                    <span style={{ fontSize: '16px' }}></span>
                                     <span>Ready to Brew!</span>
-                                    <span style={{ fontSize: '16px' }}>🔥</span>
+                                    <span style={{ fontSize: '16px' }}></span>
                                 </div>
                                 <div style={{
                                     marginTop: '6px',
@@ -1999,9 +1997,9 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     justifyContent: 'center',
                                     gap: '6px',
                                 }}>
-                                    <span style={{ fontSize: '16px' }}>🍲</span>
+                                    <span style={{ fontSize: '16px' }}></span>
                                     <span>Currently Brewing {attachedBrothPot.currentRecipeName || 'Unknown Brew'}</span>
-                                    <span style={{ fontSize: '16px' }}>🍲</span>
+                                    <span style={{ fontSize: '16px' }}></span>
                                 </div>
                                 {/* Brewing Time Remaining */}
                                 {attachedBrothPot.requiredCookingTimeSecs > 0 && (
@@ -2014,7 +2012,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                         justifyContent: 'center',
                                         gap: '8px',
                                     }}>
-                                        <span>⏱️ Time Remaining:</span>
+                                        <span>Time Remaining:</span>
                                         <span style={{ fontWeight: 'bold', color: '#ffcc44' }}>
                                             {formatDurationSeconds(Math.max(0, attachedBrothPot.requiredCookingTimeSecs - attachedBrothPot.cookingProgressSecs))}
                                         </span>
@@ -2063,9 +2061,9 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     justifyContent: 'center',
                                     gap: '6px',
                                 }}>
-                                    <span style={{ fontSize: '14px' }}>🌊</span>
+                                    <span style={{ fontSize: '14px' }}></span>
                                     <span>Cannot brew with salt water - Desalinate first!</span>
-                                    <span style={{ fontSize: '14px' }}>🌊</span>
+                                    <span style={{ fontSize: '14px' }}></span>
                                 </div>
                             </div>
                         )}
@@ -2155,8 +2153,8 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 }}
                                 className={`${styles.interactionButton} ${styles.extinguishButton}`}
                                 style={{ width: '100%', marginTop: '8px', textShadow: 'none' }}
-                                title={attachedBrothPot.waterLevelMl > 0 
-                                    ? `⚠️ WARNING: Picking up will spill ${attachedBrothPot.waterLevelMl}ml of water! (No confirmation for quick PvP escapes)` 
+                                title={attachedBrothPot.waterLevelMl > 0
+                                    ? `WARNING: Picking up will spill ${attachedBrothPot.waterLevelMl}ml of water! (No confirmation for quick PvP escapes)`
                                     : "Pick up the Field Cauldron and return it to your inventory"}
                             >
                                 Pick Up Broth Pot {attachedBrothPot.waterLevelMl > 0 ? '(Will Spill Water!)' : ''}
@@ -2206,7 +2204,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 marginBottom: '6px',
                                 textAlign: 'center'
                             }}>
-                                {((container.containerEntity as any) as SpacetimeDBRainCollector & { isSaltWater?: boolean }).isSaltWater ? '🌊' : '💧'} Water: {Math.round((container.containerEntity as SpacetimeDBRainCollector).totalWaterCollected * 1000)}ml / 40000ml
+                                Water: {Math.round((container.containerEntity as SpacetimeDBRainCollector).totalWaterCollected * 1000)}ml / 40000ml
                             </div>
                             
                             {/* Visual water level bar */}
@@ -2331,7 +2329,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                         {/* Repair Bench Info Section */}
                         <div style={{ marginTop: '12px', marginBottom: '12px', padding: '10px', backgroundColor: 'rgba(0, 0, 0, 0.3)', borderRadius: '4px', border: '1px solid rgba(255, 166, 77, 0.3)' }}>
                             <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#ffa64d', marginBottom: '8px', textAlign: 'center' }}>
-                                🔧 {(() => { const box = container.containerEntity as SpacetimeDBWoodenStorageBox; return isCompoundMonument(box.isMonument, box.posX, box.posY) ? 'Maintenance Station' : 'Repair Bench'; })()}
+                                {(() => { const box = container.containerEntity as SpacetimeDBWoodenStorageBox; return isCompoundMonument(box.isMonument, box.posX, box.posY) ? 'Maintenance Station' : 'Repair Bench'; })()}
                             </div>
                             
                             {/* Show item info if there's an item in the slot */}
@@ -2487,7 +2485,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                         borderRadius: '4px',
                                                         border: '1px solid rgba(255, 100, 100, 0.3)'
                                                     }}>
-                                                        ⚠️ {blockedReason}
+                                                        {blockedReason}
                                                     </div>
                                                 )}
                                             </>
@@ -2535,7 +2533,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                         : 'none',
                                 }}
                             >
-                                🔧 Repair Item
+                                Repair Item
                             </button>
                             
                             {/* Repair info */}
@@ -2569,7 +2567,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             marginBottom: '8px', 
                             textAlign: 'center' 
                         }}>
-                            🍳 {(() => { const box = container.containerEntity as SpacetimeDBWoodenStorageBox; return isCompoundMonument(box.isMonument, box.posX, box.posY) ? 'Fabrication Kitchen' : 'Cooking Station'; })()}
+                            {(() => { const box = container.containerEntity as SpacetimeDBWoodenStorageBox; return isCompoundMonument(box.isMonument, box.posX, box.posY) ? 'Fabrication Kitchen' : 'Cooking Station'; })()}
                         </div>
                         
                         <div style={{
@@ -2582,7 +2580,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 This workstation unlocks advanced cooking recipes when you're nearby.
                             </p>
                             <p style={{ margin: '0', color: '#888' }}>
-                                📋 Open your crafting menu by pressing <b>B</b> and navigate to the Consumables tab to see available recipes
+                                Open your crafting menu by pressing <b>B</b> and navigate to the Consumables tab to see available recipes
                             </p>
                         </div>
                     </div>
@@ -2605,7 +2603,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             marginBottom: '8px', 
                             textAlign: 'center' 
                         }}>
-                            🐝 Beehive Production
+                            Beehive Production
                         </div>
                         
                         {/* Slot 0: Queen Bee Input */}
@@ -2668,7 +2666,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                 gap: '8px',
                                             }}>
                                                 <span style={{ fontSize: '11px', color: '#ffcc44' }}>
-                                                    🍯 Production starting...
+                                                    Production starting...
                                                 </span>
                                             </div>
                                         );
@@ -2687,7 +2685,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                             flexWrap: 'wrap',
                                         }}>
                                             <span style={{ fontSize: '11px', color: '#ffcc44' }}>
-                                                🍯 Next honeycomb:
+                                                Next honeycomb:
                                             </span>
                                             <span style={{ 
                                                 fontSize: '12px', 
@@ -2792,8 +2790,8 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     }}
                                     className={`${styles.interactionButton} ${isEmpty ? styles.lightFireButton : styles.extinguishButton}`}
                                     style={{ marginTop: '8px', textShadow: 'none' }}
-                                    title={!isEmpty 
-                                        ? `⚠️ WARNING: Picking up will spill ${brothPot.waterLevelMl}ml of water and drop ingredients! (No confirmation for quick PvP escapes)` 
+                                    title={!isEmpty
+                                        ? `WARNING: Picking up will spill ${brothPot.waterLevelMl}ml of water and drop ingredients! (No confirmation for quick PvP escapes)`
                                         : "Pick up the Field Cauldron and return it to your inventory"}
                                 >
                                     Pick Up Broth Pot {!isEmpty ? '(Will Spill Contents!)' : ''}
@@ -2820,7 +2818,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 color: '#87CEEB',
                                 marginBottom: '8px'
                             }}>
-                                🏗️ Building Privilege
+                                Building Privilege
                             </div>
                             
                             <div style={{ 
@@ -2870,7 +2868,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                         onClick={() => {
                                                             if (!connection?.reducers || container.containerId === null) return;
                                                             const hearthIdNum = typeof container.containerId === 'bigint' ? Number(container.containerId) : container.containerId;
-                                                            if (window.confirm(`⚠️ Wipe ALL ${playersWithPrivilege.length} building privileges?\n\nThis will revoke access for everyone (including yourself).\n\nThis action cannot be undone.`)) {
+                                                            if (window.confirm(`Wipe ALL ${playersWithPrivilege.length} building privileges?\n\nThis will revoke access for everyone (including yourself).\n\nThis action cannot be undone.`)) {
                                                                 try {
                                                                     (connection.reducers as any).wipeAllBuildingPrivileges(hearthIdNum);
                                                                 } catch (e: any) {
@@ -2985,7 +2983,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                 color: '#ffa040',
                                 marginBottom: '8px'
                             }}>
-                                ⚙️ Building Upkeep
+                                Building Upkeep
                             </div>
                             
                             {upkeepCosts ? (
@@ -3014,8 +3012,8 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                     {(upkeepCosts.availableWood >= upkeepCosts.requiredWood && 
                                                       upkeepCosts.availableStone >= upkeepCosts.requiredStone && 
                                                       upkeepCosts.availableMetal >= upkeepCosts.requiredMetal) 
-                                                        ? '✓ Building Protected' 
-                                                        : '⚠️ Insufficient Resources - Buildings Will Decay'}
+                                                        ? '✓ Building Protected'
+                                                        : 'Insufficient Resources - Buildings Will Decay'}
                                                 </div>
                                                 
                                                 {/* Show time estimate - resource duration when protected, decay time when unprotected */}
@@ -3033,11 +3031,11 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                                           upkeepCosts.availableStone >= upkeepCosts.requiredStone && 
                                                           upkeepCosts.availableMetal >= upkeepCosts.requiredMetal) ? (
                                                             <>
-                                                                ⏱️ Resources will last: {calculateResourceDuration(upkeepCosts)}
+                                                                Resources will last: {calculateResourceDuration(upkeepCosts)}
                                                             </>
                                                         ) : (
                                                             <>
-                                                                ⏱️ Buildings will decay in: {formatDecayTime(upkeepCosts.estimatedDecayHours)}
+                                                                Buildings will decay in: {formatDecayTime(upkeepCosts.estimatedDecayHours)}
                                                             </>
                                                         )}
                                                     </div>
@@ -3051,13 +3049,13 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                         <div style={{ fontSize: '12px', color: '#ffffff' }}>
                                             <div style={{ marginBottom: '6px', fontWeight: 'bold', color: '#ffa040' }}>Required per hour:</div>
                                             <div style={{ marginBottom: '4px', fontSize: '13px' }}>
-                                                🪵 Wood: {upkeepCosts.requiredWood}
+                                                Wood: {upkeepCosts.requiredWood}
                                             </div>
                                             <div style={{ marginBottom: '4px', fontSize: '13px' }}>
-                                                🪨 Stone: {upkeepCosts.requiredStone}
+                                                Stone: {upkeepCosts.requiredStone}
                                             </div>
                                             <div style={{ marginBottom: '4px', fontSize: '13px' }}>
-                                                ⚙️ Metal: {upkeepCosts.requiredMetal}
+                                                Metal: {upkeepCosts.requiredMetal}
                                             </div>
                                         </div>
                                     </div>
@@ -3137,7 +3135,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             fontFamily: "'PixelOperator'",
                             letterSpacing: '1px',
                         }}>
-                            {pendingEmptyReservoirInfo.isSalt ? '🌊 SPILL SALT WATER?' : '⚠️ SPILL FRESH WATER?'}
+                            {pendingEmptyReservoirInfo.isSalt ? 'SPILL SALT WATER?' : 'SPILL FRESH WATER?'}
                         </div>
                         
                         <div style={{

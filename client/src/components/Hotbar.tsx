@@ -1800,7 +1800,7 @@ connection.reducers.quickMoveToBrothPot({
                   style={{ position: 'absolute', top: '2px', left: '4px', fontSize: '12px', zIndex: 4, pointerEvents: 'none' }}
                   title="Hot! Use gloves to avoid burn damage"
                 >
-                  🔥
+                  HOT
                 </span>
               )}
 
@@ -1970,7 +1970,7 @@ connection.reducers.quickMoveToBrothPot({
                     textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                     userSelect: 'none'
                   }}>
-                    {isFoodItem(populatedItem.definition) ? '🦠' : '✖'}
+                    {isFoodItem(populatedItem.definition) ? 'BAD' : 'X'}
                   </span>
                 </div>
               )}
@@ -2025,7 +2025,7 @@ connection.reducers.quickMoveToBrothPot({
                     textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                     userSelect: 'none'
                   }}>
-                    💧
+                    H2O
                   </span>
                 </div>
               )}
@@ -2160,7 +2160,7 @@ connection.reducers.quickMoveToBrothPot({
                   marginRight: '8px', 
                   color: tooltip.content.consumableStats.health > 0 ? 'rgba(100, 255, 100, 0.9)' : 'rgba(255, 100, 100, 0.9)' 
                 }}>
-                  ❤️ {tooltip.content.consumableStats.health > 0 ? '+' : ''}{tooltip.content.consumableStats.health}
+                  HP {tooltip.content.consumableStats.health > 0 ? '+' : ''}{tooltip.content.consumableStats.health}
                 </span>
               )}
               {tooltip.content.consumableStats.thirst !== 0 && (
@@ -2168,26 +2168,26 @@ connection.reducers.quickMoveToBrothPot({
                   marginRight: '8px', 
                   color: tooltip.content.consumableStats.thirst > 0 ? 'rgba(100, 200, 255, 0.9)' : 'rgba(255, 100, 100, 0.9)' 
                 }}>
-                  💧 {tooltip.content.consumableStats.thirst > 0 ? '+' : ''}{tooltip.content.consumableStats.thirst}
+                  Thirst {tooltip.content.consumableStats.thirst > 0 ? '+' : ''}{tooltip.content.consumableStats.thirst}
                 </span>
               )}
               {tooltip.content.consumableStats.hunger !== 0 && (
                 <span style={{ 
                   color: tooltip.content.consumableStats.hunger > 0 ? 'rgba(255, 200, 100, 0.9)' : 'rgba(255, 100, 100, 0.9)' 
                 }}>
-                  🍖 {tooltip.content.consumableStats.hunger > 0 ? '+' : ''}{tooltip.content.consumableStats.hunger}
+                  Hunger {tooltip.content.consumableStats.hunger > 0 ? '+' : ''}{tooltip.content.consumableStats.hunger}
                 </span>
               )}
             </div>
           )}
           {tooltip.content.waterContentMl !== undefined && tooltip.content.waterCapacityMl !== undefined && (
             <div style={{ fontSize: '10px', color: 'rgba(100, 200, 255, 0.9)', marginBottom: '2px' }}>
-              {tooltip.content.isSaltWater ? '🌊' : '💧'} {tooltip.content.waterContentMl} / {tooltip.content.waterCapacityMl} mL
+              {tooltip.content.isSaltWater ? 'Salt' : 'Fresh'} {tooltip.content.waterContentMl} / {tooltip.content.waterCapacityMl} mL
             </div>
           )}
           {tooltip.content.ammoCapacity !== undefined && (
             <div style={{ fontSize: '10px', color: 'rgba(255, 200, 100, 0.9)', marginBottom: '2px' }}>
-              🔫 Ammo: {tooltip.content.ammoLoaded ?? 0} / {tooltip.content.ammoCapacity}
+              Ammo: {tooltip.content.ammoLoaded ?? 0} / {tooltip.content.ammoCapacity}
             </div>
           )}
           {tooltip.content.durability !== undefined && tooltip.content.maxDurability !== undefined && (
@@ -2202,7 +2202,7 @@ connection.reducers.quickMoveToBrothPot({
                     : 'rgba(50, 205, 50, 0.9)',  // Green for good
               marginBottom: '2px' 
             }}>
-              {tooltip.content.spoilageTimeRemaining ? '🍖' : '🔧'} Durability: {tooltip.content.durability} / {tooltip.content.maxDurability}
+              Durability: {tooltip.content.durability} / {tooltip.content.maxDurability}
               {tooltip.content.spoilageTimeRemaining && (
                 <span style={{ marginLeft: '8px', color: tooltip.content.spoilageTimeRemaining === 'Spoiled' ? 'rgba(255, 100, 100, 0.9)' : 'rgba(255, 200, 100, 0.9)' }}>
                   ({tooltip.content.spoilageTimeRemaining})

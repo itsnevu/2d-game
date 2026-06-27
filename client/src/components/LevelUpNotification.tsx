@@ -253,7 +253,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
                   {/* Memory Shards awarded */}
                   {notif.shardsAwarded > 0 && (
                     <div className="shards-display">
-                      <span className="shards-icon">💠</span>
+                      <span className="shards-icon"></span>
                       <span className="shards-value">+{notif.shardsAwarded.toLocaleString()}</span>
                       <span className="shards-label">MEMORY SHARDS</span>
                     </div>

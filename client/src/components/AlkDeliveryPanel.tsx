@@ -380,7 +380,7 @@ export const AlkDeliveryPanel: React.FC<AlkDeliveryPanelProps> = ({
             {isCentralCompound && onOpenAlkBoard && (
                 <div className="alk-quick-actions">
                     <div className="quick-actions-header">
-                        <span className="quick-actions-icon">📋</span>
+                        <span className="quick-actions-icon"></span>
                         <span className="quick-actions-title">ALK Provisioning Board</span>
                     </div>
                     <div className="quick-actions-buttons">
@@ -389,7 +389,7 @@ export const AlkDeliveryPanel: React.FC<AlkDeliveryPanelProps> = ({
                             onClick={() => onOpenAlkBoard('buy-orders')}
                             title="Spend Memory Shards to buy materials"
                         >
-                            <span className="btn-icon">🛒</span>
+                            <span className="btn-icon"></span>
                             <span className="btn-text">Buy Materials</span>
                         </button>
                         <button 
@@ -397,7 +397,7 @@ export const AlkDeliveryPanel: React.FC<AlkDeliveryPanelProps> = ({
                             onClick={() => onOpenAlkBoard('seasonal')}
                             title="Accept work orders to earn Memory Shards"
                         >
-                            <span className="btn-icon">📜</span>
+                            <span className="btn-icon"></span>
                             <span className="btn-text">Work Orders</span>
                         </button>
                         <button 
@@ -405,7 +405,7 @@ export const AlkDeliveryPanel: React.FC<AlkDeliveryPanelProps> = ({
                             onClick={() => onOpenAlkBoard('my-contracts')}
                             title="View your accepted contracts"
                         >
-                            <span className="btn-icon">📦</span>
+                            <span className="btn-icon"></span>
                             <span className="btn-text">My Contracts</span>
                         </button>
                     </div>
@@ -417,7 +417,7 @@ export const AlkDeliveryPanel: React.FC<AlkDeliveryPanelProps> = ({
             {isCentralCompound && (
                 <div className={`alk-matronage-section ${!hasMatronsMark || isInMatronage ? 'disabled' : ''}`}>
                     <div className="matronage-header">
-                        <span className="matronage-icon">🏛️</span>
+                        <span className="matronage-icon"></span>
                         <h3>Found a Matronage</h3>
                         {isInMatronage && (
                             <span className="matronage-status in-matronage">Already in Matronage</span>
@@ -550,7 +550,6 @@ export const AlkDeliveryPanel: React.FC<AlkDeliveryPanelProps> = ({
                                                 disabled={isDelivering}
                                                 title={`Assign to ${playerMatronage?.name || 'Matronage'} pool`}
                                             >
-                                                🏛️
                                             </button>
                                         )}
                                     </div>
@@ -590,7 +589,7 @@ export const AlkDeliveryPanel: React.FC<AlkDeliveryPanelProps> = ({
             <div className="alk-delivery-instructions">
                 <p>Deliver completed contracts to earn Memory Shards!</p>
                 {station.deliveryFeeRate > 0 && station.deliveryFeeRate < 0.15 ? null : (
-                    <p className="tip">💡 Central Compound has no delivery fee</p>
+                    <p className="tip">Central Compound has no delivery fee</p>
                 )}
             </div>
         </div>

@@ -73,15 +73,15 @@ interface PlantEncyclopediaProps {
 
 // Category display configuration
 const CATEGORY_CONFIG: Record<string, { name: string; color: string; icon: string; order: number }> = {
-  'Vegetable': { name: 'Vegetables & Root Crops', color: '#4CAF50', icon: '🥕', order: 1 },
-  'Berry': { name: 'Berries', color: '#E91E63', icon: '🫐', order: 2 },
-  'Mushroom': { name: 'Mushrooms', color: '#795548', icon: '🍄', order: 3 },
-  'Herb': { name: 'Herbs & Medicinal', color: '#8BC34A', icon: '🌿', order: 4 },
-  'Fiber': { name: 'Fiber Plants', color: '#9E9E9E', icon: '🧵', order: 5 },
-  'Arctic': { name: 'Arctic & Alpine Plants', color: '#03A9F4', icon: '❄️', order: 6 },
-  'Toxic': { name: 'Toxic Plants', color: '#9C27B0', icon: '☠️', order: 7 },
-  'ResourcePile': { name: 'Resource Piles', color: '#FF9800', icon: '📦', order: 8 },
-  'Special': { name: 'Special Resources', color: '#00BCD4', icon: '✨', order: 9 },
+  'Vegetable': { name: 'Vegetables & Root Crops', color: '#4CAF50', icon: '', order: 1 },
+  'Berry': { name: 'Berries', color: '#E91E63', icon: '', order: 2 },
+  'Mushroom': { name: 'Mushrooms', color: '#795548', icon: '', order: 3 },
+  'Herb': { name: 'Herbs & Medicinal', color: '#8BC34A', icon: '', order: 4 },
+  'Fiber': { name: 'Fiber Plants', color: '#9E9E9E', icon: '', order: 5 },
+  'Arctic': { name: 'Arctic & Alpine Plants', color: '#03A9F4', icon: '', order: 6 },
+  'Toxic': { name: 'Toxic Plants', color: '#9C27B0', icon: '', order: 7 },
+  'ResourcePile': { name: 'Resource Piles', color: '#FF9800', icon: '', order: 8 },
+  'Special': { name: 'Special Resources', color: '#00BCD4', icon: '', order: 9 },
 };
 
 // Helper to get category key from PlantCategory enum
@@ -132,7 +132,7 @@ const PlantCard: React.FC<{ plant: PlantConfigDefinition; isExpanded: boolean; o
   onToggle 
 }) => {
   const categoryKey = getCategoryKey(plant.category);
-  const categoryConfig = CATEGORY_CONFIG[categoryKey] || { name: 'Unknown', color: '#666', icon: '❓', order: 99 };
+  const categoryConfig = CATEGORY_CONFIG[categoryKey] || { name: 'Unknown', color: '#666', icon: '', order: 99 };
   const seasons = parseSeasons(plant.growingSeasons);
   
   const hasSecondaryYield = plant.secondaryYieldItem && plant.secondaryYieldChance > 0;
@@ -241,13 +241,13 @@ const PlantCard: React.FC<{ plant: PlantConfigDefinition; isExpanded: boolean; o
           
           {/* Location */}
           <div className="info-section">
-            <div className="info-label">📍 Location:</div>
+            <div className="info-label">Location:</div>
             <div className="info-value">{plant.spawnLocation}</div>
           </div>
           
           {/* Growing Seasons */}
           <div className="info-section seasons-section">
-            <div className="info-label">🌱 Grows in:</div>
+            <div className="info-label">Grows in:</div>
             <div className="seasons-badges">
               {seasons.length > 0 ? (
                 seasons.map(season => (
@@ -505,7 +505,7 @@ onKeyDown={(e) => {
               onMouseEnter={() => setHoveredCategory(cat)}
               onMouseLeave={() => setHoveredCategory(null)}
             >
-              <span className="cat-icon">{config?.icon || '❓'}</span>
+              <span className="cat-icon">{config?.icon || ''}</span>
               <span className="cat-count">{count}</span>
               {/* Tooltip */}
               {hoveredCategory === cat && (
@@ -536,7 +536,7 @@ onKeyDown={(e) => {
       <div className="plants-list">
         {!hasDiscoveredAny ? (
           <div className="no-plants discovery-message">
-            <div className="discovery-icon">🌱</div>
+            <div className="discovery-icon"></div>
             <div className="discovery-title">No Plants Discovered Yet</div>
             <div className="discovery-hint">
               Harvest wild plants and crops to add them to your encyclopedia.

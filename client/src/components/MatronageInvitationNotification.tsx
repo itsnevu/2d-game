@@ -75,7 +75,7 @@ const MatronageInvitationNotification: React.FC<MatronageInvitationNotificationP
 
     return (
         <div className="matronage-notification" onClick={onOpenMatronageTab}>
-            <div className="notification-icon">📨</div>
+            <div className="notification-icon"></div>
             <div className="notification-content">
                 <div className="notification-title">
                     {invitationCount === 1 

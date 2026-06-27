@@ -127,7 +127,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     {/* Header bar */}
                     <div className={`quest-header-bar ${isDaily ? 'daily' : ''}`}>
                         <span className={`quest-header-text ${isDaily ? 'daily' : ''}`}>
-                            {isDaily ? '🔄 DAILY TRAINING' : '// MISSION'}
+                            {isDaily ? 'DAILY TRAINING' : '// MISSION'}
                         </span>
                         <div className="quest-header-dots">
                             <span className={`quest-dot ${isDaily ? 'purple' : 'green'}`} />
@@ -140,7 +140,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     <div className="quest-content">
                         {/* Checkmark icon with glow */}
                         <div className={`quest-icon ${isDaily ? 'daily' : ''}`}>
-                            <span className={`quest-check-emoji ${isDaily ? 'daily' : ''}`}>✓</span>
+                            <span className={`quest-check-emoji ${isDaily ? 'daily' : ''}`}>OK</span>
                             <div className={`quest-icon-glow ${isDaily ? 'daily' : ''}`} />
                         </div>
                         
@@ -162,14 +162,12 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                             <div className="quest-rewards">
                                 {notification.xpAwarded > 0 && (
                                     <div className={`quest-reward-item xp ${isDaily ? 'daily' : ''}`}>
-                                        <span className="quest-reward-icon">◆</span>
                                         <span className="quest-reward-value">+{notification.xpAwarded}</span>
                                         <span className="quest-reward-label">XP</span>
                                     </div>
                                 )}
                                 {notification.shardsAwarded > 0 && (
                                     <div className="quest-reward-item shards">
-                                        <span className="quest-reward-icon">💎</span>
                                         <span className="quest-reward-value">+{notification.shardsAwarded}</span>
                                         <span className="quest-reward-label">SHARDS</span>
                                     </div>
@@ -179,7 +177,6 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                             {/* Unlocked Recipe */}
                             {notification.unlockedRecipe && (
                                 <div className="quest-unlock">
-                                    <span className="quest-unlock-icon">🔓</span>
                                     <span className="quest-unlock-text">UNLOCKED: {notification.unlockedRecipe}</span>
                                 </div>
                             )}
@@ -925,7 +922,6 @@ export const QuestProgressToast: React.FC<QuestProgressToastProps> = ({
                     alignItems: 'center',
                     gap: '6px',
                 }}>
-                    <span>📊</span>
                     <span>Quest Progress</span>
                 </div>
 

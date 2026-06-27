@@ -888,7 +888,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                 navItems={[
                                     { label: 'ABOUT', selector: 'about' },
                                     { label: 'HOW TO PLAY', selector: 'how-to-play' },
-                                    { label: 'BLOG', selector: 'blog' },
                                 ]}
                                 onNavigate={(selector) => {
                                     if (selector === 'about') {
@@ -917,7 +916,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                             {[
                                 { label: 'ABOUT', selector: 'about' },
                                 { label: 'HOW TO PLAY', selector: 'how-to-play' },
-                                { label: 'BLOG', selector: 'blog' },
                             ].map((item) => (
                                 <button
                                     key={item.label}
@@ -1125,7 +1123,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         letterSpacing: '1px',
                         boxShadow: '0 0 10px rgba(200, 162, 60, 0.1)',
                     }}>
-                        ⚠️ IMPORTANT: PLAYERS MUST BUY & SELL <strong style={{ color: 'white', textShadow: '0 0 5px #C8A23C' }}>$WLDR</strong> TO PROGRESS AND SURVIVE
+                        IMPORTANT: PLAYERS MUST BUY & SELL <strong style={{ color: 'white', textShadow: '0 0 5px #C8A23C' }}>$WLDR</strong> TO PROGRESS AND SURVIVE
                     </div>
 
                     <div style={{
@@ -1338,8 +1336,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         Authenticated - Reconnecting to game...
                                     </p>
                                 </div>
-                            ) : !authError && !connectionError && !localError && !loggedInPlayer && !storedUsername ? (
-                                // New Player: Always show username input (don't wait for SpacetimeDB)
+                            ) : !authError && !connectionError && !loggedInPlayer && !storedUsername ? (
+                                // New Player: Always show character picker + username input (stays visible on
+                                // recoverable errors like "username taken" so the player can fix it and retry).
                                 <div style={{
                                     maxWidth: '350px',
                                     margin: '0 auto',
@@ -1463,7 +1462,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         ) : null /* Not loading, no error, not authenticated: Button below will handle Sign In */}
 
                         {/* Render Login/Join button only if not loading and no authError and (no connectionError OR we have storedUsername) */}
-                        {!authIsLoading && !authError && (!connectionError || storedUsername) && !localError && (
+                        {!authIsLoading && !authError && (!connectionError || storedUsername) && (
                             <form onSubmit={handleSubmit}>
                                 {isAuthenticated ? (
                                     <>
@@ -1593,7 +1592,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                     backdropFilter: 'blur(6px)',
                                                 }}
                                             >
-                                                👁 Spectate — No Wallet Needed
+                                                Spectate — No Wallet Needed
                                             </button>
                                         </div>
                                     )}
@@ -1777,12 +1776,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     <div style={{
                                         fontSize: '14px',
                                         color: '#86be52',
-                                        fontFamily: "'Courier New', monospace",
+                                        fontFamily: "'PixelOperatorMono', monospace",
                                         textTransform: 'uppercase',
                                         letterSpacing: '2px',
                                         marginBottom: '8px',
                                     }}>
-                                        🟢 Players Online
+                                        Players Online
                                     </div>
                                     <div style={{
                                         fontFamily: UI_BRAND_FONT,
@@ -1790,11 +1789,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         color: 'white',
                                         textShadow: '0 0 10px rgba(255,255,255,0.3)',
                                     }}>
-                                        {onlinePlayerCount || 1} <span style={{ fontSize: '20px', color: 'rgba(255,255,255,0.4)' }}>/ {maxPlayerCount || 50}</span>
+                                        {typeof onlinePlayerCount === 'number' ? onlinePlayerCount : '—'} <span style={{ fontSize: '20px', color: 'rgba(255,255,255,0.4)' }}>/ {maxPlayerCount || 50}</span>
                                     </div>
                                 </div>
 
-                                {/* Players Monthly */}
+                                {/* Persistent-world objective card (honest, non-hardcoded) */}
                                 <div style={{
                                     backgroundColor: 'rgba(0, 0, 0, 0.75)',
                                     backdropFilter: 'blur(12px)',
@@ -1812,20 +1811,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     <div style={{
                                         fontSize: '14px',
                                         color: '#ffc83c',
-                                        fontFamily: "'Courier New', monospace",
+                                        fontFamily: "'PixelOperatorMono', monospace",
                                         textTransform: 'uppercase',
                                         letterSpacing: '2px',
                                         marginBottom: '8px',
                                     }}>
-                                        🏆 Monthly Active
+                                        The Goal
                                     </div>
                                     <div style={{
-                                        fontFamily: UI_BRAND_FONT,
-                                        fontSize: '48px',
+                                        fontFamily: "'PixelOperator', sans-serif",
+                                        fontSize: '15px',
                                         color: 'white',
-                                        textShadow: '0 0 10px rgba(255,255,255,0.3)',
+                                        lineHeight: 1.4,
+                                        textShadow: '0 0 10px rgba(255,255,255,0.2)',
                                     }}>
-                                        1,250+
+                                        Survive, craft, and grow your $WLDR — one shared world.
                                     </div>
                                 </div>
                             </div>
@@ -1957,7 +1957,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         justifyContent: 'center',
                     }}>
                         <a href="/about" onClick={(e) => { e.preventDefault(); navigate('/about'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>ABOUT</a>
-                        <a href="/blog" onClick={(e) => { e.preventDefault(); navigate('/blog'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>BLOG</a>
                         <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>PRIVACY</a>
                         <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); window.scrollTo(0,0); }} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '13px', fontFamily: "'Courier New', monospace" }} onMouseEnter={(e) => e.currentTarget.style.color = '#5c8e32'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>TERMS</a>
                     </div>

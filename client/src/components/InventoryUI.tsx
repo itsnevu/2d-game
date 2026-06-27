@@ -1322,7 +1322,7 @@ connection.reducers.quickMoveToBrothPot({
                                                     textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                                     userSelect: 'none'
                                                 }}>
-                                                    {isFoodItem(item.definition) ? '🦠' : '✖'}
+                                                    {'✖'}
                                                 </span>
                                             </div>
                                         )}
@@ -1353,7 +1353,7 @@ connection.reducers.quickMoveToBrothPot({
                             transition: 'all 0.2s ease',
                         }}
                     >
-                        {isHotLootActive ? '⚡ HOT LOOT ACTIVE ⚡' : '[ Hold H to hot loot ]'}
+                        {isHotLootActive ? 'HOT LOOT ACTIVE' : '[ Hold H to hot loot ]'}
                     </div>
                 )}
                 <InventorySearchBar
@@ -1415,7 +1415,6 @@ connection.reducers.quickMoveToBrothPot({
                                         style={{ position: 'absolute', top: '2px', left: '4px', fontSize: '12px', zIndex: 4, pointerEvents: 'none' }}
                                         title="Hot! Use gloves to avoid burn damage"
                                     >
-                                        🔥
                                     </span>
                                 )}
                                 
@@ -1555,7 +1554,7 @@ connection.reducers.quickMoveToBrothPot({
                                             textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                             userSelect: 'none'
                                         }}>
-                                            {isFoodItem(item.definition) ? '🦠' : '✖'}
+                                            {'✖'}
                                         </span>
                                     </div>
                                 )}

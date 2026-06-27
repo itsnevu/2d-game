@@ -327,8 +327,11 @@ export const GameConnectionProvider: React.FC<GameConnectionProviderProps> = ({ 
             await connection.reducers.registerPlayer({ username, characterId: Math.max(0, Math.min(3, Math.floor(characterId))) });
             console.log('[GameConn] Player registration successful');
         } catch (err: any) {
+            // A rejected register_player reducer (e.g. "username already taken", "server full")
+            // is a RECOVERABLE form error, NOT a connection failure. Do NOT set connectionError
+            // here — doing so would drop the UI into the "Reconnecting to game..." spinner and
+            // trap the player. Just rethrow so the caller can show it inline and let them retry.
             const errorMessage = err?.message || err?.toString?.() || 'Registration failed';
-            setConnectionError(errorMessage);
             throw new Error(errorMessage);
         }
     }, [connectionState, connection, dbIdentity]);

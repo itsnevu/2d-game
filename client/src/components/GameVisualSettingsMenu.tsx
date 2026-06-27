@@ -1246,32 +1246,32 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                 </div>
 
                 <div className={styles.menuButtons}>
-                    <button 
+                    <button
                         onClick={onBack}
                         className={styles.menuButton}
                         style={{
-                            background: 'linear-gradient(135deg, rgba(80, 40, 20, 0.8), rgba(60, 30, 15, 0.9))',
-                            color: '#ffffff',
-                            border: '2px solid #ff8833',
+                            background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.55), rgba(45, 71, 21, 0.85))',
+                            color: '#e8f0e0',
+                            border: '2px solid #86be52',
                             borderRadius: '8px',
                             padding: '15px 30px',
                             fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 0 15px rgba(255, 136, 51, 0.3), inset 0 0 10px rgba(255, 136, 51, 0.1)',
-                            textShadow: '0 0 5px rgba(255, 136, 51, 0.8)',
+                            boxShadow: '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)',
+                            textShadow: '0 0 5px rgba(134, 190, 82, 0.8)',
                             letterSpacing: '1px',
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(100, 50, 25, 0.9), rgba(80, 40, 20, 1))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(134, 190, 82, 0.7), rgba(92, 142, 50, 0.95))';
                             e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                            e.currentTarget.style.boxShadow = '0 0 25px rgba(255, 136, 51, 0.6), inset 0 0 15px rgba(255, 136, 51, 0.2)';
+                            e.currentTarget.style.boxShadow = '0 0 25px rgba(134, 190, 82, 0.6), inset 0 0 15px rgba(134, 190, 82, 0.2)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(80, 40, 20, 0.8), rgba(60, 30, 15, 0.9))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.55), rgba(45, 71, 21, 0.85))';
                             e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 136, 51, 0.3), inset 0 0 10px rgba(255, 136, 51, 0.1)';
+                            e.currentTarget.style.boxShadow = '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)';
                         }}
                     >
                         NEURAL INTERFACE MENU

@@ -221,18 +221,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
     };
 
     const getTimeEmoji = (timeOfDay?: TimeOfDay | null) => {
-        switch (timeOfDay?.tag) {
-            case 'Dawn': return '🌅';
-            case 'TwilightMorning': return '🌆';
-            case 'Morning': return '☀️';
-            case 'Noon': return '🌞';
-            case 'Afternoon': return '🌤️';
-            case 'Dusk': return '🌇';
-            case 'TwilightEvening': return '🌆';
-            case 'Night': return '🌙';
-            case 'Midnight': return '🌑';
-            default: return '🌍';
-        }
+        return getTimeOfDayDisplay(timeOfDay);
     };
 
     const getWeatherDisplay = (weather: any, isWinter: boolean = false) => {
@@ -257,24 +246,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
     };
 
     const getWeatherEmoji = (weather: any, isWinter: boolean = false) => {
-        if (isWinter) {
-            switch (weather?.tag) {
-                case 'Clear': return '❄️';
-                case 'LightRain': return '🌨️';
-                case 'ModerateRain': return '🌨️';
-                case 'HeavyRain': return '❄️';
-                case 'HeavyStorm': return '🌬️';
-                default: return '❄️';
-            }
-        }
-        switch (weather?.tag) {
-            case 'Clear': return '☀️';
-            case 'LightRain': return '🌦️';
-            case 'ModerateRain': return '🌧️';
-            case 'HeavyRain': return '🌧️';
-            case 'HeavyStorm': return '⛈️';
-            default: return '🌍';
-        }
+        return getWeatherDisplay(weather, isWinter);
     };
 
     const getSeasonDisplay = (season?: Season | null) => {
@@ -402,7 +374,6 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             borderBottom: `1px solid ${ACCENT_CYAN}40`,
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ fontSize: '14px' }}>📡</span>
                                 <span style={{ fontSize: '9px', fontWeight: 'bold', color: ACCENT_CYAN, letterSpacing: '1px' }}>UPLINK</span>
                             </div>
                             <div style={{ display: 'flex', gap: '4px' }}>
@@ -418,7 +389,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             <span style={{ fontSize: '10px', color: getSeasonColor(worldState.currentSeason), fontWeight: 'bold' }}>
                                 {getSeasonDisplay(worldState.currentSeason)}
                             </span>
-                            <span style={{ fontSize: '8px', color: '#9ca3af' }}>{dayInSeason}/{DAYS_PER_SEASON}</span>
+                            <span style={{ fontSize: '8px', color: '#9ab08a' }}>{dayInSeason}/{DAYS_PER_SEASON}</span>
                             <span style={{ color: `${ACCENT_CYAN}50` }}>|</span>
                             <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>Day {worldState.cycleCount}</span>
                             <span style={{ color: `${ACCENT_CYAN}50` }}>|</span>
@@ -427,11 +398,11 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
 
                         {/* Day Progress */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                            <span style={{ fontSize: '9px', color: '#9ca3af', minWidth: '50px' }}>{getTimeOfDayDisplay(worldState.timeOfDay)}</span>
+                            <span style={{ fontSize: '9px', color: '#9ab08a', minWidth: '50px' }}>{getTimeOfDayDisplay(worldState.timeOfDay)}</span>
                             <div style={{
                                 flex: 1,
                                 height: '4px',
-                                background: 'rgba(0,0,0,0.5)',
+                                background: 'rgba(16, 30, 22, 0.85)',
                                 borderRadius: '2px',
                                 overflow: 'hidden',
                             }}>
@@ -594,7 +565,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                                     borderColor: ACCENT_CYAN,
                                     boxShadow: `0 0 20px ${ACCENT_CYAN}60`,
                                 }}>
-                                    <span style={{ color: '#9ca3af' }}>
+                                    <span style={{ color: '#9ab08a' }}>
                                         {getWeatherDisplay(displayWeather, isWinter)}
                                         {displayRainIntensity > 0 && ` (${Math.round(displayRainIntensity * 100)}%)`}
                                     </span>
@@ -642,7 +613,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                         )}
                         
                         {/* Expand Icon */}
-                        <span style={{ fontSize: '8px', color: `${ACCENT_CYAN}60` }}>▼</span>
+                        <span style={{ fontSize: '8px', color: `${ACCENT_CYAN}60` }}>[+]</span>
                     </div>
                 </div>
                 <style>{uplinkStyles}</style>
@@ -687,7 +658,6 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                     {/* Header bar */}
                     <div className="uplink-header">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '14px' }}>📡</span>
                             <span className="uplink-header-text">// NEURAL UPLINK</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -700,7 +670,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                                 onClick={(e) => { e.stopPropagation(); toggleMinimized(); }}
                                 className="uplink-minimize"
                             >
-                                ▲
+                                [-]
                             </div>
                         </div>
                     </div>
@@ -721,7 +691,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                                     <span style={{
                                         fontSize: '11px',
                                         fontWeight: 'bold',
-                                        color: '#d1d5db',
+                                        color: '#e8f0e0',
                                         textShadow: `0 0 6px ${ACCENT_CYAN}50`,
                                     }}>Year {worldState.year}</span>
                                 </div>
@@ -743,7 +713,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                                         {getTimeOfDayDisplay(worldState.timeOfDay).toUpperCase()}
                                         {worldState.isFullMoon && (worldState.timeOfDay?.tag === 'Night' || worldState.timeOfDay?.tag === 'Midnight') && ' • FULL MOON'}
                                     </span>
-                                    <span style={{ fontSize: '8px', color: '#6b7280' }}>Day {worldState.dayOfYear}/{DAYS_PER_YEAR}</span>
+                                    <span style={{ fontSize: '8px', color: '#9ab08a' }}>Day {worldState.dayOfYear}/{DAYS_PER_YEAR}</span>
                                 </div>
                                 
                                 {/* Day Cycle Progress Bar */}
@@ -764,7 +734,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             {/* Weather */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <span style={{ fontSize: '14px' }}>{getWeatherEmoji(displayWeather, isWinter)}</span>
-                                <span style={{ fontSize: '10px', color: '#9ca3af' }}>{getWeatherDisplay(displayWeather, isWinter)}</span>
+                                <span style={{ fontSize: '10px', color: '#9ab08a' }}>{getWeatherDisplay(displayWeather, isWinter)}</span>
                                 {displayRainIntensity > 0 && (
                                     <span style={{ fontSize: '9px', color: ACCENT_CYAN }}>
                                         {Math.round(displayRainIntensity * 100)}%
@@ -869,9 +839,9 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             
                             {/* Tutorial Complete */}
                             {tutorialComplete && (
-                                <div className="uplink-objective" style={{ borderColor: `#6b728030` }}>
-                                    <span className="uplink-objective-dot" style={{ backgroundColor: '#6b7280', boxShadow: 'none' }} />
-                                    <span style={{ fontSize: '9px', color: '#6b7280' }}>CALIBRATION COMPLETE</span>
+                                <div className="uplink-objective" style={{ borderColor: `rgba(92, 142, 50, 0.35)` }}>
+                                    <span className="uplink-objective-dot" style={{ backgroundColor: '#86be52', boxShadow: 'none' }} />
+                                    <span style={{ fontSize: '9px', color: '#9ab08a' }}>CALIBRATION COMPLETE</span>
                                 </div>
                             )}
                             
@@ -879,7 +849,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             {activeDailyQuestInfo.active > 0 && (
                                 <div className="uplink-objective" style={{ borderColor: `${ACCENT_PURPLE}30`, marginTop: '4px' }}>
                                     <span className="uplink-objective-dot" style={{ backgroundColor: ACCENT_PURPLE, boxShadow: `0 0 6px ${ACCENT_PURPLE}` }} />
-                                    <span style={{ fontSize: '9px', color: '#9ca3af' }}>
+                                    <span style={{ fontSize: '9px', color: '#9ab08a' }}>
                                         DAILY: {activeDailyQuestInfo.completed}/{activeDailyQuestInfo.total}
                                     </span>
                                 </div>
@@ -887,7 +857,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                             
                             {/* No Active Quests */}
                             {!hasActiveQuest && tutorialComplete && activeDailyQuestInfo.active === 0 && (
-                                <div style={{ fontSize: '9px', color: '#6b7280', fontStyle: 'italic', padding: '4px 0' }}>
+                                <div style={{ fontSize: '9px', color: '#9ab08a', fontStyle: 'italic', padding: '4px 0' }}>
                                     All clear, Agent
                                 </div>
                             )}
@@ -1063,7 +1033,7 @@ const uplinkStyles = `
     .uplink-progress-bar {
         position: relative;
         height: 14px;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(16, 30, 22, 0.85);
         border-radius: 7px;
         overflow: hidden;
         border: 1px solid rgba(92, 142, 50, 0.3);

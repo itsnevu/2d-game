@@ -1611,7 +1611,7 @@ const PlayerUI: React.FC<PlayerUIProps> = ({
                                     }}
                                     title={`${effect.name}${effect.duration ? ` - ${Math.ceil(effect.duration)}s` : ''}`}
                                 >
-                                    {effect.emoji}
+                                    {effect.name.slice(0, 3).toUpperCase()}
                                 </div>
                             ))}
                         </div>

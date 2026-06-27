@@ -6,7 +6,6 @@ import GameTipsMenu from './GameTipsMenu';
 import GameSettingsMenu from './GameSettingsMenu';
 import GameVisualSettingsMenu from './GameVisualSettingsMenu';
 import type { MenuType } from './GameMenu';
-import DebugPanel from './DebugPanel';
 import DayNightCycleTracker from './DayNightCycleTracker';
 import QuestsPanel from './QuestsPanel';
 import MusicControlPanel from './MusicControlPanel';
@@ -99,19 +98,12 @@ export default function GameScreenOverlayUI({
       {!isMobile && autoActionStates.isAutoAttacking && (
         <div style={{ position: 'fixed', top: '70px', right: '15px', display: 'flex', flexDirection: 'column', gap: '8px', zIndex: 50, pointerEvents: 'none' }}>
           <div style={{ backgroundColor: 'rgba(40, 40, 60, 0.85)', color: 'white', padding: '8px 12px', borderRadius: '4px', fontSize: '10px', fontFamily: "'PixelOperator', sans-serif", fontWeight: 'normal', textAlign: 'center', border: '1px solid #a0a0c0', boxShadow: '2px 2px 0px rgba(0,0,0,0.5)', width: '140px', animation: 'pulse 2s infinite' }}>
-            ⚔️ AUTO ATTACK (Z)
+            AUTO ATTACK (Z)
           </div>
         </div>
       )}
 
-      {!isMobile && process.env.NODE_ENV === 'development' && localPlayer && (
-        <DebugPanel
-          localPlayer={localPlayer}
-          worldState={worldState}
-          connection={connection}
-          itemDefinitions={itemDefinitions}
-        />
-      )}
+      {/* In-game debug console removed from the player experience. */}
 
       {currentMenu === 'main' && <GameMenu onClose={onMenuClose} onNavigate={onMenuNavigate} />}
       {currentMenu === 'controls' && <ControlsMenu onBack={onMenuBack} onClose={onMenuClose} />}

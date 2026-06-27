@@ -143,11 +143,11 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
 
     const getStatusText = (status: QuestStatus): string => {
         switch (status.tag) {
-            case 'Locked': return '🔒 LOCKED';
-            case 'Available': return '⭐ AVAILABLE';
-            case 'InProgress': return '▶ IN PROGRESS';
-            case 'Completed': return '✓ COMPLETE';
-            case 'Expired': return '⏰ EXPIRED';
+            case 'Locked': return 'LOCKED';
+            case 'Available': return 'AVAILABLE';
+            case 'InProgress': return 'IN PROGRESS';
+            case 'Completed': return 'COMPLETE';
+            case 'Expired': return 'EXPIRED';
             default: return 'UNKNOWN';
         }
     };
@@ -255,7 +255,6 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         fontWeight: 'bold',
                         textShadow: GLOW_CYAN,
                     }}>
-                        <span style={{ fontSize: isMobile ? '20px' : '26px' }}>📡</span>
                         <span>{`${ASSISTANT_NAME} DIRECTIVES`}</span>
                     </div>
                     <button 
@@ -334,7 +333,6 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             }
                         }}
                     >
-                        <span style={{ fontSize: isMobile ? '16px' : '18px' }}>🎯</span>
                         <span>Primary Mission</span>
                         {tutorialProgress?.tutorialCompleted && (
                             <span style={{ 
@@ -344,7 +342,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                 background: 'rgba(74, 222, 128, 0.2)',
                                 borderRadius: '3px',
                             }}>
-                                ✓
+                                OK
                             </span>
                         )}
                     </button>
@@ -389,9 +387,6 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             }
                         }}
                     >
-                        <span style={{ fontSize: isMobile ? '16px' : '18px' }}>
-                            {tutorialProgress?.tutorialCompleted ? '📋' : '🔒'}
-                        </span>
                         <span>Daily Training</span>
                         {tutorialProgress?.tutorialCompleted ? (
                             <span style={{ 
@@ -459,7 +454,6 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             }
                         }}
                     >
-                        <span style={{ fontSize: isMobile ? '16px' : '18px' }}>🔊</span>
                         <span style={{ display: isMobile ? 'none' : 'inline' }}>Audio Logs</span>
                         <span style={{ display: isMobile ? 'inline' : 'none' }}>Audio</span>
                         <span style={{ 
@@ -594,11 +588,9 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                                     <div style={{ display: 'flex', gap: '20px', fontSize: isMobile ? '11px' : '13px' }}>
                                         <span style={{ color: '#ffc83c', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <span>⚡</span>
                                             <span>{currentTutorialQuest.xpReward.toString()} XP</span>
                                         </span>
                                         <span style={{ color: '#d488ff', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <span>💎</span>
                                             <span>{currentTutorialQuest.shardReward.toString()} Shards</span>
                                         </span>
                                     </div>
@@ -632,7 +624,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                 border: '1px solid rgba(74, 222, 128, 0.25)',
                                 lineHeight: 1.6,
                             }}>
-                                🎖️ Calibration protocol complete. You've proven yourself capable, Agent. 
+                                Calibration protocol complete. You've proven yourself capable, Agent.
                                 Continue with daily training to maintain peak performance.
                             </div>
                         ) : (
@@ -645,7 +637,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                 borderRadius: '12px',
                                 border: '1px dashed rgba(107, 114, 128, 0.4)',
                             }}>
-                                ⏳ No active mission. Initializing directive uplink...
+                                No active mission. Initializing directive uplink...
                             </div>
                         )}
 
@@ -663,7 +655,6 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                     textTransform: 'uppercase',
                                     letterSpacing: '1px',
                                 }}>
-                                    <span>📊</span>
                                     <span>Calibration Progress</span>
                                 </div>
                                 <div style={{ 
@@ -699,7 +690,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                     transition: 'all 0.2s ease',
                                                 }}
                                             >
-                                                {isCompleted ? '✓' : index + 1}
+                                                {isCompleted ? 'OK' : index + 1}
                                             </div>
                                         );
                                     })}
@@ -729,7 +720,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                     marginBottom: '16px',
                                     opacity: 0.7,
                                 }}>
-                                    🔒
+                                    LOCKED
                                 </div>
                                 <div style={{ 
                                     color: '#9ca3af', 
@@ -778,7 +769,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                         e.currentTarget.style.boxShadow = 'none';
                                     }}
                                 >
-                                    Go to Primary Mission →
+                                    Go to Primary Mission
                                 </button>
                             </div>
                         ) : dailyQuestsWithDefs.length > 0 ? (
@@ -854,11 +845,9 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                 </span>
                                                 <div style={{ display: 'flex', gap: '16px', fontSize: isMobile ? '10px' : '12px' }}>
                                                     <span style={{ color: '#ffc83c', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                                        <span>⚡</span>
                                                         <span>{quest.xpReward.toString()} XP</span>
                                                     </span>
                                                     <span style={{ color: '#d488ff', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                                        <span>💎</span>
                                                         <span>{quest.shardReward.toString()}</span>
                                                     </span>
                                                 </div>
@@ -878,7 +867,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                 border: '1px dashed rgba(107, 114, 128, 0.4)',
                                 lineHeight: 1.6,
                             }}>
-                                ⏳ Daily training assignments not yet initialized. Check back soon.
+                                Daily training assignments not yet initialized. Check back soon.
                             </div>
                         )}
                         </>
@@ -904,7 +893,6 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                 alignItems: 'center',
                                 gap: '8px',
                             }}>
-                                <span>📡</span>
                                 <span>{`${ASSISTANT_NAME} Audio Logs`}</span>
                             </div>
                             <div style={{
@@ -967,7 +955,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                     fontSize: '20px',
                                                     flexShrink: 0,
                                                 }}>
-                                                    {isUnlocked ? tutorial.emoji : '🔒'}
+                                                    {isUnlocked ? 'LOG' : 'LOCKED'}
                                                 </div>
                                                 
                                                 {/* Content */}
@@ -996,7 +984,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                         fontSize: isMobile ? '16px' : '20px',
                                                         flexShrink: 0,
                                                     }}>
-                                                        ▶
+                                                        PLAY
                                                     </div>
                                                 )}
                                             </div>
@@ -1016,7 +1004,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                 lineHeight: 1.6,
                                 textAlign: 'center',
                             }}>
-                                {`🔇 No audio logs recorded yet. Explore the island to unlock ${ASSISTANT_NAME} transmissions.`}
+                                {`No audio logs recorded yet. Explore the island to unlock ${ASSISTANT_NAME} transmissions.`}
                             </div>
                         )}
                         </>

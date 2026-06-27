@@ -22,13 +22,13 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
 
 // Category icons
 const CATEGORY_ICONS: Record<string, string> = {
-  Exploration: '🗺️',
-  Combat: '⚔️',
-  Gathering: '🪓',
-  Crafting: '🔨',
-  Social: '👥',
-  Survival: '❤️',
-  Special: '⭐',
+  Exploration: '',
+  Combat: '',
+  Gathering: '',
+  Crafting: '',
+  Social: '',
+  Survival: '',
+  Special: '',
 };
 
 // Sort options
@@ -273,7 +273,6 @@ const AchievementsPanel: React.FC = () => {
             fontSize: '14px',
             pointerEvents: 'none',
           }}>
-            🔍
           </span>
           <input
             type="text"
@@ -388,7 +387,7 @@ const AchievementsPanel: React.FC = () => {
               transition: 'all 0.2s ease',
             }}
           >
-            🕒 Recent
+            Recent
           </button>
         </div>
 
@@ -465,7 +464,7 @@ const AchievementsPanel: React.FC = () => {
               textTransform: 'uppercase',
             }}
           >
-            {CATEGORY_ICONS[category] || '📜'} {CATEGORY_DISPLAY_NAMES[category] || category}
+            {CATEGORY_DISPLAY_NAMES[category] || category}
           </button>
         ))}
       </div>
@@ -483,7 +482,6 @@ const AchievementsPanel: React.FC = () => {
             padding: '40px 20px',
             color: 'rgba(255, 255, 255, 0.6)',
           }}>
-            <div style={{ fontSize: '24px', marginBottom: '10px' }}>🏆</div>
             <div>No achievements found.</div>
             {searchQuery && (
               <div style={{ marginTop: '8px', fontSize: '12px' }}>
@@ -536,7 +534,7 @@ const AchievementsPanel: React.FC = () => {
                     borderRadius: '8px',
                     filter: isUnlocked ? 'none' : 'grayscale(100%)',
                   }}>
-                    {achievement.icon || '🏆'}
+                    {achievement.icon || ''}
                   </div>
                   
                   {/* Content */}

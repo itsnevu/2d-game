@@ -57,17 +57,17 @@ const getContractKindName = (kind: AlkContractKind | null | undefined): string =
     
     const kindTag = kind.tag as string;
     switch (kindTag) {
-        case 'SeasonalHarvest': return '🌱 Harvest';
-        case 'Materials': return '📦 Materials';
-        case 'Arms': return '⚔️ Arms';
-        case 'Armor': return '🛡️ Armor';
-        case 'Tools': return '🔧 Tools';
-        case 'Provisions': return '🍖 Provisions';
-        case 'DailyBonus': return '⭐ Bonus';
-        case 'BuyOrder': return '🛒 Buy Order';
+        case 'SeasonalHarvest': return 'Harvest';
+        case 'Materials': return 'Materials';
+        case 'Arms': return 'Arms';
+        case 'Armor': return 'Armor';
+        case 'Tools': return 'Tools';
+        case 'Provisions': return 'Provisions';
+        case 'DailyBonus': return 'Bonus';
+        case 'BuyOrder': return 'Buy Order';
         // Legacy
-        case 'BaseFood': return '🌱 Harvest';
-        case 'BaseIndustrial': return '📦 Materials';
+        case 'BaseFood': return 'Harvest';
+        case 'BaseIndustrial': return 'Materials';
         default: return kindTag || 'Unknown';
     }
 };
@@ -337,7 +337,7 @@ const ContractCard: React.FC<ContractCardProps> = ({
                         </span>
                         {playerItemCount > 0 && (
                             <span style={{ fontSize: '11px', color: '#ffaa00', marginLeft: '8px' }}>
-                                📦 {playerItemCount} in bag
+                                {playerItemCount} in bag
                             </span>
                         )}
                     </div>
@@ -424,7 +424,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                     />
                     <div className="contract-item-text">
                         <span className="contract-item-name">{cleanItemName}</span>
-                        <span className="contract-kind" style={{ color: '#ffaa00' }}>🛒 Buy Order</span>
+                        <span className="contract-kind" style={{ color: '#ffaa00' }}>Buy Order</span>
                     </div>
                 </div>
             </div>
@@ -548,7 +548,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                 <div style={{ fontSize: '12px', color: canAfford ? '#86be52' : '#ff6666', marginTop: '4px' }}>
                     Total: {totalItems} {cleanItemName} for {totalCost}
                     <img src={memoryShardIcon} alt="shards" className="shard-icon-small" style={{ marginLeft: '2px' }} />
-                    {!canAfford && <span style={{ marginLeft: '8px' }}>⚠️ Not enough shards!</span>}
+                    {!canAfford && <span style={{ marginLeft: '8px' }}>Not enough shards!</span>}
                 </div>
                 
                 <button 
@@ -565,7 +565,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                         cursor: canPurchase ? 'pointer' : 'not-allowed',
                     }}
                 >
-                    {!isAtCentralCompound ? '⚠️ GO TO CENTRAL COMPOUND' : canAfford ? '🛒 PURCHASE' : '⚠️ NOT ENOUGH SHARDS'}
+                    {!isAtCentralCompound ? 'GO TO CENTRAL COMPOUND' : canAfford ? 'PURCHASE' : 'NOT ENOUGH SHARDS'}
                 </button>
             </div>
         </div>
@@ -747,7 +747,6 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
             if (searchResults.length === 0) {
                 return (
                     <div className="no-contracts">
-                        <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔍</div>
                         No contracts found for "{searchQuery}"
                         <br />
                         <span style={{ fontSize: '12px', opacity: 0.7 }}>
@@ -831,7 +830,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                             borderBottom: '1px solid rgba(45, 71, 21, 0.3)',
                             background: 'rgba(45, 71, 21, 0.1)'
                         }}>
-                            🛒 <strong>BUY ORDERS</strong> - Spend Memory Shards to buy materials instantly
+                            <strong>BUY ORDERS</strong> - Spend Memory Shards to buy materials instantly
                             <br />
                             <span style={{ fontSize: '11px', opacity: 0.8 }}>
                                 Must be at Central Compound to purchase. Prices are ~2x sell value.
@@ -959,10 +958,10 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
             
             {/* Season Advisory */}
             <div className="season-advisory">
-                {currentSeason === 0 && "🌸 Spring: Fresh produce in high demand. Scurvy grass and crowberries available."}
-                {currentSeason === 1 && "☀️ Summer: Agricultural peak. Pumpkins and corn contracts active."}
-                {currentSeason === 2 && "🍂 Autumn: Harvest season. Root vegetables and salmon at premium rates."}
-                {currentSeason === 3 && "❄️ Winter: Preserved goods and pelts in demand. Stay warm."}
+                {currentSeason === 0 && "Spring: Fresh produce in high demand. Scurvy grass and crowberries available."}
+                {currentSeason === 1 && "Summer: Agricultural peak. Pumpkins and corn contracts active."}
+                {currentSeason === 2 && "Autumn: Harvest season. Root vegetables and salmon at premium rates."}
+                {currentSeason === 3 && "Winter: Preserved goods and pelts in demand. Stay warm."}
             </div>
             
             {/* Search Bar */}
@@ -974,7 +973,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                 alignItems: 'center',
                 gap: '10px'
             }}>
-                <span style={{ color: '#5c8e32', fontSize: '16px' }}>🔍</span>
+                <span style={{ color: '#5c8e32', fontSize: '16px' }}></span>
                 <input
                     type="text"
                     placeholder="Search contracts by item name..."
@@ -1029,7 +1028,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                         }}
                         title="Clear search (Esc)"
                     >
-                        ✕ Clear
+                        Clear
                     </button>
                 )}
             </div>
@@ -1041,7 +1040,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     onClick={() => setActiveTab('my-contracts')}
                     title="Your accepted contracts"
                 >
-                    📋 MY ORDERS
+                    MY ORDERS
                     <span className="tab-count">{myContracts.filter(c => c.status?.tag === 'Active').length}</span>
                 </button>
                 <button 
@@ -1049,7 +1048,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     onClick={() => setActiveTab('bonus')}
                     title="Time-limited bonus contracts - HIGH REWARDS!"
                 >
-                    ⭐ BONUS
+                    BONUS
                     <span className="tab-count bonus-count">{bonusContracts.length}</span>
                 </button>
                 <button 
@@ -1064,7 +1063,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                         color: activeTab === 'buy-orders' ? '#ffdd00' : '#ffaa00',
                     }}
                 >
-                    🛒 BUY
+                    BUY
                     <span className="tab-count" style={{ 
                         background: 'rgba(45, 71, 21, 0.3)', 
                         color: '#ffdd00' 
@@ -1081,7 +1080,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     title="Plant-based items (seasonal)"
                     style={{ fontSize: '12px', padding: '10px 16px' }}
                 >
-                    <span style={{ fontSize: '12px', marginRight: '6px' }}>🌱</span>
+                    <span style={{ fontSize: '12px', marginRight: '6px' }}></span>
                     Harvest
                     <span className="cat-count">{seasonalContracts.length}</span>
                 </button>
@@ -1091,7 +1090,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     title="Raw materials"
                     style={{ fontSize: '12px', padding: '10px 16px' }}
                 >
-                    <span style={{ fontSize: '12px', marginRight: '6px' }}>📦</span>
+                    <span style={{ fontSize: '12px', marginRight: '6px' }}></span>
                     Materials
                     <span className="cat-count">{materialsContracts.length}</span>
                 </button>
@@ -1101,7 +1100,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     title="Weapons"
                     style={{ fontSize: '12px', padding: '10px 16px' }}
                 >
-                    <span style={{ fontSize: '12px', marginRight: '6px' }}>⚔️</span>
+                    <span style={{ fontSize: '12px', marginRight: '6px' }}></span>
                     Arms
                     <span className="cat-count">{armsContracts.length}</span>
                 </button>
@@ -1111,7 +1110,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     title="Armor"
                     style={{ fontSize: '12px', padding: '10px 16px' }}
                 >
-                    <span style={{ fontSize: '12px', marginRight: '6px' }}>🛡️</span>
+                    <span style={{ fontSize: '12px', marginRight: '6px' }}></span>
                     Armor
                     <span className="cat-count">{armorContracts.length}</span>
                 </button>
@@ -1121,7 +1120,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     title="Tools"
                     style={{ fontSize: '12px', padding: '10px 16px' }}
                 >
-                    <span style={{ fontSize: '12px', marginRight: '6px' }}>🔧</span>
+                    <span style={{ fontSize: '12px', marginRight: '6px' }}></span>
                     Tools
                     <span className="cat-count">{toolsContracts.length}</span>
                 </button>
@@ -1131,7 +1130,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     title="Food & medicine"
                     style={{ fontSize: '12px', padding: '10px 16px' }}
                 >
-                    <span style={{ fontSize: '12px', marginRight: '6px' }}>🍖</span>
+                    <span style={{ fontSize: '12px', marginRight: '6px' }}></span>
                     Food
                     <span className="cat-count">{provisionsContracts.length}</span>
                 </button>
@@ -1152,7 +1151,7 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     </div>
                 ) : (
                     <div className="footer-tip">
-                        💡 Deliver at Central Compound (no fee) or Substations (10% fee)
+                        Deliver at Central Compound (no fee) or Substations (10% fee)
                     </div>
                 )}
             </div>

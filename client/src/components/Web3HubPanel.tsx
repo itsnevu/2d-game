@@ -297,9 +297,9 @@ export const Web3HubPanel: React.FC = () => {
   return (
     <div className="web3-panel">
       <div className="web3-panel-header">
-        <h2 className="web3-panel-title">🪙 WEB3 PORTAL</h2>
+        <h2 className="web3-panel-title">WEB3 PORTAL</h2>
         <div className="web3-gold-badge">
-          💰 {goldBalance.toLocaleString()} Gold
+          {goldBalance.toLocaleString()} Gold
         </div>
       </div>
 
@@ -348,8 +348,8 @@ export const Web3HubPanel: React.FC = () => {
 
               <div style={{ marginTop: '20px' }} className={`web3-status-box ${isInWildernessZone ? 'danger' : 'safe'}`}>
                 {isInWildernessZone 
-                  ? '⚠️ Currently inside Wilderness PvP Zone! Staked bounty is vulnerable.' 
-                  : '🛡️ Currently outside Wilderness. Your assets are safe.'}
+                  ? 'Currently inside Wilderness PvP Zone! Staked bounty is vulnerable.'
+                  : 'Currently outside Wilderness. Your assets are safe.'}
               </div>
 
               <div className="web3-form-group" style={{ marginTop: '20px' }}>
