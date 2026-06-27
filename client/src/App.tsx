@@ -43,6 +43,7 @@ import { useErrorDisplay } from './contexts/ErrorDisplayContext';
 import { useSettings } from './contexts/SettingsContext';
 
 // Assets & Styles
+import './theme/tokens.css'; // Unified HUD design tokens (must load before component styles)
 import './App.css';
 
 // Auto-close interaction when player moves too far from container
@@ -89,11 +90,12 @@ function AppContent() {
     useAuthErrorHandler(); // This will automatically handle 401 errors and invalidate tokens
     
     // --- Auth Hook ---
-    const { 
-        userProfile, 
-        isAuthenticated, 
+    const {
+        userProfile,
+        isAuthenticated,
         isSpectator,
-        isLoading: authLoading, 
+        setIsSpectator,
+        isLoading: authLoading,
         loginRedirect,
         spacetimeToken
     } = useAuth();
@@ -200,11 +202,11 @@ function AppContent() {
     // --- Render Logic ---
     return (
         <div className="App" style={{ backgroundColor: '#111' }}>
-            {/* Conditional Rendering: Login vs Game */}
-            {!isAuthenticated && (
+            {/* Conditional Rendering: Login vs Spectator vs Game */}
+            {!isAuthenticated && !isSpectator && (
                  <LoginScreen
                     handleJoinGame={loginRedirect} // Correctly pass loginRedirect
-                    handleSpectateGame={async () => { /* login required before spectate */ }}
+                    handleSpectateGame={() => { setIsSpectator(true); }} // No wallet required to spectate
                     loggedInPlayer={null}
                     connectionError={connectionError}
                     isSpacetimeConnected={spacetimeConnected}
@@ -231,8 +233,8 @@ function AppContent() {
                  />
             )}
             
-            {/* If authenticated AND registered/game ready, or spectating */}
-            {isAuthenticated && (isSpectator || (localPlayerRegistered && loggedInPlayer)) && (
+            {/* Spectating (no wallet required) OR an authenticated, registered player */}
+            {(isSpectator || (isAuthenticated && localPlayerRegistered && loggedInPlayer)) && (
                 (() => { 
                     const localPlayerIdentityHex = dbIdentity ? dbIdentity.toHexString() : undefined;
                     return (

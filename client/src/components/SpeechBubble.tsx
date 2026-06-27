@@ -68,7 +68,7 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
         borderRadius: '8px',
         maxWidth: `${maxWidth}px`,
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
-        fontFamily: '"Press Start 2P", cursive, Arial, sans-serif', // More game-like font if available
+        fontFamily: 'var(--ui-font), Arial, sans-serif', // More game-like font if available
         fontSize: '12px',
         lineHeight: '1.4',
         opacity: opacity,

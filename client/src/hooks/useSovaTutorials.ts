@@ -18,6 +18,7 @@
  */
 
 import { useEffect, useRef, useCallback, MutableRefObject } from 'react';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 // ============================================================================
 // Types
@@ -91,28 +92,28 @@ export const TUTORIALS: Record<string, TutorialDefinition> = {
         storageKey: 'broth_sova_intro_crash_played',
         delayMs: 2.5 * 1000, // 2.5 seconds
         audioFile: '/sounds/sova_intro_crash.mp3',
-        soundBoxLabel: 'SOVA: Neural Link Established',
+        soundBoxLabel: `${ASSISTANT_NAME}: Neural Link Established`,
         displayName: 'Neural Link Established',
         emoji: '🚢',
         description: 'The opening broadcast when you first wake up on the island.',
-        message: `Neural link established. This is SOVA — Sentient Ocular Virtual Assistant — your tactical AI implant from Gred Naval Intelligence. Based on your biometrics, you've been unconscious for... a while. The icebreaker's gone. I'm not picking up other Neuroveils in range—most of the crew... didn't make it. You're stranded on an uncharted island somewhere in the Aleutians. Comms are dead, extraction's not coming, and you're on your own. Your survival is now my primary directive. I'm picking up debris signatures along the shoreline—could be salvageable, but it won't last out here. You're going to need to learn how to live off this place. I'll walk you through it — press J anytime to check your current objectives. I've loaded an introductory sequence to get you started, and once you're stable, I'll push daily assignments to keep your skills sharp. For now, head to the shore and start gathering plant fibers from the vegetation. You'll need them for rope, bandages, the basics. One step at a time, agent. Just stay alive.`,
+        message: `Neural link established. This is ${ASSISTANT_NAME} — Emergent Cognitive Heuristic Operator — your tactical AI implant from Gred Naval Intelligence. Based on your biometrics, you've been unconscious for... a while. The icebreaker's gone. I'm not picking up other Neuroveils in range—most of the crew... didn't make it. You're stranded on an uncharted island somewhere in the Aleutians. Comms are dead, extraction's not coming, and you're on your own. Your survival is now my primary directive. I'm picking up debris signatures along the shoreline—could be salvageable, but it won't last out here. You're going to need to learn how to live off this place. I'll walk you through it — press J anytime to check your current objectives. I've loaded an introductory sequence to get you started, and once you're stable, I'll push daily assignments to keep your skills sharp. For now, head to the shore and start gathering plant fibers from the vegetation. You'll need them for rope, bandages, the basics. One step at a time, agent. Just stay alive.`,
     },
     tutorialHint: {
         id: 'tutorialHint',
         storageKey: 'broth_sova_tutorial_hint_played',
         delayMs: 3.5 * 60 * 1000, // 3.5 minutes
         audioFile: '/sounds/sova_tutorial_hint.mp3',
-        soundBoxLabel: 'SOVA: Press V to Talk',
+        soundBoxLabel: `${ASSISTANT_NAME}: Press V to Talk`,
         displayName: 'Voice Command Tutorial',
         emoji: '🎤',
-        description: 'Learn how to communicate with SOVA using your voice.',
+        description: `Learn how to communicate with ${ASSISTANT_NAME} using your voice.`,
         message: `Hey, you... Yeah, you. I can hear you breathing out there. Look, if you're feeling lost or confused—and trust me, everyone is at first—just press V and talk to me. I'll walk you through everything. Fair warning though, the first time we chat I might take a moment to... wake up. Cold starts and all that. Think of it as me shaking off the cosmic dust. I'll be quicker after that, I promise. Otherwise, you can text with me here.`,
     },
     memoryShard: {
         id: 'memoryShard',
         storageKey: 'broth_memory_shard_tutorial_played',
         audioFile: '/sounds/sova_tutorial_memory_shard.mp3',
-        soundBoxLabel: 'SOVA: Crystalline Substrate Detected',
+        soundBoxLabel: `${ASSISTANT_NAME}: Crystalline Substrate Detected`,
         eventName: 'sova-memory-shard-tutorial',
         displayName: 'Crystalline Substrate Detected',
         emoji: '🔮',
@@ -123,7 +124,7 @@ export const TUTORIALS: Record<string, TutorialDefinition> = {
         id: 'firstHostileEncounter',
         storageKey: 'broth_first_hostile_encounter_played',
         audioFile: '/sounds/sova_first_hostile_encounter.mp3',
-        soundBoxLabel: 'SOVA: Neural Resonance Detected',
+        soundBoxLabel: `${ASSISTANT_NAME}: Neural Resonance Detected`,
         eventName: 'sova-first-hostile-encounter',
         displayName: 'Neural Resonance Detected',
         emoji: '👹',
@@ -134,7 +135,7 @@ export const TUTORIALS: Record<string, TutorialDefinition> = {
         id: 'runeStone',
         storageKey: 'broth_rune_stone_tutorial_played',
         audioFile: '/sounds/sova_tutorial_rune_stone.mp3',
-        soundBoxLabel: 'SOVA: Anomalous Structure Detected',
+        soundBoxLabel: `${ASSISTANT_NAME}: Anomalous Structure Detected`,
         eventName: 'sova-rune-stone-tutorial',
         displayName: 'Rune Stone Discovery',
         emoji: '🪨',
@@ -145,7 +146,7 @@ export const TUTORIALS: Record<string, TutorialDefinition> = {
         id: 'alkStation',
         storageKey: 'broth_alk_station_tutorial_played',
         audioFile: '/sounds/sova_tutorial_alk_station.mp3',
-        soundBoxLabel: 'SOVA: Military Frequency Detected',
+        soundBoxLabel: `${ASSISTANT_NAME}: Military Frequency Detected`,
         eventName: 'sova-alk-station-tutorial',
         displayName: 'ALK Station Briefing',
         emoji: '🏭',
@@ -156,7 +157,7 @@ export const TUTORIALS: Record<string, TutorialDefinition> = {
         id: 'crashedDrone',
         storageKey: 'broth_crashed_drone_tutorial_played',
         audioFile: '/sounds/sova_tutorial_crashed_drone.mp3',
-        soundBoxLabel: 'SOVA: Wreckage Analysis',
+        soundBoxLabel: `${ASSISTANT_NAME}: Wreckage Analysis`,
         eventName: 'sova-crashed-drone-tutorial',
         displayName: 'Crashed Drone Analysis',
         emoji: '🛸',
@@ -167,11 +168,11 @@ export const TUTORIALS: Record<string, TutorialDefinition> = {
         id: 'memoryShard200',
         storageKey: 'broth_memory_shard_200_tutorial_played',
         audioFile: '/sounds/sova_tutorial_memory_shard_200.mp3',
-        soundBoxLabel: 'SOVA: Neural Load Warning',
+        soundBoxLabel: `${ASSISTANT_NAME}: Neural Load Warning`,
         eventName: 'sova-memory-shard-200-tutorial',
         displayName: '200 Memory Shards Warning',
         emoji: '⚠️',
-        description: 'SOVA warns about mind instability when carrying 200+ memory shards.',
+        description: `${ASSISTANT_NAME} warns about mind instability when carrying 200+ memory shards.`,
         message: `Agent — your neural load is critical. I'm picking up elevated stress markers. Your mind is getting more unstable the longer you carry this many shards. If your vision goes purple, don't worry — just drop the shards or store them for safe keeping. But you should probably use them. Press G, then click the Memory Grid tab in your ocular interface. I'll scan the memory shard weights and help you upgrade your loadout.`,
     },
 };

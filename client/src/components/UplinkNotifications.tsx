@@ -19,8 +19,8 @@ const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #5c8e32, #c4e89c, #86be52, #
 const ACCENT_CYAN = '#5c8e32';
 const ACCENT_GREEN = '#c4e89c';
 const ACCENT_PURPLE = '#86be52';
-const ACCENT_PINK = '#f472b6';
-const ACCENT_GOLD = '#ffd700';
+const ACCENT_PINK = '#d488ff';
+const ACCENT_GOLD = '#ffc83c';
 
 // Notification types
 type NotificationType = 'level_up' | 'achievement' | 'mission_complete';
@@ -271,7 +271,7 @@ const UplinkNotifications: React.FC<UplinkNotificationsProps> = ({
       case 'level_up':
         return { primary: ACCENT_CYAN, secondary: ACCENT_PURPLE, gradient: 'linear-gradient(135deg, #5c8e32, #2d4715, #5c8e32)' };
       case 'achievement':
-        return { primary: ACCENT_GOLD, secondary: ACCENT_PINK, gradient: 'linear-gradient(135deg, #ffd700, #ff006e, #ffd700)' };
+        return { primary: ACCENT_GOLD, secondary: ACCENT_PINK, gradient: 'linear-gradient(135deg, #ffc83c, #d488ff, #ffc83c)' };
       case 'mission_complete':
         return { primary: ACCENT_GREEN, secondary: ACCENT_CYAN, gradient: 'linear-gradient(135deg, #c4e89c, #5c8e32, #c4e89c)' };
       default:
@@ -321,7 +321,7 @@ const UplinkNotifications: React.FC<UplinkNotificationsProps> = ({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          fontFamily: "'Courier New', 'Consolas', monospace",
+          fontFamily: "'PixelOperator', monospace",
         }}>
           {/* Scanlines */}
           <div className="uplink-notif-scanlines" />

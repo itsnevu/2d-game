@@ -26,7 +26,7 @@
   width: 280px;
   height: 280px;
   border-radius: 50%;
-  background: linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+  background: linear-gradient(135deg, rgba(16, 30, 22, 0.98), rgba(12, 21, 15, 0.99));
   backdrop-filter: blur(12px);
   border: 2px solid rgba(134, 190, 82, 0.4);
   box-shadow: 
@@ -38,7 +38,7 @@
 
 /* Enhanced background when recording */
 .voice-interface-rings:has(.recording)::before {
-  background: linear-gradient(145deg, rgba(10, 35, 45, 0.98), rgba(5, 25, 35, 0.99));
+  background: linear-gradient(135deg, rgba(20, 38, 26, 0.98), rgba(12, 26, 17, 0.99));
   border-color: rgba(134, 190, 82, 0.7);
   box-shadow: 
     0 0 50px rgba(134, 190, 82, 0.4),
@@ -144,7 +144,7 @@
   align-items: center;
   justify-content: center;
   font-size: 28px;
-  background: linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+  background: linear-gradient(135deg, rgba(16, 30, 22, 0.98), rgba(12, 21, 15, 0.99));
   backdrop-filter: blur(8px);
   z-index: 10;
   overflow: hidden;
@@ -163,15 +163,15 @@
 }
 
 .voice-interface-center.recording {
-  background: linear-gradient(145deg, rgba(10, 40, 50, 0.98), rgba(5, 30, 40, 0.99));
-  box-shadow: 
+  background: linear-gradient(135deg, rgba(20, 38, 26, 0.98), rgba(12, 26, 17, 0.99));
+  box-shadow:
     0 0 35px rgba(134, 190, 82, 0.7), 
     inset 0 0 40px rgba(134, 190, 82, 0.15);
   border-color: #86be52;
 }
 
 .voice-interface-center.idle {
-  background: linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+  background: linear-gradient(135deg, rgba(16, 30, 22, 0.98), rgba(12, 21, 15, 0.99));
 }
 
 /* SOVA Icon */
@@ -212,10 +212,10 @@
   transform: translateX(-50%);
   color: #86be52;
   font-size: 14px;
-  font-family: "Press Start 2P", cursive;
+  font-family: 'PixelOperator', sans-serif;
   text-shadow: 0 0 12px rgba(134, 190, 82, 0.8), 0 0 25px rgba(134, 190, 82, 0.4);
   letter-spacing: 4px;
-  background: linear-gradient(135deg, rgba(15, 30, 50, 0.95), rgba(10, 20, 40, 0.98));
+  background: linear-gradient(135deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98));
   padding: 10px 20px;
   border-radius: 6px;
   border: 1px solid rgba(134, 190, 82, 0.4);
@@ -230,11 +230,11 @@
   transform: translateX(-50%);
   color: rgba(134, 190, 82, 0.9);
   font-size: 10px;
-  font-family: "Press Start 2P", cursive;
+  font-family: 'PixelOperator', sans-serif;
   text-align: center;
   text-shadow: 0 0 8px rgba(134, 190, 82, 0.6);
   white-space: nowrap;
-  background: linear-gradient(135deg, rgba(15, 30, 50, 0.95), rgba(10, 20, 40, 0.98));
+  background: linear-gradient(135deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98));
   padding: 8px 16px;
   border-radius: 6px;
   border: 1px solid rgba(134, 190, 82, 0.3);
@@ -250,7 +250,7 @@
   transform: translateX(-50%);
   color: #ff6666;
   font-size: 9px;
-  font-family: "Press Start 2P", cursive;
+  font-family: 'PixelOperator', sans-serif;
   text-align: center;
   max-width: 320px;
   word-wrap: break-word;
@@ -271,11 +271,11 @@
   transform: translateX(-50%);
   color: #5c8e32;
   font-size: 9px;
-  font-family: "Press Start 2P", cursive;
+  font-family: 'PixelOperator', sans-serif;
   text-align: center;
   max-width: 400px;
   word-wrap: break-word;
-  background: linear-gradient(135deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99));
+  background: linear-gradient(135deg, rgba(16, 30, 22, 0.98), rgba(12, 21, 15, 0.99));
   padding: 14px 20px;
   border-radius: 8px;
   border: 1px solid rgba(92, 142, 50, 0.4);

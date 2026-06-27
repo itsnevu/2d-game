@@ -147,6 +147,7 @@ export function renderPlayerCorpse({
     goldShareRatio: 0,
     goldBalance: 0n,
     stakedBounty: 0n,
+    characterId: 0, // Corpses render with the base sprite (PlayerCorpse doesn't store appearance)
   };
 
   // Choose the appropriate hero sprite based on water status (corpses don't crouch)

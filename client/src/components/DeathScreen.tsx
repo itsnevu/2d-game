@@ -510,7 +510,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000, // Ensure it's above the canvas
-    fontFamily: '"Courier New", monospace', // Cyberpunk monospace font
+    fontFamily: "'PixelOperator', monospace", // Cyberpunk monospace font
     color: '#ffffff',
     backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(92, 142, 50, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(45, 71, 21, 0.1) 0%, transparent 50%)', // Subtle cyberpunk glow
   },
@@ -524,10 +524,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     backdropFilter: 'blur(10px)', // Glass morphism effect
   },
   title: {
-    color: '#ff006e', // Neon pink
+    color: '#c4e89c', // Accent bright
     fontSize: '2.5em',
     marginBottom: '20px',
-    textShadow: '0 0 10px #ff006e, 2px 2px 4px #000000', // Neon glow + shadow
+    textShadow: '0 0 10px #c4e89c, 2px 2px 4px #000000', // Accent glow + shadow
     fontWeight: 'bold',
     letterSpacing: '2px',
   },
@@ -540,7 +540,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   buttonEnabled: {
     padding: '10px 20px', // Reduced from 15px 30px
     fontSize: '1em', // Reduced from 1.1em
-    fontFamily: '"Courier New", monospace',
+    fontFamily: "'PixelOperator', monospace",
     background: 'linear-gradient(135deg, #5c8e32 0%, #2d4715 100%)', // Cyan to purple gradient
     color: '#ffffff',
     border: '2px solid #5c8e32',
@@ -555,7 +555,7 @@ const styles: { [key: string]: React.CSSProperties } = {
    buttonDisabled: {
     padding: '10px 20px', // Reduced from 15px 30px
     fontSize: '1em', // Reduced from 1.1em
-    fontFamily: '"Courier New", monospace',
+    fontFamily: "'PixelOperator', monospace",
     backgroundColor: 'rgba(71, 85, 105, 0.5)', // Dark slate
     color: '#64748b', // Muted slate
     border: '2px solid #475569',
@@ -568,7 +568,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   buttonLoading: {
     padding: '10px 20px', // Reduced from 15px 30px
     fontSize: '1em', // Reduced from 1.1em
-    fontFamily: '"Courier New", monospace',
+    fontFamily: "'PixelOperator', monospace",
     background: 'linear-gradient(135deg, #475569 0%, #64748b 100%)', // Muted gradient
     color: '#cbd5e1', // Light slate
     border: '2px solid #64748b',
@@ -590,17 +590,17 @@ const styles: { [key: string]: React.CSSProperties } = {
   buttonYellow: {
     padding: '10px 20px', // Reduced from 15px 30px
     fontSize: '1em', // Reduced from 1.1em
-    fontFamily: '"Courier New", monospace',
-    background: 'linear-gradient(135deg, #ffeb3b 0%, #ff9800 100%)', // Yellow to orange gradient
-    color: '#000000', // Black text for better contrast on yellow
-    border: '2px solid #ffeb3b',
+    fontFamily: "'PixelOperator', monospace",
+    background: 'linear-gradient(135deg, #ffc83c 0%, #ff9800 100%)', // Amber to orange gradient
+    color: '#000000', // Black text for better contrast on amber
+    border: '2px solid #ffc83c',
     borderRadius: '6px',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     textTransform: 'uppercase',
     letterSpacing: '1px',
     fontWeight: 'bold',
-    boxShadow: '0 0 15px rgba(255, 235, 59, 0.4)',
+    boxShadow: '0 0 15px rgba(255, 200, 60, 0.4)',
     textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
   },
   // Enhanced minimap canvas styling

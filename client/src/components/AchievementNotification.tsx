@@ -374,8 +374,8 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         }
         
         @keyframes trophyPulse {
-          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ffd700); }
-          50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ffd700); }
+          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ffc83c); }
+          50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ffc83c); }
         }
         
         @keyframes achievementGlitch {
@@ -406,7 +406,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         .achievement-glow-container {
           position: relative;
           padding: 2px;
-          background: linear-gradient(135deg, #ffd700, #ff9500, #ff006e, #ffd700);
+          background: linear-gradient(135deg, #ffc83c, #ffc83c, #c4e89c, #ffc83c);
           background-size: 300% 300%;
           animation: achievementGradientShift 4s ease infinite;
           border-radius: 8px;
@@ -463,7 +463,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
           position: absolute;
           width: 12px;
           height: 12px;
-          border: 2px solid #ffd700;
+          border: 2px solid #ffc83c;
           z-index: 5;
         }
         
@@ -515,9 +515,9 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         }
         
         .achievement-close:hover {
-          color: #ffd700;
+          color: #ffc83c;
           background: rgba(134, 190, 82, 0.2);
-          text-shadow: 0 0 10px #ffd700;
+          text-shadow: 0 0 10px #ffc83c;
         }
         
         /* Content layout */
@@ -564,9 +564,9 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         }
         
         .achievement-label {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 9px;
-          color: #ffd700;
+          color: #ffc83c;
           letter-spacing: 1.5px;
           text-transform: uppercase;
           opacity: 0.8;
@@ -575,7 +575,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         /* Achievement name with glitch */
         .achievement-name {
           position: relative;
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 15px;
           font-weight: bold;
           margin-bottom: 8px;
@@ -597,18 +597,18 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         }
         
         .achievement-name .glitch-layer-1 {
-          color: #ffd700;
+          color: #ffc83c;
           animation: achievementGlitch 0.5s infinite;
         }
-        
+
         .achievement-name .glitch-layer-2 {
-          color: #ff006e;
+          color: #c4e89c;
           animation: achievementGlitch2 0.5s infinite;
         }
         
         /* Achievement description */
         .achievement-description {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 11px;
           color: rgba(255, 255, 255, 0.7);
           margin-top: 4px;
@@ -639,31 +639,31 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         }
         
         .reward-item.xp .reward-value {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperatorMono', monospace;
           font-size: 13px;
           font-weight: bold;
           color: #5c8e32;
           text-shadow: 0 0 8px #5c8e32;
         }
-        
+
         .reward-item.xp .reward-label {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 9px;
           color: #64748b;
           letter-spacing: 1px;
         }
-        
+
         .reward-item.title .reward-icon {
-          color: #ff006e;
+          color: #d488ff;
           font-size: 10px;
         }
-        
+
         .reward-item.title .reward-value {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 11px;
           font-weight: bold;
-          color: #ff006e;
-          text-shadow: 0 0 8px #ff006e;
+          color: #d488ff;
+          text-shadow: 0 0 8px #d488ff;
         }
         
         /* Progress bar */
@@ -674,7 +674,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         
         .achievement-progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #ffd700, #ff9500);
+          background: linear-gradient(90deg, #ffc83c, #ffc83c);
           animation: achievementProgressFill linear forwards;
         }
         
@@ -693,9 +693,9 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
           position: absolute;
           width: 4px;
           height: 4px;
-          background: #ffd700;
+          background: #ffc83c;
           border-radius: 50%;
-          box-shadow: 0 0 8px #ffd700;
+          box-shadow: 0 0 8px #ffc83c;
         }
         
         .achievement-particle.particle-0 { 
@@ -706,9 +706,9 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         .achievement-particle.particle-1 { 
           top: -15px; 
           right: 30%; 
-          animation: achievementFloat 2.3s ease-in-out infinite 0.3s; 
-          background: #ff9500; 
-          box-shadow: 0 0 8px #ff9500; 
+          animation: achievementFloat 2.3s ease-in-out infinite 0.3s;
+          background: #ffc83c;
+          box-shadow: 0 0 8px #ffc83c;
         }
         .achievement-particle.particle-2 { 
           bottom: -10px; 
@@ -718,9 +718,9 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
         .achievement-particle.particle-3 { 
           bottom: -15px; 
           right: 20%; 
-          animation: achievementFloat 2.4s ease-in-out infinite 0.7s; 
-          background: #ff006e; 
-          box-shadow: 0 0 8px #ff006e; 
+          animation: achievementFloat 2.4s ease-in-out infinite 0.7s;
+          background: #c4e89c;
+          box-shadow: 0 0 8px #c4e89c;
         }
       `}</style>
     </div>

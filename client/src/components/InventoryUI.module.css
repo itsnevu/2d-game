@@ -8,9 +8,9 @@
   height: 80vh;
   max-height: 850px; /* Corrected value */
   /* Cyberpunk SOVA styling */
-  background: linear-gradient(135deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98));
-  border: 2px solid #5c8e32;
-  box-shadow: 0 0 30px rgba(0, 170, 255, 0.3), inset 0 0 20px rgba(0, 170, 255, 0.1);
+  background: var(--ui-panel-bg);
+  border: 2px solid var(--ui-border);
+  box-shadow: 0 0 30px var(--ui-accent-glow), inset 0 0 20px rgba(134, 190, 82, 0.1);
   border-radius: 8px;
   padding: 20px;
   padding-top: 45px;
@@ -18,7 +18,7 @@
   display: flex;
   gap: 15px;
   color: #ffffff;
-  font-family: 'Press Start 2P', cursive;
+  font-family: var(--ui-font), cursive;
   box-sizing: border-box;
   align-items: flex-start;
   backdrop-filter: blur(10px);
@@ -33,7 +33,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #00ffff, transparent);
+  background: linear-gradient(90deg, transparent, var(--ui-accent), transparent);
   animation: scanLine 3s linear infinite;
   pointer-events: none;
   z-index: 1;
@@ -183,11 +183,11 @@
 .craftableItemsSection {
     height: 250px;
     margin-bottom: 15px;
-    border: 2px solid rgba(0, 170, 255, 0.3);
+    border: 2px solid var(--ui-border-inner);
     border-radius: 6px;
     padding: 5px;
-    background: linear-gradient(135deg, rgba(15, 15, 35, 0.8), rgba(10, 10, 25, 0.9));
-    box-shadow: inset 0 0 15px rgba(0, 170, 255, 0.1);
+    background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+    box-shadow: inset 0 0 15px rgba(134, 190, 82, 0.1);
 }
 
 .craftableItemsGrid {
@@ -201,11 +201,11 @@
 
 .craftingQueueSection {
     height: 220px;
-    border: 2px solid rgba(0, 170, 255, 0.3);
+    border: 2px solid var(--ui-border-inner);
     border-radius: 6px;
     padding: 5px;
-    background: linear-gradient(135deg, rgba(15, 15, 35, 0.8), rgba(10, 10, 25, 0.9));
-    box-shadow: inset 0 0 15px rgba(0, 170, 255, 0.1);
+    background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+    box-shadow: inset 0 0 15px rgba(134, 190, 82, 0.1);
     display: flex;
     flex-direction: column;
 }
@@ -275,7 +275,7 @@
 .interactionButton {
     margin-top: 10px;
     padding: 8px 15px;
-    border: 2px solid rgba(0, 170, 255, 0.5);
+    border: 2px solid var(--ui-border);
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
@@ -284,7 +284,7 @@
     font-family: inherit;
     font-size: 11px;
     white-space: nowrap;
-    box-shadow: 0 0 10px rgba(0, 170, 255, 0.2), inset 0 0 8px rgba(0, 170, 255, 0.1);
+    box-shadow: 0 0 10px rgba(134, 190, 82, 0.2), inset 0 0 8px rgba(134, 190, 82, 0.1);
     text-shadow: 0 0 5px currentColor;
 }
 
@@ -337,31 +337,31 @@
 
 /* General Styles */
 .sectionTitle {
-  color: #00ffff;
+  color: var(--ui-accent);
   margin-bottom: 10px;
   text-align: center;
-  font-size: 1.1em; 
+  font-size: 1.1em;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-top: 0;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.4);
   animation: titleGlow 2s ease-in-out infinite alternate;
 }
 
 @keyframes titleGlow {
-  0% { 
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4);
+  0% {
+    text-shadow: 0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.4);
   }
-  100% { 
-    text-shadow: 0 0 15px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.6);
+  100% {
+    text-shadow: 0 0 15px rgba(134, 190, 82, 1), 0 0 30px rgba(134, 190, 82, 0.6);
   }
 }
 
 .slot {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9));
-  border: 2px solid rgba(0, 170, 255, 0.4);
+  background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+  border: 2px solid var(--ui-border-inner);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -369,20 +369,20 @@
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: inset 0 0 10px rgba(0, 170, 255, 0.1);
+  box-shadow: inset 0 0 10px rgba(134, 190, 82, 0.1);
   transition: all 0.2s ease;
 }
 
 .slot:hover {
-    border-color: #5c8e32;
-    box-shadow: 0 0 10px rgba(0, 170, 255, 0.4), inset 0 0 15px rgba(0, 170, 255, 0.2);
+    border-color: var(--ui-border);
+    box-shadow: 0 0 10px rgba(134, 190, 82, 0.4), inset 0 0 15px rgba(134, 190, 82, 0.2);
 }
 
 /* Selected slot styling */
 .selectedSlot {
-    border-color: #00ffff !important;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.2) !important;
-    background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 150, 255, 0.3)) !important;
+    border-color: var(--ui-accent-bright) !important;
+    box-shadow: 0 0 15px var(--ui-accent-glow), inset 0 0 20px rgba(134, 190, 82, 0.2) !important;
+    background: linear-gradient(135deg, rgba(134, 190, 82, 0.2), rgba(134, 190, 82, 0.3)) !important;
 }
 
 /* Custom Scrollbar Styles - Cyberpunk theme */
@@ -393,31 +393,31 @@
 
 .craftableItemsSection::-webkit-scrollbar-track,
 .craftingQueueList::-webkit-scrollbar-track {
-  background: rgba(30, 15, 50, 0.8);
+  background: var(--ui-bg-900);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.2);
 }
 
 .craftableItemsSection::-webkit-scrollbar-thumb,
 .craftingQueueList::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.8), rgba(0, 150, 255, 0.6));
+  background: linear-gradient(135deg, var(--ui-accent), #6fa040);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3), inset 0 0 4px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.4);
+  box-shadow: 0 0 8px rgba(134, 190, 82, 0.3), inset 0 0 4px rgba(196, 232, 156, 0.2);
 }
 
 .craftableItemsSection::-webkit-scrollbar-thumb:hover,
 .craftingQueueList::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(0, 200, 255, 0.9), rgba(0, 170, 255, 0.8));
-  box-shadow: 0 0 12px rgba(0, 204, 255, 0.5), inset 0 0 6px rgba(0, 255, 255, 0.3);
-  border-color: rgba(0, 204, 255, 0.6);
+  background: linear-gradient(135deg, var(--ui-accent-bright), var(--ui-accent));
+  box-shadow: 0 0 12px rgba(196, 232, 156, 0.5), inset 0 0 6px rgba(196, 232, 156, 0.3);
+  border-color: rgba(196, 232, 156, 0.6);
 }
 
 /* Class for scrollable areas */
 .scrollableSection {
   overflow-y: auto;
   scrollbar-width: thin; /* For Firefox */
-  scrollbar-color: rgba(0, 170, 255, 0.8) rgba(30, 15, 50, 0.8); /* For Firefox - thumb track */
+  scrollbar-color: var(--ui-accent) var(--ui-bg-900); /* For Firefox - thumb track */
 }
 
 /* Style scrollbar for Webkit browsers */
@@ -425,20 +425,20 @@
   width: 8px;
 }
 .scrollableSection::-webkit-scrollbar-track {
-  background: rgba(30, 15, 50, 0.8);
+  background: var(--ui-bg-900);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.2);
 }
 .scrollableSection::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.8), rgba(0, 150, 255, 0.6));
+  background: linear-gradient(135deg, var(--ui-accent), #6fa040);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3), inset 0 0 4px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.4);
+  box-shadow: 0 0 8px rgba(134, 190, 82, 0.3), inset 0 0 4px rgba(196, 232, 156, 0.2);
 }
 .scrollableSection::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(0, 200, 255, 0.9), rgba(0, 170, 255, 0.8));
-  box-shadow: 0 0 12px rgba(0, 204, 255, 0.5), inset 0 0 6px rgba(0, 255, 255, 0.3);
-  border-color: rgba(0, 204, 255, 0.6);
+  background: linear-gradient(135deg, var(--ui-accent-bright), var(--ui-accent));
+  box-shadow: 0 0 12px rgba(196, 232, 156, 0.5), inset 0 0 6px rgba(196, 232, 156, 0.3);
+  border-color: rgba(196, 232, 156, 0.6);
 }
 
 /* Recipe List Styles */
@@ -527,7 +527,7 @@
   font-size: 10px; /* Slightly smaller than craft button */
   cursor: pointer;
   border: 1px solid #777; /* Lighter border than craft button */
-  background-color: #6688cc; /* A distinct blue color */
+  background-color: #5c8e32; /* A distinct accent color */
   color: white;
   border-radius: 3px;
   transition: background-color 0.2s ease;
@@ -535,7 +535,7 @@
 }
 
 .maxButton:hover {
-  background-color: #7799dd;
+  background-color: #6fa040;
 }
 
 .maxButton:disabled { /* If we ever disable it, though not currently planned */
@@ -582,7 +582,7 @@
   font-size: 11px;
   cursor: pointer;
   border: 2px solid #86be52;
-  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(196, 232, 156, 0.4));
   color: #ffffff;
   border-radius: 3px;
   transition: all 0.3s ease;
@@ -592,7 +592,7 @@
 }
 
 .craftButton:hover {
-  background: linear-gradient(135deg, rgba(134, 190, 82, 0.5), rgba(0, 200, 100, 0.6));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.5), rgba(196, 232, 156, 0.6));
   transform: translateY(-2px);
   box-shadow: 0 0 15px rgba(134, 190, 82, 0.4), inset 0 0 12px rgba(134, 190, 82, 0.2);
 }
@@ -651,8 +651,8 @@
 }
 
 .filterButton {
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 220, 0.4));
-  border: 2px solid rgba(0, 170, 255, 0.5);
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4));
+  border: 2px solid var(--ui-border);
   border-radius: 4px;
   padding: 6px 8px;
   color: #5c8e32;
@@ -663,16 +663,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 170, 255, 0.2), inset 0 0 8px rgba(0, 170, 255, 0.1);
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.6);
+  box-shadow: 0 0 10px rgba(134, 190, 82, 0.2), inset 0 0 8px rgba(134, 190, 82, 0.1);
+  text-shadow: 0 0 5px rgba(134, 190, 82, 0.6);
   transition: all 0.3s ease;
 }
 
 .filterButton:hover {
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.5), rgba(0, 150, 220, 0.6));
-  border-color: rgba(0, 170, 255, 0.7);
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.5), rgba(92, 142, 50, 0.6));
+  border-color: rgba(134, 190, 82, 0.7);
   transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(0, 170, 255, 0.4), inset 0 0 12px rgba(0, 170, 255, 0.2);
+  box-shadow: 0 0 15px rgba(134, 190, 82, 0.4), inset 0 0 12px rgba(134, 190, 82, 0.2);
 }
 
 .filterDropdown {
@@ -680,10 +680,10 @@
   top: 100%;
   right: 0;
   margin-top: 2px;
-  background: linear-gradient(135deg, rgba(30, 15, 50, 0.98), rgba(20, 10, 40, 0.99));
-  border: 2px solid #5c8e32;
+  background: var(--ui-panel-bg);
+  border: 2px solid var(--ui-border);
   border-radius: 8px;
-  box-shadow: 0 0 30px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1);
+  box-shadow: 0 0 30px var(--ui-accent-glow), inset 0 0 20px rgba(134, 190, 82, 0.1);
   backdrop-filter: blur(10px);
   z-index: 150;
   min-width: 140px;
@@ -693,12 +693,12 @@
 
 .filterOption {
   padding: 10px 14px;
-  color: #00ffff;
+  color: var(--ui-accent);
   font-size: 11px;
   cursor: pointer;
-  border-bottom: 2px solid rgba(0, 170, 255, 0.2);
+  border-bottom: 2px solid rgba(134, 190, 82, 0.2);
   transition: all 0.2s ease;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 5px rgba(134, 190, 82, 0.4);
 }
 
 .filterOption:last-child {
@@ -706,20 +706,20 @@
 }
 
 .filterOption:hover {
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 150, 220, 0.3));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.2), rgba(92, 142, 50, 0.3));
   color: #5c8e32;
-  box-shadow: inset 0 0 10px rgba(0, 170, 255, 0.1);
+  box-shadow: inset 0 0 10px rgba(134, 190, 82, 0.1);
 }
 
 .filterOptionSelected {
-  background: linear-gradient(135deg, rgba(134, 190, 82, 0.2), rgba(0, 200, 100, 0.3));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.2), rgba(196, 232, 156, 0.3));
   color: #86be52;
   text-shadow: 0 0 8px rgba(134, 190, 82, 0.6);
   box-shadow: inset 0 0 10px rgba(134, 190, 82, 0.1);
 }
 
 .filterOptionSelected:hover {
-  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(196, 232, 156, 0.4));
 }
 
 .equipmentSlot {
@@ -772,11 +772,11 @@
 .craftableItemsSection {
     height: 250px;
     margin-bottom: 15px;
-    border: 2px solid rgba(0, 170, 255, 0.3);
+    border: 2px solid var(--ui-border-inner);
     border-radius: 6px;
     padding: 5px;
-    background: linear-gradient(135deg, rgba(15, 15, 35, 0.8), rgba(10, 10, 25, 0.9));
-    box-shadow: inset 0 0 15px rgba(0, 170, 255, 0.1);
+    background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+    box-shadow: inset 0 0 15px rgba(134, 190, 82, 0.1);
 }
 
 .craftableItemsGrid {
@@ -790,11 +790,11 @@
 
 .craftingQueueSection {
     height: 220px;
-    border: 2px solid rgba(0, 170, 255, 0.3);
+    border: 2px solid var(--ui-border-inner);
     border-radius: 6px;
     padding: 5px;
-    background: linear-gradient(135deg, rgba(15, 15, 35, 0.8), rgba(10, 10, 25, 0.9));
-    box-shadow: inset 0 0 15px rgba(0, 170, 255, 0.1);
+    background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+    box-shadow: inset 0 0 15px rgba(134, 190, 82, 0.1);
     display: flex;
     flex-direction: column;
 }
@@ -864,7 +864,7 @@
 .interactionButton {
     margin-top: 10px;
     padding: 8px 15px;
-    border: 2px solid rgba(0, 170, 255, 0.5);
+    border: 2px solid var(--ui-border);
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
@@ -873,7 +873,7 @@
     font-family: inherit;
     font-size: 11px;
     white-space: nowrap;
-    box-shadow: 0 0 10px rgba(0, 170, 255, 0.2), inset 0 0 8px rgba(0, 170, 255, 0.1);
+    box-shadow: 0 0 10px rgba(134, 190, 82, 0.2), inset 0 0 8px rgba(134, 190, 82, 0.1);
     text-shadow: 0 0 5px currentColor;
 }
 
@@ -926,31 +926,31 @@
 
 /* General Styles */
 .sectionTitle {
-  color: #00ffff;
+  color: var(--ui-accent);
   margin-bottom: 10px;
   text-align: center;
-  font-size: 1.1em; 
+  font-size: 1.1em;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-top: 0;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.4);
   animation: titleGlow 2s ease-in-out infinite alternate;
 }
 
 @keyframes titleGlow {
-  0% { 
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4);
+  0% {
+    text-shadow: 0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.4);
   }
-  100% { 
-    text-shadow: 0 0 15px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.6);
+  100% {
+    text-shadow: 0 0 15px rgba(134, 190, 82, 1), 0 0 30px rgba(134, 190, 82, 0.6);
   }
 }
 
 .slot {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9));
-  border: 2px solid rgba(0, 170, 255, 0.4);
+  background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+  border: 2px solid var(--ui-border-inner);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -958,20 +958,20 @@
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: inset 0 0 10px rgba(0, 170, 255, 0.1);
+  box-shadow: inset 0 0 10px rgba(134, 190, 82, 0.1);
   transition: all 0.2s ease;
 }
 
 .slot:hover {
-    border-color: #5c8e32;
-    box-shadow: 0 0 10px rgba(0, 170, 255, 0.4), inset 0 0 15px rgba(0, 170, 255, 0.2);
+    border-color: var(--ui-border);
+    box-shadow: 0 0 10px rgba(134, 190, 82, 0.4), inset 0 0 15px rgba(134, 190, 82, 0.2);
 }
 
 /* Selected slot styling */
 .selectedSlot {
-    border-color: #00ffff !important;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.2) !important;
-    background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 150, 255, 0.3)) !important;
+    border-color: var(--ui-accent-bright) !important;
+    box-shadow: 0 0 15px var(--ui-accent-glow), inset 0 0 20px rgba(134, 190, 82, 0.2) !important;
+    background: linear-gradient(135deg, rgba(134, 190, 82, 0.2), rgba(134, 190, 82, 0.3)) !important;
 }
 
 /* Custom Scrollbar Styles - Cyberpunk theme */
@@ -982,31 +982,31 @@
 
 .craftableItemsSection::-webkit-scrollbar-track,
 .craftingQueueList::-webkit-scrollbar-track {
-  background: rgba(30, 15, 50, 0.8);
+  background: var(--ui-bg-900);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.2);
 }
 
 .craftableItemsSection::-webkit-scrollbar-thumb,
 .craftingQueueList::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.8), rgba(0, 150, 255, 0.6));
+  background: linear-gradient(135deg, var(--ui-accent), #6fa040);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3), inset 0 0 4px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.4);
+  box-shadow: 0 0 8px rgba(134, 190, 82, 0.3), inset 0 0 4px rgba(196, 232, 156, 0.2);
 }
 
 .craftableItemsSection::-webkit-scrollbar-thumb:hover,
 .craftingQueueList::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(0, 200, 255, 0.9), rgba(0, 170, 255, 0.8));
-  box-shadow: 0 0 12px rgba(0, 204, 255, 0.5), inset 0 0 6px rgba(0, 255, 255, 0.3);
-  border-color: rgba(0, 204, 255, 0.6);
+  background: linear-gradient(135deg, var(--ui-accent-bright), var(--ui-accent));
+  box-shadow: 0 0 12px rgba(196, 232, 156, 0.5), inset 0 0 6px rgba(196, 232, 156, 0.3);
+  border-color: rgba(196, 232, 156, 0.6);
 }
 
 /* Class for scrollable areas */
 .scrollableSection {
   overflow-y: auto;
   scrollbar-width: thin; /* For Firefox */
-  scrollbar-color: rgba(0, 170, 255, 0.8) rgba(30, 15, 50, 0.8); /* For Firefox - thumb track */
+  scrollbar-color: var(--ui-accent) var(--ui-bg-900); /* For Firefox - thumb track */
 }
 
 /* Style scrollbar for Webkit browsers */
@@ -1014,20 +1014,20 @@
   width: 8px;
 }
 .scrollableSection::-webkit-scrollbar-track {
-  background: rgba(30, 15, 50, 0.8);
+  background: var(--ui-bg-900);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.2);
 }
 .scrollableSection::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.8), rgba(0, 150, 255, 0.6));
+  background: linear-gradient(135deg, var(--ui-accent), #6fa040);
   border-radius: 4px;
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3), inset 0 0 4px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(134, 190, 82, 0.4);
+  box-shadow: 0 0 8px rgba(134, 190, 82, 0.3), inset 0 0 4px rgba(196, 232, 156, 0.2);
 }
 .scrollableSection::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(0, 200, 255, 0.9), rgba(0, 170, 255, 0.8));
-  box-shadow: 0 0 12px rgba(0, 204, 255, 0.5), inset 0 0 6px rgba(0, 255, 255, 0.3);
-  border-color: rgba(0, 204, 255, 0.6);
+  background: linear-gradient(135deg, var(--ui-accent-bright), var(--ui-accent));
+  box-shadow: 0 0 12px rgba(196, 232, 156, 0.5), inset 0 0 6px rgba(196, 232, 156, 0.3);
+  border-color: rgba(196, 232, 156, 0.6);
 }
 
 /* Recipe List Styles */
@@ -1116,7 +1116,7 @@
   font-size: 10px; /* Slightly smaller than craft button */
   cursor: pointer;
   border: 1px solid #777; /* Lighter border than craft button */
-  background-color: #6688cc; /* A distinct blue color */
+  background-color: #5c8e32; /* A distinct accent color */
   color: white;
   border-radius: 3px;
   transition: background-color 0.2s ease;
@@ -1124,7 +1124,7 @@
 }
 
 .maxButton:hover {
-  background-color: #7799dd;
+  background-color: #6fa040;
 }
 
 .maxButton:disabled { /* If we ever disable it, though not currently planned */
@@ -1171,7 +1171,7 @@
   font-size: 11px;
   cursor: pointer;
   border: 2px solid #86be52;
-  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(196, 232, 156, 0.4));
   color: #ffffff;
   border-radius: 3px;
   transition: all 0.3s ease;
@@ -1181,7 +1181,7 @@
 }
 
 .craftButton:hover {
-  background: linear-gradient(135deg, rgba(134, 190, 82, 0.5), rgba(0, 200, 100, 0.6));
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.5), rgba(196, 232, 156, 0.6));
   transform: translateY(-2px);
   box-shadow: 0 0 15px rgba(134, 190, 82, 0.4), inset 0 0 12px rgba(134, 190, 82, 0.2);
 }
@@ -1334,24 +1334,24 @@
   padding: 8px 10px;
   font-family: inherit;
   font-size: 11px;
-  background: linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9));
-  color: #00ffff;
-  border: 2px solid rgba(0, 170, 255, 0.4);
+  background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+  color: var(--ui-accent);
+  border: 2px solid var(--ui-border-inner);
   border-radius: 4px;
   box-sizing: border-box;
-  text-shadow: 0 0 4px rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 4px rgba(134, 190, 82, 0.4);
   transition: all 0.3s ease;
 }
 
 .craftingSearchInput::placeholder {
-  color: rgba(0, 170, 255, 0.6);
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.3);
+  color: rgba(134, 190, 82, 0.6);
+  text-shadow: 0 0 4px rgba(134, 190, 82, 0.3);
   opacity: 1;
 }
 
 .craftingSearchInput:focus {
   outline: none;
   border-color: #5c8e32;
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.15), rgba(0, 150, 255, 0.1));
-  box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.2), 0 0 10px rgba(0, 170, 255, 0.3);
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.15), rgba(134, 190, 82, 0.1));
+  box-shadow: inset 0 0 15px rgba(134, 190, 82, 0.2), 0 0 10px rgba(134, 190, 82, 0.3);
 } 

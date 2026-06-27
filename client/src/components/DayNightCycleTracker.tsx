@@ -23,7 +23,7 @@ const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #5c8e32, #c4e89c, #86be52, #
 const ACCENT_CYAN = '#5c8e32';
 const ACCENT_GREEN = '#c4e89c';
 const ACCENT_PURPLE = '#86be52';
-const ACCENT_PINK = '#f472b6';
+const ACCENT_PINK = '#d488ff';
 
 // Colors for different times of day
 const TIME_COLORS = {
@@ -388,7 +388,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                         background: UI_BG_COLOR,
                         padding: '10px 14px',
                         borderRadius: '8px',
-                        fontFamily: "'Courier New', 'Consolas', monospace",
+                        fontFamily: "'PixelOperatorMono', monospace",
                         color: ACCENT_CYAN,
                         minWidth: '200px',
                     }}>
@@ -505,7 +505,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                         background: UI_BG_COLOR,
                         padding: '8px 14px',
                         borderRadius: '6px',
-                        fontFamily: "'Courier New', 'Consolas', monospace",
+                        fontFamily: "'PixelOperatorMono', monospace",
                         display: 'flex',
                         alignItems: 'center',
                         gap: '10px',
@@ -673,7 +673,7 @@ const DayNightCycleTracker: React.FC<DayNightCycleTrackerProps> = ({
                     borderRadius: '8px',
                     minWidth: '250px',
                     overflow: 'hidden',
-                    fontFamily: "'Courier New', 'Consolas', monospace",
+                    fontFamily: "'PixelOperatorMono', monospace",
                 }}>
                     {/* Scanlines */}
                     <div className="uplink-scanlines" />
@@ -1151,7 +1151,7 @@ const uplinkStyles = `
         backdrop-filter: blur(10px);
         white-space: nowrap;
         font-size: 9px;
-        font-family: 'Courier New', 'Consolas', monospace;
+        font-family: 'PixelOperatorMono', monospace;
         letter-spacing: 0.5px;
         z-index: 100;
         pointer-events: none;

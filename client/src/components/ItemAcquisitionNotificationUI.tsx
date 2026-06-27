@@ -71,18 +71,18 @@ const ItemAcquisitionNotificationUI: React.FC<ItemAcquisitionNotificationUIProps
               display: 'flex',
               alignItems: 'center',
               position: 'relative',
-              backgroundColor: isMostRecent ? 'rgba(0, 10, 20, 0.95)' : 'rgba(0, 5, 15, 0.9)',
-              color: '#00ffff',
+              backgroundColor: isMostRecent ? 'rgba(16, 30, 22, 0.95)' : 'rgba(12, 21, 15, 0.9)',
+              color: '#86be52',
               padding: '8px 12px',
               borderRadius: '2px',
-              border: isMostRecent 
-                ? `1px solid ${isPositive ? '#00ffff' : '#ff3366'}` 
-                : `1px solid ${isPositive ? 'rgba(0, 255, 255, 0.4)' : 'rgba(255, 51, 102, 0.4)'}`,
+              border: isMostRecent
+                ? `1px solid ${isPositive ? '#86be52' : '#ff3366'}`
+                : `1px solid ${isPositive ? 'rgba(134, 190, 82, 0.4)' : 'rgba(255, 51, 102, 0.4)'}`,
               marginBottom: '6px',
-              boxShadow: isMostRecent 
-                ? `0 0 15px ${isPositive ? 'rgba(0, 255, 255, 0.6)' : 'rgba(255, 51, 102, 0.6)'}, inset 0 0 20px rgba(0, 255, 255, 0.05)` 
-                : 'inset 0 0 20px rgba(0, 255, 255, 0.03)',
-              fontFamily: "'Courier New', 'Consolas', 'Monaco', monospace",
+              boxShadow: isMostRecent
+                ? `0 0 15px ${isPositive ? 'rgba(134, 190, 82, 0.6)' : 'rgba(255, 51, 102, 0.6)'}, inset 0 0 20px rgba(134, 190, 82, 0.05)`
+                : 'inset 0 0 20px rgba(134, 190, 82, 0.03)',
+              fontFamily: "'PixelOperatorMono'",
               fontSize: '11px',
               fontWeight: 'bold',
               minWidth: '200px',
@@ -98,7 +98,7 @@ const ItemAcquisitionNotificationUI: React.FC<ItemAcquisitionNotificationUIProps
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px)',
+              background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(134, 190, 82, 0.03) 2px, rgba(134, 190, 82, 0.03) 4px)',
               pointerEvents: 'none',
               zIndex: 1,
             }} />
@@ -111,10 +111,10 @@ const ItemAcquisitionNotificationUI: React.FC<ItemAcquisitionNotificationUIProps
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: 'rgba(0, 255, 255, 0.1)',
+              backgroundColor: 'rgba(134, 190, 82, 0.1)',
               borderRadius: '2px',
-              border: '1px solid rgba(0, 255, 255, 0.3)',
-              boxShadow: isMostRecent ? '0 0 8px rgba(0, 255, 255, 0.4)' : 'none',
+              border: '1px solid rgba(134, 190, 82, 0.3)',
+              boxShadow: isMostRecent ? '0 0 8px rgba(134, 190, 82, 0.4)' : 'none',
               position: 'relative',
               zIndex: 2,
             }}>
@@ -125,7 +125,7 @@ const ItemAcquisitionNotificationUI: React.FC<ItemAcquisitionNotificationUIProps
                   width: '20px', 
                   height: '20px', 
                   imageRendering: 'pixelated',
-                  filter: isMostRecent ? 'drop-shadow(0 0 2px rgba(0, 255, 255, 0.6))' : 'none',
+                  filter: isMostRecent ? 'drop-shadow(0 0 2px rgba(134, 190, 82, 0.6))' : 'none',
                 }}
               />
             </div>
@@ -141,15 +141,15 @@ const ItemAcquisitionNotificationUI: React.FC<ItemAcquisitionNotificationUIProps
                   {`${notif.quantityChange > 0 ? '+' : ''}${notif.quantityChange}`}
                 </span>
                 {' '}
-                <span style={{ 
-                  color: '#00ffff',
-                  textShadow: isMostRecent ? '0 0 6px rgba(0, 255, 255, 0.6)' : 'none',
+                <span style={{
+                  color: '#86be52',
+                  textShadow: isMostRecent ? '0 0 6px rgba(134, 190, 82, 0.6)' : 'none',
                 }}>
                   {notif.itemName}
                 </span>
                 {notif.currentTotalInInventory !== undefined && (
-                    <span style={{ 
-                      color: 'rgba(0, 255, 255, 0.6)', 
+                    <span style={{
+                      color: 'rgba(134, 190, 82, 0.6)',
                       marginLeft: '6px',
                       fontSize: '10px',
                     }}>
@@ -166,8 +166,8 @@ const ItemAcquisitionNotificationUI: React.FC<ItemAcquisitionNotificationUIProps
                 right: 0,
                 width: '8px',
                 height: '8px',
-                borderTop: `2px solid ${isPositive ? '#00ffff' : '#ff3366'}`,
-                borderRight: `2px solid ${isPositive ? '#00ffff' : '#ff3366'}`,
+                borderTop: `2px solid ${isPositive ? '#86be52' : '#ff3366'}`,
+                borderRight: `2px solid ${isPositive ? '#86be52' : '#ff3366'}`,
                 zIndex: 2,
               }} />
             )}

@@ -3,7 +3,7 @@
 .itemInteractionPanel {
   margin-top: 15px;
   padding: 15px;
-  background: linear-gradient(135deg, rgba(15, 23, 35, 0.98), rgba(20, 10, 40, 0.98));
+  background: var(--ui-panel-bg);
   border: 2px solid #5c8e32;
   border-radius: 8px;
   box-shadow: 0 0 25px rgba(92, 142, 50, 0.4), inset 0 0 15px rgba(92, 142, 50, 0.1), 2px 2px 0px rgba(0,0,0,0.4);
@@ -67,7 +67,7 @@
   flex-shrink: 0;
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 10, 40, 0.8));
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), var(--ui-bg-800));
   border: 2px solid #2d4715;
   border-radius: 6px;
   display: flex;
@@ -256,7 +256,7 @@
   font-family: inherit;
   font-size: 11px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 10, 40, 0.8));
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), var(--ui-bg-800));
   color: #5c8e32;
   border: 2px solid #2d4715;
   border-radius: 6px;
@@ -277,14 +277,14 @@
 }
 
 .splitButton {
-  background: linear-gradient(135deg, #6688cc 0%, #5577bb 100%);
+  background: linear-gradient(135deg, #86be52 0%, #5c8e32 100%);
   border-color: #5c8e32;
   min-width: 70px; /* Smaller than other action buttons */
   box-shadow: 0 0 10px rgba(92, 142, 50, 0.4), inset 0 0 10px rgba(92, 142, 50, 0.1);
 }
 
 .splitButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #7799dd 0%, #6688cc 100%);
+  background: linear-gradient(135deg, #c4e89c 0%, #86be52 100%);
   box-shadow: 0 4px 15px rgba(92, 142, 50, 0.6), inset 0 0 15px rgba(92, 142, 50, 0.2);
   border-color: #2d4715;
 }

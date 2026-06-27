@@ -7,6 +7,7 @@
  */
 
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 export interface ErrorDisplayState {
   message: string;
@@ -36,14 +37,14 @@ export function getErrorMessageForError(error: unknown): string {
 
   // SOVA / voice errors
   if (/sova|SOVA|voice|tutorial|entrainment|insanity/i.test(str)) {
-    if (/failed to play|playback error|play error/i.test(str)) return 'SOVA voice failed to play.';
-    if (/failed to (load|create)|load error|create audio/i.test(str)) return 'SOVA voice file could not load.';
+    if (/failed to play|playback error|play error/i.test(str)) return `${ASSISTANT_NAME} voice failed to play.`;
+    if (/failed to (load|create)|load error|create audio/i.test(str)) return `${ASSISTANT_NAME} voice file could not load.`;
     if (/brew cooldown/i.test(str)) return 'Brew cooldown feedback failed.';
     if (/capability|mobile/i.test(str)) return 'Voice feedback unavailable on this device.';
     if (/memory shard|memory_shard/i.test(str)) return 'Memory shard tutorial audio failed.';
     if (/corpse protection/i.test(str)) return 'Corpse protection voice failed.';
     if (/cairn|lore/i.test(str)) return 'Cairn lore audio failed.';
-    return 'SOVA voice error.';
+    return `${ASSISTANT_NAME} voice error.`;
   }
 
   // General sound errors

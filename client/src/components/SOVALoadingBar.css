@@ -10,7 +10,7 @@
   width: 390px; /* Match hotbar width (6 slots × 60px + 5 margins × 6px) */
   height: 60px;
   pointer-events: none;
-  font-family: "Press Start 2P", cursive;
+  font-family: 'PixelOperator', sans-serif;
 }
 
 /* Main loading bar */
@@ -19,12 +19,12 @@
   width: 100%;
   height: 20px;
   margin-bottom: 8px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid rgba(0, 255, 255, 0.4);
+  background: var(--ui-bg-900);
+  border: 2px solid var(--ui-border);
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 
-    0 0 20px rgba(0, 255, 255, 0.3),
+  box-shadow:
+    0 0 20px var(--ui-accent-glow),
     inset 0 0 10px rgba(0, 0, 0, 0.8);
 }
 
@@ -35,10 +35,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    rgba(0, 50, 50, 0.3) 0%, 
-    rgba(0, 100, 100, 0.2) 50%, 
-    rgba(0, 50, 50, 0.3) 100%
+  background: linear-gradient(90deg,
+    rgba(134, 190, 82, 0.15) 0%,
+    rgba(134, 190, 82, 0.25) 50%,
+    rgba(134, 190, 82, 0.15) 100%
   );
 }
 
@@ -49,24 +49,24 @@
   left: 0;
   height: 100%;
   transition: width 0.5s ease-in-out;
-  background: linear-gradient(90deg, 
-    #00ffff 0%, 
-    #ff00ff 50%, 
-    #ffff00 100%
+  background: linear-gradient(90deg,
+    var(--ui-accent) 0%,
+    var(--ui-accent-bright) 50%,
+    var(--ui-accent) 100%
   );
-  box-shadow: 
-    0 0 15px rgba(0, 255, 255, 0.6),
+  box-shadow:
+    0 0 15px var(--ui-accent-glow),
     inset 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Processing animation */
 .sova-loading-fill.processing {
-  background: linear-gradient(90deg, 
-    #00ffff 0%, 
-    #ff00ff 25%,
-    #ffff00 50%,
-    #ff00ff 75%,
-    #00ffff 100%
+  background: linear-gradient(90deg,
+    var(--ui-accent) 0%,
+    var(--ui-accent-bright) 25%,
+    var(--ui-accent) 50%,
+    var(--ui-accent-bright) 75%,
+    var(--ui-accent) 100%
   );
   background-size: 200% 100%;
   animation: sova-processing 2s linear infinite;
@@ -74,13 +74,13 @@
 
 /* Recording animation */
 .sova-loading-fill.recording {
-  background: linear-gradient(90deg, 
-    #00ff00 0%, 
-    #00ffff 50%, 
-    #00ff00 100%
+  background: linear-gradient(90deg,
+    var(--ui-accent-bright) 0%,
+    var(--ui-accent) 50%,
+    var(--ui-accent-bright) 100%
   );
-  box-shadow: 
-    0 0 15px rgba(0, 255, 0, 0.6),
+  box-shadow:
+    0 0 15px var(--ui-accent-glow),
     inset 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
@@ -121,16 +121,16 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(0, 255, 255, 0.3);
-  border: 1px solid rgba(0, 255, 255, 0.6);
+  background: rgba(134, 190, 82, 0.3);
+  border: 1px solid rgba(134, 190, 82, 0.6);
   transition: all 0.3s ease;
 }
 
 .sova-phase-dot.active {
-  background: #00ffff;
-  box-shadow: 
-    0 0 10px #00ffff,
-    0 0 20px rgba(0, 255, 255, 0.5);
+  background: var(--ui-accent);
+  box-shadow:
+    0 0 10px var(--ui-accent),
+    0 0 20px var(--ui-accent-glow);
   transform: scale(1.2);
 }
 
@@ -144,8 +144,8 @@
 }
 
 .sova-status-label {
-  color: #00ffff;
-  text-shadow: 0 0 5px #00ffff;
+  color: var(--ui-accent);
+  text-shadow: 0 0 5px var(--ui-accent);
   letter-spacing: 2px;
 }
 
@@ -190,7 +190,7 @@
   left: -10px;
   right: -10px;
   bottom: -10px;
-  background: radial-gradient(circle, rgba(0, 255, 255, 0.1), transparent 70%);
+  background: radial-gradient(circle, rgba(134, 190, 82, 0.1), transparent 70%);
   border-radius: 10px;
   z-index: -1;
   opacity: 0.6;

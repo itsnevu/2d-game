@@ -7,6 +7,7 @@ const EMPTY_CAIRNS_MAP = new Map<string, any>();
 import { useInputHandler } from '../../hooks/useInputHandler';
 import { getInteractableLabel } from '../../utils/interactionLabelUtils';
 import { isAnySovaAudioPlaying } from '../../hooks/useSovaSoundBox';
+import { ASSISTANT_NAME } from '../../constants/branding';
 import { previewSeaweedHarvestBlockedIfNeeded } from '../../hooks/useSoundSystem';
 import { logDebug } from '../../utils/gameDebugUtils';
 import type { InteractableTarget } from '../../types/interactions';
@@ -269,7 +270,7 @@ export function useGameCanvasInteractionRuntime(options: UseGameCanvasInteractio
       } else if (options.showSovaSoundBox) {
         const audio = new Audio('/sounds/sova_error_mobile_capability.mp3');
         audio.volume = 0.8;
-        options.showSovaSoundBox(audio, 'SOVA');
+        options.showSovaSoundBox(audio, ASSISTANT_NAME);
         audio.play().catch((error) => {
           console.warn('[Mobile] Failed to play capability error:', error);
         });

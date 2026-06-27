@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CyberpunkLoadingScreen.css';
 import sovaImage from '../assets/ui/sova.png';
 import { useMobileDetection } from '../hooks/useMobileDetection';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 interface CyberpunkErrorBarProps {
     message: string;
@@ -421,7 +422,7 @@ const CyberpunkLoadingScreen: React.FC<CyberpunkLoadingScreenProps> = ({
 
         audio.currentTime = 0;
         markLoadingScreenSovaActive(audio);
-        showSovaSoundBox(audio, `SOVA`, {
+        showSovaSoundBox(audio, ASSISTANT_NAME, {
             hideUI: true,
             priority: 'loading',
             onEnded: playNext,
@@ -635,7 +636,7 @@ const CyberpunkLoadingScreen: React.FC<CyberpunkLoadingScreenProps> = ({
         setIsSovaSpeaking(true);
         hasPlayedReconnect.current = true;
         lastPlayedSoundIndex.current = randomIndex;
-        showSovaSoundBox(audio, 'SOVA', {
+        showSovaSoundBox(audio, ASSISTANT_NAME, {
             hideUI: true,
             priority: 'loading',
             onEnded: () => {
@@ -657,8 +658,8 @@ const CyberpunkLoadingScreen: React.FC<CyberpunkLoadingScreenProps> = ({
     const SovaAvatarElement = (
         <img 
             ref={sovaAvatarRef}
-            src={sovaImage} 
-            alt="Sova Avatar" 
+            src={sovaImage}
+            alt={`${ASSISTANT_NAME} Avatar`}
             className={`sova-avatar ${
                 isSovaSpeaking ? 'speaking' : ''
             } ${
@@ -678,11 +679,11 @@ const CyberpunkLoadingScreen: React.FC<CyberpunkLoadingScreenProps> = ({
             onMouseEnter={() => {
                 if (!isMobile) {
                     setIsHoveringOverSova(true);
-                    const tooltip = isSovaSpeaking 
-                        ? "TERMINATE SOVA AUDIO STREAM" 
+                    const tooltip = isSovaSpeaking
+                        ? `TERMINATE ${ASSISTANT_NAME} AUDIO STREAM`
                         : showAudioPrompt
-                        ? "ENABLE SOVA AUDIO INTERFACE"
-                        : "ACTIVATE SOVA COMMUNICATION";
+                        ? `ENABLE ${ASSISTANT_NAME} AUDIO INTERFACE`
+                        : `ACTIVATE ${ASSISTANT_NAME} COMMUNICATION`;
                     setTooltipText(tooltip);
                     setShowTooltip(true);
                 }
@@ -695,11 +696,11 @@ const CyberpunkLoadingScreen: React.FC<CyberpunkLoadingScreenProps> = ({
             }}
             onTouchEnd={() => {
                 if (isMobile) {
-                    const tooltip = isSovaSpeaking 
-                        ? "TAP TO STOP" 
+                    const tooltip = isSovaSpeaking
+                        ? "TAP TO STOP"
                         : showAudioPrompt
                         ? "TAP TO ENABLE AUDIO"
-                        : "TAP TO HEAR SOVA";
+                        : `TAP TO HEAR ${ASSISTANT_NAME}`;
                     setTooltipText(tooltip);
                     setShowTooltip(true);
                     setTimeout(() => setShowTooltip(false), 1500);
@@ -716,8 +717,8 @@ const CyberpunkLoadingScreen: React.FC<CyberpunkLoadingScreenProps> = ({
                     <>
                         <div className="audio-icon">🔊</div>
                         <div className="audio-prompt-text">
-                            <div className="audio-prompt-title">RESUME SOVA AUDIO</div>
-                            <div className="audio-prompt-subtitle">{isMobile ? 'Tap SOVA to enable' : 'Tap SOVA or click anywhere'}</div>
+                            <div className="audio-prompt-title">RESUME {ASSISTANT_NAME} AUDIO</div>
+                            <div className="audio-prompt-subtitle">{isMobile ? `Tap ${ASSISTANT_NAME} to enable` : `Tap ${ASSISTANT_NAME} or click anywhere`}</div>
                         </div>
                     </>
                 ) : (
@@ -725,7 +726,7 @@ const CyberpunkLoadingScreen: React.FC<CyberpunkLoadingScreenProps> = ({
                         <div className="audio-icon">🔊</div>
                         <div className="audio-prompt-text">
                             <div className="audio-prompt-title">AUDIO AVAILABLE</div>
-                            <div className="audio-prompt-subtitle">{isMobile ? 'Tap button to enable SOVA' : 'Click anywhere to enable SOVA audio'}</div>
+                            <div className="audio-prompt-subtitle">{isMobile ? `Tap button to enable ${ASSISTANT_NAME}` : `Click anywhere to enable ${ASSISTANT_NAME} audio`}</div>
                         </div>
                         <button 
                             className="enable-audio-button" 

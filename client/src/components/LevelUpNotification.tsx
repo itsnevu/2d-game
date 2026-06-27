@@ -391,7 +391,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         
         @keyframes textGlow {
           0%, 100% { text-shadow: 0 0 10px #5c8e32, 0 0 20px #5c8e32, 0 0 40px #2d4715; }
-          50% { text-shadow: 0 0 20px #5c8e32, 0 0 40px #5c8e32, 0 0 60px #2d4715, 0 0 80px #ff006e; }
+          50% { text-shadow: 0 0 20px #5c8e32, 0 0 40px #5c8e32, 0 0 60px #2d4715, 0 0 80px #c4e89c; }
         }
         
         @keyframes dotPulse {
@@ -412,7 +412,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         .glow-container {
           position: relative;
           padding: 3px;
-          background: linear-gradient(135deg, #5c8e32, #2d4715, #ff006e, #5c8e32);
+          background: linear-gradient(135deg, #5c8e32, #2d4715, #c4e89c, #5c8e32);
           background-size: 300% 300%;
           animation: gradientShift 3s ease infinite;
           border-radius: 12px;
@@ -517,7 +517,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .header-text {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 11px;
           color: #5c8e32;
           letter-spacing: 2px;
@@ -546,7 +546,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .dot.pink {
-          background: #ff006e;
+          background: #c4e89c;
           animation: dotPulse 1s ease-in-out infinite 0.4s;
         }
         
@@ -559,7 +559,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         /* Glitch text effect */
         .level-up-text {
           position: relative;
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 42px;
           font-weight: bold;
           letter-spacing: 4px;
@@ -589,7 +589,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .level-up-text .layer-2 {
-          color: #ff006e;
+          color: #c4e89c;
           animation: glitchText2 0.3s infinite;
           clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
         }
@@ -624,21 +624,21 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .level-prefix {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperatorMono', monospace;
           font-size: 14px;
           color: #94a3b8;
           letter-spacing: 2px;
         }
         
         .level-value {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperatorMono', monospace;
           font-size: 56px;
           font-weight: bold;
-          color: #ffd700;
-          text-shadow: 
-            0 0 10px #ffd700, 
-            0 0 20px #ffd700, 
-            0 0 40px #ff9500,
+          color: #ffc83c;
+          text-shadow:
+            0 0 10px #ffc83c,
+            0 0 20px #ffc83c,
+            0 0 40px #ffc83c,
             2px 2px 0 rgba(0, 0, 0, 0.5);
           line-height: 1;
         }
@@ -662,7 +662,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .xp-value {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperatorMono', monospace;
           font-size: 18px;
           font-weight: bold;
           color: #5c8e32;
@@ -670,7 +670,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .xp-label {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 10px;
           color: #64748b;
           letter-spacing: 2px;
@@ -684,7 +684,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
           justify-content: center;
           gap: 8px;
           padding: 10px 20px;
-          background: linear-gradient(135deg, rgba(45, 71, 21, 0.15), rgba(255, 0, 110, 0.1));
+          background: linear-gradient(135deg, rgba(45, 71, 21, 0.15), rgba(196, 232, 156, 0.1));
           border: 1px solid rgba(45, 71, 21, 0.4);
           border-radius: 4px;
           margin-top: 8px;
@@ -696,15 +696,15 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .shards-value {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperatorMono', monospace;
           font-size: 18px;
           font-weight: bold;
-          color: #a855f7;
-          text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+          color: #d488ff;
+          text-shadow: 0 0 10px rgba(212, 136, 255, 0.8);
         }
         
         .shards-label {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 10px;
           color: #64748b;
           letter-spacing: 2px;
@@ -735,7 +735,7 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         }
         
         .footer-text {
-          font-family: 'Courier New', 'Consolas', monospace;
+          font-family: 'PixelOperator', monospace;
           font-size: 9px;
           color: #475569;
           letter-spacing: 1px;
@@ -766,11 +766,11 @@ const LevelUpNotification: React.FC<LevelUpNotificationProps> = ({
         .particle-0 { top: -20px; left: 20%; animation: float 2s ease-in-out infinite 0s; }
         .particle-1 { top: -30px; left: 80%; animation: float 2.5s ease-in-out infinite 0.3s; background: #2d4715; box-shadow: 0 0 10px #2d4715; }
         .particle-2 { top: 50%; left: -20px; animation: float 2s ease-in-out infinite 0.5s; }
-        .particle-3 { top: 50%; right: -20px; animation: float 2.2s ease-in-out infinite 0.7s; background: #ff006e; box-shadow: 0 0 10px #ff006e; }
-        .particle-4 { bottom: -20px; left: 30%; animation: float 2.4s ease-in-out infinite 0.2s; background: #ffd700; box-shadow: 0 0 10px #ffd700; }
+        .particle-3 { top: 50%; right: -20px; animation: float 2.2s ease-in-out infinite 0.7s; background: #c4e89c; box-shadow: 0 0 10px #c4e89c; }
+        .particle-4 { bottom: -20px; left: 30%; animation: float 2.4s ease-in-out infinite 0.2s; background: #ffc83c; box-shadow: 0 0 10px #ffc83c; }
         .particle-5 { bottom: -30px; left: 70%; animation: float 2.1s ease-in-out infinite 0.4s; }
         .particle-6 { top: 30%; left: -15px; animation: float 2.3s ease-in-out infinite 0.6s; background: #2d4715; box-shadow: 0 0 10px #2d4715; }
-        .particle-7 { top: 70%; right: -15px; animation: float 2.6s ease-in-out infinite 0.8s; background: #ff006e; box-shadow: 0 0 10px #ff006e; }
+        .particle-7 { top: 70%; right: -15px; animation: float 2.6s ease-in-out infinite 0.8s; background: #c4e89c; box-shadow: 0 0 10px #c4e89c; }
       `}</style>
     </div>
   );

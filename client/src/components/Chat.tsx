@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { useGameUI } from '../contexts/GameUIContext';
 import { useChatRuntimeData } from '../engine/react/selectors';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 interface ChatProps {
   connection: DbConnection | null;
@@ -35,7 +36,7 @@ const SOVAMessage: React.FC<{message: {id: string, text: string, isUser: boolean
   <div className={`${styles.message} ${message.isUser ? styles.sovaMessageUser : styles.sovaMessageBot}`}>
     <div className={styles.messageHeader}>
       <span className={`${styles.playerName} ${message.isUser ? styles.sovaPlayerNameUser : styles.sovaPlayerNameBot}`}>
-        {message.isUser ? 'You' : 'SOVA'}
+        {message.isUser ? 'You' : ASSISTANT_NAME}
       </span>
       <span className={styles.timestamp}>
         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
@@ -310,7 +311,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
         // Fallback response if AI generation fails
         const fallbackResponse = {
           id: `sova-${Date.now()}`,
-          text: `SOVA: AI response error - ${aiResponse.error || 'Unknown error'}. Message received: "${userMessageText}". Please try again.`,
+          text: `${ASSISTANT_NAME}: AI response error - ${aiResponse.error || 'Unknown error'}. Message received: "${userMessageText}". Please try again.`,
           isUser: false,
           timestamp: new Date()
         };
@@ -322,7 +323,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
       // Error handling for API failures
       const errorResponse = {
         id: `sova-${Date.now()}`,
-        text: `SOVA: System error occurred. Message received: "${userMessageText}". Please try again later.`,
+        text: `${ASSISTANT_NAME}: System error occurred. Message received: "${userMessageText}". Please try again later.`,
         isUser: false,
         timestamp: new Date()
       };
@@ -861,9 +862,9 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
         onClick={toggleMinimized}
         data-chat-container="true"
       >
-        <img 
-          src={sovaIcon} 
-          alt="SOVA" 
+        <img
+          src={sovaIcon}
+          alt={ASSISTANT_NAME}
           className={styles.sovaIcon}
         />
       </div>
@@ -951,7 +952,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
             }
           }}
         >
-          SOVA
+          {ASSISTANT_NAME}
         </button>
         {matronageMembers?.get(localPlayerIdentity || '') && (
           <button 
@@ -1040,7 +1041,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
           <div className={styles.messageHistory}>
             {sovaMessages.length === 0 ? (
               <div className={styles.sovaWelcomeMessage}>
-                <span style={{ fontWeight: 600 }}>SOVA Online.</span>
+                <span style={{ fontWeight: 600 }}>{ASSISTANT_NAME} Online.</span>
                 <br />
                 Recon initiated. What intel do you require, agent?
               </div>
@@ -1055,7 +1056,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
                   <div className={`${styles.message} ${styles.sovaMessageBot}`}>
                     <div className={styles.messageHeader}>
                       <span className={`${styles.playerName} ${styles.sovaPlayerNameBot}`}>
-                        SOVA
+                        {ASSISTANT_NAME}
                       </span>
                     </div>
                     <div className={styles.messageContent}>
@@ -1099,7 +1100,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
               className={styles.chatPlaceholder} 
               onClick={handlePlaceholderClick}
             >
-              Ask SOVA anything...
+              Ask {ASSISTANT_NAME} anything...
             </div>
           )}
         </>
@@ -1110,7 +1111,7 @@ const Chat: React.FC<ChatProps> = ({ connection, onSOVAMessageAdderReady, isMobi
         <div className={styles.performanceReportModal}>
           <div className={styles.performanceReportContent}>
             <div className={styles.performanceReportTitle}>
-              📊 SOVA API PERFORMANCE REPORT
+              📊 {ASSISTANT_NAME} API PERFORMANCE REPORT
             </div>
             
             <pre className={styles.performanceReportText}>

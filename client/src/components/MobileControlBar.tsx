@@ -1,4 +1,5 @@
 import React from 'react';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 interface MobileControlBarProps {
     onMapToggle: () => void;
@@ -44,17 +45,17 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                     width: '56px',
                     height: '56px',
                     borderRadius: '50%',
-                    background: isMapOpen 
-                        ? 'linear-gradient(135deg, rgba(0, 200, 150, 0.9), rgba(0, 150, 120, 0.95))'
-                        : 'linear-gradient(135deg, rgba(20, 40, 80, 0.9), rgba(10, 30, 70, 0.95))',
-                    border: isMapOpen 
-                        ? '3px solid #00ffaa'
+                    background: isMapOpen
+                        ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.9), rgba(92, 142, 50, 0.95))'
+                        : 'linear-gradient(135deg, rgba(16, 30, 22, 0.9), rgba(12, 21, 15, 0.95))',
+                    border: isMapOpen
+                        ? '3px solid #c4e89c'
                         : '3px solid #5c8e32',
-                    color: '#00ffff',
+                    color: isMapOpen ? '#c4e89c' : '#86be52',
                     cursor: 'pointer',
                     boxShadow: isMapOpen
-                        ? '0 0 20px rgba(0, 255, 170, 0.6), inset 0 0 15px rgba(0, 255, 170, 0.2)'
-                        : '0 0 15px rgba(0, 170, 255, 0.4), inset 0 0 10px rgba(0, 170, 255, 0.1)',
+                        ? '0 0 20px rgba(134, 190, 82, 0.6), inset 0 0 15px rgba(134, 190, 82, 0.2)'
+                        : '0 0 15px rgba(134, 190, 82, 0.45), inset 0 0 10px rgba(134, 190, 82, 0.1)',
                     transition: 'all 0.3s ease',
                     display: 'flex',
                     alignItems: 'center',
@@ -75,9 +76,9 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                 </svg>
                 <span style={{
                     fontSize: '7px',
-                    fontFamily: '"Press Start 2P", cursive',
+                    fontFamily: "'PixelOperator', sans-serif",
                     marginTop: '2px',
-                    textShadow: '0 0 4px rgba(0, 255, 255, 0.8)',
+                    textShadow: '0 0 4px rgba(134, 190, 82, 0.8)',
                 }}>
                     MAP
                 </span>
@@ -91,11 +92,11 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                         width: '56px',
                         height: '56px',
                         borderRadius: '50%',
-                        background: 'linear-gradient(135deg, rgba(255, 180, 0, 0.9), rgba(220, 140, 0, 0.95))',
-                        border: '3px solid #ffcc00',
+                        background: 'linear-gradient(135deg, rgba(255, 200, 60, 0.9), rgba(220, 160, 30, 0.95))',
+                        border: '3px solid #ffc83c',
                         color: '#fff8e0',
                         cursor: 'pointer',
-                        boxShadow: '0 0 20px rgba(255, 200, 0, 0.6), inset 0 0 15px rgba(255, 200, 0, 0.2)',
+                        boxShadow: '0 0 20px rgba(255, 200, 60, 0.6), inset 0 0 15px rgba(255, 200, 60, 0.2)',
                         transition: 'all 0.3s ease',
                         display: 'flex',
                         alignItems: 'center',
@@ -114,7 +115,7 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                     </svg>
                     <span style={{
                         fontSize: '6px',
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "'PixelOperator', sans-serif",
                         marginTop: '2px',
                         textShadow: '0 0 4px rgba(255, 255, 200, 0.8)',
                         whiteSpace: 'nowrap',
@@ -131,24 +132,24 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                     width: '56px',
                     height: '56px',
                     borderRadius: '50%',
-                    background: isChatOpen 
-                        ? 'linear-gradient(135deg, rgba(0, 200, 150, 0.9), rgba(0, 150, 120, 0.95))'
-                        : 'linear-gradient(135deg, rgba(30, 15, 50, 0.9), rgba(20, 10, 40, 0.95))',
-                    border: isChatOpen 
-                        ? '3px solid #00ffaa'
+                    background: isChatOpen
+                        ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.9), rgba(92, 142, 50, 0.95))'
+                        : 'linear-gradient(135deg, rgba(16, 30, 22, 0.9), rgba(12, 21, 15, 0.95))',
+                    border: isChatOpen
+                        ? '3px solid #c4e89c'
                         : '3px solid #5c8e32',
-                    color: '#00ffff',
+                    color: isChatOpen ? '#c4e89c' : '#86be52',
                     cursor: 'pointer',
                     boxShadow: isChatOpen
-                        ? '0 0 20px rgba(0, 255, 170, 0.6), inset 0 0 15px rgba(0, 255, 170, 0.2)'
-                        : '0 0 20px rgba(0, 170, 255, 0.5), inset 0 0 15px rgba(0, 170, 255, 0.2)',
+                        ? '0 0 20px rgba(134, 190, 82, 0.6), inset 0 0 15px rgba(134, 190, 82, 0.2)'
+                        : '0 0 20px rgba(134, 190, 82, 0.45), inset 0 0 15px rgba(134, 190, 82, 0.2)',
                     transition: 'all 0.3s ease',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexDirection: 'column',
                 }}
-                aria-label="Toggle SOVA chat"
+                aria-label={`Toggle ${ASSISTANT_NAME} chat`}
             >
                 {/* SOVA AI icon - stylized eye/radar design */}
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -166,12 +167,12 @@ const MobileControlBar: React.FC<MobileControlBarProps> = ({
                 </svg>
                 <span style={{
                     fontSize: '6px',
-                    fontFamily: '"Press Start 2P", cursive',
+                    fontFamily: "'PixelOperator', sans-serif",
                     marginTop: '1px',
-                    textShadow: '0 0 4px rgba(0, 255, 255, 0.8)',
+                    textShadow: '0 0 4px rgba(134, 190, 82, 0.8)',
                     letterSpacing: '1px',
                 }}>
-                    SOVA
+                    {ASSISTANT_NAME}
                 </span>
             </button>
 

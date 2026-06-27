@@ -16,13 +16,13 @@ const calculatedMinimapHeight = BASE_MINIMAP_WIDTH * worldAspectRatio;
 const MINIMAP_WIDTH = BASE_MINIMAP_WIDTH;
 const MINIMAP_HEIGHT = Math.round(calculatedMinimapHeight); // Use calculated height
 
-// Cyberpunk color scheme
-const MINIMAP_BG_COLOR = 'rgba(20, 30, 45, 0.98)'; // Dark blue-black
-const MINIMAP_BORDER_COLOR = '#5c8e32'; // Bright cyan border
+// Neural Green color scheme
+const MINIMAP_BG_COLOR = 'rgba(16, 30, 22, 0.98)'; // Dark green panel bg (#101e16)
+const MINIMAP_BORDER_COLOR = '#5c8e32'; // Green border
 const MINIMAP_BORDER_WIDTH = 2;
-const MINIMAP_INNER_BORDER_COLOR = '#2d4715'; // Purple inner border
+const MINIMAP_INNER_BORDER_COLOR = '#2d4715'; // Dark green inner border
 const MINIMAP_INNER_BORDER_WIDTH = 1;
-const MINIMAP_GLOW_COLOR = '#5c8e32'; // Cyan glow effect
+const MINIMAP_GLOW_COLOR = '#5c8e32'; // Green glow effect
 
 // Tab and X button functionality now handled by React components
 const PLAYER_DOT_SIZE = 3;
@@ -144,12 +144,12 @@ const PIN_BORDER_COLOR = '#000000'; // Black border
 const PIN_SIZE = 24; // Standard size
 const PIN_BORDER_WIDTH = 1; // Thin border width
 
-// Grid Constants - Cyberpunk SOVA style with enhanced readability
-const GRID_LINE_COLOR = 'rgba(92, 142, 50, 0.08)'; // Very subtle cyan grid (was 0.15)
-const GRID_LINE_HIGHLIGHT_COLOR = 'rgba(92, 142, 50, 0.20)'; // Subtle cyan for major grid lines (was 0.4)
-const GRID_TEXT_COLOR = 'rgba(0, 255, 255, 1.0)'; // FULL BRIGHTNESS cyan for instant readability
-const GRID_TEXT_FONT = 'bold 13px "Courier New", monospace'; // LARGER and BOLD for combat readability
-const GRID_TEXT_SHADOW = '0 0 8px rgba(0, 255, 255, 1.0), 0 0 3px #000000'; // Stronger glow + black outline
+// Grid Constants - Neural Green style with enhanced readability
+const GRID_LINE_COLOR = 'rgba(92, 142, 50, 0.08)'; // Very subtle green grid (was 0.15)
+const GRID_LINE_HIGHLIGHT_COLOR = 'rgba(92, 142, 50, 0.20)'; // Subtle green for major grid lines (was 0.4)
+const GRID_TEXT_COLOR = 'rgba(196, 232, 156, 1.0)'; // FULL BRIGHTNESS green (#c4e89c) for instant readability
+const GRID_TEXT_FONT = "bold 13px 'PixelOperatorMono', monospace"; // LARGER and BOLD for combat readability
+const GRID_TEXT_SHADOW = '0 0 8px rgba(134, 190, 82, 1.0), 0 0 3px #000000'; // Stronger glow + black outline
 const GRID_TEXT_BG_COLOR = 'rgba(0, 0, 0, 0.85)'; // Darker background for better contrast
 const GRID_TEXT_BG_PADDING = 3; // More padding for readability
 
@@ -825,7 +825,7 @@ export function drawMinimapOntoCanvas({
     
     // Show a message that minimap cache is not ready
     ctx.fillStyle = 'rgba(92, 142, 50, 0.8)';
-    ctx.font = '14px "Courier New", monospace';
+    ctx.font = "14px 'PixelOperator', sans-serif";
     ctx.textAlign = 'center';
     // ctx.fillText('INITIALIZING TACTICAL MAP...', minimapX + minimapWidth/2, minimapY + minimapHeight/2);
   }
@@ -1237,7 +1237,7 @@ export function drawMinimapOntoCanvas({
         
         // Draw "ALK" text for central compound only (it's larger/more important)
         if (isCentralCompound) {
-          ctx.font = 'bold 12px "Courier New", monospace';
+          ctx.font = "bold 12px 'PixelOperator', sans-serif";
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillStyle = '#ffffff';
@@ -1281,7 +1281,7 @@ export function drawMinimapOntoCanvas({
         ctx.save();
         
         // Draw "SHIPWRECK" text with cyberpunk styling - LARGER SIZE
-        ctx.font = 'bold 14px "Courier New", monospace'; // Increased from 10px to 14px
+        ctx.font = "bold 14px 'PixelOperator', sans-serif"; // Increased from 10px to 14px
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1338,7 +1338,7 @@ export function drawMinimapOntoCanvas({
         ctx.save();
         
         // Draw "FISHING VILLAGE" text with warm/earthy styling - LARGER SIZE
-        ctx.font = 'bold 14px "Courier New", monospace'; // Same size as shipwreck
+        ctx.font = "bold 14px 'PixelOperator', sans-serif"; // Same size as shipwreck
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1399,7 +1399,7 @@ export function drawMinimapOntoCanvas({
         ctx.save();
         
         // Draw "WHALE GRAVEYARD" text with cyberpunk styling - same size as other landmarks
-        ctx.font = 'bold 14px "Courier New", monospace';
+        ctx.font = "bold 14px 'PixelOperator', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1456,7 +1456,7 @@ export function drawMinimapOntoCanvas({
         ctx.save();
         
         // Draw "HUNTING VILLAGE" text with cyberpunk styling - same size as other landmarks
-        ctx.font = 'bold 14px "Courier New", monospace';
+        ctx.font = "bold 14px 'PixelOperator', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1513,7 +1513,7 @@ export function drawMinimapOntoCanvas({
         ctx.save();
         
         // Draw "CRASHED DRONE" text with cyberpunk styling - same size as other landmarks
-        ctx.font = 'bold 14px "Courier New", monospace';
+        ctx.font = "bold 14px 'PixelOperator', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1570,7 +1570,7 @@ export function drawMinimapOntoCanvas({
         ctx.save();
         
         // Draw "WEATHER STATION" text with cyberpunk styling - same size as other landmarks
-        ctx.font = 'bold 14px "Courier New", monospace';
+        ctx.font = "bold 14px 'PixelOperator', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1627,7 +1627,7 @@ export function drawMinimapOntoCanvas({
         
         ctx.save();
         
-        ctx.font = 'bold 14px "Courier New", monospace';
+        ctx.font = "bold 14px 'PixelOperator', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1687,7 +1687,7 @@ export function drawMinimapOntoCanvas({
         ctx.save();
         
         // Draw quarry label text with cyberpunk styling - same size as shipwreck
-        ctx.font = 'bold 14px "Courier New", monospace';
+        ctx.font = "bold 14px 'PixelOperator', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1813,7 +1813,7 @@ export function drawMinimapOntoCanvas({
         
         // Draw label below the beacon
         if (showNames) {
-          ctx.font = 'bold 12px "Courier New", monospace';
+          ctx.font = "bold 12px 'PixelOperator', sans-serif";
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
           ctx.shadowColor = BEACON_EVENT_GLOW_COLOR;
@@ -2332,7 +2332,7 @@ export function drawMinimapOntoCanvas({
               );
               
               // Draw border around background for extra definition
-              ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+              ctx.strokeStyle = 'rgba(134, 190, 82, 0.3)';
               ctx.lineWidth = 1;
               ctx.strokeRect(
                 screenCoords.x + 2 - GRID_TEXT_BG_PADDING,
@@ -2343,14 +2343,14 @@ export function drawMinimapOntoCanvas({
               
               // Draw text with STRONG glow and black outline
               ctx.shadowBlur = 8;
-              ctx.shadowColor = 'rgba(0, 255, 255, 1.0)';
-              
+              ctx.shadowColor = 'rgba(134, 190, 82, 1.0)';
+
               // Draw black outline for text (stroke text multiple times)
               ctx.strokeStyle = '#000000';
               ctx.lineWidth = 3;
               ctx.strokeText(label, screenCoords.x + 2, screenCoords.y + 2);
-              
-              // Draw bright cyan text
+
+              // Draw bright green text
               ctx.fillStyle = GRID_TEXT_COLOR;
               ctx.fillText(label, screenCoords.x + 2, screenCoords.y + 2);
               

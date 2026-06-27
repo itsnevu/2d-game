@@ -57,4 +57,5 @@ export default __t.row({
   goldShareRatio: __t.f32().name("gold_share_ratio"),
   goldBalance: __t.u64().name("gold_balance"),
   stakedBounty: __t.u64().name("staked_bounty"),
+  characterId: __t.u8().name("character_id"),
 });

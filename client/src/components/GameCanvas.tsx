@@ -33,6 +33,7 @@ import { setWaterOverlayIntensity } from '../utils/renderers/waterOverlayUtils';
 
 // --- Other Components & Utils ---
 import GameCanvasOverlayUI from './GameCanvasOverlayUI';
+import SpectatorEmberOrb from './SpectatorEmberOrb';
 import type { PlacementItemInfo, PlacementActions } from '../hooks/usePlacementManager';
 // V2 system removed due to performance issues
 import { useGameCanvasAssetPreload } from '../hooks/useGameCanvasAssetPreload';
@@ -706,6 +707,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
       {isSpectator && (
         <>
+          {/* Spectator body: a swarm of spinning fire embers at the camera centre */}
+          <SpectatorEmberOrb />
           <div
             style={{
               position: 'absolute',

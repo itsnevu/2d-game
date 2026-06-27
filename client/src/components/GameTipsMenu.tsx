@@ -63,7 +63,7 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                background: 'linear-gradient(135deg, rgba(25, 10, 40, 0.95), rgba(15, 5, 30, 0.98))',
+                background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98))',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -77,10 +77,10 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                 style={{
                     maxWidth: '600px',
                     maxHeight: '80vh',
-                    background: 'linear-gradient(145deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98))',
-                    border: '2px solid #00ffff',
+                    background: 'linear-gradient(145deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98))',
+                    border: '2px solid #86be52',
                     borderRadius: '12px',
-                    boxShadow: '0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1)',
+                    boxShadow: '0 0 30px rgba(134, 190, 82, 0.45), inset 0 0 20px rgba(134, 190, 82, 0.15)',
                     position: 'relative',
                     overflow: 'hidden',
                 }}
@@ -88,22 +88,22 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
             >
                 <h2 className={styles.menuTitle}
                     style={{
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "var(--ui-font)",
                         fontSize: '24px',
-                        color: '#00ffff',
+                        color: '#86be52',
                         textAlign: 'center',
                         marginBottom: '15px',
-                        textShadow: '0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4)',
+                        textShadow: '0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.45)',
                     }}
                 >
                     TACTICAL KNOWLEDGE MATRIX
                 </h2>
-                
+
                 <div
                     style={{
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "var(--ui-font)",
                         fontSize: '12px',
-                        color: '#6699cc',
+                        color: '#9ab08a',
                         textAlign: 'center',
                         letterSpacing: '1px',
                         opacity: 0.8,
@@ -121,9 +121,9 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                     gap: '8px',
                     marginBottom: '20px',
                     padding: '10px 15px',
-                    background: 'linear-gradient(135deg, rgba(10, 20, 40, 0.8), rgba(5, 15, 35, 0.9))',
+                    background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
                     borderRadius: '8px',
-                    border: '1px solid rgba(0, 255, 255, 0.2)',
+                    border: '1px solid rgba(134, 190, 82, 0.2)',
                     margin: '0 15px 20px 15px',
                 }}>
                     {sectionEmojis.map((emoji, index) => (
@@ -137,27 +137,27 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                             <button
                                 onClick={() => scrollToSection(index)}
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9))',
-                                    border: '2px solid rgba(0, 170, 255, 0.4)',
+                                    background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
+                                    border: '2px solid rgba(134, 190, 82, 0.4)',
                                     borderRadius: '6px',
                                     padding: '8px 10px',
                                     fontSize: '16px',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
-                                    boxShadow: '0 0 8px rgba(0, 170, 255, 0.2)',
+                                    boxShadow: '0 0 8px rgba(134, 190, 82, 0.2)',
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'scale(1.1)';
-                                    e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 170, 255, 0.4)';
-                                    e.currentTarget.style.borderColor = 'rgba(0, 170, 255, 0.8)';
+                                    e.currentTarget.style.boxShadow = '0 0 15px rgba(134, 190, 82, 0.4)';
+                                    e.currentTarget.style.borderColor = 'rgba(134, 190, 82, 0.8)';
                                     // Show tooltip
                                     const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
                                     if (tooltip) tooltip.style.opacity = '1';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'scale(1)';
-                                    e.currentTarget.style.boxShadow = '0 0 8px rgba(0, 170, 255, 0.2)';
-                                    e.currentTarget.style.borderColor = 'rgba(0, 170, 255, 0.4)';
+                                    e.currentTarget.style.boxShadow = '0 0 8px rgba(134, 190, 82, 0.2)';
+                                    e.currentTarget.style.borderColor = 'rgba(134, 190, 82, 0.4)';
                                     // Hide tooltip
                                     const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
                                     if (tooltip) tooltip.style.opacity = '0';
@@ -175,18 +175,18 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                                     marginBottom: '8px',
                                     padding: '6px 10px',
                                     background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 20, 0.98))',
-                                    color: '#00ffff',
-                                    border: '1px solid #00ffff',
+                                    color: '#86be52',
+                                    border: '1px solid #86be52',
                                     borderRadius: '4px',
                                     fontSize: '12px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "var(--ui-font)",
                                     whiteSpace: 'nowrap',
                                     opacity: 0,
                                     pointerEvents: 'none',
                                     transition: 'opacity 0.3s ease',
                                     zIndex: 1000,
-                                    textShadow: '0 0 5px rgba(0, 255, 255, 0.8)',
-                                    boxShadow: '0 0 10px rgba(0, 255, 255, 0.3)',
+                                    textShadow: '0 0 5px rgba(134, 190, 82, 0.8)',
+                                    boxShadow: '0 0 10px rgba(134, 190, 82, 0.45)',
                                 }}
                             >
                                 {sectionNames[index]}
@@ -199,7 +199,7 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                                     height: 0,
                                     borderLeft: '5px solid transparent',
                                     borderRight: '5px solid transparent',
-                                    borderTop: '5px solid #00ffff',
+                                    borderTop: '5px solid #86be52',
                                 }} />
                             </div>
                         </div>
@@ -215,11 +215,11 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                         <div key={sectionIndex} data-section={sectionIndex}>
                             <h3
                                 style={{
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "var(--ui-font)",
                                     fontSize: '16px',
                                     color: '#5c8e32',
                                     marginBottom: '15px',
-                                    textShadow: '0 0 8px rgba(0, 170, 255, 0.8)',
+                                    textShadow: '0 0 8px rgba(134, 190, 82, 0.8)',
                                 }}
                             >
                                 {section.title}
@@ -232,15 +232,15 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                                             display: 'flex',
                                             alignItems: 'flex-start',
                                             padding: '15px 18px',
-                                            background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.6), rgba(15, 25, 50, 0.8))',
+                                            background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.6), rgba(12, 21, 15, 0.8))',
                                             borderRadius: '8px',
-                                            border: '1px solid rgba(0, 170, 255, 0.3)',
-                                            boxShadow: '0 0 10px rgba(0, 170, 255, 0.1), inset 0 0 5px rgba(0, 170, 255, 0.05)',
+                                            border: '1px solid rgba(134, 190, 82, 0.3)',
+                                            boxShadow: '0 0 10px rgba(134, 190, 82, 0.1), inset 0 0 5px rgba(134, 190, 82, 0.05)',
                                         }}
                                     >
                                         <span
                                             style={{
-                                                fontFamily: '"Press Start 2P", cursive',
+                                                fontFamily: "var(--ui-font)",
                                                 fontSize: '14px',
                                                 color: '#ffdd44',
                                                 marginRight: '12px',
@@ -252,7 +252,7 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                                         </span>
                                         <span
                                             style={{
-                                                fontFamily: '"Press Start 2P", cursive',
+                                                fontFamily: "var(--ui-font)",
                                                 fontSize: '14px',
                                                 color: '#ffffff',
                                                 lineHeight: '1.7',
@@ -283,7 +283,7 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                             border: '2px solid #ff8833',
                             borderRadius: '8px',
                             padding: '15px 30px',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "var(--ui-font)",
                             fontSize: '16px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
@@ -308,28 +308,28 @@ const GameTipsMenu: React.FC<GameTipsMenuProps> = ({ onBack, onClose }) => {
                         onClick={onClose}
                         className={`${styles.menuButton} ${styles.menuButtonPrimary}`}
                         style={{
-                            background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
+                            background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
                             color: '#ffffff',
                             border: '2px solid #5c8e32',
                             borderRadius: '8px',
                             padding: '15px 30px',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "var(--ui-font)",
                             fontSize: '16px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)',
-                            textShadow: '0 0 5px rgba(0, 170, 255, 0.8)',
+                            boxShadow: '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)',
+                            textShadow: '0 0 5px rgba(134, 190, 82, 0.8)',
                             letterSpacing: '1px',
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 50, 100, 0.9), rgba(15, 40, 90, 1))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(22, 42, 30, 0.9), rgba(16, 30, 22, 1))';
                             e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                            e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 170, 255, 0.6), inset 0 0 15px rgba(0, 170, 255, 0.2)';
+                            e.currentTarget.style.boxShadow = '0 0 25px rgba(134, 190, 82, 0.6), inset 0 0 15px rgba(134, 190, 82, 0.2)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))';
                             e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)';
+                            e.currentTarget.style.boxShadow = '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)';
                         }}
                     >
                         RESUME CONSCIOUSNESS

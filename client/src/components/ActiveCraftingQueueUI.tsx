@@ -94,15 +94,15 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         right: '285px',
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 10, 20, 0.95)',
-        color: '#00ffff',
+        backgroundColor: 'rgba(12, 21, 15, 0.95)',
+        color: '#86be52',
         padding: '10px 14px',
         borderRadius: '2px',
-        border: isNearComplete ? '1px solid #86be52' : '1px solid #00ffff',
-        boxShadow: isNearComplete 
-          ? '0 0 20px rgba(134, 190, 82, 0.7), inset 0 0 20px rgba(134, 190, 82, 0.1)' 
-          : '0 0 15px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.05)',
-        fontFamily: "'Courier New', 'Consolas', 'Monaco', monospace",
+        border: isNearComplete ? '1px solid #86be52' : '1px solid #86be52',
+        boxShadow: isNearComplete
+          ? '0 0 20px rgba(134, 190, 82, 0.7), inset 0 0 20px rgba(134, 190, 82, 0.1)'
+          : '0 0 15px rgba(134, 190, 82, 0.6), inset 0 0 20px rgba(134, 190, 82, 0.05)',
+        fontFamily: "'PixelOperatorMono', monospace",
         fontSize: '11px',
         fontWeight: 'bold',
         minWidth: '220px',
@@ -168,7 +168,7 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px)',
+        background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(134, 190, 82, 0.03) 2px, rgba(134, 190, 82, 0.03) 4px)',
         pointerEvents: 'none',
         zIndex: 1,
       }} />
@@ -180,9 +180,9 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         left: 0,
         right: 0,
         bottom: 0,
-        background: `linear-gradient(90deg, 
-          transparent ${Math.max(0, progressPercent - 10)}%, 
-          rgba(0, 255, 255, 0.1) ${progressPercent}%, 
+        background: `linear-gradient(90deg,
+          transparent ${Math.max(0, progressPercent - 10)}%,
+          rgba(134, 190, 82, 0.1) ${progressPercent}%,
           transparent ${Math.min(100, progressPercent + 10)}%)`,
         pointerEvents: 'none',
         zIndex: 0,
@@ -197,12 +197,12 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 255, 255, 0.15)',
+        backgroundColor: 'rgba(134, 190, 82, 0.15)',
         borderRadius: '2px',
-        border: isNearComplete ? '1px solid #86be52' : '1px solid rgba(0, 255, 255, 0.5)',
-        boxShadow: isNearComplete 
-          ? '0 0 12px rgba(134, 190, 82, 0.6), inset 0 0 8px rgba(134, 190, 82, 0.2)' 
-          : '0 0 10px rgba(0, 255, 255, 0.4), inset 0 0 8px rgba(0, 255, 255, 0.1)',
+        border: isNearComplete ? '1px solid #86be52' : '1px solid rgba(134, 190, 82, 0.5)',
+        boxShadow: isNearComplete
+          ? '0 0 12px rgba(134, 190, 82, 0.6), inset 0 0 8px rgba(134, 190, 82, 0.2)'
+          : '0 0 10px rgba(134, 190, 82, 0.4), inset 0 0 8px rgba(134, 190, 82, 0.1)',
         position: 'relative',
         zIndex: 2,
         transition: 'all 0.3s ease-out',
@@ -214,30 +214,30 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
             width: '22px', 
             height: '22px', 
             imageRendering: 'pixelated',
-            filter: isNearComplete 
-              ? 'drop-shadow(0 0 4px rgba(134, 190, 82, 0.8))' 
-              : 'drop-shadow(0 0 3px rgba(0, 255, 255, 0.6))',
+            filter: isNearComplete
+              ? 'drop-shadow(0 0 4px rgba(134, 190, 82, 0.8))'
+              : 'drop-shadow(0 0 3px rgba(134, 190, 82, 0.6))',
           }}
         />
       </div>
 
       {/* Progress Info */}
       <div style={{ flex: 1, position: 'relative', zIndex: 2 }}>
-        <div style={{ 
-          color: '#00ffff',
+        <div style={{
+          color: '#86be52',
           fontSize: '11px',
           marginBottom: '4px',
-          textShadow: '0 0 6px rgba(0, 255, 255, 0.6)',
+          textShadow: '0 0 6px rgba(134, 190, 82, 0.6)',
           letterSpacing: '0.5px',
         }}>
           {itemName}
         </div>
-        <div style={{ 
-          color: isNearComplete ? '#86be52' : '#00ccff',
+        <div style={{
+          color: isNearComplete ? '#86be52' : '#86be52',
           fontSize: '10px',
-          textShadow: isNearComplete 
-            ? '0 0 8px rgba(134, 190, 82, 0.8)' 
-            : '0 0 6px rgba(0, 204, 255, 0.6)',
+          textShadow: isNearComplete
+            ? '0 0 8px rgba(134, 190, 82, 0.8)'
+            : '0 0 6px rgba(134, 190, 82, 0.6)',
           fontWeight: 'bold',
         }}>
           {formatTime(remainingTime)}
@@ -248,11 +248,11 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
       <div style={{
         width: '6px',
         height: '48px',
-        backgroundColor: 'rgba(0, 50, 80, 0.6)',
+        backgroundColor: 'rgba(16, 30, 22, 0.6)',
         borderRadius: '2px',
         overflow: 'hidden',
         marginLeft: '10px',
-        border: '1px solid rgba(0, 255, 255, 0.3)',
+        border: '1px solid rgba(134, 190, 82, 0.3)',
         position: 'relative',
         zIndex: 2,
         boxShadow: 'inset 0 0 8px rgba(0, 0, 0, 0.5)',
@@ -264,12 +264,12 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
           left: 0,
           right: 0,
           height: `${progressPercent}%`,
-          background: isNearComplete 
-            ? 'linear-gradient(to top, #86be52, #00ffaa)' 
-            : 'linear-gradient(to top, #0099ff, #00ffff)',
-          boxShadow: isNearComplete 
-            ? '0 0 12px rgba(134, 190, 82, 0.8)' 
-            : '0 0 10px rgba(0, 255, 255, 0.6)',
+          background: isNearComplete
+            ? 'linear-gradient(to top, #86be52, #c4e89c)'
+            : 'linear-gradient(to top, #5c8e32, #86be52)',
+          boxShadow: isNearComplete
+            ? '0 0 12px rgba(134, 190, 82, 0.8)'
+            : '0 0 10px rgba(134, 190, 82, 0.6)',
           transition: 'height 0.5s ease-out, background 0.3s ease-out, box-shadow 0.3s ease-out',
         }}>
           {/* Animated shimmer effect */}
@@ -292,8 +292,8 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         left: 0,
         width: '8px',
         height: '8px',
-        borderTop: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
-        borderLeft: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
+        borderTop: isNearComplete ? '2px solid #86be52' : '2px solid #86be52',
+        borderLeft: isNearComplete ? '2px solid #86be52' : '2px solid #86be52',
         zIndex: 2,
       }} />
       <div style={{
@@ -302,8 +302,8 @@ const ActiveCraftingQueueUI: React.FC<ActiveCraftingQueueUIProps> = ({
         right: 0,
         width: '8px',
         height: '8px',
-        borderBottom: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
-        borderRight: isNearComplete ? '2px solid #86be52' : '2px solid #00ffff',
+        borderBottom: isNearComplete ? '2px solid #86be52' : '2px solid #86be52',
+        borderRight: isNearComplete ? '2px solid #86be52' : '2px solid #86be52',
         zIndex: 2,
       }} />
     </div>

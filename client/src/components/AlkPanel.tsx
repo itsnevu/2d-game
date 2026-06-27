@@ -230,15 +230,15 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                     padding: '0',
                                     fontSize: '14px',
                                     fontWeight: 'bold',
-                                    background: contractCount > 1 ? 'linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 220, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
+                                    background: contractCount > 1 ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
                                     color: contractCount > 1 ? '#5c8e32' : '#666',
-                                    border: contractCount > 1 ? '2px solid rgba(0, 170, 255, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
+                                    border: contractCount > 1 ? '2px solid rgba(134, 190, 82, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
                                     borderRadius: '3px 0 0 3px',
                                     cursor: contractCount > 1 ? 'pointer' : 'not-allowed',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: contractCount > 1 ? '0 0 8px rgba(0, 170, 255, 0.2)' : 'none',
+                                    boxShadow: contractCount > 1 ? '0 0 8px rgba(134, 190, 82, 0.2)' : 'none',
                                     transition: 'all 0.2s ease'
                                 }}
                             >
@@ -261,13 +261,13 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                     padding: '0',
                                     fontSize: '13px',
                                     textAlign: 'center',
-                                    background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9))',
-                                    border: '2px solid rgba(0, 170, 255, 0.4)',
+                                    background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
+                                    border: '2px solid rgba(134, 190, 82, 0.4)',
                                     borderLeft: 'none',
                                     borderRight: 'none',
-                                    color: '#00ffff',
+                                    color: '#86be52',
                                     outline: 'none',
-                                    textShadow: '0 0 5px rgba(0, 255, 255, 0.4)',
+                                    textShadow: '0 0 5px rgba(134, 190, 82, 0.45)',
                                     MozAppearance: 'textfield' as any
                                 }}
                             />
@@ -282,15 +282,15 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                     padding: '0',
                                     fontSize: '14px',
                                     fontWeight: 'bold',
-                                    background: contractCount < maxContracts ? 'linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 150, 220, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
+                                    background: contractCount < maxContracts ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))' : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
                                     color: contractCount < maxContracts ? '#5c8e32' : '#666',
-                                    border: contractCount < maxContracts ? '2px solid rgba(0, 170, 255, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
+                                    border: contractCount < maxContracts ? '2px solid rgba(134, 190, 82, 0.4)' : '2px solid rgba(100, 100, 120, 0.3)',
                                     borderRadius: '0',
                                     cursor: contractCount < maxContracts ? 'pointer' : 'not-allowed',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: contractCount < maxContracts ? '0 0 8px rgba(0, 170, 255, 0.2)' : 'none',
+                                    boxShadow: contractCount < maxContracts ? '0 0 8px rgba(134, 190, 82, 0.2)' : 'none',
                                     transition: 'all 0.2s ease'
                                 }}
                             >
@@ -311,7 +311,7 @@ const ContractCard: React.FC<ContractCardProps> = ({
                                     fontSize: '10px',
                                     fontWeight: 'bold',
                                     background: maxFromInventory > 0 
-                                        ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4))' 
+                                        ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))' 
                                         : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
                                     color: maxFromInventory > 0 ? '#86be52' : '#666',
                                     border: maxFromInventory > 0 
@@ -487,7 +487,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                                 padding: '0',
                                 fontSize: '13px',
                                 textAlign: 'center',
-                                background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9))',
+                                background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
                                 border: '2px solid rgba(45, 71, 21, 0.4)',
                                 borderLeft: 'none',
                                 borderRight: 'none',
@@ -530,7 +530,7 @@ const BuyOrderCard: React.FC<BuyOrderCardProps> = ({
                                 fontSize: '10px',
                                 fontWeight: 'bold',
                                 background: maxBundles > 0 
-                                    ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(0, 200, 100, 0.4))' 
+                                    ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))' 
                                     : 'linear-gradient(135deg, rgba(40, 40, 60, 0.5), rgba(30, 30, 50, 0.6))',
                                 color: maxBundles > 0 ? '#86be52' : '#666',
                                 border: maxBundles > 0 
@@ -759,12 +759,12 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
             
             return (
                 <div className="contracts-list search-results">
-                    <div className="search-results-header" style={{ 
-                        padding: '8px 12px', 
-                        marginBottom: '8px', 
-                        color: '#00ffff',
+                    <div className="search-results-header" style={{
+                        padding: '8px 12px',
+                        marginBottom: '8px',
+                        color: '#86be52',
                         fontSize: '13px',
-                        borderBottom: '1px solid rgba(0, 170, 255, 0.3)'
+                        borderBottom: '1px solid rgba(134, 190, 82, 0.3)'
                     }}>
                         Found {searchResults.length} contract{searchResults.length !== 1 ? 's' : ''} matching "{searchQuery}"
                     </div>
@@ -968,8 +968,8 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
             {/* Search Bar */}
             <div className="alk-search-bar" style={{
                 padding: '8px 16px',
-                background: 'linear-gradient(135deg, rgba(15, 25, 50, 0.8), rgba(10, 20, 40, 0.9))',
-                borderBottom: '1px solid rgba(0, 170, 255, 0.2)',
+                background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
+                borderBottom: '1px solid rgba(134, 190, 82, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px'
@@ -996,19 +996,19 @@ const AlkPanel: React.FC<AlkPanelProps> = ({
                     data-is-chat-input="true"
                     style={{
                         flex: 1,
-                        background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.8), rgba(15, 25, 50, 0.9))',
-                        border: isSearchFocused 
-                            ? '2px solid rgba(0, 255, 255, 0.6)' 
-                            : '2px solid rgba(0, 170, 255, 0.3)',
+                        background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
+                        border: isSearchFocused
+                            ? '2px solid rgba(196, 232, 156, 0.6)'
+                            : '2px solid rgba(134, 190, 82, 0.3)',
                         borderRadius: '4px',
                         padding: '8px 12px',
                         color: '#ffffff',
                         fontSize: '14px',
                         outline: 'none',
                         transition: 'all 0.2s ease',
-                        boxShadow: isSearchFocused 
-                            ? '0 0 12px rgba(0, 255, 255, 0.3), inset 0 0 8px rgba(0, 170, 255, 0.1)' 
-                            : 'inset 0 0 8px rgba(0, 170, 255, 0.1)'
+                        boxShadow: isSearchFocused
+                            ? '0 0 12px rgba(134, 190, 82, 0.45), inset 0 0 8px rgba(134, 190, 82, 0.1)'
+                            : 'inset 0 0 8px rgba(134, 190, 82, 0.1)'
                     }}
                 />
                 {searchQuery && (

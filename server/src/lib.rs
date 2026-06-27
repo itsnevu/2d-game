@@ -758,6 +758,8 @@ pub struct Player {
     pub gold_share_ratio: f32, // Ratio of gold that goes to the scholar (e.g., 0.7 = 70% to scholar, 30% to owner)
     pub gold_balance: u64, // In-game gold balance (exchangeable for $KINS)
     pub staked_bounty: u64, // Gold staked for Wilderness PvP
+    // === Appearance ===
+    pub character_id: u8, // Chosen player character/skin variant (0-3), shown to all players
 }
 
 pub const TUTORIAL_ID_MEMORY_SHARD: &str = "memoryShard";
@@ -1691,7 +1693,7 @@ pub fn identity_disconnected(ctx: &ReducerContext) {
 /// For new players, it creates their initial game state and grants starting items.
 /// For existing players, it updates their connection status and timestamps.
 #[spacetimedb::reducer]
-pub fn register_player(ctx: &ReducerContext, username: String) -> Result<(), String> {
+pub fn register_player(ctx: &ReducerContext, username: String, character_id: u8) -> Result<(), String> {
     let sender_id = ctx.sender();
     let players = ctx.db.player();
     log::info!("Attempting registration/login for identity: {:?}, username: {}", sender_id, username);
@@ -2312,6 +2314,7 @@ pub fn register_player(ctx: &ReducerContext, username: String) -> Result<(), Str
         gold_share_ratio: 1.0,
         gold_balance: 0,
         staked_bounty: 0,
+        character_id: character_id.min(3), // Clamp to the 4 available characters (0-3)
     };
 
     // Insert the new player
@@ -2481,6 +2484,7 @@ pub fn register_npc(ctx: &ReducerContext, username: String, role: String) -> Res
         gold_share_ratio: 1.0,
         gold_balance: 0,
         staked_bounty: 0,
+        character_id: (username.len() as u8) % 4, // Vary NPC appearance deterministically
     };
 
     match players.try_insert(player) {

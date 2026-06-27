@@ -3100,7 +3100,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                 >
                     <div 
                         style={{
-                            background: 'linear-gradient(145deg, rgba(40, 20, 60, 0.98), rgba(30, 15, 50, 0.99))',
+                            background: 'linear-gradient(145deg, #101e16, #0c150f)',
                             border: pendingEmptyReservoirInfo.isSalt ? '2px solid #87CEEB' : '2px solid #ff6666',
                             borderRadius: '12px',
                             padding: '30px',
@@ -3134,7 +3134,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             textShadow: pendingEmptyReservoirInfo.isSalt 
                                 ? '0 0 10px rgba(135, 206, 250, 0.8)'
                                 : '0 0 10px rgba(255, 153, 153, 0.8)',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator'",
                             letterSpacing: '1px',
                         }}>
                             {pendingEmptyReservoirInfo.isSalt ? '🌊 SPILL SALT WATER?' : '⚠️ SPILL FRESH WATER?'}
@@ -3151,7 +3151,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                             border: pendingEmptyReservoirInfo.isSalt
                                 ? '1px solid rgba(135, 206, 250, 0.3)'
                                 : '1px solid rgba(255, 102, 102, 0.3)',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator'",
                         }}>
                             You are about to spill <strong style={{ color: pendingEmptyReservoirInfo.isSalt ? '#87CEEB' : '#66ccff' }}>{pendingEmptyReservoirInfo.waterAmount}ml</strong> of <strong>{pendingEmptyReservoirInfo.waterType}</strong> from the rain collector.
                             <br /><br />
@@ -3189,7 +3189,7 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     border: '2px solid #ff6666',
                                     borderRadius: '8px',
                                     padding: '15px 25px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "'PixelOperator'",
                                     fontSize: '12px',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
@@ -3218,28 +3218,28 @@ const ExternalContainerUI: React.FC<ExternalContainerUIProps> = ({
                                     setPendingEmptyReservoirInfo(null);
                                 }}
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
+                                    background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
                                     color: '#ffffff',
                                     border: '2px solid #5c8e32',
                                     borderRadius: '8px',
                                     padding: '15px 25px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "'PixelOperator'",
                                     fontSize: '12px',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
-                                    boxShadow: '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)',
+                                    boxShadow: '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)',
                                     textShadow: '0 0 5px currentColor',
                                     letterSpacing: '1px',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 50, 100, 0.9), rgba(15, 40, 90, 1))';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(22, 40, 28, 0.9), rgba(16, 30, 22, 1))';
                                     e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                                    e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 170, 255, 0.6), inset 0 0 15px rgba(0, 170, 255, 0.2)';
+                                    e.currentTarget.style.boxShadow = '0 0 25px rgba(134, 190, 82, 0.6), inset 0 0 15px rgba(134, 190, 82, 0.2)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))';
                                     e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                                    e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)';
+                                    e.currentTarget.style.boxShadow = '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)';
                                 }}
                             >
                                 KEEP WATER

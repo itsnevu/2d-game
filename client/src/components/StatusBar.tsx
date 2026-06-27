@@ -219,10 +219,10 @@ const StatusBar: React.FC<StatusBarProps> = ({
       display: 'flex',
       alignItems: 'center',
       marginBottom: '5px', // Reduced from 8px
-      fontFamily: 'Courier New, Consolas, Monaco, monospace',
+      fontFamily: "'PixelOperatorMono', monospace",
       fontSize: '10px',
-      color: '#00ffff',
-      textShadow: '0 0 4px rgba(0, 255, 255, 0.6)',
+      color: '#86be52',
+      textShadow: '0 0 4px rgba(134, 190, 82, 0.6)',
       height: '22px', // Reduced from 28px for more compact layout
     }}>
       {/* Icon */}
@@ -245,10 +245,10 @@ const StatusBar: React.FC<StatusBarProps> = ({
         position: 'relative',
         flex: '1',
         height: '12px', // Reduced from 16px to be more compact
-        backgroundColor: '#555',
+        backgroundColor: '#101e16',
         borderRadius: '2px', // Reduced radius
         overflow: 'hidden',
-        border: '1px solid #333',
+        border: '1px solid #5c8e32',
         marginRight: '8px', // Reduced spacing
       }}>
         <div style={filledBarStyle}>

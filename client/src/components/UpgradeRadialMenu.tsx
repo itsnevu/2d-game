@@ -536,21 +536,21 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
       >
         <defs>
           <radialGradient id="upgradeCyberpunkGlow">
-            <stop offset="0%" stopColor="rgba(0, 221, 255, 0.4)" />
-            <stop offset="70%" stopColor="rgba(0, 150, 255, 0.1)" />
+            <stop offset="0%" stopColor="rgba(134, 190, 82, 0.4)" />
+            <stop offset="70%" stopColor="rgba(134, 190, 82, 0.1)" />
             <stop offset="100%" stopColor="transparent" />
           </radialGradient>
           <linearGradient id="upgradeSectorHoverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(0, 170, 255, 0.85)" />
+            <stop offset="0%" stopColor="rgba(134, 190, 82, 0.85)" />
             <stop offset="100%" stopColor="rgba(45, 71, 21, 0.9)" />
           </linearGradient>
           <linearGradient id="upgradeSectorNormalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(20, 40, 80, 0.8)" />
-            <stop offset="100%" stopColor="rgba(10, 30, 70, 0.9)" />
+            <stop offset="0%" stopColor="rgba(16, 30, 22, 0.8)" />
+            <stop offset="100%" stopColor="rgba(12, 21, 15, 0.9)" />
           </linearGradient>
           <linearGradient id="upgradeCenterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(30, 15, 50, 0.95)" />
-            <stop offset="100%" stopColor="rgba(20, 10, 40, 0.98)" />
+            <stop offset="0%" stopColor="rgba(16, 30, 22, 0.95)" />
+            <stop offset="100%" stopColor="rgba(12, 21, 15, 0.98)" />
           </linearGradient>
           <filter id="upgradeCyberpunkGlowFilter">
             <feGaussianBlur stdDeviation="4" result="coloredBlur" />
@@ -591,8 +591,8 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
                 stroke={
                   isAvailable
                     ? isHovered || isSelected
-                      ? '#00ffff'
-                      : 'rgba(0, 170, 255, 0.5)'
+                      ? '#c4e89c'
+                      : 'rgba(134, 190, 82, 0.45)'
                     : 'rgba(150, 60, 60, 0.6)'
                 }
                 strokeWidth={isHovered || isSelected ? 3 : 2}
@@ -614,7 +614,7 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
           cy={MENU_SIZE / 2}
           r={INNER_RADIUS}
           fill="url(#upgradeCenterGradient)"
-          stroke="#00ffff"
+          stroke="#86be52"
           strokeWidth={2}
           style={{
             transition: 'all 0.15s ease',
@@ -652,9 +652,9 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
                 icon={upgradeOptions[hoveredIndex].icon}
                 style={{
                   fontSize: '48px',
-                  color: upgradeOptions[hoveredIndex].available ? '#00ffff' : '#cc6666',
-                  filter: upgradeOptions[hoveredIndex].available 
-                    ? 'drop-shadow(0 0 12px rgba(0, 255, 255, 0.8))' 
+                  color: upgradeOptions[hoveredIndex].available ? '#86be52' : '#cc6666',
+                  filter: upgradeOptions[hoveredIndex].available
+                    ? 'drop-shadow(0 0 12px rgba(134, 190, 82, 0.45))'
                     : 'drop-shadow(0 0 8px rgba(204, 102, 102, 0.6))',
                 }}
               />
@@ -663,10 +663,10 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
             <div
               style={{
                 fontSize: '18px',
-                fontFamily: '"Press Start 2P", cursive',
-                color: '#ffffff',
+                fontFamily: "'PixelOperator', cursive",
+                color: '#e8f0e0',
                 fontWeight: 'bold',
-                textShadow: '0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4)',
+                textShadow: '0 0 10px rgba(134, 190, 82, 0.45), 0 0 20px rgba(134, 190, 82, 0.45)',
                 marginBottom: '6px',
                 lineHeight: '1.3',
               }}
@@ -677,9 +677,9 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
             <div
               style={{
                 fontSize: '12px',
-                fontFamily: '"Press Start 2P", cursive',
-                color: '#6699cc',
-                textShadow: '0 0 5px rgba(102, 153, 204, 0.6)',
+                fontFamily: "'PixelOperator', cursive",
+                color: '#9ab08a',
+                textShadow: '0 0 5px rgba(154, 176, 138, 0.6)',
                 lineHeight: '1.4',
                 marginBottom: '8px',
               }}
@@ -691,9 +691,9 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
               <div
                 style={{
                   fontSize: '11px',
-                  fontFamily: '"Press Start 2P", cursive',
-                  color: '#ffffff',
-                  textShadow: '0 0 5px rgba(255, 255, 255, 0.6)',
+                  fontFamily: "'PixelOperatorMono', cursive",
+                  color: '#e8f0e0',
+                  textShadow: '0 0 5px rgba(232, 240, 224, 0.6)',
                 }}
               >
                 {upgradeOptions[hoveredIndex].requirements.wood} x Wood ({woodCount})
@@ -703,9 +703,9 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
               <div
                 style={{
                   fontSize: '11px',
-                  fontFamily: '"Press Start 2P", cursive',
-                  color: '#ffffff',
-                  textShadow: '0 0 5px rgba(255, 255, 255, 0.6)',
+                  fontFamily: "'PixelOperatorMono', cursive",
+                  color: '#e8f0e0',
+                  textShadow: '0 0 5px rgba(232, 240, 224, 0.6)',
                 }}
               >
                 {upgradeOptions[hoveredIndex].requirements.stone} x Stone ({stoneCount})
@@ -715,9 +715,9 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
               <div
                 style={{
                   fontSize: '11px',
-                  fontFamily: '"Press Start 2P", cursive',
-                  color: '#ffffff',
-                  textShadow: '0 0 5px rgba(255, 255, 255, 0.6)',
+                  fontFamily: "'PixelOperatorMono', cursive",
+                  color: '#e8f0e0',
+                  textShadow: '0 0 5px rgba(232, 240, 224, 0.6)',
                 }}
               >
                 {upgradeOptions[hoveredIndex].requirements.metal} x Metal ({metalCount})
@@ -750,10 +750,10 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
               {/* Icon only - no text */}
               <div
                 style={{
-                  filter: isAvailable 
-                    ? isHovered 
-                      ? 'drop-shadow(0 0 12px rgba(0, 255, 255, 1))' 
-                      : 'drop-shadow(0 0 6px rgba(0, 170, 255, 0.6))'
+                  filter: isAvailable
+                    ? isHovered
+                      ? 'drop-shadow(0 0 12px rgba(134, 190, 82, 0.45))'
+                      : 'drop-shadow(0 0 6px rgba(134, 190, 82, 0.45))'
                     : 'drop-shadow(0 0 4px rgba(204, 102, 102, 0.5))',
                   transition: 'all 0.15s ease',
                 }}
@@ -762,9 +762,9 @@ export const UpgradeRadialMenu: React.FC<UpgradeRadialMenuProps> = ({
                   icon={option.icon}
                   style={{
                     fontSize: '32px',
-                    color: isAvailable 
-                      ? isHovered 
-                        ? '#00ffff' 
+                    color: isAvailable
+                      ? isHovered
+                        ? '#c4e89c'
                         : '#5c8e32'
                       : '#cc6666',
                   }}

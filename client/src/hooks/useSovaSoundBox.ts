@@ -26,6 +26,7 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import React from 'react';
 import SovaSoundBox from '../components/SovaSoundBox';
+import { ASSISTANT_NAME } from '../constants/branding';
 import { isCairnAudioPlaying } from '../utils/cairnAudioUtils';
 import { stopNotificationSound } from '../utils/notificationSoundQueue';
 
@@ -196,7 +197,7 @@ export function useSovaSoundBox(): UseSovaSoundBoxReturn {
     }
   }, []);
 
-  const showSovaSoundBox = useCallback((audio: HTMLAudioElement, label: string = 'SOVA', options?: SovaSoundBoxOptions) => {
+  const showSovaSoundBox = useCallback((audio: HTMLAudioElement, label: string = ASSISTANT_NAME, options?: SovaSoundBoxOptions) => {
     const hideUI = options?.hideUI === true;
     const requestedPriority = options?.priority ?? 'normal';
     // SOVA INTRO IS NON-INTERRUPTABLE: If intro is playing, skip any other SOVA audio

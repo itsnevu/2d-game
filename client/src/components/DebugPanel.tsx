@@ -21,7 +21,7 @@ const scrollbarStyles = `
         width: 8px;
     }
     .debug-panel-scroll::-webkit-scrollbar-track {
-        background: rgba(0, 30, 50, 0.5);
+        background: rgba(12, 21, 15, 0.5);
         border-radius: 4px;
     }
     .debug-panel-scroll::-webkit-scrollbar-thumb {
@@ -258,12 +258,12 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
     const getWeatherColor = () => {
         const weather = worldState?.currentWeather?.tag;
         switch (weather) {
-            case 'Clear': return { bg: 'linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(56, 142, 60, 0.4))', color: '#4CAF50', border: '1px solid #4CAF50' };
-            case 'LightRain': return { bg: 'linear-gradient(135deg, rgba(3, 169, 244, 0.3), rgba(2, 136, 209, 0.4))', color: '#03A9F4', border: '1px solid #03A9F4' };
-            case 'ModerateRain': return { bg: 'linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(25, 118, 210, 0.4))', color: '#2196F3', border: '1px solid #2196F3' };
-            case 'HeavyRain': return { bg: 'linear-gradient(135deg, rgba(63, 81, 181, 0.3), rgba(48, 63, 159, 0.4))', color: '#3F51B5', border: '1px solid #3F51B5' };
-            case 'HeavyStorm': return { bg: 'linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(123, 31, 162, 0.4))', color: '#9C27B0', border: '1px solid #9C27B0' };
-            default: return { bg: 'linear-gradient(135deg, rgba(255, 152, 0, 0.3), rgba(245, 124, 0, 0.4))', color: '#FF9800', border: '1px solid #FF9800' };
+            case 'Clear': return { bg: 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))', color: '#86be52', border: '1px solid #86be52' };
+            case 'LightRain': return { bg: 'linear-gradient(135deg, rgba(196, 232, 156, 0.3), rgba(134, 190, 82, 0.4))', color: '#c4e89c', border: '1px solid #c4e89c' };
+            case 'ModerateRain': return { bg: 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))', color: '#86be52', border: '1px solid #86be52' };
+            case 'HeavyRain': return { bg: 'linear-gradient(135deg, rgba(255, 200, 60, 0.3), rgba(212, 160, 40, 0.4))', color: '#ffc83c', border: '1px solid #ffc83c' };
+            case 'HeavyStorm': return { bg: 'linear-gradient(135deg, rgba(212, 136, 255, 0.3), rgba(170, 100, 220, 0.4))', color: '#d488ff', border: '1px solid #d488ff' };
+            default: return { bg: 'linear-gradient(135deg, rgba(255, 200, 60, 0.3), rgba(212, 160, 40, 0.4))', color: '#ffc83c', border: '1px solid #ffc83c' };
         }
     };
 
@@ -281,23 +281,23 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
 
     const getTimeColor = () => {
         const timeOfDay = worldState?.timeOfDay?.tag;
-        if (timeOfDay === 'Night' || timeOfDay === 'Midnight') 
-            return { bg: 'linear-gradient(135deg, rgba(63, 81, 181, 0.3), rgba(48, 63, 159, 0.4))', color: '#7986CB', border: '1px solid #7986CB' };
-        if (timeOfDay === 'Dawn' || timeOfDay === 'Dusk') 
-            return { bg: 'linear-gradient(135deg, rgba(255, 152, 0, 0.3), rgba(245, 124, 0, 0.4))', color: '#FF9800', border: '1px solid #FF9800' };
-        if (timeOfDay === 'TwilightMorning' || timeOfDay === 'TwilightEvening') 
-            return { bg: 'linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(123, 31, 162, 0.4))', color: '#BA68C8', border: '1px solid #BA68C8' };
-        return { bg: 'linear-gradient(135deg, rgba(255, 235, 59, 0.3), rgba(251, 192, 45, 0.4))', color: '#FFD54F', border: '1px solid #FFD54F' };
+        if (timeOfDay === 'Night' || timeOfDay === 'Midnight')
+            return { bg: 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))', color: '#86be52', border: '1px solid #86be52' };
+        if (timeOfDay === 'Dawn' || timeOfDay === 'Dusk')
+            return { bg: 'linear-gradient(135deg, rgba(255, 200, 60, 0.3), rgba(212, 160, 40, 0.4))', color: '#ffc83c', border: '1px solid #ffc83c' };
+        if (timeOfDay === 'TwilightMorning' || timeOfDay === 'TwilightEvening')
+            return { bg: 'linear-gradient(135deg, rgba(212, 136, 255, 0.3), rgba(170, 100, 220, 0.4))', color: '#d488ff', border: '1px solid #d488ff' };
+        return { bg: 'linear-gradient(135deg, rgba(255, 200, 60, 0.3), rgba(212, 160, 40, 0.4))', color: '#ffc83c', border: '1px solid #ffc83c' };
     };
 
     const getSeasonColor = () => {
         const season = worldState?.currentSeason?.tag;
         switch (season) {
-            case 'Spring': return { bg: 'linear-gradient(135deg, rgba(129, 199, 132, 0.3), rgba(102, 187, 106, 0.4))', color: '#81C784', border: '1px solid #81C784', icon: springIcon };
-            case 'Summer': return { bg: 'linear-gradient(135deg, rgba(255, 213, 79, 0.3), rgba(255, 193, 7, 0.4))', color: '#FFD54F', border: '1px solid #FFD54F', icon: summerIcon };
-            case 'Autumn': return { bg: 'linear-gradient(135deg, rgba(255, 138, 101, 0.3), rgba(255, 112, 67, 0.4))', color: '#FF8A65', border: '1px solid #FF8A65', icon: autumnIcon };
-            case 'Winter': return { bg: 'linear-gradient(135deg, rgba(144, 202, 249, 0.3), rgba(100, 181, 246, 0.4))', color: '#90CAF9', border: '1px solid #90CAF9', icon: winterIcon };
-            default: return { bg: 'linear-gradient(135deg, rgba(129, 199, 132, 0.3), rgba(102, 187, 106, 0.4))', color: '#81C784', border: '1px solid #81C784', icon: springIcon };
+            case 'Spring': return { bg: 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))', color: '#86be52', border: '1px solid #86be52', icon: springIcon };
+            case 'Summer': return { bg: 'linear-gradient(135deg, rgba(255, 200, 60, 0.3), rgba(212, 160, 40, 0.4))', color: '#ffc83c', border: '1px solid #ffc83c', icon: summerIcon };
+            case 'Autumn': return { bg: 'linear-gradient(135deg, rgba(255, 200, 60, 0.3), rgba(212, 160, 40, 0.4))', color: '#ffc83c', border: '1px solid #ffc83c', icon: autumnIcon };
+            case 'Winter': return { bg: 'linear-gradient(135deg, rgba(196, 232, 156, 0.3), rgba(134, 190, 82, 0.4))', color: '#c4e89c', border: '1px solid #c4e89c', icon: winterIcon };
+            default: return { bg: 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(92, 142, 50, 0.4))', color: '#86be52', border: '1px solid #86be52', icon: springIcon };
         }
     };
 
@@ -311,7 +311,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
             top: '70px',
             left: '15px',
             zIndex: 998,
-            background: 'linear-gradient(145deg, rgba(15, 30, 50, 0.95), rgba(10, 20, 40, 0.98))',
+            background: 'linear-gradient(145deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98))',
             border: '2px solid #5c8e32',
             borderRadius: '8px',
             padding: '12px',
@@ -320,7 +320,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
             flexDirection: 'column',
             gap: '8px',
             boxShadow: '0 0 20px rgba(92, 142, 50, 0.3), inset 0 0 15px rgba(92, 142, 50, 0.1)',
-            fontFamily: '"Press Start 2P", monospace',
+            fontFamily: "'PixelOperatorMono', monospace",
             minWidth: '240px',
             maxHeight: '475px',
             overflowY: 'auto',
@@ -344,7 +344,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                 marginBottom: '4px',
                 borderBottom: '1px solid rgba(92, 142, 50, 0.3)',
                 paddingBottom: '6px',
-                background: 'linear-gradient(145deg, rgba(15, 30, 50, 0.98), rgba(10, 20, 40, 0.99))',
+                background: 'linear-gradient(145deg, rgba(16, 30, 22, 0.98), rgba(12, 21, 15, 0.99))',
                 marginLeft: '-12px',
                 marginRight: '-12px',
                 marginTop: '-12px',
@@ -364,7 +364,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                     onClick={() => setIsMinimized(!isMinimized)}
                     onFocus={(e) => e.currentTarget.blur()}
                     style={{
-                        background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.2), rgba(0, 170, 255, 0.3))',
+                        background: 'linear-gradient(135deg, rgba(92, 142, 50, 0.2), rgba(134, 190, 82, 0.3))',
                         color: '#5c8e32',
                         border: '1px solid rgba(92, 142, 50, 0.4)',
                         padding: '4px 8px',
@@ -376,11 +376,11 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         minWidth: '28px'
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(0, 170, 255, 0.4))';
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(134, 190, 82, 0.4))';
                         e.currentTarget.style.boxShadow = '0 0 10px rgba(92, 142, 50, 0.4)';
                     }}
                     onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.2), rgba(0, 170, 255, 0.3))';
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(92, 142, 50, 0.2), rgba(134, 190, 82, 0.3))';
                         e.currentTarget.style.boxShadow = 'none';
                     }}
                 >
@@ -398,17 +398,17 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         }}
                         onFocus={(e) => e.currentTarget.blur()}
                         style={{
-                            background: showAutotileDebug 
-                                ? 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(0, 170, 255, 0.4))' 
+                            background: showAutotileDebug
+                                ? 'linear-gradient(135deg, rgba(92, 142, 50, 0.3), rgba(134, 190, 82, 0.4))'
                                 : 'linear-gradient(135deg, rgba(60, 30, 30, 0.6), rgba(40, 20, 20, 0.7))',
-                            color: showAutotileDebug ? '#00ffff' : '#ff6b6b',
+                            color: showAutotileDebug ? '#c4e89c' : '#ff6b6b',
                             border: showAutotileDebug ? '1px solid #5c8e32' : '1px solid #ff6b6b',
                             padding: '8px 12px',
                             borderRadius: '4px',
                             fontSize: '10px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
-                            textShadow: showAutotileDebug ? '0 0 5px #00ffff' : '0 0 5px #ff6b6b',
+                            textShadow: showAutotileDebug ? '0 0 5px #c4e89c' : '0 0 5px #ff6b6b',
                             boxShadow: showAutotileDebug 
                                 ? '0 0 10px rgba(92, 142, 50, 0.3)' 
                                 : '0 0 10px rgba(255, 107, 107, 0.2)',
@@ -605,16 +605,16 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onFocus={(e) => e.currentTarget.blur()}
                         style={{
                             background: showYSortDebug
-                                ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(200, 170, 0, 0.4))'
+                                ? 'linear-gradient(135deg, rgba(134, 190, 82, 0.3), rgba(255, 200, 60, 0.4))'
                                 : 'linear-gradient(135deg, rgba(60, 30, 30, 0.6), rgba(40, 20, 20, 0.7))',
-                            color: showYSortDebug ? '#ffd700' : '#ff6b6b',
-                            border: showYSortDebug ? '1px solid #ffd700' : '1px solid #ff6b6b',
+                            color: showYSortDebug ? '#ffc83c' : '#ff6b6b',
+                            border: showYSortDebug ? '1px solid #ffc83c' : '1px solid #ff6b6b',
                             padding: '8px 12px',
                             borderRadius: '4px',
                             fontSize: '10px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
-                            textShadow: showYSortDebug ? '0 0 5px #ffd700' : '0 0 5px #ff6b6b',
+                            textShadow: showYSortDebug ? '0 0 5px #ffc83c' : '0 0 5px #ff6b6b',
                             boxShadow: showYSortDebug
                                 ? '0 0 10px rgba(134, 190, 82, 0.3)'
                                 : '0 0 10px rgba(255, 107, 107, 0.2)',
@@ -646,18 +646,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onFocus={(e) => e.currentTarget.blur()}
                         style={{
                             background: showShipwreckDebug
-                                ? 'linear-gradient(135deg, rgba(140, 100, 220, 0.3), rgba(100, 60, 180, 0.4))'
+                                ? 'linear-gradient(135deg, rgba(212, 136, 255, 0.3), rgba(170, 100, 220, 0.4))'
                                 : 'linear-gradient(135deg, rgba(60, 30, 30, 0.6), rgba(40, 20, 20, 0.7))',
-                            color: showShipwreckDebug ? '#8c64dc' : '#ff6b6b',
-                            border: showShipwreckDebug ? '1px solid #8c64dc' : '1px solid #ff6b6b',
+                            color: showShipwreckDebug ? '#d488ff' : '#ff6b6b',
+                            border: showShipwreckDebug ? '1px solid #d488ff' : '1px solid #ff6b6b',
                             padding: '8px 12px',
                             borderRadius: '4px',
                             fontSize: '10px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
-                            textShadow: showShipwreckDebug ? '0 0 5px #8c64dc' : '0 0 5px #ff6b6b',
+                            textShadow: showShipwreckDebug ? '0 0 5px #d488ff' : '0 0 5px #ff6b6b',
                             boxShadow: showShipwreckDebug
-                                ? '0 0 10px rgba(140, 100, 220, 0.3)'
+                                ? '0 0 10px rgba(212, 136, 255, 0.3)'
                                 : '0 0 10px rgba(255, 107, 107, 0.2)',
                             fontFamily: 'inherit',
                             letterSpacing: '0.5px'
@@ -665,13 +665,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-1px)';
                             e.currentTarget.style.boxShadow = showShipwreckDebug
-                                ? '0 0 15px rgba(140, 100, 220, 0.5)'
+                                ? '0 0 15px rgba(212, 136, 255, 0.5)'
                                 : '0 0 15px rgba(255, 107, 107, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
                             e.currentTarget.style.boxShadow = showShipwreckDebug
-                                ? '0 0 10px rgba(140, 100, 220, 0.3)'
+                                ? '0 0 10px rgba(212, 136, 255, 0.3)'
                                 : '0 0 10px rgba(255, 107, 107, 0.2)';
                         }}
                     >
@@ -1021,11 +1021,11 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                         <style>{`
                             /* Style dropdown options to match dark theme */
                             select option {
-                                background: rgba(20, 30, 50, 0.98) !important;
+                                background: rgba(16, 30, 22, 0.98) !important;
                                 color: #ffffff !important;
                             }
                             select optgroup {
-                                background: rgba(15, 30, 50, 0.95) !important;
+                                background: rgba(16, 30, 22, 0.95) !important;
                                 color: #5c8e32 !important;
                                 font-weight: bold;
                             }
@@ -1046,7 +1046,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                 onFocus={(e) => e.currentTarget.blur()}
                                 style={{
                                     flex: 1,
-                                    background: 'linear-gradient(135deg, rgba(30, 40, 60, 0.9), rgba(20, 30, 50, 0.95))',
+                                    background: 'linear-gradient(135deg, rgba(20, 36, 26, 0.9), rgba(16, 30, 22, 0.95))',
                                     color: '#ffffff',
                                     border: '1px solid rgba(92, 142, 50, 0.4)',
                                     padding: '6px 8px',
@@ -1174,7 +1174,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                     placeholder={allItems.length ? "Search items (Tab to complete)" : "Loading items..."}
                                     data-allow-spacebar="true"
                                     style={{
-                                        background: 'linear-gradient(135deg, rgba(30, 40, 60, 0.9), rgba(20, 30, 50, 0.95))',
+                                        background: 'linear-gradient(135deg, rgba(20, 36, 26, 0.9), rgba(16, 30, 22, 0.95))',
                                         color: '#ffffff',
                                         border: '1px solid rgba(92, 142, 50, 0.4)',
                                         padding: '6px 8px',
@@ -1248,7 +1248,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                             marginTop: '2px',
                                             maxHeight: '140px',
                                             overflowY: 'auto',
-                                            background: 'rgba(15, 30, 50, 0.98)',
+                                            background: 'rgba(16, 30, 22, 0.98)',
                                             border: '1px solid rgba(92, 142, 50, 0.4)',
                                             borderRadius: '4px',
                                             zIndex: 1000,
@@ -1297,7 +1297,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ localPlayer, worldState, connec
                                 <div style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    background: 'linear-gradient(135deg, rgba(30, 40, 60, 0.9), rgba(20, 30, 50, 0.95))',
+                                    background: 'linear-gradient(135deg, rgba(20, 36, 26, 0.9), rgba(16, 30, 22, 0.95))',
                                     border: '1px solid rgba(92, 142, 50, 0.4)',
                                     borderRadius: '4px',
                                     overflow: 'hidden'

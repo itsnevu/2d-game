@@ -646,7 +646,7 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
               gap: '6px',
               cursor: 'pointer',
               fontSize: '11px',
-              fontFamily: '"Courier New", monospace',
+              fontFamily: "'PixelOperator', monospace",
               color: '#5c8e32',
               backgroundColor: 'rgba(0, 0, 0, 0.7)',
               padding: '4px 8px',
@@ -688,22 +688,22 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
               gap: '6px',
               cursor: 'pointer',
               fontSize: '11px',
-              fontFamily: '"Courier New", monospace',
-              color: '#4682B4',
+              fontFamily: "'PixelOperator', monospace",
+              color: '#86be52',
               backgroundColor: 'rgba(0, 0, 0, 0.7)',
               padding: '4px 8px',
               borderRadius: '4px',
-              border: '1px solid rgba(70, 130, 180, 0.3)',
+              border: '1px solid rgba(134, 190, 82, 0.3)',
               userSelect: 'none',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-              e.currentTarget.style.borderColor = 'rgba(70, 130, 180, 0.6)';
+              e.currentTarget.style.borderColor = 'rgba(134, 190, 82, 0.6)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-              e.currentTarget.style.borderColor = 'rgba(70, 130, 180, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(134, 190, 82, 0.3)';
             }}
           >
             <input
@@ -714,10 +714,10 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
                 cursor: 'pointer',
                 width: '14px',
                 height: '14px',
-                accentColor: '#4682B4',
+                accentColor: '#86be52',
               }}
             />
-            <span style={{ textShadow: '0 0 4px rgba(70, 130, 180, 0.8)' }}>
+            <span style={{ textShadow: '0 0 4px rgba(134, 190, 82, 0.8)' }}>
               Weather
             </span>
           </label>
@@ -730,22 +730,22 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
               gap: '6px',
               cursor: 'pointer',
               fontSize: '11px',
-              fontFamily: '"Courier New", monospace',
-              color: '#D2691E',
+              fontFamily: "'PixelOperator', monospace",
+              color: '#ffc83c',
               backgroundColor: 'rgba(0, 0, 0, 0.7)',
               padding: '4px 8px',
               borderRadius: '4px',
-              border: '1px solid rgba(210, 105, 30, 0.3)',
+              border: '1px solid rgba(255, 200, 60, 0.3)',
               userSelect: 'none',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-              e.currentTarget.style.borderColor = 'rgba(210, 105, 30, 0.6)';
+              e.currentTarget.style.borderColor = 'rgba(255, 200, 60, 0.6)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-              e.currentTarget.style.borderColor = 'rgba(210, 105, 30, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(255, 200, 60, 0.3)';
             }}
           >
             <input
@@ -756,10 +756,10 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = ({
                 cursor: 'pointer',
                 width: '14px',
                 height: '14px',
-                accentColor: '#D2691E',
+                accentColor: '#ffc83c',
               }}
             />
-            <span style={{ textShadow: '0 0 4px rgba(210, 105, 30, 0.8)' }}>
+            <span style={{ textShadow: '0 0 4px rgba(255, 200, 60, 0.8)' }}>
               Show Names
             </span>
           </label>

@@ -147,7 +147,7 @@ const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
       boxSizing: 'border-box',
       color: '#ffffff',
       overflow: 'hidden',
-      fontFamily: "'Courier New', monospace",
+      fontFamily: "'PixelOperator', monospace",
     }}>
       {/* Header */}
       <div style={{

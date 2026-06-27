@@ -1,15 +1,15 @@
 .tooltipContainer {
   position: fixed; /* Fixed position to float over other UI */
-  background: linear-gradient(135deg, rgba(30, 15, 50, 0.98), rgba(20, 10, 40, 0.99));
-  border: 2px solid #5c8e32;
+  background: var(--ui-panel-bg);
+  border: 2px solid var(--ui-border);
   border-radius: 8px;
   padding: 12px 10px;
-  color: #00ffff;
-  font-family: 'PixelOperatorMono', monospace;
+  color: var(--ui-accent);
+  font-family: var(--ui-font-mono), monospace;
   font-size: 0.8rem;
   z-index: 200;
   width: 300px;
-  box-shadow: 0 0 30px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1);
+  box-shadow: 0 0 30px var(--ui-accent-glow), inset 0 0 20px rgba(134, 190, 82, 0.1);
   backdrop-filter: blur(10px);
   pointer-events: none;
   line-height: 1.4;
@@ -18,7 +18,7 @@
   gap: 6px;
   overflow-wrap: break-word;
   box-sizing: border-box;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 5px rgba(134, 190, 82, 0.4);
   animation: tooltipFadeIn 0.15s ease-out;
 }
 
@@ -38,9 +38,9 @@
   font-size: 0.9rem;
   margin-bottom: 4px;
   padding-bottom: 4px;
-  border-bottom: 2px solid rgba(0, 170, 255, 0.4);
+  border-bottom: 2px solid var(--ui-border);
   text-align: center;
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+  text-shadow: 0 0 8px var(--ui-accent-glow);
 }
 
 .tooltipName.simple {
@@ -58,25 +58,25 @@
 
 .tooltipCategory {
   font-size: 0.7rem;
-  color: #5c8e32;
+  color: var(--ui-border);
   text-align: center;
   margin-bottom: 2px;
   font-style: italic;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+  text-shadow: 0 0 5px var(--ui-accent-glow);
 }
 
 .tooltipDescription {
   font-size: 0.75rem;
-  color: rgba(0, 255, 255, 0.8);
+  color: rgba(134, 190, 82, 0.8);
   margin-bottom: 6px;
   white-space: pre-wrap;
-  text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+  text-shadow: 0 0 4px rgba(134, 190, 82, 0.3);
 }
 
 .tooltipStatsSection {
   margin-top: 4px;
   padding-top: 6px;
-  border-top: 2px dashed rgba(0, 170, 255, 0.3);
+  border-top: 2px dashed rgba(134, 190, 82, 0.3);
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -89,23 +89,23 @@
 }
 
 .statLabel {
-  color: #5c8e32;
+  color: var(--ui-border);
   margin-right: 8px;
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.4);
+  text-shadow: 0 0 4px rgba(134, 190, 82, 0.4);
 }
 
 .statValue {
-  color: #00ffff;
+  color: var(--ui-accent);
   font-weight: bold;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+  text-shadow: 0 0 5px var(--ui-accent-glow);
 }
 
 /* Example stat value colors */
-.statValue.positive { 
+.statValue.positive {
   color: #86be52;
   text-shadow: 0 0 6px rgba(134, 190, 82, 0.6);
 }
-.statValue.negative { 
+.statValue.negative {
   color: #ff3366;
   text-shadow: 0 0 6px rgba(255, 51, 102, 0.6);
 }
@@ -114,7 +114,7 @@
 .tooltipCraftingCosts {
   margin-top: 6px;
   padding-top: 8px;
-  border-top: 2px dashed rgba(0, 170, 255, 0.3);
+  border-top: 2px dashed rgba(134, 190, 82, 0.3);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -122,10 +122,10 @@
 
 .craftingCostsHeader {
   font-size: 0.7rem;
-  color: #5c8e32;
+  color: var(--ui-border);
   font-weight: bold;
   margin-bottom: 2px;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+  text-shadow: 0 0 5px var(--ui-accent-glow);
 }
 
 .craftingCostRow {
@@ -144,9 +144,9 @@
 }
 
 .craftingCostName {
-  color: rgba(0, 255, 255, 0.9);
+  color: rgba(134, 190, 82, 0.9);
   flex: 1;
-  text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+  text-shadow: 0 0 4px rgba(134, 190, 82, 0.3);
 }
 
 .craftingCostValue {
@@ -204,10 +204,10 @@
 }
 
 .alternativeName {
-  color: rgba(0, 255, 255, 0.9);
+  color: rgba(134, 190, 82, 0.9);
   flex: 1;
   min-width: 0;
-  text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+  text-shadow: 0 0 4px rgba(134, 190, 82, 0.3);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

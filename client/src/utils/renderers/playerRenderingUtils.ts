@@ -25,6 +25,34 @@ import { drawShadow, drawDynamicGroundShadow } from './shadowUtils';
 import { drawSwimmingEffectsUnder, drawSwimmingEffectsOver, drawShorelineWaterLine } from './swimmingEffectsUtils';
 import { getCachedRadialGradient, getCachedLinearGradient } from './gradientCacheUtils';
 import { JUMP_DURATION_MS } from '../../config/gameConfig'; // Import the constant
+import { characterFilter } from '../../constants/characters';
+
+// --- Per-character sprite tinting --------------------------------------------
+// Each selectable character is a hue-shifted recolor of the single hero sheet.
+// We pre-tint each spritesheet once per character into an offscreen canvas and
+// cache it (keyed by sheet object), so the hot render path just draws the cached
+// tinted sheet. Character 0 (no filter) returns the original sheet untouched.
+const tintedSheetCache = new WeakMap<CanvasImageSource, Map<number, CanvasImageSource>>();
+function getTintedSheet(sheet: CanvasImageSource, characterId: number): CanvasImageSource {
+  const filter = characterFilter(characterId);
+  if (!filter) return sheet; // character 0 / unknown => original colors
+  let perChar = tintedSheetCache.get(sheet);
+  if (!perChar) { perChar = new Map(); tintedSheetCache.set(sheet, perChar); }
+  const cached = perChar.get(characterId);
+  if (cached) return cached;
+  const w = (sheet as HTMLImageElement).width ?? (sheet as HTMLCanvasElement).width;
+  const h = (sheet as HTMLImageElement).height ?? (sheet as HTMLCanvasElement).height;
+  if (!w || !h) return sheet; // sheet not loaded yet; try again next frame
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const cctx = canvas.getContext('2d');
+  if (!cctx) return sheet;
+  cctx.filter = filter;
+  cctx.drawImage(sheet, 0, 0);
+  cctx.filter = 'none';
+  perChar.set(characterId, canvas);
+  return canvas;
+}
 
 /** Get player with predicted/interpolated position for rendering (swimming/shadow logic). */
 export function getPlayerForRendering<T extends { positionX: number; positionY: number; direction: string }>(
@@ -525,6 +553,17 @@ export const renderPlayer = (
   isOnSeaTransitionTile?: boolean, // Standing on Beach/Sea, Beach/HotSpringWater, or Asphalt/Sea: draw feet-level water line
   isSwimmingInHotSpringWater?: boolean // HotSpringWater tile: dark-teal surface ripples
 ) => {
+  // --- Per-character recolor: swap each sheet for its tinted variant (character 0 = original) ---
+  const characterId = (player as { characterId?: number }).characterId ?? 0;
+  if (characterId) {
+    heroImg = getTintedSheet(heroImg, characterId);
+    heroSprintImg = getTintedSheet(heroSprintImg, characterId);
+    heroIdleImg = getTintedSheet(heroIdleImg, characterId);
+    heroCrouchImg = getTintedSheet(heroCrouchImg, characterId);
+    heroSwimImg = getTintedSheet(heroSwimImg, characterId);
+    heroDodgeImg = getTintedSheet(heroDodgeImg, characterId);
+  }
+
   // Use caller's stabilized value when provided; otherwise use player.isOnWater (for swimming bottom-half pass)
   const effectiveIsOnWater = effectiveIsOnWaterFromCaller !== undefined
     ? effectiveIsOnWaterFromCaller

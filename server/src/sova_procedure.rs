@@ -144,7 +144,7 @@ pub fn generate_brew_recipe(
 ) -> Result<String, String> {
     let cfg = ctx
         .with_tx(|tx| tx.db.ai_http_config().id().find(&1))
-        .ok_or_else(|| "SOVA backend not configured (missing ai_http_config row id=1).".to_string())?;
+        .ok_or_else(|| "ECHO backend not configured (missing ai_http_config row id=1).".to_string())?;
 
     let ingredients: Vec<String> = serde_json::from_str(&ingredients_json)
         .map_err(|e| format!("Invalid ingredients_json: {}", e))?;
@@ -359,7 +359,7 @@ pub fn generate_brew_icon(_ctx: &mut ProcedureContext, _subject: String) -> Resu
 pub fn ask_sova(ctx: &mut ProcedureContext, request_body: String) -> Result<String, String> {
     let cfg = ctx
         .with_tx(|tx| tx.db.ai_http_config().id().find(&1))
-        .ok_or_else(|| "SOVA backend not configured (missing ai_http_config row id=1).".to_string())?;
+        .ok_or_else(|| "ECHO backend not configured (missing ai_http_config row id=1).".to_string())?;
 
     let mut payload: serde_json::Value = serde_json::from_str(&request_body)
         .map_err(|e| format!("Invalid ask_sova request JSON: {}", e))?;
@@ -536,7 +536,7 @@ pub fn transcribe_speech(
 ) -> Result<String, String> {
     let cfg = ctx
         .with_tx(|tx| tx.db.ai_http_config().id().find(&1))
-        .ok_or_else(|| "SOVA backend not configured (missing ai_http_config row id=1).".to_string())?;
+        .ok_or_else(|| "ECHO backend not configured (missing ai_http_config row id=1).".to_string())?;
 
     if cfg.openai_api_key.trim().is_empty() {
         return Err("openai_api_key is empty in ai_http_config".to_string());

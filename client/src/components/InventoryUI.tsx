@@ -1345,11 +1345,11 @@ connection.reducers.quickMoveToBrothPot({
                     <div 
                         style={{
                             fontSize: '10px',
-                            color: isHotLootActive ? '#00ffff' : 'rgba(0, 255, 255, 0.6)',
+                            color: isHotLootActive ? '#c4e89c' : 'rgba(134, 190, 82, 0.6)',
                             textAlign: 'center',
                             marginBottom: '8px',
-                            fontFamily: '"Press Start 2P", cursive',
-                            textShadow: isHotLootActive ? '0 0 8px rgba(0, 255, 255, 0.8)' : 'none',
+                            fontFamily: "'PixelOperator'",
+                            textShadow: isHotLootActive ? '0 0 8px rgba(134, 190, 82, 0.45)' : 'none',
                             transition: 'all 0.2s ease',
                         }}
                     >

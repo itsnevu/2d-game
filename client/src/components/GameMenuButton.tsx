@@ -13,17 +13,17 @@ const GameMenuButton: React.FC<GameMenuButtonProps> = ({ onClick }) => {
                 top: '15px',
                 left: '15px',
                 zIndex: 999,
-                background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.9), rgba(10, 30, 70, 0.95))',
-                color: '#00ffff',
+                background: 'linear-gradient(135deg, #101e16, #0c150f)',
+                color: '#86be52',
                 border: '2px solid #5c8e32',
                 borderRadius: '8px',
                 padding: '10px 12px',
-                fontFamily: '"Press Start 2P", cursive',
+                fontFamily: "'PixelOperator', monospace",
                 fontSize: '12px',
                 cursor: 'pointer',
-                boxShadow: '0 0 15px rgba(0, 170, 255, 0.4), inset 0 0 10px rgba(0, 170, 255, 0.1)',
+                boxShadow: '0 0 15px rgba(134, 190, 82, 0.45), inset 0 0 10px rgba(134, 190, 82, 0.1)',
                 transition: 'all 0.3s ease',
-                textShadow: '0 0 8px rgba(0, 255, 255, 0.8)',
+                textShadow: '0 0 8px rgba(134, 190, 82, 0.45)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -33,16 +33,16 @@ const GameMenuButton: React.FC<GameMenuButtonProps> = ({ onClick }) => {
                 height: '44px',
             }}
             onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 50, 100, 0.95), rgba(15, 40, 90, 1))';
+                e.currentTarget.style.background = 'linear-gradient(135deg, #16291d, #101e16)';
                 e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 170, 255, 0.7), inset 0 0 15px rgba(0, 170, 255, 0.2)';
-                e.currentTarget.style.textShadow = '0 0 12px rgba(0, 255, 255, 1), 0 0 20px rgba(0, 255, 255, 0.6)';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(134, 190, 82, 0.45), inset 0 0 15px rgba(134, 190, 82, 0.2)';
+                e.currentTarget.style.textShadow = '0 0 12px rgba(196, 232, 156, 1), 0 0 20px rgba(134, 190, 82, 0.45)';
             }}
             onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 40, 80, 0.9), rgba(10, 30, 70, 0.95))';
+                e.currentTarget.style.background = 'linear-gradient(135deg, #101e16, #0c150f)';
                 e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 170, 255, 0.4), inset 0 0 10px rgba(0, 170, 255, 0.1)';
-                e.currentTarget.style.textShadow = '0 0 8px rgba(0, 255, 255, 0.8)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(134, 190, 82, 0.45), inset 0 0 10px rgba(134, 190, 82, 0.1)';
+                e.currentTarget.style.textShadow = '0 0 8px rgba(134, 190, 82, 0.45)';
             }}
             aria-label="Open game menu"
         >
@@ -51,25 +51,25 @@ const GameMenuButton: React.FC<GameMenuButtonProps> = ({ onClick }) => {
                 display: 'block',
                 width: '18px',
                 height: '2px',
-                backgroundColor: '#00ffff',
+                backgroundColor: '#86be52',
                 borderRadius: '1px',
-                boxShadow: '0 0 4px rgba(0, 255, 255, 0.8)',
+                boxShadow: '0 0 4px rgba(134, 190, 82, 0.45)',
             }} />
             <span style={{
                 display: 'block',
                 width: '18px',
                 height: '2px',
-                backgroundColor: '#00ffff',
+                backgroundColor: '#86be52',
                 borderRadius: '1px',
-                boxShadow: '0 0 4px rgba(0, 255, 255, 0.8)',
+                boxShadow: '0 0 4px rgba(134, 190, 82, 0.45)',
             }} />
             <span style={{
                 display: 'block',
                 width: '18px',
                 height: '2px',
-                backgroundColor: '#00ffff',
+                backgroundColor: '#86be52',
                 borderRadius: '1px',
-                boxShadow: '0 0 4px rgba(0, 255, 255, 0.8)',
+                boxShadow: '0 0 4px rgba(134, 190, 82, 0.45)',
             }} />
         </button>
     );

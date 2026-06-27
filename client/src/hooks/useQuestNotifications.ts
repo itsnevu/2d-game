@@ -14,6 +14,7 @@ import { Identity } from 'spacetimedb';
 import { QuestCompletionData } from '../components/QuestNotifications';
 import { queueNotificationSound, playNotificationSfxOnly } from '../utils/notificationSoundQueue';
 import { isAnySovaAudioPlaying } from './useSovaSoundBox';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 // ============================================================================
 // Types
@@ -82,10 +83,10 @@ interface UseQuestNotificationsReturn {
 // ============================================================================
 
 const SOVA_LABEL_MAP: Record<string, string> = {
-    'quest_start': 'SOVA: New Mission',
-    'quest_complete': 'SOVA: Mission Complete',
-    'quest_hint': 'SOVA: Hint',
-    'daily_quests_assigned': 'SOVA: Daily Training',
+    'quest_start': `${ASSISTANT_NAME}: New Mission`,
+    'quest_complete': `${ASSISTANT_NAME}: Mission Complete`,
+    'quest_hint': `${ASSISTANT_NAME}: Hint`,
+    'daily_quests_assigned': `${ASSISTANT_NAME}: Daily Training`,
 };
 
 // Priority for sequencing when multiple SOVA messages arrive in same batch (lower = play first)
@@ -243,7 +244,7 @@ export function useQuestNotifications({
                     audio.volume = 0.8;
                     audio.preload = 'auto';
                     
-                    const label = SOVA_LABEL_MAP[message.messageType] || 'SOVA: Quest Update';
+                    const label = SOVA_LABEL_MAP[message.messageType] || `${ASSISTANT_NAME}: Quest Update`;
                     
                     const onEndedOrError = () => {
                         audio.removeEventListener('ended', onEndedOrError);

@@ -158,7 +158,7 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
       position: 'fixed',
       bottom: '140px', // Position above status bars
       right: '15px',
-      fontFamily: '"Courier New", monospace',
+      fontFamily: "'PixelOperator', monospace",
       fontSize: '11px',
       color: '#ffffff',
       textShadow: '1px 1px 2px #000000',
@@ -206,7 +206,7 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
                 boxShadow: `0 0 25px ${getEffectColor(effect.type, effect.id)}60, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
                 backdropFilter: 'blur(10px)',
                 zIndex: 100,
-                fontFamily: '"Courier New", monospace',
+                fontFamily: "'PixelOperator', monospace",
                 animation: 'tooltipFadeIn 0.2s ease-out',
                 textAlign: 'left',
                 pointerEvents: 'none'
@@ -316,7 +316,8 @@ const StatusEffectsPanel: React.FC<StatusEffectsPanelProps> = ({ effects }) => {
             
             {/* Duration Text */}
             {effect.duration !== undefined && effect.duration > 0 && (
-              <span style={{ 
+              <span style={{
+                fontFamily: "'PixelOperatorMono', monospace",
                 fontSize: '11px',
                 color: '#5c8e32',
                 fontWeight: 'bold',

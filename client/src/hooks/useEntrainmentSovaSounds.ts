@@ -15,6 +15,7 @@
 import { useEffect, useRef, useCallback, useMemo } from 'react';
 import type { ActiveConsumableEffect } from '../generated/types';
 import { insanity100SoundRef } from './useInsanitySovaSounds';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 interface UseEntrainmentSovaSoundsProps {
   activeConsumableEffects: Map<string, ActiveConsumableEffect> | undefined;
@@ -211,7 +212,7 @@ export function useEntrainmentSovaSounds({
       // Pass callback to set up SovaSoundBox BEFORE audio.play() to prevent race conditions
       const audio = playEntrainmentQuote((audioElement) => {
         if (onSoundPlayRef.current) {
-          onSoundPlayRef.current(audioElement, 'SOVA: Entrainment');
+          onSoundPlayRef.current(audioElement, `${ASSISTANT_NAME}: Entrainment`);
         }
       }, onSovaError);
       currentQuoteAudioRef.current = audio;
@@ -266,7 +267,7 @@ export function useEntrainmentSovaSounds({
       // Pass callback to set up SovaSoundBox BEFORE audio.play() to prevent race conditions
       const audio = playEntrainmentQuote((audioElement) => {
         if (onSoundPlayRef.current) {
-          onSoundPlayRef.current(audioElement, 'SOVA: Entrainment');
+          onSoundPlayRef.current(audioElement, `${ASSISTANT_NAME}: Entrainment`);
         }
       }, onSovaError);
       currentQuoteAudioRef.current = audio;

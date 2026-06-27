@@ -15,6 +15,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import type { Player } from '../generated/types';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 interface UseInsanitySovaSoundsProps {
   localPlayer: Player | undefined;
@@ -91,12 +92,12 @@ export function useInsanitySovaSounds({ localPlayer, onSoundPlay, onAddMessage }
   // Helper to get label for threshold
   const getInsanityLabel = useCallback((threshold: number): string => {
     switch (threshold) {
-      case 25: return 'SOVA: Insanity Warning';
-      case 50: return 'SOVA: Mind Fracturing';
-      case 75: return 'SOVA: Critical Insanity';
-      case 90: return 'SOVA: On The Edge';
-      case 100: return 'SOVA: Total Insanity';
-      default: return 'SOVA: Insanity Alert';
+      case 25: return `${ASSISTANT_NAME}: Insanity Warning`;
+      case 50: return `${ASSISTANT_NAME}: Mind Fracturing`;
+      case 75: return `${ASSISTANT_NAME}: Critical Insanity`;
+      case 90: return `${ASSISTANT_NAME}: On The Edge`;
+      case 100: return `${ASSISTANT_NAME}: Total Insanity`;
+      default: return `${ASSISTANT_NAME}: Insanity Alert`;
     }
   }, []);
   

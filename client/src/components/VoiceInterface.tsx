@@ -4,6 +4,7 @@ import { openaiService } from '../services/openaiService';
 import { buildGameContext, type GameContextBuilderProps } from '../utils/gameContextBuilder';
 import sovaIcon from '../assets/ui/sova.png';
 import './VoiceInterface.css';
+import { ASSISTANT_NAME } from '../constants/branding';
 import { kokoroService } from '../services/kokoroService';
 import { parseCraftIntent, resolveRecipeByName, getCraftFeedback } from '../utils/craftIntentParser';
 import type { DbConnection } from '../generated';
@@ -578,9 +579,9 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
           ) : voiceState.error ? (
             <div className="voice-interface-error">⚠</div>
           ) : (
-            <img 
-              src={sovaIcon} 
-              alt="SOVA" 
+            <img
+              src={sovaIcon}
+              alt={ASSISTANT_NAME}
               className={`voice-interface-sova-icon ${voiceState.isRecording ? 'recording' : ''}`}
             />
           )}
@@ -588,7 +589,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
 
         {/* SOVA Label */}
         <div className="voice-interface-label">
-          SOVA
+          {ASSISTANT_NAME}
         </div>
 
         {/* Status Text */}

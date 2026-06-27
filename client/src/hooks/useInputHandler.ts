@@ -24,6 +24,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback, useMemo, RefObject, MutableRefObject } from 'react';
+import { ASSISTANT_NAME } from '../constants/branding';
 import { useLatest } from './useLatest';
 import { DbConnection } from '../generated';
 import {
@@ -1421,7 +1422,7 @@ export const useInputHandler = ({
                                                 if (loreAudio) {
                                                     if (showSovaSoundBox) {
                                                         loreAudio.play().then(() => {
-                                                            showSovaSoundBox(loreAudio, `SOVA: ${loreEntry.title}`);
+                                                            showSovaSoundBox(loreAudio, `${ASSISTANT_NAME}: ${loreEntry.title}`);
                                                         }).catch(err => {
                                                             console.warn(`[Cairn] Failed to play lore audio:`, err);
                                                             // CRITICAL: Clear the pending flag if audio fails to play

@@ -155,12 +155,12 @@ const FishingReticle: React.FC<FishingReticleProps> = ({
           width: '40px',
           height: '40px',
           borderRadius: '50%',
-          border: `3px solid ${isValidTarget ? '#00ffff' : '#ff4444'}`,
-          backgroundColor: `${isValidTarget ? 'rgba(0, 255, 255, 0.15)' : 'rgba(255, 68, 68, 0.15)'}`,
+          border: `3px solid ${isValidTarget ? '#86be52' : '#ff4444'}`,
+          backgroundColor: `${isValidTarget ? 'rgba(134, 190, 82, 0.15)' : 'rgba(255, 68, 68, 0.15)'}`,
           pointerEvents: 'none',
           zIndex: 10000,
           transition: 'all 0.1s ease-out',
-          boxShadow: `0 0 15px ${isValidTarget ? 'rgba(0, 255, 255, 0.6)' : 'rgba(255, 68, 68, 0.6)'}, inset 0 0 8px ${isValidTarget ? 'rgba(0, 255, 255, 0.2)' : 'rgba(255, 68, 68, 0.2)'}`,
+          boxShadow: `0 0 15px ${isValidTarget ? 'rgba(134, 190, 82, 0.6)' : 'rgba(255, 68, 68, 0.6)'}, inset 0 0 8px ${isValidTarget ? 'rgba(134, 190, 82, 0.2)' : 'rgba(255, 68, 68, 0.2)'}`,
         }}
       >
         {/* Center dot */}
@@ -171,10 +171,10 @@ const FishingReticle: React.FC<FishingReticleProps> = ({
             left: '50%',
             width: '6px',
             height: '6px',
-            backgroundColor: isValidTarget ? '#00ffff' : '#ff4444',
+            backgroundColor: isValidTarget ? '#86be52' : '#ff4444',
             borderRadius: '50%',
             transform: 'translate(-50%, -50%)',
-            boxShadow: `0 0 8px ${isValidTarget ? '#00ffff' : '#ff4444'}`,
+            boxShadow: `0 0 8px ${isValidTarget ? '#86be52' : '#ff4444'}`,
           }}
         />
         
@@ -186,7 +186,7 @@ const FishingReticle: React.FC<FishingReticleProps> = ({
             left: '2px',
             right: '2px',
             height: '2px',
-            backgroundColor: isValidTarget ? '#00ffff' : '#ff4444',
+            backgroundColor: isValidTarget ? '#86be52' : '#ff4444',
             transform: 'translateY(-50%)',
             opacity: 0.8,
           }}
@@ -198,7 +198,7 @@ const FishingReticle: React.FC<FishingReticleProps> = ({
             top: '2px',
             bottom: '2px',
             width: '2px',
-            backgroundColor: isValidTarget ? '#00ffff' : '#ff4444',
+            backgroundColor: isValidTarget ? '#86be52' : '#ff4444',
             transform: 'translateX(-50%)',
             opacity: 0.8,
           }}

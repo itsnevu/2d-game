@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseAppGameplayRegistrationOptions {
-  registerPlayer: (username: string) => Promise<void>;
+  registerPlayer: (username: string, characterId?: number) => Promise<void>;
   isAuthenticated: boolean;
   spacetimeConnected: boolean;
   spacetimeToken: string | null | undefined;
@@ -32,7 +32,7 @@ export function useAppGameplayRegistration({
     }
   }, [localPlayerRegistered, isRegistering]);
 
-  const handleAttemptRegisterPlayer = useCallback(async (usernameToRegister: string | null): Promise<void> => {
+  const handleAttemptRegisterPlayer = useCallback(async (usernameToRegister: string | null, characterId: number = 0): Promise<void> => {
     setUiError(null);
 
     if (!isAuthenticated) {
@@ -79,7 +79,7 @@ export function useAppGameplayRegistration({
     setIsRegistering(true);
     try {
       const usernameToSend = usernameToRegister?.trim() || loggedInPlayer?.username || 'Player';
-      await registerPlayer(usernameToSend);
+      await registerPlayer(usernameToSend, characterId);
     } catch (error) {
       setIsRegistering(false);
       throw error;

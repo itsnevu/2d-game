@@ -13,7 +13,7 @@
     width: 480px;
     max-height: 80vh; /* Use viewport height for better responsiveness */
     min-height: 400px;
-    background: linear-gradient(135deg, #1a1a2e 0%, #0d141a 100%);
+    background: var(--ui-panel-bg);
     border: 2px solid #5c8e32;
     border-radius: 8px;
     box-shadow: 
@@ -119,11 +119,11 @@
 .alk-delivery-balance .balance-value {
     font-size: 20px;
     font-weight: bold;
-    color: #00ffff;
+    color: var(--ui-accent);
     display: flex;
     align-items: center;
     gap: 6px;
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+    text-shadow: 0 0 8px var(--ui-accent-glow);
 }
 
 .shard-icon {
@@ -301,7 +301,7 @@
 /* Quick Actions Section (Central Compound Only) */
 .alk-quick-actions {
     padding: 14px 16px;
-    background: linear-gradient(135deg, rgba(92, 142, 50, 0.08) 0%, rgba(0, 100, 150, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(92, 142, 50, 0.08) 0%, rgba(134, 190, 82, 0.05) 100%);
     border-bottom: 1px solid rgba(92, 142, 50, 0.2);
 }
 
@@ -524,7 +524,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #0088cc 0%, #5c8e32 100%);
+    background: linear-gradient(90deg, var(--ui-accent) 0%, #5c8e32 100%);
     border-radius: 3px;
     transition: width 0.3s ease;
 }
@@ -564,7 +564,7 @@
 }
 
 .reward-row.net .reward-value {
-    color: #00ffff;
+    color: var(--ui-accent);
     font-weight: bold;
 }
 
@@ -583,13 +583,13 @@
 }
 
 .deliver-button.enabled {
-    background: linear-gradient(180deg, #0088cc 0%, #5c8e32 100%);
+    background: linear-gradient(180deg, var(--ui-accent) 0%, #5c8e32 100%);
     border: 1px solid #5c8e32;
     color: #000;
 }
 
 .deliver-button.enabled:hover:not(:disabled) {
-    background: linear-gradient(180deg, #5c8e32 0%, #00ffff 100%);
+    background: linear-gradient(180deg, #5c8e32 0%, var(--ui-accent-bright) 100%);
     box-shadow: 0 0 10px rgba(92, 142, 50, 0.5);
 }
 
@@ -649,14 +649,14 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    color: #00ffff;
+    color: var(--ui-accent);
     font-weight: bold;
 }
 
 .deliver-all-button {
     width: 100%;
     padding: 12px 16px;
-    background: linear-gradient(180deg, #0088cc 0%, #5c8e32 100%);
+    background: linear-gradient(180deg, var(--ui-accent) 0%, #5c8e32 100%);
     border: 2px solid #5c8e32;
     border-radius: 4px;
     color: #000;
@@ -670,7 +670,7 @@
 }
 
 .deliver-all-button:hover:not(:disabled) {
-    background: linear-gradient(180deg, #5c8e32 0%, #00ffff 100%);
+    background: linear-gradient(180deg, #5c8e32 0%, var(--ui-accent-bright) 100%);
     box-shadow: 0 0 20px rgba(92, 142, 50, 0.5);
 }
 

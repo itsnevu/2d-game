@@ -519,13 +519,13 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                                     width: '48px',
                                     height: '48px',
                                     padding: '4px',
-                                    background: !isMemoryGridUnlocked 
-                                        ? 'linear-gradient(135deg, rgba(40, 30, 50, 0.6), rgba(30, 25, 40, 0.7))'
+                                    background: !isMemoryGridUnlocked
+                                        ? 'linear-gradient(135deg, rgba(16, 30, 22, 0.6), rgba(12, 21, 15, 0.7))'
                                         : hasResourcesButNeedsStation
                                             ? 'linear-gradient(135deg, rgba(50, 35, 20, 0.6), rgba(40, 30, 15, 0.7))'
-                                            : isCraftable 
-                                                ? 'linear-gradient(135deg, rgba(20, 30, 60, 0.6), rgba(15, 25, 50, 0.7))'
-                                                : 'linear-gradient(135deg, rgba(30, 20, 40, 0.6), rgba(25, 15, 35, 0.7))',
+                                            : isCraftable
+                                                ? 'linear-gradient(135deg, rgba(16, 30, 22, 0.6), rgba(12, 21, 15, 0.7))'
+                                                : 'linear-gradient(135deg, rgba(16, 30, 22, 0.6), rgba(12, 21, 15, 0.7))',
                                     borderRadius: '4px',
                                     border: getBorderColor(),
                                     boxShadow: getBoxShadow(),
@@ -596,7 +596,7 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
 
             {/* Crafting Queue Section (Moved down, potentially needs own scroll later) */}
             <div className={styles.craftingQueueSection}>
-                <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#00ffff', margin: '16px 0 12px 0', textShadow: '0 0 10px rgba(0, 255, 255, 0.6)' }}>
+                <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#86be52', margin: '16px 0 12px 0', textShadow: '0 0 10px rgba(134, 190, 82, 0.6)' }}>
                     CRAFTING QUEUE ({playerQueue.length})
                 </h4>
                  {/* Added scrollable class and data-attribute */}
@@ -619,11 +619,11 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                                 alignItems: 'center',
                                 gap: '12px',
                                 padding: '12px',
-                                background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.6), rgba(15, 25, 50, 0.7))',
+                                background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.6), rgba(12, 21, 15, 0.7))',
                                 borderRadius: '6px',
                                 marginBottom: '8px',
-                                border: '2px solid rgba(0, 170, 255, 0.3)',
-                                boxShadow: 'inset 0 0 10px rgba(0, 170, 255, 0.1)',
+                                border: '2px solid rgba(134, 190, 82, 0.3)',
+                                boxShadow: 'inset 0 0 10px rgba(134, 190, 82, 0.1)',
                                 transition: 'all 0.3s ease'
                             }}>
                                 <div style={{ width: '40px', height: '40px', flexShrink: 0 }}>
@@ -636,7 +636,7 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                                                     )}
                                   </div>
                                   <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#00ffff', textShadow: '0 0 8px rgba(0, 255, 255, 0.6)' }}>
+                                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#86be52', textShadow: '0 0 8px rgba(134, 190, 82, 0.6)' }}>
                                         {outputDef?.name || 'Unknown Item'}
                                     </div>
                                     <div style={{ fontSize: '14px', color: '#5c8e32' }}>
@@ -668,9 +668,9 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                         <div style={{ 
                             fontSize: '14px', 
                             color: '#5c8e32', 
-                            textAlign: 'center', 
+                            textAlign: 'center',
                             padding: '20px',
-                            textShadow: '0 0 5px rgba(0, 170, 255, 0.4)'
+                            textShadow: '0 0 5px rgba(134, 190, 82, 0.4)'
                         }}>
                             No items in queue
                         </div>
@@ -710,24 +710,24 @@ const CraftingUI: React.FC<CraftingUIProps> = ({
                     top: hoveredRecipe.y,
                     transform: 'translateX(-100%) translateY(-50%)',
                     padding: '6px 10px',
-                    background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.95), rgba(15, 25, 50, 0.98))',
-                    border: hoveredRecipe.requiresStation 
-                        ? '1px solid rgba(255, 165, 0, 0.6)' 
-                        : '1px solid rgba(0, 170, 255, 0.5)',
+                    background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98))',
+                    border: hoveredRecipe.requiresStation
+                        ? '1px solid rgba(255, 165, 0, 0.6)'
+                        : '1px solid rgba(134, 190, 82, 0.5)',
                     borderRadius: '4px',
-                    color: hoveredRecipe.requiresStation ? '#ffa500' : '#00ffff',
+                    color: hoveredRecipe.requiresStation ? '#ffa500' : '#86be52',
                     fontSize: '12px',
                     fontWeight: 'bold',
-                    fontFamily: '"Courier New", monospace',
+                    fontFamily: "'PixelOperatorMono', monospace",
                     whiteSpace: 'nowrap',
                     zIndex: 10000,
                     pointerEvents: 'none',
-                    boxShadow: hoveredRecipe.requiresStation 
-                        ? '0 0 10px rgba(255, 165, 0, 0.3)' 
-                        : '0 0 10px rgba(0, 170, 255, 0.3)',
-                    textShadow: hoveredRecipe.requiresStation 
-                        ? '0 0 5px rgba(255, 165, 0, 0.5)' 
-                        : '0 0 5px rgba(0, 255, 255, 0.5)'
+                    boxShadow: hoveredRecipe.requiresStation
+                        ? '0 0 10px rgba(255, 165, 0, 0.3)'
+                        : '0 0 10px rgba(134, 190, 82, 0.3)',
+                    textShadow: hoveredRecipe.requiresStation
+                        ? '0 0 5px rgba(255, 165, 0, 0.5)'
+                        : '0 0 5px rgba(134, 190, 82, 0.5)'
                 }}>
                     <div>{hoveredRecipe.name}</div>
                     {hoveredRecipe.requiresStation && (

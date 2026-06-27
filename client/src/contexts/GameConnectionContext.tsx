@@ -28,7 +28,7 @@ interface ConnectionContextState {
     isConnected: boolean; // Is the connection to SpacetimeDB established?
     isLoading: boolean;   // Is the SpacetimeDB connection attempt in progress?
     error: string | null; // Stores SpacetimeDB connection-related errors
-    registerPlayer: (username: string) => Promise<void>; // Return Promise to handle errors
+    registerPlayer: (username: string, characterId?: number) => Promise<void>; // Return Promise to handle errors
     retryConnection: () => void; // Manual retry function
 }
 
@@ -51,7 +51,8 @@ interface GameConnectionProviderProps {
 // Provider component
 export const GameConnectionProvider: React.FC<GameConnectionProviderProps> = ({ children }) => {
     // Get the spacetimeToken obtained from the auth-server by AuthContext
-    const { spacetimeToken, invalidateCurrentToken } = useAuth(); 
+    // isSpectator lets non-authenticated visitors connect anonymously to watch the world.
+    const { spacetimeToken, invalidateCurrentToken, isSpectator } = useAuth();
     
     // Consolidated connection state
     const [connectionState, setConnectionState] = useState<ConnectionState>(ConnectionState.DISCONNECTED);
@@ -124,9 +125,9 @@ export const GameConnectionProvider: React.FC<GameConnectionProviderProps> = ({ 
     useEffect(() => {
         console.log(`[GameConn LOG] useEffect triggered. Token exists: ${!!spacetimeToken}. State: ${connectionState}. retryCount: ${retryCount}`);
 
-        // Guard conditions
-        if (!spacetimeToken) {
-            console.log("[GameConn LOG] No token - cleaning up connection");
+        // Guard conditions: connect when authenticated (token) OR spectating (anonymous).
+        if (!spacetimeToken && !isSpectator) {
+            console.log("[GameConn LOG] No token and not spectating - cleaning up connection");
             cleanupConnection();
             updateConnectionState(ConnectionState.DISCONNECTED);
             return;
@@ -175,10 +176,15 @@ export const GameConnectionProvider: React.FC<GameConnectionProviderProps> = ({ 
         timeoutRef.current = timeoutId;
 
         try {
-            const builder = DbConnection.builder()
+            let builder = DbConnection.builder()
                 .withUri(spacetimeWsUrl)
-                .withDatabaseName(spacetimeDatabaseName)
-                .withToken(spacetimeToken)
+                .withDatabaseName(spacetimeDatabaseName);
+            // Authenticated players connect with their OIDC token; anonymous spectators
+            // connect without one (SpacetimeDB issues a throwaway identity for read-only watching).
+            if (spacetimeToken) {
+                builder = builder.withToken(spacetimeToken);
+            }
+            builder = builder
                 .onConnect((conn: DbConnection, identity: SpacetimeDBIdentity) => {
                     if (abortController.signal.aborted) return;
                     
@@ -305,10 +311,10 @@ export const GameConnectionProvider: React.FC<GameConnectionProviderProps> = ({ 
             abortController.abort();
             cleanupConnection();
         };
-    }, [spacetimeToken, invalidateCurrentToken, retryCount, cleanupConnection, updateConnectionState]);
+    }, [spacetimeToken, isSpectator, invalidateCurrentToken, retryCount, cleanupConnection, updateConnectionState]);
 
     // Player registration function (SpacetimeDB 2.0: registerPlayer returns Promise)
-    const registerPlayer = useCallback(async (username: string): Promise<void> => {
+    const registerPlayer = useCallback(async (username: string, characterId: number = 0): Promise<void> => {
         if (connectionState !== ConnectionState.CONNECTED || !connection || !dbIdentity || !username.trim()) {
             const errorMessage = "Cannot register: Not connected to game servers";
             updateConnectionState(connectionState, connection, dbIdentity, errorMessage);
@@ -318,7 +324,7 @@ export const GameConnectionProvider: React.FC<GameConnectionProviderProps> = ({ 
         setConnectionError(null);
 
         try {
-            await connection.reducers.registerPlayer({ username });
+            await connection.reducers.registerPlayer({ username, characterId: Math.max(0, Math.min(3, Math.floor(characterId))) });
             console.log('[GameConn] Player registration successful');
         } catch (err: any) {
             const errorMessage = err?.message || err?.toString?.() || 'Registration failed';

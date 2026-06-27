@@ -67,7 +67,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ isMobile = false }) => {
         borderRadius: '4px',
         color: '#ffffff',
         fontSize: '12px',
-        fontFamily: '"Press Start 2P", cursive',
+        fontFamily: "var(--ui-font)",
         textAlign: 'center',
         cursor: 'pointer',
         zIndex: 1000,

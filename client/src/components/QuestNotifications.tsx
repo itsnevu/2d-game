@@ -13,11 +13,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 // Style constants (matching other UI components)
-const UI_BG_COLOR = 'linear-gradient(135deg, rgba(20, 10, 35, 0.98), rgba(15, 8, 30, 0.99))';
+const UI_BG_COLOR = 'linear-gradient(135deg, #101e16, #0c150f)';
 const UI_BORDER_COLOR = '#5c8e32';
-const UI_FONT_FAMILY = '"Press Start 2P", cursive';
+const UI_FONT_FAMILY = "'PixelOperator', sans-serif";
 const SOVA_PURPLE = '#86be52';
-const SOVA_CYAN = '#5c8e32';
+const SOVA_CYAN = '#86be52';
 const SUCCESS_GREEN = '#c4e89c';
 
 // ============================================================================
@@ -331,7 +331,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-glow-container.daily {
-                    background: linear-gradient(135deg, #86be52, #5c8e32, #a855f7, #86be52);
+                    background: linear-gradient(135deg, #86be52, #5c8e32, #d488ff, #86be52);
                 }
                 
                 /* Main notification box */
@@ -496,7 +496,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-header-text {
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 9px;
                     color: #c4e89c;
                     letter-spacing: 1.5px;
@@ -603,7 +603,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 /* Completion label with glitch */
                 .quest-complete-label {
                     position: relative;
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 14px;
                     font-weight: bold;
                     margin-bottom: 6px;
@@ -649,7 +649,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 
                 /* Quest name */
                 .quest-name {
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 11px;
                     color: #ffffff;
                     margin-bottom: 10px;
@@ -685,7 +685,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-reward-item.xp .quest-reward-value {
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 12px;
                     font-weight: bold;
                     color: #5c8e32;
@@ -693,7 +693,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-reward-item.xp .quest-reward-label {
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 8px;
                     color: #64748b;
                     letter-spacing: 1px;
@@ -704,7 +704,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-reward-item.shards .quest-reward-value {
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 12px;
                     font-weight: bold;
                     color: #86be52;
@@ -712,7 +712,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-reward-item.shards .quest-reward-label {
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 8px;
                     color: #64748b;
                     letter-spacing: 1px;
@@ -734,7 +734,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 }
                 
                 .quest-unlock-text {
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 9px;
                     color: #86be52;
                     text-shadow: 0 0 8px #86be52;
@@ -764,7 +764,7 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                 .quest-click-hint {
                     text-align: center;
                     padding: 8px 0 6px 0;
-                    font-family: 'Courier New', 'Consolas', monospace;
+                    font-family: 'PixelOperatorMono', monospace;
                     font-size: 8px;
                     color: rgba(74, 222, 128, 0.5);
                     letter-spacing: 1.5px;
@@ -840,8 +840,8 @@ export const QuestCompletionNotification: React.FC<QuestCompletionNotificationPr
                     box-shadow: 0 0 8px #86be52;
                 }
                 .quest-particle.daily.particle-2 {
-                    background: #a855f7;
-                    box-shadow: 0 0 8px #a855f7;
+                    background: #d488ff;
+                    box-shadow: 0 0 8px #d488ff;
                 }
                 .quest-particle.daily.particle-3 {
                     background: #c4e89c;

@@ -39,7 +39,7 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                background: 'linear-gradient(135deg, rgba(25, 10, 40, 0.95), rgba(15, 5, 30, 0.98))',
+                background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98))',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -53,10 +53,10 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
                 style={{
                     maxWidth: '600px',
                     maxHeight: '80vh',
-                    background: 'linear-gradient(145deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98))',
-                    border: '2px solid #00ffff',
+                    background: 'linear-gradient(145deg, rgba(16, 30, 22, 0.95), rgba(12, 21, 15, 0.98))',
+                    border: '2px solid #86be52',
                     borderRadius: '12px',
-                    boxShadow: '0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1)',
+                    boxShadow: '0 0 30px rgba(134, 190, 82, 0.45), inset 0 0 20px rgba(134, 190, 82, 0.15)',
                     position: 'relative',
                     overflow: 'hidden',
                 }}
@@ -64,22 +64,22 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
             >
                 <h2 className={styles.menuTitle}
                     style={{
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "var(--ui-font)",
                         fontSize: '24px',
-                        color: '#00ffff',
+                        color: '#86be52',
                         textAlign: 'center',
                         marginBottom: '8px',
-                        textShadow: '0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4)',
+                        textShadow: '0 0 10px rgba(134, 190, 82, 0.8), 0 0 20px rgba(134, 190, 82, 0.45)',
                     }}
                 >
                     MOTOR CORTEX INTERFACE
                 </h2>
-                
+
                 <div
                     style={{
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "var(--ui-font)",
                         fontSize: '12px',
-                        color: '#6699cc',
+                        color: '#9ab08a',
                         textAlign: 'center',
                         letterSpacing: '1px',
                         opacity: 0.8,
@@ -97,11 +97,11 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
                         <div key={sectionIndex}>
                             <h3
                                 style={{
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "var(--ui-font)",
                                     fontSize: '16px',
                                     color: '#5c8e32',
                                     marginBottom: '15px',
-                                    textShadow: '0 0 8px rgba(0, 170, 255, 0.8)',
+                                    textShadow: '0 0 8px rgba(134, 190, 82, 0.8)',
                                 }}
                             >
                                 {section.title}
@@ -115,15 +115,15 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
                                             justifyContent: 'space-between',
                                             alignItems: 'center',
                                             padding: '10px 15px',
-                                            background: 'linear-gradient(135deg, rgba(20, 30, 60, 0.6), rgba(15, 25, 50, 0.8))',
+                                            background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.6), rgba(12, 21, 15, 0.8))',
                                             borderRadius: '6px',
-                                            border: '1px solid rgba(0, 170, 255, 0.3)',
-                                            boxShadow: '0 0 10px rgba(0, 170, 255, 0.1), inset 0 0 5px rgba(0, 170, 255, 0.05)',
+                                            border: '1px solid rgba(134, 190, 82, 0.3)',
+                                            boxShadow: '0 0 10px rgba(134, 190, 82, 0.1), inset 0 0 5px rgba(134, 190, 82, 0.05)',
                                         }}
                                     >
                                         <span
                                             style={{
-                                                fontFamily: '"Press Start 2P", cursive',
+                                                fontFamily: "var(--ui-font)",
                                                 fontSize: '16px',
                                                 color: '#ffdd44',
                                                 fontWeight: 'bold',
@@ -136,7 +136,7 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
                                         </span>
                                         <span
                                             style={{
-                                                fontFamily: '"Press Start 2P", cursive',
+                                                fontFamily: "var(--ui-font)",
                                                 fontSize: '16px',
                                                 color: '#ffffff',
                                                 textAlign: 'left',
@@ -164,7 +164,7 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
                             border: '2px solid #ff8833',
                             borderRadius: '8px',
                             padding: '15px 30px',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "var(--ui-font)",
                             fontSize: '16px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
@@ -189,28 +189,28 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({ onBack, onClose }) => {
                         onClick={onClose}
                         className={`${styles.menuButton} ${styles.menuButtonPrimary}`}
                         style={{
-                            background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
+                            background: 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))',
                             color: '#ffffff',
                             border: '2px solid #5c8e32',
                             borderRadius: '8px',
                             padding: '15px 30px',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "var(--ui-font)",
                             fontSize: '16px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)',
-                            textShadow: '0 0 5px rgba(0, 170, 255, 0.8)',
+                            boxShadow: '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)',
+                            textShadow: '0 0 5px rgba(134, 190, 82, 0.8)',
                             letterSpacing: '1px',
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 50, 100, 0.9), rgba(15, 40, 90, 1))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(22, 42, 30, 0.9), rgba(16, 30, 22, 1))';
                             e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                            e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 170, 255, 0.6), inset 0 0 15px rgba(0, 170, 255, 0.2)';
+                            e.currentTarget.style.boxShadow = '0 0 25px rgba(134, 190, 82, 0.6), inset 0 0 15px rgba(134, 190, 82, 0.2)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16, 30, 22, 0.8), rgba(12, 21, 15, 0.9))';
                             e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)';
+                            e.currentTarget.style.boxShadow = '0 0 15px rgba(134, 190, 82, 0.3), inset 0 0 10px rgba(134, 190, 82, 0.1)';
                         }}
                     >
                         RESUME CONSCIOUSNESS

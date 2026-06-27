@@ -21,6 +21,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faXTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faBars, faTimes, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import loginBackground from '../assets/ui/login_background.jpg';
+import heroIdle from '../assets/hero_idle.png';
+import { CHARACTERS } from '../constants/characters';
 // Using direct public path for video to avoid Vite import errors
 
 
@@ -320,7 +322,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ navItems, onNavigate, onP
 
 interface LoginScreenProps {
     // Removed username/setUsername props
-    handleJoinGame: (usernameToRegister: string | null) => Promise<void>; // Accepts null for existing players, returns Promise to handle errors
+    handleJoinGame: (usernameToRegister: string | null, characterId?: number) => Promise<void>; // Accepts null for existing players, returns Promise to handle errors
     handleSpectateGame?: () => void | Promise<void>;
     loggedInPlayer: Player | null; // Player data from SpacetimeDB if exists
     connectionError?: string | null; // SpacetimeDB connection error from GameConnectionContext
@@ -361,6 +363,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
     // Local state for the username input field (only used for new players)
     const [inputUsername, setInputUsername] = useState<string>('');
+    const [selectedCharacterId, setSelectedCharacterId] = useState<number>(0);
     const [localError, setLocalError] = useState<string | null>(null);
     const [simulatedWldrBalance, setSimulatedWldrBalance] = useState<number | null>(null);
 
@@ -391,9 +394,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             const signResponse = await provider.signMessage(encodedMessage, "utf8");
             
             const signatureStr = bs58.encode(signResponse.signature);
-            
+
             await loginWithWallet(publicKeyStr, signatureStr, messageStr);
-            setIsSpectator(balance < 1000);
+            // A successful wallet login ALWAYS enters the game as a player.
+            // Spectator mode is reserved for visitors who have NOT connected a wallet.
+            setIsSpectator(false);
         } catch (err: any) {
             console.error("[LoginScreen] Wallet authentication failed:", err);
             setLocalError(err.message || "Wallet sign-in cancelled or failed.");
@@ -578,13 +583,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             // If not authenticated, start the OpenAuth login flow
             await loginRedirect();
         } else {
-            if (simulatedWldrBalance !== null && simulatedWldrBalance < 1000) {
-                setIsSpectator(true);
-                handleSpectateGame?.();
-                return;
-            }
-
-            // If authenticated, check if it's a new or existing player
+            // If authenticated, check if it's a new or existing player.
+            // NOTE: a connected wallet always JOINS as a player — the simulated
+            // $WLDR balance is shown for flavor only and never forces spectator mode.
 
             // CRITICAL CHECK: If authenticated but an authError exists, do not proceed.
             // This typically means a token was rejected, and invalidateCurrentToken should have
@@ -604,9 +605,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                     // Existing player reconnecting with stored username: Join directly
                     await handleJoinGame(null);
                 } else if (inputUsername.trim()) {
-                    // New player with entered username: Validate and join
+                    // New player with entered username: Validate and join with chosen character
                     if (validateNewUsername()) {
-                        await handleJoinGame(inputUsername);
+                        await handleJoinGame(inputUsername, selectedCharacterId);
                     }
                 } else {
                     // No player data and no username entered
@@ -1324,6 +1325,67 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     margin: '0 auto',
                                     textAlign: 'left',
                                 }}>
+                                    {/* Character picker — choose 1 of 4 looks (seen by all other players) */}
+                                    <div style={{ marginBottom: '22px' }}>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '10px',
+                                            fontSize: '13px',
+                                            color: 'rgba(255, 255, 255, 0.9)',
+                                            fontWeight: '500',
+                                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+                                            letterSpacing: '0.5px',
+                                            fontFamily: "'PixelOperator', sans-serif",
+                                        }}>
+                                            Choose Your Character
+                                        </label>
+                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between' }}>
+                                            {CHARACTERS.map((c) => {
+                                                const selected = selectedCharacterId === c.id;
+                                                return (
+                                                    <button
+                                                        key={c.id}
+                                                        type="button"
+                                                        onClick={() => setSelectedCharacterId(c.id)}
+                                                        title={c.name}
+                                                        style={{
+                                                            flex: 1,
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            alignItems: 'center',
+                                                            gap: '6px',
+                                                            padding: '8px 2px',
+                                                            cursor: 'pointer',
+                                                            background: selected ? 'rgba(134,190,82,0.18)' : 'rgba(12,21,15,0.6)',
+                                                            border: selected ? '2px solid #86be52' : '1px solid rgba(92,142,50,0.4)',
+                                                            borderRadius: '10px',
+                                                            transition: 'all 0.15s ease',
+                                                            boxShadow: selected ? '0 0 14px rgba(134,190,82,0.45)' : 'none',
+                                                        }}
+                                                    >
+                                                        <div style={{
+                                                            width: '44px',
+                                                            height: '44px',
+                                                            backgroundImage: `url(${heroIdle})`,
+                                                            backgroundSize: '400% 400%',
+                                                            backgroundPosition: '0% 0%',
+                                                            backgroundRepeat: 'no-repeat',
+                                                            imageRendering: 'pixelated',
+                                                            filter: c.filter || 'none',
+                                                        }} />
+                                                        <span style={{
+                                                            fontSize: '10px',
+                                                            color: selected ? '#c4e89c' : 'rgba(232,240,224,0.7)',
+                                                            fontFamily: "'PixelOperator', sans-serif",
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.5px',
+                                                        }}>{c.name}</span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
                                     <div style={{
                                         marginBottom: '25px',
                                     }}>
@@ -1402,13 +1464,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         <button
                                             type="submit"
                                             disabled={authError !== null || (connectionError !== null && !storedUsername) || localError !== null}
-                                            onClick={(e) => {
-                                                if (simulatedWldrBalance !== null && simulatedWldrBalance < 1000) {
-                                                    e.preventDefault();
-                                                    setIsSpectator(true);
-                                                    handleSpectateGame?.();
-                                                }
-                                            }}
                                             onMouseEnter={(e) => {
                                                 const isButtonDisabled = authError !== null || (connectionError !== null && !storedUsername) || localError !== null;
                                                 if (!isButtonDisabled) {
@@ -1444,10 +1499,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                 overflow: 'hidden',
                                             }}
                                         >
-                                            {simulatedWldrBalance !== null && simulatedWldrBalance < 1000 ? 'Spectate Game' : 'Join Game'}
+                                            Join Game
                                         </button>
                                     </>
                                 ) : (
+                                  <>
                                     <button
                                         type="button"
                                         onClick={handleWalletLogin}
@@ -1482,6 +1538,46 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     >
                                         Connect Solana Wallet
                                     </button>
+
+                                    {/* Spectate without a wallet — watch the live world as a drifting ember. */}
+                                    {handleSpectateGame && (
+                                        <div style={{ marginTop: '16px' }}>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleSpectateGame?.()}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.color = '#c4e89c';
+                                                    e.currentTarget.style.borderColor = 'rgba(134, 190, 82, 0.8)';
+                                                    e.currentTarget.style.background = 'rgba(16, 30, 22, 0.85)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.color = 'rgba(232, 240, 224, 0.85)';
+                                                    e.currentTarget.style.borderColor = 'rgba(92, 142, 50, 0.5)';
+                                                    e.currentTarget.style.background = 'rgba(12, 21, 15, 0.6)';
+                                                }}
+                                                style={{
+                                                    padding: '12px 28px',
+                                                    border: '1px solid rgba(92, 142, 50, 0.5)',
+                                                    background: 'rgba(12, 21, 15, 0.6)',
+                                                    color: 'rgba(232, 240, 224, 0.85)',
+                                                    fontFamily: "'PixelOperator', sans-serif",
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer',
+                                                    display: 'inline-block',
+                                                    boxSizing: 'border-box',
+                                                    textTransform: 'uppercase',
+                                                    borderRadius: '8px',
+                                                    transition: 'all 0.25s ease',
+                                                    letterSpacing: '1px',
+                                                    backdropFilter: 'blur(6px)',
+                                                }}
+                                            >
+                                                👁 Spectate — No Wallet Needed
+                                            </button>
+                                        </div>
+                                    )}
+                                  </>
                                 )}
                             </form>
                         )}

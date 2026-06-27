@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { KnockedOutStatus } from '../generated/types';
 import sovaIcon from '../assets/ui/sova.png';
 import './CyberpunkKnockedOutScreen.css';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 interface CyberpunkKnockedOutScreenProps {
   knockedOutStatus: KnockedOutStatus | null;
@@ -18,7 +19,7 @@ const CyberpunkKnockedOutScreen: React.FC<CyberpunkKnockedOutScreenProps> = ({
     const messages = [
       'NEURAL LINK COMPROMISED',
       'CONSCIOUSNESS FADING',
-      'SOVA ATTEMPTING RECOVERY',
+      `${ASSISTANT_NAME} ATTEMPTING RECOVERY`,
       'BIOMETRIC ANALYSIS ACTIVE',
       'SURVIVAL PROTOCOLS ENGAGED'
     ];
@@ -37,7 +38,7 @@ const CyberpunkKnockedOutScreen: React.FC<CyberpunkKnockedOutScreenProps> = ({
         <div className="neural-grid-background"></div>
         <div className="status-container">
           <div className="sova-avatar-container">
-            <img src={sovaIcon} alt="SOVA" className="sova-avatar pulsing" />
+            <img src={sovaIcon} alt={ASSISTANT_NAME} className="sova-avatar pulsing" />
             <div className="avatar-glow"></div>
           </div>
           <div className="status-header">
@@ -63,10 +64,10 @@ const CyberpunkKnockedOutScreen: React.FC<CyberpunkKnockedOutScreenProps> = ({
     <div className={`cyberpunk-knocked-out-screen ${criticalState ? 'critical' : warningState ? 'warning' : 'stable'}`}>
       {/* Independent SOVA Icon at top center */}
       <div className="independent-sova-container">
-        <img 
-          src={sovaIcon} 
-          alt="SOVA" 
-          className={`independent-sova ${criticalState ? 'critical-pulse' : 'analyzing'}`} 
+        <img
+          src={sovaIcon}
+          alt={ASSISTANT_NAME}
+          className={`independent-sova ${criticalState ? 'critical-pulse' : 'analyzing'}`}
         />
       </div>
 
@@ -80,10 +81,10 @@ const CyberpunkKnockedOutScreen: React.FC<CyberpunkKnockedOutScreenProps> = ({
       <div className="status-container">
         {/* SOVA Avatar */}
         <div className="sova-avatar-container">
-          <img 
-            src={sovaIcon} 
-            alt="SOVA" 
-            className={`sova-avatar ${criticalState ? 'critical-pulse' : 'analyzing'}`} 
+          <img
+            src={sovaIcon}
+            alt={ASSISTANT_NAME}
+            className={`sova-avatar ${criticalState ? 'critical-pulse' : 'analyzing'}`}
           />
           <div className="avatar-glow"></div>
           <div className="neural-connection-lines"></div>
@@ -192,7 +193,7 @@ const CyberpunkKnockedOutScreen: React.FC<CyberpunkKnockedOutScreenProps> = ({
       {/* Corner UI Elements */}
       <div className="corner-ui top-left">
         <div className="ui-line"></div>
-        <div className="ui-text">SOVA.SYS</div>
+        <div className="ui-text">{ASSISTANT_NAME}.SYS</div>
       </div>
       <div className="corner-ui top-right">
         <div className="ui-text">NEURAL.LINK</div>

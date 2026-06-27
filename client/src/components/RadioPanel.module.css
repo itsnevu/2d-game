@@ -29,7 +29,7 @@
   border-radius: 12px;
   padding: 20px;
   color: #f5e6d3;
-  font-family: 'Press Start 2P', monospace;
+  font-family: var(--ui-font), monospace;
 }
 
 /* Metal texture overlay */
@@ -114,16 +114,16 @@
 
 .frequencyDisplay {
   font-size: 24px;
-  color: #86be52;
-  text-shadow: 0 0 10px #86be52, 0 0 20px #00ff44;
-  font-family: 'PixelOperatorMono', monospace;
+  color: var(--ui-accent);
+  text-shadow: 0 0 10px var(--ui-accent), 0 0 20px var(--ui-accent-bright);
+  font-family: var(--ui-font-mono), monospace;
   margin-bottom: 6px;
   letter-spacing: 2px;
 }
 
 .stationName {
   font-size: 11px;
-  color: #88ddaa;
+  color: var(--ui-accent);
   margin-bottom: 8px;
 }
 
@@ -143,8 +143,8 @@
 }
 
 .signalBar.active {
-  background: #86be52;
-  box-shadow: 0 0 5px #86be52;
+  background: var(--ui-accent);
+  box-shadow: 0 0 5px var(--ui-accent);
 }
 
 .signalBar:nth-child(1) { height: 8px; align-self: flex-end; }
@@ -334,8 +334,8 @@
 
 .stationFreq {
   font-size: 10px;
-  color: #86be52;
-  font-family: 'PixelOperatorMono', monospace;
+  color: var(--ui-accent);
+  font-family: var(--ui-font-mono), monospace;
 }
 
 /* Speaker Grille - Hidden to save space */

@@ -119,7 +119,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                     <h2
                         style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '24px',
                             color: '#5c3a21',
                             textAlign: 'center',
@@ -133,7 +133,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                     </h2>
                     <div
                         style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#5c3a21',
                             textAlign: 'center',
@@ -159,7 +159,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                                 border: '3px solid #5c3a21',
                                 borderRadius: '0px',
                                 padding: '15px 25px',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '14px',
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
@@ -260,7 +260,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                                 fontSize: '18px',
                                 marginBottom: '15px',
                                 textShadow: '0 0 10px rgba(92, 142, 50, 0.8)',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 letterSpacing: '1px',
                             }}>
                                 ⚠️ NEURAL SLEEP PROTOCOL ⚠️
@@ -274,7 +274,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                                 padding: '20px',
                                 backgroundColor: 'rgba(0, 0, 0, 0.05)',
                                 border: '2px solid #5c3a21',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                             }}>
                                 Are you sure you want to disconnect and exit the game?
                                 <br /><br />
@@ -294,7 +294,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                                         border: '3px solid #5c3a21',
                                         borderRadius: '0px',
                                         padding: '15px 25px',
-                                        fontFamily: '"Press Start 2P", cursive',
+                                        fontFamily: "'PixelOperator', monospace",
                                         fontSize: '12px',
                                         cursor: 'pointer',
                                         transition: 'all 0.15s ease',
@@ -321,7 +321,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
                                         border: '3px solid #5c3a21',
                                         borderRadius: '0px',
                                         padding: '15px 25px',
-                                        fontFamily: '"Press Start 2P", cursive',
+                                        fontFamily: "'PixelOperator', monospace",
                                         fontSize: '12px',
                                         cursor: 'pointer',
                                         transition: 'all 0.15s ease',
@@ -351,11 +351,11 @@ const GameMenu: React.FC<GameMenuProps> = ({
                     }
                     
                     @keyframes glow {
-                        0% { 
-                            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4);
+                        0% {
+                            text-shadow: 0 0 10px rgba(134, 190, 82, 0.45), 0 0 20px rgba(134, 190, 82, 0.4);
                         }
-                        100% { 
-                            text-shadow: 0 0 15px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.6);
+                        100% {
+                            text-shadow: 0 0 15px rgba(134, 190, 82, 1), 0 0 30px rgba(134, 190, 82, 0.45);
                         }
                     }
                     
@@ -371,9 +371,9 @@ const GameMenu: React.FC<GameMenuProps> = ({
                         left: 0;
                         width: 100%;
                         height: 100%;
-                        background: 
-                            radial-gradient(circle at 25% 25%, rgba(0, 221, 255, 0.1) 0%, transparent 50%),
-                            radial-gradient(circle at 75% 75%, rgba(0, 150, 255, 0.1) 0%, transparent 50%);
+                        background:
+                            radial-gradient(circle at 25% 25%, rgba(134, 190, 82, 0.1) 0%, transparent 50%),
+                            radial-gradient(circle at 75% 75%, rgba(134, 190, 82, 0.1) 0%, transparent 50%);
                         animation: holodeck-pulse 8s ease-in-out infinite alternate;
                         pointer-events: none;
                     }

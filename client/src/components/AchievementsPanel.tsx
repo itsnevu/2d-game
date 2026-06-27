@@ -179,14 +179,14 @@ const AchievementsPanel: React.FC = () => {
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
-      background: 'rgba(15, 23, 35, 0.95)',
+      background: 'var(--ui-bg-900)',
       border: 'none',
       borderRadius: '0',
       padding: '0',
       boxSizing: 'border-box',
       color: '#ffffff',
       overflow: 'hidden',
-      fontFamily: "'Courier New', monospace",
+      fontFamily: 'var(--ui-font)',
     }}>
       {/* Header */}
       <div style={{
@@ -200,7 +200,7 @@ const AchievementsPanel: React.FC = () => {
         flexShrink: 0,
       }}>
         <h2 style={{
-          color: '#ffd700',
+          color: 'var(--ui-warn)',
           margin: 0,
           fontSize: '1.2rem',
           fontWeight: 'bold',
@@ -235,7 +235,7 @@ const AchievementsPanel: React.FC = () => {
           <div style={{
             width: `${stats.percentage}%`,
             height: '100%',
-            background: 'linear-gradient(90deg, #ffd700, #ffaa00)',
+            background: 'linear-gradient(90deg, var(--ui-warn), #ffaa00)',
             transition: 'width 0.3s ease',
           }} />
           <span style={{
@@ -292,7 +292,7 @@ const AchievementsPanel: React.FC = () => {
               transition: 'all 0.2s ease',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#ffd700';
+              e.target.style.borderColor = 'var(--ui-warn)';
               e.target.style.boxShadow = '0 0 8px rgba(134, 190, 82, 0.3)';
               setIsCraftingSearchFocused(true);
             }}
@@ -358,9 +358,9 @@ const AchievementsPanel: React.FC = () => {
             onClick={() => setSortBy('alphabetical')}
             style={{
               background: sortBy === 'alphabetical'
-                ? 'linear-gradient(135deg, #4a9eff 0%, #2a7edf 100%)'
-                : 'rgba(74, 158, 255, 0.1)',
-              border: `1px solid ${sortBy === 'alphabetical' ? '#4a9eff' : 'rgba(74, 158, 255, 0.3)'}`,
+                ? 'linear-gradient(135deg, var(--ui-accent-bright) 0%, var(--ui-accent) 100%)'
+                : 'rgba(134, 190, 82, 0.1)',
+              border: `1px solid ${sortBy === 'alphabetical' ? 'var(--ui-accent)' : 'rgba(134, 190, 82, 0.3)'}`,
               borderRadius: '4px',
               color: sortBy === 'alphabetical' ? '#fff' : 'rgba(255, 255, 255, 0.8)',
               padding: '5px 10px',
@@ -408,7 +408,7 @@ const AchievementsPanel: React.FC = () => {
             onChange={(e) => setShowUnlockedOnly(e.target.checked)}
             style={{
               cursor: 'pointer',
-              accentColor: '#ffd700',
+              accentColor: 'var(--ui-warn)',
             }}
           />
           Show Unlocked Only
@@ -430,9 +430,9 @@ const AchievementsPanel: React.FC = () => {
           onClick={() => setSelectedCategory(null)}
           style={{
             background: selectedCategory === null
-              ? 'linear-gradient(135deg, #ffd700 0%, #ffaa00 100%)'
+              ? 'linear-gradient(135deg, var(--ui-warn) 0%, #ffaa00 100%)'
               : 'rgba(134, 190, 82, 0.1)',
-            border: `1px solid ${selectedCategory === null ? '#ffd700' : 'rgba(134, 190, 82, 0.3)'}`,
+            border: `1px solid ${selectedCategory === null ? 'var(--ui-warn)' : 'rgba(134, 190, 82, 0.3)'}`,
             borderRadius: '4px',
             color: selectedCategory === null ? '#000' : '#ffffff',
             padding: '6px 12px',
@@ -452,9 +452,9 @@ const AchievementsPanel: React.FC = () => {
             onClick={() => setSelectedCategory(category)}
             style={{
               background: selectedCategory === category
-                ? 'linear-gradient(135deg, #ffd700 0%, #ffaa00 100%)'
+                ? 'linear-gradient(135deg, var(--ui-warn) 0%, #ffaa00 100%)'
                 : 'rgba(134, 190, 82, 0.1)',
-              border: `1px solid ${selectedCategory === category ? '#ffd700' : 'rgba(134, 190, 82, 0.3)'}`,
+              border: `1px solid ${selectedCategory === category ? 'var(--ui-warn)' : 'rgba(134, 190, 82, 0.3)'}`,
               borderRadius: '4px',
               color: selectedCategory === category ? '#000' : '#ffffff',
               padding: '6px 12px',
@@ -544,7 +544,7 @@ const AchievementsPanel: React.FC = () => {
                     <div style={{
                       fontWeight: 'bold',
                       fontSize: '14px',
-                      color: isUnlocked ? '#ffd700' : '#ffffff',
+                      color: isUnlocked ? 'var(--ui-warn)' : '#ffffff',
                       marginBottom: '4px',
                       textAlign: 'left',
                     }}>
@@ -567,12 +567,12 @@ const AchievementsPanel: React.FC = () => {
                       fontSize: '11px',
                     }}>
                       {Number(achievement.xpReward) > 0 && (
-                        <span style={{ color: '#00ffff' }}>
+                        <span style={{ color: '#c4e89c' }}>
                           +{Number(achievement.xpReward)} XP
                         </span>
                       )}
                       {achievement.titleReward && (
-                        <span style={{ color: '#ff6b9d' }}>
+                        <span style={{ color: '#d488ff' }}>
                           Title: {achievement.titleReward}
                         </span>
                       )}

@@ -222,7 +222,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
     };
 
     const backdropStyle = { background: 'rgba(0, 0, 0, 0.08)', backdropFilter: 'blur(0.5px)' as const };
-    const panelBg = 'linear-gradient(145deg, rgba(15, 30, 50, 0.55), rgba(10, 20, 40, 0.62))';
+    const panelBg = 'linear-gradient(145deg, rgba(16, 30, 22, 0.55), rgba(12, 21, 15, 0.62))';
 
     return (
         <>
@@ -270,7 +270,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                 <div style={{ textAlign: 'left', marginBottom: '35px' }}>
                     <h2
                         style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '22px',
                             color: '#86be52',
                             textAlign: 'left',
@@ -284,7 +284,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     </h2>
                     <div
                         style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#86be52',
                             textAlign: 'left',
@@ -316,9 +316,9 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                         background: 'linear-gradient(135deg, rgba(10, 35, 45, 0.72), rgba(8, 24, 32, 0.84))',
                     }}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '11px',
-                            color: '#88ffd8',
+                            color: '#c4e89c',
                             marginBottom: '10px',
                             letterSpacing: '1px',
                             textAlign: 'left',
@@ -375,7 +375,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     minWidth: '150px',
                                     padding: '10px 12px',
                                     fontSize: '11px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "'PixelOperator', monospace",
                                     border:
                                         activeVisualPreset === 'advanced'
                                             ? '2px solid #86be52'
@@ -404,7 +404,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     minWidth: '150px',
                                     padding: '10px 12px',
                                     fontSize: '12px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "'PixelOperator', monospace",
                                     border:
                                         activeVisualPreset === 'performance'
                                             ? '2px solid #4ec8ff'
@@ -428,9 +428,9 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
 
                     <div style={{
                         marginBottom: '16px',
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "'PixelOperator', monospace",
                         fontSize: '11px',
-                        color: '#66d7ff',
+                        color: '#86be52',
                         letterSpacing: '1px',
                         textAlign: 'left',
                         opacity: 0.9,
@@ -441,7 +441,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Tree Shadows Setting */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#88ff44',
                             marginBottom: '12px',
@@ -462,7 +462,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             ALL SHADOWS: {allShadowsEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#aaffaa',
                             marginBottom: '8px',
@@ -485,7 +485,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '14px',
                                 color: allShadowsEnabled ? '#88ff44' : '#666',
                                 textShadow: allShadowsEnabled ? '0 0 5px #88ff44' : 'none',
@@ -509,7 +509,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Weather Precipitation Setting */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#44aaff',
                             marginBottom: '12px',
@@ -530,7 +530,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             PRECIPITATION: {weatherOverlayEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#aaccff',
                             marginBottom: '8px',
@@ -553,7 +553,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '14px',
                                 color: weatherOverlayEnabled ? '#44aaff' : '#666',
                                 textShadow: weatherOverlayEnabled ? '0 0 5px #44aaff' : 'none',
@@ -577,7 +577,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Storm Atmosphere Setting */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#5cb8ff',
                             marginBottom: '12px',
@@ -590,7 +590,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             STORM ATMOSPHERE: {stormAtmosphereEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#b8dcff',
                             marginBottom: '8px',
@@ -608,7 +608,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '14px',
                                 color: stormAtmosphereEnabled ? '#5cb8ff' : '#666',
                                 textShadow: stormAtmosphereEnabled ? '0 0 5px #5cb8ff' : 'none',
@@ -629,7 +629,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {false && (
                     <div style={{ marginBottom: '25px' }}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#88cc44',
                             marginBottom: '12px',
@@ -650,7 +650,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             GRASS RENDERING: {grassEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#aaffaa',
                             marginBottom: '8px',
@@ -673,7 +673,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '14px',
                                 color: grassEnabled ? '#88cc44' : '#666',
                                 textShadow: grassEnabled ? '0 0 5px #88cc44' : 'none',
@@ -698,7 +698,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Status Overlays Setting (Cold/Low Health) */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#ff5566',
                             marginBottom: '12px',
@@ -719,7 +719,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             STATUS OVERLAYS: {statusOverlaysEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#ffaaaa',
                             marginBottom: '8px',
@@ -742,7 +742,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '14px',
                                 color: statusOverlaysEnabled ? '#ff5566' : '#666',
                                 textShadow: statusOverlaysEnabled ? '0 0 5px #ff5566' : 'none',
@@ -766,11 +766,11 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Always Show Player Names Setting */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
-                            color: '#00ffff',
+                            color: '#86be52',
                             marginBottom: '12px',
-                            textShadow: '0 0 8px #00ffff',
+                            textShadow: '0 0 8px #86be52',
                             letterSpacing: '1px',
                             display: 'flex',
                             alignItems: 'center',
@@ -779,23 +779,23 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             <FontAwesomeIcon 
                                 icon={faUsers} 
                                 style={{
-                                    color: '#00ffff',
-                                    textShadow: '0 0 8px #00ffff',
+                                    color: '#86be52',
+                                    textShadow: '0 0 8px #86be52',
                                     fontSize: '14px',
                                 }}
                             />
                             PLAYER NAMES: {alwaysShowPlayerNames ? 'ALWAYS VISIBLE' : 'HOVER ONLY'}
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
-                            color: '#aaffff',
+                            color: '#9ab08a',
                             marginBottom: '8px',
                             opacity: 0.7,
                             letterSpacing: '0.5px',
                             textAlign: 'left',
                         }}>
-                            {alwaysShowPlayerNames 
+                            {alwaysShowPlayerNames
                                 ? 'Player names shown above all characters' 
                                 : 'Player names shown only when hovering'
                             }
@@ -810,10 +810,10 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '14px',
-                                color: alwaysShowPlayerNames ? '#00ffff' : '#666',
-                                textShadow: alwaysShowPlayerNames ? '0 0 5px #00ffff' : 'none',
+                                color: alwaysShowPlayerNames ? '#86be52' : '#666',
+                                textShadow: alwaysShowPlayerNames ? '0 0 5px #86be52' : 'none',
                                 transition: 'all 0.3s ease',
                             }}>
                                 <input
@@ -823,7 +823,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     style={{
                                         marginRight: '10px',
                                         transform: 'scale(1.5)',
-                                        accentColor: '#00ffff',
+                                        accentColor: '#86be52',
                                     }}
                                 />
                                 ALWAYS SHOW NAMES
@@ -834,9 +834,9 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     <div style={{
                         marginBottom: '16px',
                         marginTop: '5px',
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "'PixelOperator', monospace",
                         fontSize: '11px',
-                        color: '#66d7ff',
+                        color: '#86be52',
                         letterSpacing: '1px',
                         textAlign: 'left',
                         opacity: 0.9,
@@ -846,13 +846,13 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
 
                     {/* Clouds Setting */}
                     <div style={settingCardStyle}>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '16px', color: '#a8d9ff', marginBottom: '12px', textShadow: '0 0 8px #a8d9ff', letterSpacing: '1px' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '16px', color: '#a8d9ff', marginBottom: '12px', textShadow: '0 0 8px #a8d9ff', letterSpacing: '1px' }}>
                             CLOUDS: {cloudsEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '12px', color: '#d6ebff', marginBottom: '8px', opacity: 0.7, letterSpacing: '0.5px', textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '12px', color: '#d6ebff', marginBottom: '8px', opacity: 0.7, letterSpacing: '0.5px', textAlign: 'left' }}>
                             High-atmosphere cloud layer rendered over world.
                         </div>
-                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: '"Press Start 2P", cursive', fontSize: '14px', color: cloudsEnabled ? '#a8d9ff' : '#666', textShadow: cloudsEnabled ? '0 0 5px #a8d9ff' : 'none' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: "'PixelOperator', monospace", fontSize: '14px', color: cloudsEnabled ? '#a8d9ff' : '#666', textShadow: cloudsEnabled ? '0 0 5px #a8d9ff' : 'none' }}>
                             <input type="checkbox" checked={cloudsEnabled} onChange={(e) => onCloudsEnabledChange(e.target.checked)} style={{ marginRight: '10px', transform: 'scale(1.5)', accentColor: '#a8d9ff' }} />
                             ENABLE CLOUDS
                         </label>
@@ -860,17 +860,17 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
 
                     {/* Water Surface Effects */}
                     <div style={settingCardStyle}>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '16px', color: '#55d6ff', marginBottom: '12px', textShadow: '0 0 8px #55d6ff', letterSpacing: '1px' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '16px', color: '#55d6ff', marginBottom: '12px', textShadow: '0 0 8px #55d6ff', letterSpacing: '1px' }}>
                             WATER SURFACE FX: {waterSurfaceEffectsEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '12px', color: '#baf3ff', marginBottom: '8px', opacity: 0.7, letterSpacing: '0.5px', textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '12px', color: '#baf3ff', marginBottom: '8px', opacity: 0.7, letterSpacing: '0.5px', textAlign: 'left' }}>
                             Voronoi/caustic/ripple water rendering and shoreline treatment.
                         </div>
-                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: '"Press Start 2P", cursive', fontSize: '14px', color: waterSurfaceEffectsEnabled ? '#55d6ff' : '#666', textShadow: waterSurfaceEffectsEnabled ? '0 0 5px #55d6ff' : 'none', marginBottom: '10px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: "'PixelOperator', monospace", fontSize: '14px', color: waterSurfaceEffectsEnabled ? '#55d6ff' : '#666', textShadow: waterSurfaceEffectsEnabled ? '0 0 5px #55d6ff' : 'none', marginBottom: '10px' }}>
                             <input type="checkbox" checked={waterSurfaceEffectsEnabled} onChange={(e) => onWaterSurfaceEffectsEnabledChange(e.target.checked)} style={{ marginRight: '10px', transform: 'scale(1.5)', accentColor: '#55d6ff' }} />
                             ENABLE WATER FX
                         </label>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '12px', color: '#baf3ff', marginBottom: '8px', opacity: 0.8, letterSpacing: '0.5px' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '12px', color: '#baf3ff', marginBottom: '8px', opacity: 0.8, letterSpacing: '0.5px' }}>
                             WATER FX INTENSITY: {Math.round(waterSurfaceEffectsIntensity)}%
                         </div>
                         <input
@@ -887,10 +887,10 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
 
                     {/* Particle Quality */}
                     <div style={{ marginBottom: '25px' }}>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '16px', color: '#ffd46a', marginBottom: '12px', textShadow: '0 0 8px #ffd46a', letterSpacing: '1px' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '16px', color: '#ffd46a', marginBottom: '12px', textShadow: '0 0 8px #ffd46a', letterSpacing: '1px' }}>
                             WORLD PARTICLES: {worldParticlesQuality === 2 ? 'FULL' : worldParticlesQuality === 1 ? 'LOW' : 'OFF'}
                         </div>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '12px', color: '#ffeab4', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '12px', color: '#ffeab4', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
                             Controls ambient and combat particles for performance tuning.
                         </div>
                         <select
@@ -898,12 +898,12 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             onChange={(e) => onWorldParticlesQualityChange(parseInt(e.target.value, 10))}
                             style={{
                                 width: '100%',
-                                background: 'rgba(10, 20, 35, 0.9)',
+                                background: 'rgba(16, 30, 22, 0.9)',
                                 color: '#ffeab4',
                                 border: '1px solid rgba(255, 212, 106, 0.6)',
                                 borderRadius: '6px',
                                 padding: '10px',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '11px',
                             }}
                         >
@@ -915,13 +915,13 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
 
                     {/* Footprints */}
                     <div style={settingCardStyle}>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '16px', color: '#9ce7a5', marginBottom: '12px', textShadow: '0 0 8px #9ce7a5', letterSpacing: '1px' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '16px', color: '#9ce7a5', marginBottom: '12px', textShadow: '0 0 8px #9ce7a5', letterSpacing: '1px' }}>
                             FOOTPRINTS: {footprintsEnabled ? 'ENABLED' : 'DISABLED'}
                         </div>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '12px', color: '#cdf4d2', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '12px', color: '#cdf4d2', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
                             Ground footprints in sand/snow. Cosmetic only.
                         </div>
-                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: '"Press Start 2P", cursive', fontSize: '14px', color: footprintsEnabled ? '#9ce7a5' : '#666', textShadow: footprintsEnabled ? '0 0 5px #9ce7a5' : 'none' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: "'PixelOperator', monospace", fontSize: '14px', color: footprintsEnabled ? '#9ce7a5' : '#666', textShadow: footprintsEnabled ? '0 0 5px #9ce7a5' : 'none' }}>
                             <input type="checkbox" checked={footprintsEnabled} onChange={(e) => onFootprintsEnabledChange(e.target.checked)} style={{ marginRight: '10px', transform: 'scale(1.5)', accentColor: '#9ce7a5' }} />
                             ENABLE FOOTPRINTS
                         </label>
@@ -929,14 +929,14 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
 
                     {/* Grass animation (sway + beach filmstrip) */}
                     <div style={settingCardStyle}>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '16px', color: '#88cc44', marginBottom: '12px', textShadow: '0 0 8px #88cc44', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '16px', color: '#88cc44', marginBottom: '12px', textShadow: '0 0 8px #88cc44', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <FontAwesomeIcon icon={faLeaf} style={{ color: '#88cc44', textShadow: '0 0 8px #88cc44', fontSize: '14px' }} />
                             GRASS ANIMATION: {grassAnimationEnabled ? 'ON' : 'OFF'}
                         </div>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '12px', color: '#aaffaa', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '12px', color: '#aaffaa', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
                             Wind sway on grass and animated beach grass. Off uses a static pose (first filmstrip frame; no sway).
                         </div>
-                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: '"Press Start 2P", cursive', fontSize: '14px', color: grassAnimationEnabled ? '#88cc44' : '#666', textShadow: grassAnimationEnabled ? '0 0 5px #88cc44' : 'none' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontFamily: "'PixelOperator', monospace", fontSize: '14px', color: grassAnimationEnabled ? '#88cc44' : '#666', textShadow: grassAnimationEnabled ? '0 0 5px #88cc44' : 'none' }}>
                             <input type="checkbox" checked={grassAnimationEnabled} onChange={(e) => onGrassAnimationEnabledChange(e.target.checked)} style={{ marginRight: '10px', transform: 'scale(1.5)', accentColor: '#88cc44' }} />
                             ENABLE GRASS ANIMATION
                         </label>
@@ -944,18 +944,18 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
 
                     {/* Fixed Simulation - Performance / High-refresh tuning */}
                     <div style={settingCardStyle}>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '16px', color: '#b8a0ff', marginBottom: '12px', textShadow: '0 0 8px #b8a0ff', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '16px', color: '#b8a0ff', marginBottom: '12px', textShadow: '0 0 8px #b8a0ff', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <FontAwesomeIcon icon={faGears} style={{ color: '#b8a0ff', textShadow: '0 0 8px #b8a0ff', fontSize: '14px' }} />
                             FIXED SIMULATION (30 Hz): {fixedSimulationMode.toUpperCase()}
                         </div>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '12px', color: '#d4c8ff', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '12px', color: '#d4c8ff', marginBottom: '8px', opacity: 0.75, letterSpacing: '0.5px', textAlign: 'left' }}>
                             {fixedSimulationMode === 'auto'
                                 ? `Auto detected ${displayRefreshRateHz} Hz and is currently ${fixedSimulationEnabled ? 'using fixed 30 Hz simulation' : 'using variable timestep'}.`
                                 : fixedSimulationMode === 'on'
                                     ? 'Forced fixed simulation at 30 Hz. Can feel smoother on high-refresh displays.'
                                     : 'Forced variable timestep. Usually smoother/more responsive on 60 Hz displays.'}
                         </div>
-                        <div style={{ fontFamily: '"Press Start 2P", cursive', fontSize: '11px', color: '#c7b7ff', marginBottom: '8px', opacity: 0.8, letterSpacing: '0.4px', textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'PixelOperator', monospace", fontSize: '11px', color: '#c7b7ff', marginBottom: '8px', opacity: 0.8, letterSpacing: '0.4px', textAlign: 'left' }}>
                             Hint: if you use 120/144/165 Hz and notice micro-jitter, try AUTO or ON.
                         </div>
                         <select
@@ -963,12 +963,12 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             onChange={(e) => onFixedSimulationModeChange(e.target.value as FixedSimulationMode)}
                             style={{
                                 width: '100%',
-                                background: 'rgba(22, 16, 38, 0.92)',
+                                background: 'rgba(16, 30, 22, 0.92)',
                                 color: '#d4c8ff',
                                 border: '1px solid rgba(184, 160, 255, 0.7)',
                                 borderRadius: '6px',
                                 padding: '10px',
-                                fontFamily: '"Press Start 2P", cursive',
+                                fontFamily: "'PixelOperator', monospace",
                                 fontSize: '11px',
                             }}
                         >
@@ -981,9 +981,9 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     <div style={{
                         marginBottom: '16px',
                         marginTop: '5px',
-                        fontFamily: '"Press Start 2P", cursive',
+                        fontFamily: "'PixelOperator', monospace",
                         fontSize: '11px',
-                        color: '#66d7ff',
+                        color: '#86be52',
                         letterSpacing: '1px',
                         textAlign: 'left',
                         opacity: 0.9,
@@ -994,7 +994,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Bloom Filter Slider */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#ffe066',
                             marginBottom: '12px',
@@ -1004,7 +1004,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             BLOOM FILTER: {Math.round(bloomIntensity)}%
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#fff2b8',
                             marginBottom: '10px',
@@ -1032,7 +1032,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Vignette Slider */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#d0d8ff',
                             marginBottom: '12px',
@@ -1042,7 +1042,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             VIGNETTE: {Math.round(vignetteIntensity)}%
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#dfe5ff',
                             marginBottom: '10px',
@@ -1070,7 +1070,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Chromatic Aberration Slider */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#ff9ad1',
                             marginBottom: '12px',
@@ -1080,7 +1080,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             CHROMATIC ABERRATION: {Math.round(chromaticAberrationIntensity)}%
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#ffc5e6',
                             marginBottom: '10px',
@@ -1108,7 +1108,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     {/* Saturation Slider */}
                     <div style={settingCardStyle}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             color: '#8effd1',
                             marginBottom: '12px',
@@ -1118,7 +1118,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             SATURATION: {Math.round(colorCorrection)}%
                         </div>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '12px',
                             color: '#c6ffe8',
                             marginBottom: '10px',
@@ -1153,7 +1153,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                         boxShadow: 'inset 0 0 12px rgba(120, 255, 200, 0.1)',
                     }}>
                         <div style={{
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '11px',
                             color: '#a8ffd8',
                             opacity: 0.8,
@@ -1175,7 +1175,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     border: '2px solid #ff7a7a',
                                     borderRadius: '8px',
                                     padding: '12px 14px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "'PixelOperator', monospace",
                                     fontSize: '13px',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
@@ -1207,7 +1207,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     border: '2px solid #ff82e6',
                                     borderRadius: '8px',
                                     padding: '12px 14px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "'PixelOperator', monospace",
                                     fontSize: '13px',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
@@ -1229,7 +1229,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                                     border: '2px solid #8a8a8a',
                                     borderRadius: '8px',
                                     padding: '12px 14px',
-                                    fontFamily: '"Press Start 2P", cursive',
+                                    fontFamily: "'PixelOperator', monospace",
                                     fontSize: '13px',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
@@ -1255,7 +1255,7 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                             border: '2px solid #ff8833',
                             borderRadius: '8px',
                             padding: '15px 30px',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
@@ -1280,28 +1280,28 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                         onClick={onClose}
                         className={`${styles.menuButton} ${styles.menuButtonPrimary}`}
                         style={{
-                            background: 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))',
+                            background: 'linear-gradient(135deg, rgba(22, 41, 29, 0.8), rgba(16, 30, 22, 0.9))',
                             color: '#ffffff',
                             border: '2px solid #5c8e32',
                             borderRadius: '8px',
                             padding: '15px 30px',
-                            fontFamily: '"Press Start 2P", cursive',
+                            fontFamily: "'PixelOperator', monospace",
                             fontSize: '16px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)',
-                            textShadow: '0 0 5px rgba(0, 170, 255, 0.8)',
+                            boxShadow: '0 0 15px rgba(134, 190, 82, 0.45), inset 0 0 10px rgba(134, 190, 82, 0.1)',
+                            textShadow: '0 0 5px rgba(134, 190, 82, 0.8)',
                             letterSpacing: '1px',
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 50, 100, 0.9), rgba(15, 40, 90, 1))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30, 56, 39, 0.9), rgba(22, 41, 29, 1))';
                             e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                            e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 170, 255, 0.6), inset 0 0 15px rgba(0, 170, 255, 0.2)';
+                            e.currentTarget.style.boxShadow = '0 0 25px rgba(134, 190, 82, 0.45), inset 0 0 15px rgba(134, 190, 82, 0.2)';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 40, 80, 0.8), rgba(10, 30, 70, 0.9))';
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(22, 41, 29, 0.8), rgba(16, 30, 22, 0.9))';
                             e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1)';
+                            e.currentTarget.style.boxShadow = '0 0 15px rgba(134, 190, 82, 0.45), inset 0 0 10px rgba(134, 190, 82, 0.1)';
                         }}
                     >
                         RESUME CONSCIOUSNESS
@@ -1329,26 +1329,26 @@ const GameVisualSettingsMenu: React.FC<GameVisualSettingsMenuProps> = ({
                     }
                     
                     .visual-cortex-scroll::-webkit-scrollbar-track {
-                        background: rgba(0, 20, 40, 0.8);
+                        background: rgba(12, 21, 15, 0.8);
                         border-radius: 4px;
                         border: 1px solid rgba(134, 190, 82, 0.2);
                     }
-                    
+
                     .visual-cortex-scroll::-webkit-scrollbar-thumb {
-                        background: linear-gradient(180deg, #86be52 0%, #00aa66 100%);
+                        background: linear-gradient(180deg, #86be52 0%, #5c8e32 100%);
                         border-radius: 4px;
                         box-shadow: 0 0 8px rgba(134, 190, 82, 0.5);
                     }
-                    
+
                     .visual-cortex-scroll::-webkit-scrollbar-thumb:hover {
-                        background: linear-gradient(180deg, #00ffaa 0%, #00cc88 100%);
+                        background: linear-gradient(180deg, #c4e89c 0%, #86be52 100%);
                         box-shadow: 0 0 12px rgba(134, 190, 82, 0.8);
                     }
-                    
+
                     /* Firefox scrollbar */
                     .visual-cortex-scroll {
                         scrollbar-width: thin;
-                        scrollbar-color: #86be52 rgba(0, 20, 40, 0.8);
+                        scrollbar-color: #86be52 rgba(12, 21, 15, 0.8);
                     }
                 `}</style>
             </div>

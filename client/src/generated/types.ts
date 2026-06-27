@@ -2220,6 +2220,7 @@ export const Player = __t.object("Player", {
   goldShareRatio: __t.f32(),
   goldBalance: __t.u64(),
   stakedBounty: __t.u64(),
+  characterId: __t.u8(),
 });
 export type Player = __Infer<typeof Player>;
 

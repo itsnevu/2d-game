@@ -8,17 +8,17 @@ const UI_BORDER_GRADIENT = 'linear-gradient(135deg, #5c8e32, #c4e89c, #86be52, #
 const ACCENT_CYAN = '#5c8e32';
 const ACCENT_GREEN = '#c4e89c';
 const ACCENT_PURPLE = '#86be52';
-const UI_FONT_FAMILY = "'Courier New', 'Consolas', monospace";
+const UI_FONT_FAMILY = "'PixelOperator', monospace";
 
 // Zone-specific colors for visual feedback
 const ZONE_COLORS: Record<MusicZone, { primary: string; secondary: string; glow: string }> = {
-    normal: { primary: '#ff6b9d', secondary: '#4ecdc4', glow: 'rgba(255, 107, 157, 0.8)' },
+    normal: { primary: '#c4e89c', secondary: '#4ecdc4', glow: 'rgba(196, 232, 156, 0.8)' },
     fishing_village: { primary: '#4fc3f7', secondary: '#81d4fa', glow: 'rgba(79, 195, 247, 0.8)' },
     hunting_village: { primary: '#8b6f47', secondary: '#a0826d', glow: 'rgba(139, 111, 71, 0.8)' },
     alpine_village: { primary: '#6B8E23', secondary: '#9ACD32', glow: 'rgba(107, 142, 35, 0.8)' }, // Olive green - shares hunting village tracks
     alk_compound: { primary: '#ffc107', secondary: '#ff9800', glow: 'rgba(255, 193, 7, 0.8)' },
-    alk_substation: { primary: '#9c27b0', secondary: '#ba68c8', glow: 'rgba(156, 39, 176, 0.8)' },
-    hot_springs: { primary: '#ff6b9d', secondary: '#4ecdc4', glow: 'rgba(255, 107, 157, 0.8)' },
+    alk_substation: { primary: '#d488ff', secondary: '#ba68c8', glow: 'rgba(212, 136, 255, 0.8)' },
+    hot_springs: { primary: '#c4e89c', secondary: '#4ecdc4', glow: 'rgba(196, 232, 156, 0.8)' },
     deep_sea: { primary: '#0288d1', secondary: '#03a9f4', glow: 'rgba(2, 136, 209, 0.8)' },
 };
 

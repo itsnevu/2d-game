@@ -17,12 +17,12 @@
   min-width: 220px;
   max-width: 320px;
   
-  background: linear-gradient(135deg, rgba(30, 15, 50, 0.95), rgba(20, 10, 40, 0.98));
-  border: 2px solid #5c8e32;
+  background: linear-gradient(135deg, var(--ui-bg-800), var(--ui-bg-900));
+  border: 2px solid var(--ui-border);
   border-radius: 8px;
-  box-shadow: 
-    0 0 30px rgba(0, 170, 255, 0.4),
-    inset 0 0 20px rgba(0, 170, 255, 0.1),
+  box-shadow:
+    0 0 30px var(--ui-accent-glow),
+    inset 0 0 20px rgba(134, 190, 82, 0.1),
     0 4px 20px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   
@@ -35,11 +35,11 @@
 
 .sova-sound-box:hover {
   transform: translateX(-50%) scale(1.02);
-  box-shadow: 
-    0 0 40px rgba(0, 255, 255, 0.5),
-    inset 0 0 25px rgba(0, 255, 255, 0.15),
+  box-shadow:
+    0 0 40px var(--ui-accent-glow),
+    inset 0 0 25px rgba(134, 190, 82, 0.15),
     0 6px 25px rgba(0, 0, 0, 0.6);
-  border-color: #00ffff;
+  border-color: var(--ui-accent-bright);
 }
 
 .sova-sound-box:active {
@@ -47,10 +47,10 @@
 }
 
 .sova-sound-box.paused {
-  border-color: rgba(0, 170, 255, 0.5);
-  box-shadow: 
-    0 0 15px rgba(0, 170, 255, 0.2),
-    inset 0 0 10px rgba(0, 170, 255, 0.05),
+  border-color: rgba(134, 190, 82, 0.5);
+  box-shadow:
+    0 0 15px rgba(134, 190, 82, 0.2),
+    inset 0 0 10px rgba(134, 190, 82, 0.05),
     0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
@@ -74,37 +74,37 @@
   height: 52px;
   flex-shrink: 0;
   
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.15), rgba(0, 255, 255, 0.08));
-  border: 1px solid rgba(0, 255, 255, 0.4);
+  background: linear-gradient(135deg, rgba(134, 190, 82, 0.15), rgba(134, 190, 82, 0.08));
+  border: 1px solid rgba(134, 190, 82, 0.4);
   border-radius: 6px;
-  
+
   animation: sova-icon-pulse 2s ease-in-out infinite;
 }
 
 .playing .sova-sound-box-icon {
   animation: sova-icon-pulse 1.5s ease-in-out infinite;
-  border-color: rgba(0, 255, 255, 0.7);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  border-color: rgba(134, 190, 82, 0.7);
+  box-shadow: 0 0 15px rgba(134, 190, 82, 0.4);
 }
 
 .sova-icon-image {
   width: 44px;
   height: 44px;
   object-fit: contain;
-  filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.6));
+  filter: drop-shadow(0 0 6px rgba(134, 190, 82, 0.6));
   image-rendering: pixelated;
 }
 
 .playing .sova-icon-image {
-  filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.8));
+  filter: drop-shadow(0 0 10px rgba(134, 190, 82, 0.8));
 }
 
 @keyframes sova-icon-pulse {
   0%, 100% {
-    box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 8px rgba(134, 190, 82, 0.3);
   }
   50% {
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(134, 190, 82, 0.6);
   }
 }
 
@@ -120,7 +120,7 @@
 .sova-waveform-bar {
   width: 3px;
   height: 4px;
-  background: linear-gradient(180deg, #00ffff, #5c8e32);
+  background: linear-gradient(180deg, var(--ui-accent-bright), var(--ui-border));
   border-radius: 2px;
   transition: height 0.1s ease;
 }
@@ -177,10 +177,10 @@
 }
 
 .sova-label-text {
-  font-family: "Press Start 2P", cursive;
+  font-family: 'PixelOperator', sans-serif;
   font-size: 10px;
-  color: #00ffff;
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+  color: var(--ui-accent);
+  text-shadow: 0 0 8px var(--ui-accent-glow);
   text-transform: uppercase;
   letter-spacing: 1px;
   white-space: nowrap;
@@ -189,7 +189,7 @@
 }
 
 .sova-close-hint {
-  font-family: "Press Start 2P", cursive;
+  font-family: 'PixelOperator', sans-serif;
   font-size: 7px;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -223,10 +223,10 @@
 
 @keyframes sova-glow-pulse {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(134, 190, 82, 0.2);
   }
   50% {
-    box-shadow: 0 0 35px rgba(0, 255, 255, 0.4);
+    box-shadow: 0 0 35px rgba(134, 190, 82, 0.4);
   }
 }
 

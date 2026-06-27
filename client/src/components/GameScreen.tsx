@@ -18,6 +18,7 @@ import TargetingReticle from './TargetingReticle';
 import FishingManager from './FishingManager';
 import { type CairnNotification } from './CairnUnlockNotification';
 import GameScreenOverlayUI from './GameScreenOverlayUI';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 // Import types used by props
 import type {
@@ -380,7 +381,7 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                         } else if (showSovaSoundBox) {
                             const audio = new Audio('/sounds/sova_error_mobile_capability.mp3');
                             audio.volume = 0.8;
-                            showSovaSoundBox(audio, 'SOVA');
+                            showSovaSoundBox(audio, ASSISTANT_NAME);
                             audio.play().catch(() => { });
                         }
                         return;
@@ -403,7 +404,7 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                         } else if (showSovaSoundBox) {
                             const audio = new Audio('/sounds/sova_error_mobile_capability.mp3');
                             audio.volume = 0.8;
-                            showSovaSoundBox(audio, 'SOVA');
+                            showSovaSoundBox(audio, ASSISTANT_NAME);
                             audio.play().catch(() => { });
                         }
                         return;

@@ -15,6 +15,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import './SovaSoundBox.css';
 import sovaLogo from '../assets/ui/sova.png';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 export interface SovaSoundBoxProps {
   /** The audio element being played - will be stopped when box is closed */
@@ -36,7 +37,7 @@ const XP_BAR_HEIGHT = 28; // Height of XP bar above hotbar
 
 const SovaSoundBox: React.FC<SovaSoundBoxProps> = ({
   audio,
-  label = 'SOVA',
+  label = ASSISTANT_NAME,
   onClose,
   autoCloseOnEnd = true,
   bottomOffset,
@@ -127,7 +128,7 @@ const SovaSoundBox: React.FC<SovaSoundBoxProps> = ({
     >
       {/* SOVA Icon */}
       <div className="sova-sound-box-icon">
-        <img src={sovaLogo} alt="SOVA" className="sova-icon-image" />
+        <img src={sovaLogo} alt={ASSISTANT_NAME} className="sova-icon-image" />
       </div>
 
       {/* Waveform visualization */}

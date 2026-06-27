@@ -1,5 +1,6 @@
 import React from 'react';
 import './SOVALoadingBar.css';
+import { ASSISTANT_NAME } from '../constants/branding';
 
 interface SOVALoadingBarProps {
   isRecording: boolean;
@@ -63,7 +64,7 @@ const SOVALoadingBar: React.FC<SOVALoadingBarProps> = ({
       
       {/* Status text */}
       <div className="sova-loading-status">
-        <span className="sova-status-label">SOVA</span>
+        <span className="sova-status-label">{ASSISTANT_NAME}</span>
         <span className="sova-status-phase">{currentPhase}</span>
       </div>
       
