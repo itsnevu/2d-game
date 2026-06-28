@@ -1745,6 +1745,11 @@ pub fn register_player(ctx: &ReducerContext, username: String, character_id: u8)
         }
         // --- END Handle Offline Corpse Restoration ---
 
+        // Allow existing players to change their character/skin by re-picking on the
+        // login screen. register_player is only invoked on an explicit "Join" submit
+        // (never on silent reconnect), so this won't reset anyone's character.
+        existing_player.character_id = character_id.min(7);
+
         players.identity().update(existing_player.clone()); // Perform the player update
 
         // --- ALSO Update ActiveConnection record --- 
