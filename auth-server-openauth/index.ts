@@ -1,5 +1,5 @@
 // index.ts - Updated for production deployment
-import './polyfill';
+import './polyfill.js';
 
 /**
  * OpenAuth issuer + Hono server with password UI and custom OIDC code/token flow.
@@ -515,17 +515,19 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
   });
   const app  = new Hono();
 
-  // --- CORS Middleware --- 
-  app.use('*', cors({ 
-      origin: [
-          'http://localhost:3008', 
-          'http://localhost:3009',
-          'http://localhost:5173',
-          'http://127.0.0.1:5173',
-          'https://brothandbullets.com',
-          'https://www.brothandbullets.com',
-          'https://broth-and-bullets-production-client-production.up.railway.app'
-      ],
+  // --- CORS Middleware ---
+  // Allow localhost (dev), the brothandbullets.com domains, ANY Vercel deployment
+  // (*.vercel.app — covers preview + prod URLs without hardcoding), and sslip.io
+  // hosts (self-hosted VPS via Caddy). Returning the origin string allows it.
+  const CORS_ALLOW: RegExp[] = [
+      /^http:\/\/localhost(:\d+)?$/,
+      /^http:\/\/127\.0\.0\.1(:\d+)?$/,
+      /^https:\/\/([a-z0-9-]+\.)*brothandbullets\.com$/,
+      /^https:\/\/[a-z0-9-]+\.vercel\.app$/,
+      /^https:\/\/([a-z0-9-]+\.)*sslip\.io$/,
+  ];
+  app.use('*', cors({
+      origin: (origin) => (origin && CORS_ALLOW.some((re) => re.test(origin)) ? origin : null),
       allowMethods: ['GET', 'POST', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization'],
       credentials: true,
