@@ -5,10 +5,12 @@
  * local stack when Vite dev or hostname is localhost → else production defaults.
  */
 
-const PROD_AUTH_SERVER_URL = 'https://broth-and-bullets-production.up.railway.app';
+// Production = self-hosted VPS (Caddy auto-HTTPS via sslip.io). Override per-channel
+// with VITE_AUTH_SERVER_URL / VITE_SPACETIME_WS_URL if the backend moves.
+const PROD_AUTH_SERVER_URL = 'https://auth.37.60.232.191.sslip.io';
 const LOCAL_AUTH_SERVER_URL = 'http://localhost:4001';
 
-const PROD_SPACETIME_WS_URL = 'wss://maincloud.spacetimedb.com';
+const PROD_SPACETIME_WS_URL = 'wss://stdb.37.60.232.191.sslip.io';
 const LOCAL_SPACETIME_WS_URL = 'ws://localhost:3000';
 
 const PROD_SPACETIME_DATABASE = 'broth-bullets';
