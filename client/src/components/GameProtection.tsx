@@ -82,15 +82,39 @@ const GameProtection: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // --- Heuristic DevTools-open detection (window chrome size delta) ---
+  // --- Heuristic DevTools-open detection (docked-panel size delta) ---
   useEffect(() => {
     if (!cfg.enabled || !cfg.detectDevtools) return;
 
-    const THRESHOLD = 170; // px of "missing" viewport that suggests a docked panel
+    // Browser chrome (tab strip, URL bar, bookmarks bar, extension toolbars, OS
+    // window borders, page zoom != 100%, mobile address bars) permanently sits
+    // between the OS window size (outer*) and the page viewport (inner*). That
+    // baseline gap varies hugely per device and on lots of ordinary setups
+    // already exceeds a fixed threshold — which is exactly why the old absolute
+    // check (gap > 170) flagged "Developer tools detected" and locked legit
+    // players out on "some devices".
+    //
+    // So instead of an absolute gap, learn THIS device's own no-devtools
+    // baseline (the smallest gap we've ever seen) and only flag DevTools when
+    // the gap GROWS far past it — i.e. a panel was actually docked after load.
+    // Two consecutive confirmations swallow transient resize frames. Caveat
+    // (unchanged): DevTools already docked before the page loaded becomes the
+    // baseline and can't be detected — that's fine, this is a deterrent.
+    const GROWTH = 180; // a freshly docked DevTools panel adds at least this much
+    let baseW = window.outerWidth - window.innerWidth;
+    let baseH = window.outerHeight - window.innerHeight;
+    let hits = 0;
+
     const check = () => {
-      const widthGap = window.outerWidth - window.innerWidth;
-      const heightGap = window.outerHeight - window.innerHeight;
-      setDevtoolsOpen(widthGap > THRESHOLD || heightGap > THRESHOLD);
+      // Some (mostly mobile) browsers report outer* as 0 — never flag on those.
+      if (!window.outerWidth || !window.outerHeight) { setDevtoolsOpen(false); return; }
+      const gapW = window.outerWidth - window.innerWidth;
+      const gapH = window.outerHeight - window.innerHeight;
+      baseW = Math.min(baseW, gapW);
+      baseH = Math.min(baseH, gapH);
+      const docked = gapW - baseW > GROWTH || gapH - baseH > GROWTH;
+      hits = docked ? hits + 1 : 0;
+      setDevtoolsOpen(hits >= 2);
     };
     check();
     const id = window.setInterval(check, 800);
