@@ -1,0 +1,10 @@
+# Backend services — these run on the VPS, NOT on Vercel.
+# Excluding them stops Vercel's multi-service ("experimentalServices") detection,
+# so Vercel deploys ONLY the root Vite frontend. NOTE: shared/ is intentionally
+# kept — the frontend imports shared/config/gameConfig.json at build time.
+tts-backend
+server
+auth-server-openauth
+web3-relayer
+agent
+solana-anchor
