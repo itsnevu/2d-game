@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Components
 import LoginScreen from './components/LoginScreen';
+import CharacterColorSwitcher from './components/CharacterColorSwitcher';
 import GameplayRuntimeBridge from './components/GameplayRuntimeBridge';
 import GameProtection from './components/GameProtection';
 
@@ -253,6 +254,14 @@ function AppContent() {
                         />
                         {/* SOVA Sound Box - Deterministic voice notifications */}
                         {SovaSoundBoxComponent}
+                        {/* In-game character/skin color switcher (real players only) */}
+                        {!isSpectator && loggedInPlayer && localPlayer && (
+                            <CharacterColorSwitcher
+                                username={loggedInPlayer.username}
+                                currentCharacterId={(localPlayer as { characterId?: number }).characterId ?? 0}
+                                registerPlayer={registerPlayer}
+                            />
+                        )}
                         </>
                     );
                 })()
