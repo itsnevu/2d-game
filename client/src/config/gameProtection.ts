@@ -29,7 +29,10 @@ export interface GameProtectionConfig {
 }
 
 export const GAME_PROTECTION: GameProtectionConfig = {
-  enabled: true,
+  // PROD-only: deterrents stay off during local dev (localhost / vite) so DevTools,
+  // the Phantom wallet popup, alt-tab, etc. never black out the screen while you
+  // build, and turn on automatically in the deployed production build.
+  enabled: import.meta.env.PROD,
   blockContextMenu: true,
   blockDevtoolsShortcuts: true,
   detectDevtools: true,

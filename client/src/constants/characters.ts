@@ -16,10 +16,14 @@ export interface CharacterDef {
 }
 
 export const CHARACTERS: CharacterDef[] = [
-  { id: 0, name: 'Crimson',  filter: '',                                swatch: '#c0392b' },
+  { id: 0, name: 'Crimson',  filter: '',                                 swatch: '#c0392b' },
   { id: 1, name: 'Verdant',  filter: 'hue-rotate(135deg) saturate(1.15)', swatch: '#5c8e32' },
   { id: 2, name: 'Azure',    filter: 'hue-rotate(215deg) saturate(1.1)',  swatch: '#3b6bdb' },
   { id: 3, name: 'Violet',   filter: 'hue-rotate(300deg) saturate(1.2)',  swatch: '#9b4ddb' },
+  { id: 4, name: 'Amber',    filter: 'hue-rotate(40deg) saturate(1.3)',   swatch: '#d98a1e' },
+  { id: 5, name: 'Teal',     filter: 'hue-rotate(180deg) saturate(1.2)',  swatch: '#1ca9a0' },
+  { id: 6, name: 'Rose',     filter: 'hue-rotate(330deg) saturate(1.25)', swatch: '#db4d8f' },
+  { id: 7, name: 'Ashen',    filter: 'grayscale(0.9) brightness(1.1)',    swatch: '#9aa0a8' },
 ];
 
 export const CHARACTER_COUNT = CHARACTERS.length;

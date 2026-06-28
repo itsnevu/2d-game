@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { Identity as SpacetimeDBIdentity } from 'spacetimedb';
 import { DbConnection } from '../generated';
 import { useAuth } from './AuthContext'; // Import useAuth
+import { clampCharacterId } from '../constants/characters';
 import {
     spacetimeWsUrl,
     spacetimeDatabaseName,
@@ -324,7 +325,7 @@ export const GameConnectionProvider: React.FC<GameConnectionProviderProps> = ({ 
         setConnectionError(null);
 
         try {
-            await connection.reducers.registerPlayer({ username, characterId: Math.max(0, Math.min(3, Math.floor(characterId))) });
+            await connection.reducers.registerPlayer({ username, characterId: clampCharacterId(characterId) });
             console.log('[GameConn] Player registration successful');
         } catch (err: any) {
             // A rejected register_player reducer (e.g. "username already taken", "server full")

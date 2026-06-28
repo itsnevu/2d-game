@@ -1339,7 +1339,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     margin: '0 auto',
                                     textAlign: 'left',
                                 }}>
-                                    {/* Character picker — choose 1 of 4 looks (seen by all other players) */}
+                                    {/* Character picker — choose 1 of the looks (seen by all other players) */}
                                     <div style={{ marginBottom: '22px' }}>
                                         <label style={{
                                             display: 'block',
@@ -1353,7 +1353,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                         }}>
                                             Choose Your Character
                                         </label>
-                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                                             {CHARACTERS.map((c) => {
                                                 const selected = selectedCharacterId === c.id;
                                                 return (
@@ -1363,7 +1363,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                                         onClick={() => setSelectedCharacterId(c.id)}
                                                         title={c.name}
                                                         style={{
-                                                            flex: 1,
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             alignItems: 'center',

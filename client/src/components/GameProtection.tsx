@@ -61,20 +61,22 @@ const GameProtection: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // --- Blank the game when it loses focus / becomes hidden ---
+  // --- Blank the game when the TAB is hidden (minimized / switched away) ---
+  // NOTE: we intentionally key off document visibility, NOT window `blur`.
+  // A `blur` also fires when a browser-extension popup (e.g. the Phantom wallet
+  // approve/sign dialog) or the address bar takes focus while the tab is still
+  // fully visible. Blacking out then makes wallet login look like it hangs on a
+  // black "Paused" screen that never clears (the page often does not get a
+  // matching `focus` back after an extension popup closes). visibilitychange
+  // only fires on real tab-switch / minimize, which is what we actually want to
+  // hide for — and it self-clears the instant the tab is visible again.
   useEffect(() => {
     if (!cfg.enabled || !cfg.hideOnFocusLoss) return;
 
-    const onBlur = () => setFocusLost(true);
-    const onFocus = () => setFocusLost(false);
     const onVisibility = () => setFocusLost(document.visibilityState === 'hidden');
-
-    window.addEventListener('blur', onBlur);
-    window.addEventListener('focus', onFocus);
     document.addEventListener('visibilitychange', onVisibility);
+    onVisibility(); // sync initial state
     return () => {
-      window.removeEventListener('blur', onBlur);
-      window.removeEventListener('focus', onFocus);
       document.removeEventListener('visibilitychange', onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

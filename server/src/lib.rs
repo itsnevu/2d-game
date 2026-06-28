@@ -759,7 +759,7 @@ pub struct Player {
     pub gold_balance: u64, // In-game gold balance (exchangeable for $KINS)
     pub staked_bounty: u64, // Gold staked for Wilderness PvP
     // === Appearance ===
-    pub character_id: u8, // Chosen player character/skin variant (0-3), shown to all players
+    pub character_id: u8, // Chosen player character/skin variant (0-7), shown to all players
 }
 
 pub const TUTORIAL_ID_MEMORY_SHARD: &str = "memoryShard";
@@ -2314,7 +2314,7 @@ pub fn register_player(ctx: &ReducerContext, username: String, character_id: u8)
         gold_share_ratio: 1.0,
         gold_balance: 0,
         staked_bounty: 0,
-        character_id: character_id.min(3), // Clamp to the 4 available characters (0-3)
+        character_id: character_id.min(7), // Clamp to the 8 available characters (0-7)
     };
 
     // Insert the new player
@@ -2484,7 +2484,7 @@ pub fn register_npc(ctx: &ReducerContext, username: String, role: String) -> Res
         gold_share_ratio: 1.0,
         gold_balance: 0,
         staked_bounty: 0,
-        character_id: (username.len() as u8) % 4, // Vary NPC appearance deterministically
+        character_id: (username.len() as u8) % 8, // Vary NPC appearance deterministically
     };
 
     match players.try_insert(player) {
