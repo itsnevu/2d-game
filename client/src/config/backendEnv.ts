@@ -7,10 +7,10 @@
 
 // Production = self-hosted VPS (Caddy auto-HTTPS via sslip.io). Override per-channel
 // with VITE_AUTH_SERVER_URL / VITE_SPACETIME_WS_URL if the backend moves.
-const PROD_AUTH_SERVER_URL = 'https://auth.37.60.232.191.sslip.io';
+const PROD_AUTH_SERVER_URL = 'https://auth.194.146.13.185.sslip.io';
 const LOCAL_AUTH_SERVER_URL = 'http://localhost:4001';
 
-const PROD_SPACETIME_WS_URL = 'wss://stdb.37.60.232.191.sslip.io';
+const PROD_SPACETIME_WS_URL = 'wss://stdb.194.146.13.185.sslip.io';
 const LOCAL_SPACETIME_WS_URL = 'ws://localhost:3000';
 
 const PROD_SPACETIME_DATABASE = 'broth-bullets';
