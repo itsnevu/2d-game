@@ -35,7 +35,21 @@ export const GAME_PROTECTION: GameProtectionConfig = {
   enabled: import.meta.env.PROD,
   blockContextMenu: true,
   blockDevtoolsShortcuts: true,
-  detectDevtools: true,
+  // OFF: the size-delta heuristic blacks out the game with "Developer tools
+  // detected. Close them to continue." for legit players and gives them no way
+  // out. It can't tell a docked DevTools panel apart from ordinary chrome that
+  // grows the outer/inner gap *after* load — most commonly PAGE ZOOM (Ctrl+= or
+  // Ctrl+mouse-wheel; e.g. 150% on 1080p shrinks the viewport ~600px, dwarfing
+  // any threshold), but also exiting fullscreen (F11), dragging the window to a
+  // monitor with different scaling, or showing the bookmarks/downloads bar. Once
+  // the gap inflates, the learned baseline never recovers, so the blackout
+  // sticks until reload — and because the inspect shortcuts are blocked, it
+  // feels like the game randomly froze. DevTools blocking is only ever a
+  // deterrent (anyone can open DevTools before load or via a remote debugger),
+  // so the shortcut-swallowing below is enough; the unrecoverable blackout costs
+  // far more than it protects. Flip back to true only if the heuristic in
+  // GameProtection.tsx is reworked to be zoom/fullscreen-aware.
+  detectDevtools: false,
   deterScreenshots: true,
   hideOnFocusLoss: true,
   disableSelection: true,
