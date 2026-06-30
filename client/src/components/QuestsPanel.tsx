@@ -154,7 +154,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
 
     const getStatusColor = (status: QuestStatus): string => {
         switch (status.tag) {
-            case 'Locked': return '#6b7280';
+            case 'Locked': return '#9ab08a';
             case 'Available': return '#ffc83c';
             case 'InProgress': return SOVA_CYAN;
             case 'Completed': return '#c4e89c';
@@ -306,7 +306,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             borderBottom: activeTab === 'mission' 
                                 ? `3px solid ${SOVA_PURPLE}`
                                 : '3px solid transparent',
-                            color: activeTab === 'mission' ? SOVA_PURPLE : '#6b7280',
+                            color: activeTab === 'mission' ? SOVA_PURPLE : '#9ab08a',
                             fontSize: isMobile ? '11px' : '14px',
                             fontWeight: 'bold',
                             fontFamily: UI_FONT_FAMILY,
@@ -328,7 +328,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         }}
                         onMouseLeave={(e) => {
                             if (activeTab !== 'mission') {
-                                e.currentTarget.style.color = '#6b7280';
+                                e.currentTarget.style.color = '#9ab08a';
                                 e.currentTarget.style.background = 'transparent';
                             }
                         }}
@@ -360,7 +360,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             borderBottom: activeTab === 'daily' 
                                 ? `3px solid ${SOVA_CYAN}`
                                 : '3px solid transparent',
-                            color: activeTab === 'daily' ? SOVA_CYAN : (tutorialProgress?.tutorialCompleted ? '#6b7280' : '#4b5563'),
+                            color: activeTab === 'daily' ? SOVA_CYAN : (tutorialProgress?.tutorialCompleted ? '#9ab08a' : '#7c8f78'),
                             fontSize: isMobile ? '11px' : '14px',
                             fontWeight: 'bold',
                             fontFamily: UI_FONT_FAMILY,
@@ -382,7 +382,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         }}
                         onMouseLeave={(e) => {
                             if (activeTab !== 'daily') {
-                                e.currentTarget.style.color = '#6b7280';
+                                e.currentTarget.style.color = '#9ab08a';
                                 e.currentTarget.style.background = 'transparent';
                             }
                         }}
@@ -427,7 +427,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             borderBottom: activeTab === 'audio'
                                 ? '3px solid #ffc83c'
                                 : '3px solid transparent',
-                            color: activeTab === 'audio' ? '#ffc83c' : '#6b7280',
+                            color: activeTab === 'audio' ? '#ffc83c' : '#9ab08a',
                             fontSize: isMobile ? '11px' : '14px',
                             fontWeight: 'bold',
                             fontFamily: UI_FONT_FAMILY,
@@ -449,7 +449,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                         }}
                         onMouseLeave={(e) => {
                             if (activeTab !== 'audio') {
-                                e.currentTarget.style.color = '#6b7280';
+                                e.currentTarget.style.color = '#9ab08a';
                                 e.currentTarget.style.background = 'transparent';
                             }
                         }}
@@ -629,7 +629,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             </div>
                         ) : (
                             <div style={{ 
-                                color: '#6b7280', 
+                                color: '#9ab08a', 
                                 fontSize: isMobile ? '12px' : '14px', 
                                 fontStyle: 'italic',
                                 padding: '20px',
@@ -683,7 +683,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                     justifyContent: 'center',
                                                     fontSize: '12px',
                                                     fontWeight: 'bold',
-                                                    color: isCompleted || isCurrent ? '#fff' : '#6b7280',
+                                                    color: isCompleted || isCurrent ? '#fff' : '#9ab08a',
                                                     border: isCurrent ? `2px solid ${SOVA_CYAN}` : '1px solid rgba(107, 114, 128, 0.3)',
                                                     boxShadow: isCurrent ? `0 0 15px ${SOVA_CYAN}` : isCompleted ? '0 0 10px rgba(74, 222, 128, 0.3)' : 'none',
                                                     cursor: 'default',
@@ -695,7 +695,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                         );
                                     })}
                                 </div>
-                                <div style={{ color: '#6b7280', fontSize: isMobile ? '11px' : '13px', marginTop: '14px', textAlign: 'center' }}>
+                                <div style={{ color: '#9ab08a', fontSize: isMobile ? '11px' : '13px', marginTop: '14px', textAlign: 'center' }}>
                                     Mission {(tutorialProgress?.currentQuestIndex || 0) + 1} of {sortedTutorialQuests.length}
                                 </div>
                             </div>
@@ -733,7 +733,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                     Daily Training Unavailable
                                 </div>
                                 <div style={{ 
-                                    color: '#6b7280', 
+                                    color: '#9ab08a', 
                                     fontSize: isMobile ? '11px' : '13px', 
                                     lineHeight: 1.6,
                                     maxWidth: '400px',
@@ -858,7 +858,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             </div>
                         ) : (
                             <div style={{ 
-                                color: '#6b7280', 
+                                color: '#9ab08a', 
                                 fontSize: isMobile ? '12px' : '14px', 
                                 fontStyle: 'italic',
                                 padding: '20px',
@@ -961,7 +961,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                 {/* Content */}
                                                 <div style={{ flex: 1, minWidth: 0 }}>
                                                     <div style={{
-                                                        color: isUnlocked ? '#e0e0e0' : '#6b7280',
+                                                        color: isUnlocked ? '#e0e0e0' : '#9ab08a',
                                                         fontSize: isMobile ? '11px' : '13px',
                                                         fontWeight: 'bold',
                                                         marginBottom: '4px',
@@ -969,7 +969,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                                                         {tutorial.displayName}
                                                     </div>
                                                     <div style={{
-                                                        color: isUnlocked ? '#9ca3af' : '#4b5563',
+                                                        color: isUnlocked ? '#9ca3af' : '#7c8f78',
                                                         fontSize: isMobile ? '9px' : '11px',
                                                         lineHeight: 1.4,
                                                     }}>
@@ -994,7 +994,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                             </div>
                         ) : (
                             <div style={{ 
-                                color: '#6b7280', 
+                                color: '#9ab08a', 
                                 fontSize: isMobile ? '12px' : '14px', 
                                 fontStyle: 'italic',
                                 padding: '20px',
@@ -1015,7 +1015,7 @@ const QuestsPanel: React.FC<QuestsPanelProps> = ({
                 <div style={{
                     padding: '16px 24px',
                     borderTop: `2px solid ${UI_BORDER_COLOR}`,
-                    color: '#6b7280',
+                    color: '#9ab08a',
                     fontSize: isMobile ? '11px' : '14px',
                     textAlign: 'center',
                     background: 'linear-gradient(180deg, rgba(12, 21, 15, 0.3), rgba(12, 21, 15, 0.6))',

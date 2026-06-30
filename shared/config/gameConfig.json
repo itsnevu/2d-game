@@ -44,7 +44,7 @@
   "combat": {
     "exhaustedSpeedPenalty": 0.75,
     "remoteHealingRangePx": 128.0,
-    "dodgeRollDistancePx": 450.0,
+    "dodgeRollDistancePx": 250.0,
     "dodgeRollDurationMs": 500,
     "dodgeRollCooldownMs": 500,
     "defaultMeleeRangeMultiplier": 4.5,

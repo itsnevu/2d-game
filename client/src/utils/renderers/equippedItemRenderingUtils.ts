@@ -345,17 +345,10 @@ export const renderEquippedItem = (
     return;
   }
 
-  const catTag = itemDef.category?.tag;
-  const appliesEquippedDodgeRollSpin =
-    catTag === 'Tool' || catTag === 'Weapon' || catTag === 'RangedWeapon';
-  const dodgeSpinRad =
-    appliesEquippedDodgeRollSpin && toolDodgeRollSpin
-      ? Math.max(0, Math.min(1, toolDodgeRollSpin.progress)) *
-        Math.PI *
-        2 *
-        toolDodgeRollSpinSign(toolDodgeRollSpin.direction) *
-        dodgeRollSpinOrientationFactor(itemDef, player.direction)
-      : 0;
+  // Held item no longer spins during a dodge roll/dash — it stays steady in hand.
+  // (Spin helpers toolDodgeRollSpinSign / dodgeRollSpinOrientationFactor are kept
+  // for easy re-enable; set dodgeSpinRad back to the old computation to restore it.)
+  const dodgeSpinRad = 0;
 
   const playerId = player.identity.toHexString();
   const isLocalPlayer = localPlayerId && playerId === localPlayerId;

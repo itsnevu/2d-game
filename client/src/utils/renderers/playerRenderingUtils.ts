@@ -269,9 +269,10 @@ export const getSpriteCoordinates = (
   // Handle idle animation (4x4 grid layout)
   // Allow idle animation even when using items (e.g., bandaging)
   if (isIdle && !isMoving) {
-    const idleFrame = currentAnimationFrame % totalFrames; // Ensure frame is within bounds
-    const spriteCol = idleFrame % 4; // Cycle through 4 columns (frames) on the row
-    
+    // Idle is a STATIC standing pose — no in-place stepping/bobbing.
+    // Always show the first frame of the idle row instead of cycling through frames.
+    const spriteCol = 0;
+
     // Calculate row based on player's facing direction (same logic as movement)
     let spriteRow = 2; // Default Down
     switch (player.direction) {

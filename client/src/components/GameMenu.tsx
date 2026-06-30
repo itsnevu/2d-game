@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVolumeUp, faEye, faGamepad, faLightbulb, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faVolumeUp, faEye, faGamepad, faLightbulb, faPlay, faRightFromBracket, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 export type MenuType = 'main' | 'controls' | 'tips' | 'settings' | 'visual_settings' | null;
 
@@ -45,12 +45,12 @@ const GameMenu: React.FC<GameMenuProps> = ({
     };
 
     const menuOptions: MenuOption[] = [
-        { label: 'RESUME', action: () => onClose() },
+        { label: 'RESUME', action: () => onClose(), icon: faPlay },
         { label: 'SOUND', action: () => onNavigate('settings'), icon: faVolumeUp },
         { label: 'VISUAL', action: () => onNavigate('visual_settings'), icon: faEye },
         { label: 'CONTROLS', action: () => onNavigate('controls'), icon: faGamepad },
         { label: 'TIPS', action: () => onNavigate('tips'), icon: faLightbulb },
-        { label: 'EXIT', action: handleSignOutRequest, isSignOut: true },
+        { label: 'EXIT', action: handleSignOutRequest, icon: faRightFromBracket, isSignOut: true },
     ];
 
     return (
