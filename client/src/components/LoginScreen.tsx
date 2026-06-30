@@ -1093,33 +1093,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                     }}>
                         WILDER
                     </h1>
-                    <p style={{
-                        fontFamily: "'PixelOperator', sans-serif",
-                        fontSize: 'clamp(14px, 2.5vw, 18px)',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        maxWidth: '600px',
-                        margin: '0 auto 10px auto',
-                        lineHeight: '1.4',
-                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-                    }}>
-                        Survive the Wilderness. Buy, sell, and trade <strong style={{ color: '#C8A23C' }}>$WLDR</strong> tokens to claim your destiny.
-                    </p>
-                    <div style={{
-                        backgroundColor: 'rgba(200, 162, 60, 0.15)',
-                        border: '1px dashed #C8A23C',
-                        borderRadius: '8px',
-                        padding: '8px 16px',
-                        display: 'inline-block',
-                        marginBottom: '40px',
-                        fontFamily: "'PixelOperator', sans-serif",
-                        fontSize: '14px',
-                        color: '#ffc83c',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px',
-                        boxShadow: '0 0 10px rgba(200, 162, 60, 0.1)',
-                    }}>
-                        IMPORTANT: PLAYERS MUST BUY & SELL <strong style={{ color: 'white', textShadow: '0 0 5px #C8A23C' }}>$WLDR</strong> TO PROGRESS AND SURVIVE
-                    </div>
 
                     <div style={{
                         textAlign: 'center',
