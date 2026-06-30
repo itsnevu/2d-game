@@ -101,11 +101,41 @@ function generateRandomString(length: number): string {
     return result;
 }
 
+// A stored id_token whose `iss` points at a DIFFERENT auth server (e.g. one left over
+// from a previous backend deployment after an IP/host migration) can never be validated
+// by the current SpacetimeDB instance: SpacetimeDB OIDC-discovers the issuer to verify the
+// token, the old issuer is gone, the WS handshake 401s, and the player is trapped on the
+// generic "Connection failed" screen with no way out. Such a token is effectively poison —
+// treat it as invalid so it is discarded and the user falls back to a clean login.
+// Lenient on a missing/unparseable issuer (other checks handle those); strict only on a
+// concrete host mismatch, compared by origin to ignore trailing-slash/path differences.
+function tokenIssuerMatchesBackend(token: string): boolean {
+    try {
+        const decoded = parseJwt(token);
+        const iss = decoded?.iss;
+        if (!iss || typeof iss !== 'string') return true;
+        return new URL(iss).origin === new URL(authServerUrl).origin;
+    } catch {
+        return true;
+    }
+}
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [spacetimeToken, setSpacetimeToken] = useState<string | null>(() => {
       const storedToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ID_TOKEN);
       // console.log(`[AuthContext LOG] Initializing token state. Found in storage: ${!!storedToken}`); // <-- LOG initialization
+      // Drop tokens left over from a previous backend (different issuer) BEFORE they are
+      // ever used to connect — otherwise they cause a doomed handshake that traps the
+      // player on "Connection failed". This makes returning players from an old/migrated
+      // backend self-heal into a clean login with no manual cache clearing.
+      if (storedToken && !tokenIssuerMatchesBackend(storedToken)) {
+          console.warn('[AuthContext] Discarding stored token from a previous backend (issuer mismatch).');
+          localStorage.removeItem(LOCAL_STORAGE_KEYS.ID_TOKEN);
+          localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+          localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
+          return null;
+      }
       return storedToken;
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -395,7 +425,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.warn("[AuthContext] Token validation failed: Missing user ID");
         return false;
       }
-      
+
+      // Reject tokens minted by a previous/different backend — they can't be validated by
+      // the current SpacetimeDB and would only trap the user on "Connection failed".
+      if (!tokenIssuerMatchesBackend(spacetimeToken)) {
+        console.warn("[AuthContext] Token validation failed: issuer does not match current auth server");
+        return false;
+      }
+
       return true;
     } catch (error) {
       console.warn("[AuthContext] Token validation failed: Parse error", error);
