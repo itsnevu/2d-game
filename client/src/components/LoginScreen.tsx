@@ -367,6 +367,27 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     const [selectedCharacterId, setSelectedCharacterId] = useState<number>(0);
     const [localError, setLocalError] = useState<string | null>(null);
     const [simulatedWldrBalance, setSimulatedWldrBalance] = useState<number | null>(null);
+    const blockingError = authError || connectionError;
+    const isAuthBlockingError = Boolean(authError);
+
+    const handleBlockingErrorAction = () => {
+        if (isAuthBlockingError) {
+            void logout();
+            return;
+        }
+
+        if (connectionError?.includes('Please refresh your browser')) {
+            window.location.reload();
+            return;
+        }
+
+        if (retryConnection) {
+            retryConnection();
+            return;
+        }
+
+        window.location.reload();
+    };
 
     const computeSimulatedBalance = (publicKey: string): number => {
         let hash = 0;
@@ -1188,22 +1209,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                     marginBottom: '20px',
                                     textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                 }}>
-                                    {connectionError || 'Connection failed. Please ensure you have an internet connection and try again.'}<br />
-                                    {!connectionError && 'If the problem persists, please try signing out and signing in.'}
+                                    {blockingError || 'Connection failed. Please ensure you have an internet connection and try again.'}<br />
+                                    {isAuthBlockingError
+                                        ? 'Please sign in again to refresh your game session.'
+                                        : !connectionError && 'If the problem persists, please try signing out and signing in.'}
                                 </p>
                                 <div style={{ display: 'flex', flexDirection: 'row', gap: '15px', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
                                     <button
-                                        onClick={() => {
-                                            // If it says "refresh your browser", do a page reload
-                                            // Otherwise use retry function if available
-                                            if (connectionError && connectionError.includes('Please refresh your browser')) {
-                                                window.location.reload();
-                                            } else if (connectionError && retryConnection) {
-                                                retryConnection();
-                                            } else {
-                                                window.location.reload();
-                                            }
-                                        }}
+                                        onClick={handleBlockingErrorAction}
                                         disabled={authIsLoading}
                                         onMouseEnter={(e) => {
                                             if (!authIsLoading) {
@@ -1237,7 +1250,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                                             overflow: 'hidden',
                                         }}
                                     >
-                                        {connectionError && connectionError.includes('Please refresh your browser') ? 'Refresh' : 'Try Again'}
+                                        {isAuthBlockingError
+                                            ? 'Sign In Again'
+                                            : connectionError && connectionError.includes('Please refresh your browser') ? 'Refresh' : 'Try Again'}
                                     </button>
                                 </div>
                             </>

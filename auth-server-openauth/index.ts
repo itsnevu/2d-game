@@ -516,12 +516,13 @@ function renderResetPasswordPage(opts: { token?: string; email?: string; error?:
   const app  = new Hono();
 
   // --- CORS Middleware ---
-  // Allow localhost (dev), the brothandbullets.com domains, ANY Vercel deployment
-  // (*.vercel.app — covers preview + prod URLs without hardcoding), and sslip.io
-  // hosts (self-hosted VPS via Caddy). Returning the origin string allows it.
+  // Allow localhost (dev), the playwilder.com + brothandbullets.com domains, ANY
+  // Vercel deployment (*.vercel.app — covers preview + prod URLs without hardcoding),
+  // and sslip.io hosts (self-hosted VPS via Caddy). Returning the origin allows it.
   const CORS_ALLOW: RegExp[] = [
       /^http:\/\/localhost(:\d+)?$/,
       /^http:\/\/127\.0\.0\.1(:\d+)?$/,
+      /^https:\/\/([a-z0-9-]+\.)*playwilder\.(com|xyz)$/,
       /^https:\/\/([a-z0-9-]+\.)*brothandbullets\.com$/,
       /^https:\/\/[a-z0-9-]+\.vercel\.app$/,
       /^https:\/\/([a-z0-9-]+\.)*sslip\.io$/,

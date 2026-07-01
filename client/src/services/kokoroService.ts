@@ -3,9 +3,27 @@
 
 console.log('[KokoroService] 🚀 Loading Kokoro TTS service...');
 
-// Configuration
-const KOKORO_BASE_URL = import.meta.env.VITE_KOKORO_BASE_URL || 'http://localhost:8001';
-const KOKORO_SYNTHESIZE_ENDPOINT = `${KOKORO_BASE_URL}/synthesize`;
+const isLocalBrowser =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const isLoopbackUrl = (url: string): boolean => {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1';
+  } catch {
+    return false;
+  }
+};
+
+// Configuration. Loopback URLs are only valid in local browser sessions; this
+// prevents production builds from calling a player's own machine when .env is local.
+const configuredKokoroBaseUrl = (import.meta.env.VITE_KOKORO_BASE_URL || '').trim();
+const KOKORO_BASE_URL =
+  configuredKokoroBaseUrl && (!isLoopbackUrl(configuredKokoroBaseUrl) || isLocalBrowser)
+    ? configuredKokoroBaseUrl
+    : isLocalBrowser ? 'http://localhost:8001' : '';
+const KOKORO_SYNTHESIZE_ENDPOINT = KOKORO_BASE_URL ? `${KOKORO_BASE_URL}/synthesize` : '';
 
 export interface KokoroResponse {
   success: boolean;
@@ -95,7 +113,7 @@ class KokoroService {
    * Play the warmup audio and return a promise that resolves when done
    */
   async playWarmupAudio(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const audio = new Audio(this.warmingUpAudioPath);
       audio.onended = () => resolve();
       audio.onerror = (e) => {
@@ -114,6 +132,10 @@ class KokoroService {
    */
   async synthesizeVoice(request: VoiceSynthesisRequest): Promise<KokoroResponse> {
     console.log('[KokoroService] 🎤 Starting TTS synthesis...');
+
+    if (!this.isConfigured()) {
+      return { success: false, error: 'Kokoro TTS service is not configured.' };
+    }
     
     let timing: Partial<KokoroTiming>;
     
@@ -468,8 +490,7 @@ class KokoroService {
    * Check if service is properly configured
    */
   isConfigured(): boolean {
-    // Service is configured if base URL is set (defaults to localhost:8001)
-    return true; // Always available if backend is running
+    return KOKORO_BASE_URL.length > 0;
   }
 
   /**
@@ -477,6 +498,10 @@ class KokoroService {
    */
   async testConnection(): Promise<{ success: boolean; error?: string }> {
     console.log('[KokoroService] 🧪 Testing API connection...');
+
+    if (!this.isConfigured()) {
+      return { success: false, error: 'Kokoro TTS service is not configured.' };
+    }
 
     try {
       const response = await fetch(`${KOKORO_BASE_URL}/health`);
@@ -498,6 +523,10 @@ class KokoroService {
    * Get available voices
    */
   async getVoices(): Promise<{ voices: Array<{ id: string; name: string; description: string }> }> {
+    if (!this.isConfigured()) {
+      return { voices: [] };
+    }
+
     try {
       const response = await fetch(`${KOKORO_BASE_URL}/voices`);
       if (response.ok) {
@@ -523,6 +552,10 @@ class KokoroService {
    * Call this early to wake up the Railway service from sleep
    */
   warmup(): void {
+    if (!this.isConfigured()) {
+      return;
+    }
+
     // Fire and forget - don't await
     fetch(`${KOKORO_BASE_URL}/health`, { method: 'GET' })
       .then(() => console.log('[KokoroService] 🔥 Warmup ping sent'))
@@ -541,4 +574,3 @@ if (typeof window !== 'undefined') {
 
 export { kokoroService };
 export default kokoroService;
-
